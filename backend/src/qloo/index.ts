@@ -4,3 +4,4 @@ export * from "./normalize.js";
 export * from "./transport.js";
 export * from "./types.js";
 export * from "./environment.js";
+export * from "./mcp-transport.js";

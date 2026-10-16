@@ -4,11 +4,13 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 2 — Cultural Elasticity Methodology v0
+## Current status: Sprint 3 — Agentic Investigation Runtime
 
-- **Sprint 2** defined the first evidence-backed methodology (`elasticity-v0.1`). For a brand and up to six candidate territories it reports **relative position** (from single-call Qloo rank panels, aggregated by rank only), **representation robustness** (does the position survive swapping territory exemplars?), **cultural coherence** (shared tag sets, RAW and operational-filtered), **evidence quality** and a **PROVISIONAL classification**: natural adjacency, credible stretch, uncertain / representation-sensitive or cultural break. **No 0–100 score:** the Relative Elasticity Index was rejected for now after its gate failed on a 6-brand live benchmark. Live benchmark results: 51/57 pairwise orderings correct (24/29 on held-out brands, 22/22 strong-vs-weak). See [docs/sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md](docs/sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md).
+- **Sprint 3** added a single-agent investigation runtime (`backend/src/agent`). The agent interprets the goal (`analyze_move`, `compare_territories`, `explore_frontier`), resolves the brand, discovers and anchors territories, picks exemplars from Qloo evidence, and calls typed, read-only Qloo tools through the official **`qloo mcp`** server. Deterministic code validates every action, chooses each territory's representation strategy and analysis route (full relative / partial / descriptive / insufficient), runs the Sprint 2 methodology only where a valid comparison set exists, bounds the loop, and validates the model's synthesis against the results. The Qloo tool boundary is **live-validated**. The agent model is **not** (`LIVE_AGENT_MODEL_VALIDATION_NOT_RUN`, no model credential); live runs used a deterministic baseline reference policy. See [docs/sprint-3/AGENTIC_INVESTIGATION_RUNTIME.md](docs/sprint-3/AGENTIC_INVESTIGATION_RUNTIME.md).
 
 Earlier sprints:
+
+- **Sprint 2** defined the first evidence-backed methodology (`elasticity-v0.1`). For a brand and up to six candidate territories it reports **relative position** (from single-call Qloo rank panels, aggregated by rank only), **representation robustness** (does the position survive swapping territory exemplars?), **cultural coherence** (shared tag sets, RAW and operational-filtered), **evidence quality** and a **PROVISIONAL classification**: natural adjacency, credible stretch, uncertain / representation-sensitive or cultural break. **No 0–100 score:** the Relative Elasticity Index was rejected for now after its gate failed on a 6-brand live benchmark. Live benchmark results: 51/57 pairwise orderings correct (24/29 on held-out brands, 22/22 strong-vs-weak). See [docs/sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md](docs/sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md).
 
 - **Sprint 0B** ran the pinned Jacquemus → Boutique Hospitality investigation against the **Qloo hackathon API** (`https://hackathon.api.qloo.com`) through the official harness. Decision: **CONDITIONAL GO**. G1 (brand) and G2 (territory) pass; profile, audience, ranking and bridge evidence are usable only in reduced form. See [docs/sprint-0/QLOO_TECHNICAL_FEASIBILITY.md](docs/sprint-0/QLOO_TECHNICAL_FEASIBILITY.md).
 - **Sprint 1** built the provider-independent `EvidencePacket`, a deterministic ingredient engine and an offline methodology eval harness. It ran unchanged on the first live packet. It produces no score. See [docs/sprint-1/CULTURAL_EVIDENCE_CORE.md](docs/sprint-1/CULTURAL_EVIDENCE_CORE.md).
@@ -67,6 +69,9 @@ pnpm check:secrets     # repo + browser-bundle credential scan
 pnpm eval:methodology  # offline methodology evals (synthetic fixtures; not Qloo validation)
 pnpm eval:live         # offline structural checks over captured live + recorded fixtures (no network)
 pnpm eval:elasticity   # offline methodology benchmark over captured live evidence (no network)
+pnpm eval:agent        # offline agent-runtime evals (SYNTHETIC world; not Qloo or live-model validation)
+pnpm agent:run -- "Could Glossier move into pottery?" --brand Glossier --territories Pottery --model baseline
+                       # one investigation; live Qloo (or --synthetic); --model auto needs ANTHROPIC_API_KEY
 pnpm methodology:jacquemus            # Jacquemus × 6 territories through the methodology (offline replay)
 pnpm methodology:jacquemus -- --live  # refresh the Jacquemus evidence from Qloo first
 pnpm feasibility:qloo  # live Qloo investigation (needs a credential; hackathon host only)

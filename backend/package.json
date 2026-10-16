@@ -15,9 +15,12 @@
     "eval:live": "tsx scripts/eval-live.ts",
     "capture:elasticity": "tsx scripts/elasticity-capture.ts",
     "eval:elasticity": "tsx scripts/eval-elasticity.ts",
-    "methodology:jacquemus": "tsx scripts/methodology-jacquemus.ts"
+    "methodology:jacquemus": "tsx scripts/methodology-jacquemus.ts",
+    "agent:run": "tsx scripts/agent-run.ts",
+    "eval:agent": "tsx scripts/eval-agent.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.131.0",
     "@cultural-elasticity/shared": "workspace:*",
     "@qloo/qloo-harness": "0.1.26",
     "fastify": "5.12.7",

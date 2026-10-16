@@ -31,7 +31,8 @@ import type { QlooOperation } from "./types.js";
 /** Provenance `source` for evidence captured from the hackathon API. Never used by synthetic data. */
 export const QLOO_LIVE_SOURCE = "qloo-hackathon-api";
 
-export type LiveCall = { operation: QlooOperation; envelope: QlooEnvelope; capturedAt: string };
+/** `source` defaults to QLOO_LIVE_SOURCE; the scripted synthetic world sets "synthetic-fixture". */
+export type LiveCall = { operation: QlooOperation; envelope: QlooEnvelope; capturedAt: string; source?: string };
 
 /** Validates one raw harness result at the boundary. */
 export function liveCall(operation: QlooOperation, raw: unknown, capturedAt: string): LiveCall {
@@ -39,7 +40,7 @@ export function liveCall(operation: QlooOperation, raw: unknown, capturedAt: str
 }
 
 export function callProvenance(call: LiveCall): ProvenanceRef {
-  return { source: QLOO_LIVE_SOURCE, operation: call.operation, correlationId: call.envelope.execution.correlation_id, capturedAt: call.capturedAt };
+  return { source: call.source ?? QLOO_LIVE_SOURCE, operation: call.operation, correlationId: call.envelope.execution.correlation_id, capturedAt: call.capturedAt };
 }
 
 function requireOk(call: LiveCall): void {

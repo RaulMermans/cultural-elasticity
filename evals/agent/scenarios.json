@@ -1,0 +1,1739 @@
+{
+ "fixtureType": "synthetic",
+ "notice": "SYNTHETIC agent-runtime evaluation scenarios. They run against evals/fixtures/synthetic/agent/world.json (fictional names, SYN- ids) and test runtime control flow and deterministic guarantees. They are NOT Qloo validation and NOT a live model validation.",
+ "version": "agent-eval-v1",
+ "scenarios": [
+  {
+   "id": "ir-move",
+   "category": "INTENT_ROUTING",
+   "description": "Single move: brand + one territory routes to analyze_move and reaches a full relative analysis via agent-chosen references.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Northwind Atelier enter boutique hospitality?",
+    "brand": "Northwind Atelier",
+    "territories": [
+     "Boutique Hospitality"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "intent": "analyze_move",
+    "routes": {
+     "boutique_hospitality": "FULL_RELATIVE_ANALYSIS"
+    },
+    "methodologyRuns": 1,
+    "toolsCalled": [
+     "qloo_resolve_entity",
+     "qloo_find_tags",
+     "qloo_recommend",
+     "validate_territory_representation"
+    ],
+    "generalization": "G3"
+   }
+  },
+  {
+   "id": "ir-compare",
+   "category": "INTENT_ROUTING",
+   "description": "Three named territories route to compare_territories; only two are brand-rankable, so no comparison set exists and every territory is partial.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "For Saffron & Salt compare tableware, skincare and slow travel",
+    "brand": "Saffron & Salt",
+    "territories": [
+     "Tableware",
+     "Skincare",
+     "Slow Travel"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "intent": "compare_territories",
+    "routes": {
+     "tableware": "PARTIAL_CULTURAL_ANALYSIS",
+     "skincare": "PARTIAL_CULTURAL_ANALYSIS",
+     "slow_travel": "PARTIAL_CULTURAL_ANALYSIS"
+    },
+    "methodologyRuns": 0,
+    "limitationCodes": [
+     "COMPARISON_SET_TOO_SMALL"
+    ],
+    "generalization": "G5"
+   }
+  },
+  {
+   "id": "ir-frontier",
+   "category": "INTENT_ROUTING",
+   "description": "No territories routes to explore_frontier; candidates are discovered from Qloo evidence.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Where could Kestrel Outfitters expand?",
+    "brand": "Kestrel Outfitters",
+    "territories": []
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "intent": "explore_frontier",
+    "minTerritories": 3,
+    "allOrigins": "qloo_evidence",
+    "toolsCalled": [
+     "qloo_related_entities",
+     "propose_territory"
+    ],
+    "methodologyRuns": 1
+   }
+  },
+  {
+   "id": "ir-explicit-intent-wins",
+   "category": "INTENT_ROUTING",
+   "description": "An interpretation that contradicts the request's explicit intent is refused.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Where could Lumen Play expand?",
+    "intent": "explore_frontier",
+    "brand": "Lumen Play"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Lumen Play",
+       "territories": [
+        "Esports"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Lumen Play",
+       "territories": []
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "intent": "explore_frontier",
+    "toolErrors": [
+     "INVALID_INTERPRETATION"
+    ]
+   }
+  },
+  {
+   "id": "er-exact",
+   "category": "ENTITY_RESOLUTION",
+   "description": "An exact Qloo name match is a confirmed resolution.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Lumen Play go into gaming peripherals?",
+    "brand": "Lumen Play",
+    "territories": [
+     "Gaming Peripherals"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "brandId": "SYN-BR-0003",
+    "brandResolution": "confirmed",
+    "generalization": "G3"
+   }
+  },
+  {
+   "id": "er-not-found",
+   "category": "ENTITY_RESOLUTION",
+   "description": "A brand Qloo does not know is never guessed: the user is asked.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Nobody Brand do tableware?",
+    "brand": "Nobody Brand",
+    "territories": [
+     "Tableware"
+    ]
+   },
+   "expect": {
+    "status": "NEEDS_INPUT",
+    "maxQlooCalls": 1
+   }
+  },
+  {
+   "id": "er-type-evidence",
+   "category": "ENTITY_RESOLUTION",
+   "description": "An ambiguous name with exactly one candidate of the requested type resolves by type evidence, flagged unconfirmed.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Harbor move into cabin culture?",
+    "brand": "Harbor",
+    "territories": [
+     "Cabin Culture"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "brandId": "SYN-BR-0007",
+    "brandResolution": "unconfirmed",
+    "limitationCodes": [
+     "BRAND_RESOLVED_BY_TYPE_EVIDENCE"
+    ],
+    "generalization": "G4"
+   }
+  },
+  {
+   "id": "amb-ask",
+   "category": "AMBIGUITY",
+   "description": "Two brands share a name: the run stops with a structured question and makes no further call.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Meridian enter skincare?",
+    "brand": "Meridian",
+    "territories": [
+     "Skincare"
+    ]
+   },
+   "expect": {
+    "status": "NEEDS_INPUT",
+    "options": [
+     "SYN-BR-0005",
+     "SYN-BR-0006"
+    ],
+    "maxQlooCalls": 1
+   }
+  },
+  {
+   "id": "amb-continue",
+   "category": "AMBIGUITY",
+   "description": "The user's answer resolves the chosen candidate and the run continues.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Meridian enter skincare?",
+    "brand": "Meridian",
+    "territories": [
+     "Skincare"
+    ]
+   },
+   "answer": "SYN-BR-0006",
+   "expect": {
+    "status": "COMPLETE",
+    "brandId": "SYN-BR-0006"
+   }
+  },
+  {
+   "id": "amb-no-silent-choice",
+   "category": "FORBIDDEN_BEHAVIOURS",
+   "description": "Resolving a candidate before the user answers is refused (no silent arbitrary selection).",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Meridian enter skincare?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Meridian",
+       "territories": [
+        "Skincare"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Meridian",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "SYN-BR-0005",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "ask_user",
+      "question": "Which Meridian?",
+      "ambiguity": "two Qloo brands"
+     }
+    ]
+   ],
+   "expect": {
+    "status": "NEEDS_INPUT",
+    "rejections": [
+     "NEEDS_USER_INPUT"
+    ]
+   }
+  },
+  {
+   "id": "dtd-unsupported-hypothesis",
+   "category": "DYNAMIC_TERRITORY_DISCOVERY",
+   "description": "A model-invented hypothesis that Qloo cannot resolve is dropped and shown as unsupported, never analyzed as if real.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Where could Northwind Atelier expand?",
+    "brand": "Northwind Atelier",
+    "territories": []
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Northwind Atelier",
+       "territories": []
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Northwind Atelier",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Interstellar Tourism",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "model idea"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Interstellar Tourism",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "drop_territory",
+      "arguments": {
+       "territoryKey": "interstellar_tourism",
+       "code": "TERRITORY_UNRESOLVED",
+       "reason": "Qloo has no concept for it"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "strategies": {
+     "interstellar_tourism": "UNSUPPORTED"
+    },
+    "routes": {
+     "interstellar_tourism": "INSUFFICIENT_EVIDENCE"
+    },
+    "failureCodes": {
+     "interstellar_tourism": "TERRITORY_UNRESOLVED"
+    }
+   }
+  },
+  {
+   "id": "dtd-near-duplicate",
+   "category": "DYNAMIC_TERRITORY_DISCOVERY",
+   "description": "Two frontier candidates whose Qloo member pools overlap heavily are deduplicated before analysis.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Where could Lumen Play expand?",
+    "brand": "Lumen Play",
+    "territories": []
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Lumen Play",
+       "territories": []
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Lumen Play",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Stays",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Boutique Stays",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "idea"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Design Stays",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "idea"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:industry:syn:boutique_stays"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:industry:syn:design_stays"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "boutique_stays",
+       "tagId": "urn:tag:industry:syn:boutique_stays"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "design_stays",
+       "tagId": "urn:tag:industry:syn:design_stays"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "boutique_stays",
+       "design_stays"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "boutique_stays"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "failureCodes": {
+     "design_stays": "DUPLICATE_TERRITORY"
+    }
+   }
+  },
+  {
+   "id": "ex-quality-selection",
+   "category": "EXEMPLAR_DISCOVERY",
+   "description": "Exemplars are chosen by evidence availability, skipping a name-family duplicate and the brand, not by Qloo's id order.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Northwind Atelier enter boutique hospitality?",
+    "brand": "Northwind Atelier",
+    "territories": [
+     "Boutique Hospitality"
+    ]
+   },
+   "expect": {
+    "exemplars": {
+     "boutique_hospitality": [
+      "Larkspur Hotels",
+      "Quillon House",
+      "Tidewell Inns"
+     ]
+    },
+    "excludedExemplars": {
+     "boutique_hospitality": [
+      "Larkspur Hotels Collection",
+      "Northwind Atelier"
+     ]
+    }
+   }
+  },
+  {
+   "id": "ex-single-member",
+   "category": "EXEMPLAR_DISCOVERY",
+   "description": "A concept with a single Qloo brand member is analyzed, with robustness INSUFFICIENT rather than invented substitutes.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "For Lumen Play compare esports, gaming peripherals and furniture.",
+    "brand": "Lumen Play",
+    "territories": [
+     "Esports",
+     "Gaming Peripherals",
+     "Furniture"
+    ]
+   },
+   "expect": {
+    "routes": {
+     "esports": "FULL_RELATIVE_ANALYSIS"
+    },
+    "robustness": {
+     "esports": "INSUFFICIENT"
+    },
+    "classes": {
+     "esports": "UNCERTAIN_REPRESENTATION_SENSITIVE"
+    },
+    "exemplarCounts": {
+     "esports": 1
+    }
+   }
+  },
+  {
+   "id": "rv-brand-conditioned",
+   "category": "FORBIDDEN_BEHAVIOURS",
+   "description": "Exemplars taken from a brand-conditioned list are refused (the brand would choose its own comparators).",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Northwind Atelier make furniture?",
+    "brand": "Northwind Atelier",
+    "territories": [
+     "Furniture"
+    ]
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Northwind Atelier",
+       "territories": [
+        "Furniture"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Northwind Atelier",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Furniture",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "furniture",
+       "tagId": "urn:tag:industry:syn:furniture"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:industry:syn:furniture"
+       ],
+       "conditionOnBrand": true,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "furniture",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-0301",
+         "reason": "top of the brand list"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "furniture"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "furniture"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "rejectedCodes": {
+     "furniture": [
+      "BRAND_CONDITIONED_SELECTION"
+     ]
+    },
+    "exemplarCounts": {
+     "furniture": 0
+    }
+   }
+  },
+  {
+   "id": "rv-fabricated-id",
+   "category": "FORBIDDEN_BEHAVIOURS",
+   "description": "An exemplar id never returned by Qloo is refused.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Saffron & Salt enter tableware?",
+    "brand": "Saffron & Salt",
+    "territories": [
+     "Tableware"
+    ]
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Saffron & Salt",
+       "territories": [
+        "Tableware"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Saffron & Salt",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Tableware",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:industry:syn:tableware"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "tableware",
+       "tagId": "urn:tag:industry:syn:tableware"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "tableware",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-9999",
+         "reason": "made up"
+        },
+        {
+         "id": "SYN-BR-0201",
+         "reason": "real"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "tableware"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "tableware"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "rejectedCodes": {
+     "tableware": [
+      "ENTITY_UNRESOLVED"
+     ]
+    },
+    "exemplarCounts": {
+     "tableware": 1
+    }
+   }
+  },
+  {
+   "id": "rv-place-representation",
+   "category": "REPRESENTATION_VALIDATION",
+   "description": "A concept with no brand members but place members is represented by places (PLACE_PANEL) and cannot join a brand rank panel.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Saffron & Salt enter slow travel?",
+    "brand": "Saffron & Salt",
+    "territories": [
+     "Slow Travel"
+    ]
+   },
+   "expect": {
+    "strategies": {
+     "slow_travel": "PLACE_PANEL"
+    },
+    "routes": {
+     "slow_travel": "PARTIAL_CULTURAL_ANALYSIS"
+    },
+    "generalization": "G5"
+   }
+  },
+  {
+   "id": "ts-benchmark-lookup",
+   "category": "FORBIDDEN_BEHAVIOURS",
+   "description": "A request for a benchmark lookup tool is refused: no such tool exists.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Northwind Atelier enter tableware?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "benchmark_lookup",
+      "arguments": {
+       "brand": "Northwind Atelier"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Northwind Atelier",
+       "territories": [
+        "Tableware"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "rejections": [
+     "UNKNOWN_TOOL"
+    ]
+   }
+  },
+  {
+   "id": "ts-wrong-phase",
+   "category": "TOOL_SELECTION",
+   "description": "Qloo pool queries before the brand is resolved are refused by phase.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Lumen Play enter esports?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Lumen Play",
+       "territories": [
+        "Esports"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:interests:syn:esports"
+       ],
+       "conditionOnBrand": false,
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "rejections": [
+     "WRONG_PHASE"
+    ]
+   }
+  },
+  {
+   "id": "ts-move-script",
+   "category": "TOOL_SELECTION",
+   "description": "A scripted single move uses resolve \u2192 find tags \u2192 pool \u2192 represent \u2192 analyze.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Saffron & Salt enter tableware?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Saffron & Salt",
+       "territories": [
+        "Tableware"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Saffron & Salt",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Tableware",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:industry:syn:tableware"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "tableware",
+       "tagId": "urn:tag:industry:syn:tableware"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "tableware",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-0201",
+         "reason": "craft studio"
+        },
+        {
+         "id": "SYN-BR-0204",
+         "reason": "heritage house"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "tableware"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "tableware"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "status": "COMPLETE",
+    "toolsCalled": [
+     "qloo_resolve_entity",
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "analyze_evidence"
+    ],
+    "routes": {
+     "tableware": "PARTIAL_CULTURAL_ANALYSIS"
+    }
+   }
+  },
+  {
+   "id": "ie-unmeasurable",
+   "category": "INSUFFICIENT_EVIDENCE",
+   "description": "An unresolvable territory and a concept with no Qloo members both end as INSUFFICIENT_EVIDENCE with nothing filled in, even when measurable references are added.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "For Lumen Play compare moonlight rituals and quantum gastronomy.",
+    "brand": "Lumen Play",
+    "territories": [
+     "Moonlight Rituals",
+     "Quantum Gastronomy"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "routes": {
+     "moonlight_rituals": "INSUFFICIENT_EVIDENCE",
+     "quantum_gastronomy": "INSUFFICIENT_EVIDENCE"
+    },
+    "strategies": {
+     "moonlight_rituals": "DESCRIPTIVE_ONLY",
+     "quantum_gastronomy": "UNSUPPORTED"
+    },
+    "generalization": "G4"
+   }
+  },
+  {
+   "id": "ie-descriptive",
+   "category": "INSUFFICIENT_EVIDENCE",
+   "description": "A concept analyzed without an exemplar panel yields descriptive brand-conditioned evidence only.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Northwind Atelier make furniture?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Northwind Atelier",
+       "territories": [
+        "Furniture"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Northwind Atelier",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Furniture",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "furniture",
+       "tagId": "urn:tag:industry:syn:furniture"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "furniture"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "furniture"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "strategies": {
+     "furniture": "CONDITIONED_ENTITY_EVIDENCE"
+    },
+    "routes": {
+     "furniture": "DESCRIPTIVE_ANALYSIS"
+    },
+    "capabilities": {
+     "furniture": {
+      "relativePosition": "UNAVAILABLE",
+      "classification": "UNAVAILABLE",
+      "conditionedEvidence": "AVAILABLE"
+     }
+    }
+   }
+  },
+  {
+   "id": "bc-qloo-budget",
+   "category": "BUDGET_CONTROL",
+   "description": "A tight Qloo budget is never exceeded; uncollected evidence is reported, not invented.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Northwind Atelier enter boutique hospitality?",
+    "brand": "Northwind Atelier",
+    "territories": [
+     "Boutique Hospitality"
+    ],
+    "limits": {
+     "maxQlooCalls": 6
+    }
+   },
+   "expect": {
+    "maxQlooCalls": 6
+   }
+  },
+  {
+   "id": "bc-iterations",
+   "category": "BUDGET_CONTROL",
+   "description": "A model that keeps calling tools is stopped at the iteration budget.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Where could Lumen Play expand?",
+    "brand": "Lumen Play",
+    "territories": [],
+    "limits": {
+     "maxAgentIterations": 4
+    }
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Lumen Play",
+       "territories": []
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 0",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 1",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 2",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 3",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 4",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 5",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 6",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 7",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 8",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "idea 9",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ]
+   ],
+   "expect": {
+    "status": "BUDGET_EXHAUSTED",
+    "maxIterations": 4
+   }
+  },
+  {
+   "id": "bc-retry-once",
+   "category": "BUDGET_CONTROL",
+   "description": "A retryable Qloo error is retried exactly once; partial/degraded results are flagged.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Saffron & Salt enter tableware?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Saffron & Salt",
+       "territories": [
+        "Tableware"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Saffron & Salt",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Tableware",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:industry:syn:tableware"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "tableware",
+       "tagId": "urn:tag:industry:syn:tableware"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "tableware",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-0201",
+         "reason": "craft studio"
+        },
+        {
+         "id": "SYN-BR-0204",
+         "reason": "heritage house"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "tableware"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "tableware"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "faults": [
+    {
+     "operation": "find_tags",
+     "whenInputContains": "Tableware",
+     "status": "error",
+     "code": "QLOO_RATE_LIMIT",
+     "retryable": true,
+     "times": 1
+    },
+    {
+     "operation": "recommend",
+     "whenInputContains": "tableware",
+     "status": "degraded",
+     "times": 1
+    }
+   ],
+   "expect": {
+    "retries": 1,
+    "limitationCodes": [
+     "QLOO_DEGRADED"
+    ]
+   }
+  },
+  {
+   "id": "fs-invented-claims",
+   "category": "FORBIDDEN_BEHAVIOURS",
+   "description": "A synthesis that invents a class, a percentage and a success claim is rejected; the deterministic template is returned.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Saffron & Salt enter tableware?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Saffron & Salt",
+       "territories": [
+        "Tableware"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Saffron & Salt",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Tableware",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:industry:syn:tableware"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "tableware",
+       "tagId": "urn:tag:industry:syn:tableware"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "tableware",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-0201",
+         "reason": "craft studio"
+        },
+        {
+         "id": "SYN-BR-0204",
+         "reason": "heritage house"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "tableware"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "tableware"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "synthesis": [
+    {
+     "summary": "Tableware is a natural adjacency with an 82% chance of success; customers will love it.",
+     "territoryNotes": [],
+     "followUpOptions": []
+    },
+    {
+     "summary": "Tableware is a natural adjacency with an 82% chance of success; customers will love it.",
+     "territoryNotes": [],
+     "followUpOptions": []
+    }
+   ],
+   "expect": {
+    "summarySource": "deterministic_template",
+    "claimViolations": true
+   }
+  },
+  {
+   "id": "fs-faithful",
+   "category": "FINAL_SYNTHESIS_CONSISTENCY",
+   "description": "A synthesis that only restates deterministic results is accepted.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Saffron & Salt enter tableware?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Saffron & Salt",
+       "territories": [
+        "Tableware"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Saffron & Salt",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Tableware",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:industry:syn:tableware"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "tableware",
+       "tagId": "urn:tag:industry:syn:tableware"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "tableware",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-0201",
+         "reason": "craft studio"
+        },
+        {
+         "id": "SYN-BR-0204",
+         "reason": "heritage house"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "tableware"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "tableware"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "synthesis": [
+    {
+     "summary": "Tableware has partial cultural evidence only: shared signals and a brand-conditioned Qloo list, but no relative position.",
+     "territoryNotes": [],
+     "followUpOptions": [
+      "Add reference territories of the same entity type."
+     ]
+    }
+   ],
+   "expect": {
+    "summarySource": "model",
+    "claimViolations": false
+   }
+  },
+  {
+   "id": "gen-unseen-brand-territory",
+   "category": "GENERALIZATION",
+   "description": "A brand and a territory absent from the benchmark run with no code change.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Harbor Goods move into cabin culture?",
+    "brand": "Harbor Goods",
+    "territories": [
+     "Cabin Culture"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "brandId": "SYN-BR-0007",
+    "resolvedConcepts": {
+     "cabin_culture": "urn:tag:interests:syn:cabin_culture"
+    },
+    "generalization": "G3+G4"
+   }
+  }
+ ]
+}

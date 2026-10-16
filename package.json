@@ -21,7 +21,9 @@
     "eval:elasticity": "pnpm --filter backend eval:elasticity",
     "methodology:jacquemus": "pnpm --filter backend methodology:jacquemus",
     "feasibility:qloo": "pnpm --filter backend feasibility:qloo",
-    "capture:elasticity": "pnpm --filter backend capture:elasticity"
+    "capture:elasticity": "pnpm --filter backend capture:elasticity",
+    "agent:run": "pnpm --filter backend agent:run",
+    "eval:agent": "pnpm --filter backend eval:agent"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

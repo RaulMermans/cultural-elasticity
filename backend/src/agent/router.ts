@@ -1,0 +1,86 @@
+/**
+ * Deterministic routing.
+ *
+ *   resolveInterpretation   the model proposes intent / brand / territories; explicit request fields win
+ *                           and a proposal that contradicts them is rejected (never silently merged)
+ *   planComparisonGroups    which territories can share one rank-panel comparison set
+ *   selectAnalysisRoute     FULL / PARTIAL / DESCRIPTIVE / INSUFFICIENT from capability availability
+ *
+ * The model can influence what is investigated. It cannot pick a route or invent a methodology.
+ */
+import type { AnalysisRoute, CapabilityAvailability } from "@cultural-elasticity/shared";
+import { MAX_PANEL_OPTIONS } from "../methodology/contracts.js";
+import { interpretationSchema, type AgentRequest, type Interpretation, type RankableType } from "./contracts.js";
+import { planRepresentation } from "./representation-planner.js";
+import type { AgentRunState, TerritoryState } from "./state.js";
+
+/**
+ * A relative position needs at least three territories in one panel: with two options every rank
+ * percentile is 0 or 1, so the "position" collapses to a binary order and the middle class
+ * (CREDIBLE_STRETCH) becomes unreachable. The methodology accepts two; the agent requires three.
+ */
+export const MIN_COMPARISON_SET = 3;
+
+const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
+
+export type InterpretationCheck = { ok: true; interpretation: Interpretation } | { ok: false; reason: string };
+
+export function resolveInterpretation(request: AgentRequest, proposed: unknown): InterpretationCheck {
+  const parsed = interpretationSchema.safeParse(proposed);
+  if (!parsed.success) return { ok: false, reason: parsed.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`).join("; ") };
+  const value = parsed.data;
+  if (request.intent && request.intent !== value.intent) return { ok: false, reason: `the request fixes intent ${request.intent}` };
+  if (request.brand && !same(request.brand, value.brand)) return { ok: false, reason: `the request fixes brand "${request.brand}"` };
+  if (request.territories) {
+    const wanted = request.territories.map((t) => t.toLowerCase()).sort();
+    const got = value.territories.map((t) => t.toLowerCase()).sort();
+    if (wanted.length !== got.length || wanted.some((t, i) => t !== got[i])) return { ok: false, reason: "the request fixes the territory list" };
+  }
+  return { ok: true, interpretation: value };
+}
+
+/** Intent implied by the request structure alone, when it is unambiguous. */
+export function structuralIntent(request: AgentRequest): Interpretation["intent"] | undefined {
+  if (request.intent) return request.intent;
+  if (!request.brand || request.territories === undefined) return undefined;
+  const n = request.territories.length;
+  return n === 0 ? "explore_frontier" : n === 1 ? "analyze_move" : "compare_territories";
+}
+
+export type ComparisonGroup = { entityType: RankableType; territoryKeys: string[] };
+
+export function planComparisonGroups(state: AgentRunState, territories: readonly TerritoryState[]): { groups: ComparisonGroup[]; excluded: { key: string; reason: string }[] } {
+  const byType = new Map<RankableType, TerritoryState[]>();
+  const excluded: { key: string; reason: string }[] = [];
+  for (const territory of territories) {
+    const plan = planRepresentation(state, territory);
+    if (!plan.rankable || plan.entityType === null) {
+      excluded.push({ key: territory.key, reason: `strategy ${plan.strategy} is not rankable` });
+      continue;
+    }
+    byType.set(plan.entityType, [...(byType.get(plan.entityType) ?? []), territory]);
+  }
+  const groups: ComparisonGroup[] = [];
+  for (const [entityType, members] of [...byType.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+    if (members.length < MIN_COMPARISON_SET) {
+      for (const m of members) excluded.push({ key: m.key, reason: `only ${members.length} rankable ${entityType} territor${members.length === 1 ? "y" : "ies"} in this analysis; a relative position needs ≥ ${MIN_COMPARISON_SET} of one entity type` });
+      continue;
+    }
+    // Keep user-named targets first, then references and frontier candidates, up to the panel cap.
+    const ordered = [...members].sort((a, b) => roleOrder(a) - roleOrder(b));
+    groups.push({ entityType, territoryKeys: ordered.slice(0, MAX_PANEL_OPTIONS).map((t) => t.key) });
+    for (const m of ordered.slice(MAX_PANEL_OPTIONS)) excluded.push({ key: m.key, reason: `panel cap of ${MAX_PANEL_OPTIONS} options reached` });
+  }
+  return { groups, excluded };
+}
+
+const roleOrder = (t: TerritoryState) => (t.role === "target" ? 0 : t.role === "frontier_candidate" ? 1 : 2);
+
+export function selectAnalysisRoute(capabilities: CapabilityAvailability): AnalysisRoute {
+  if (capabilities.relativePosition === "AVAILABLE") return "FULL_RELATIVE_ANALYSIS";
+  const coherence = capabilities.coherence === "AVAILABLE";
+  const conditioned = capabilities.conditionedEvidence === "AVAILABLE";
+  if (coherence && conditioned) return "PARTIAL_CULTURAL_ANALYSIS";
+  if (coherence || conditioned) return "DESCRIPTIVE_ANALYSIS";
+  return "INSUFFICIENT_EVIDENCE";
+}
