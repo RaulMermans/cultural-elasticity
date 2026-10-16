@@ -1,5 +1,5 @@
 import "server-only";
-import { isAnalysisIngredients, isHealthResponse, type AnalysisIngredients } from "@cultural-elasticity/shared";
+import { isAnalysisIngredients, isCulturalElasticityResult, isHealthResponse, type AnalysisIngredients, type CulturalElasticityResult } from "@cultural-elasticity/shared";
 
 export type BackendStatus = "connected" | "unavailable";
 
@@ -37,6 +37,30 @@ export async function postAnalysisIngredients(packet: unknown): Promise<Analysis
     });
     const body: unknown = await response.json();
     if (response.ok && isAnalysisIngredients(body)) return { status: "ok", ingredients: body };
+    return { status: "rejected", detail: JSON.stringify(body).slice(0, 2000) };
+  } catch {
+    return { status: "unavailable" };
+  }
+}
+
+export type MethodologyResult =
+  | { status: "ok"; result: CulturalElasticityResult }
+  | { status: "rejected"; detail: string }
+  | { status: "unavailable" };
+
+/** Development only: sends an assembled methodology input to the backend's deterministic methodology endpoint. */
+export async function postMethodology(input: unknown): Promise<MethodologyResult> {
+  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  try {
+    const response = await fetch(new URL("/api/methodology/analyze", baseUrl), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(input),
+      cache: "no-store",
+      signal: AbortSignal.timeout(15000),
+    });
+    const body: unknown = await response.json();
+    if (response.ok && isCulturalElasticityResult(body)) return { status: "ok", result: body };
     return { status: "rejected", detail: JSON.stringify(body).slice(0, 2000) };
   } catch {
     return { status: "unavailable" };

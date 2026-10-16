@@ -15,6 +15,7 @@
  */
 import type {
   ComparisonScope,
+  ConditionedEntityEvidence as SharedConditionedEntityEvidence,
   CulturalSignal as SharedCulturalSignal,
   InterpretableMetric as SharedInterpretableMetric,
   Limitation as SharedLimitation,
@@ -24,7 +25,9 @@ import type {
 } from "@cultural-elasticity/shared";
 import { z } from "zod";
 
-export const EVIDENCE_PACKET_SCHEMA_VERSION = "ce-evidence/0.1";
+/** 0.2 adds the optional `conditionedEntities` slot. 0.1 packets remain valid and cannot carry it. */
+export const EVIDENCE_PACKET_SCHEMA_VERSION = "ce-evidence/0.2";
+export const SUPPORTED_EVIDENCE_PACKET_VERSIONS = ["ce-evidence/0.1", EVIDENCE_PACKET_SCHEMA_VERSION] as const;
 
 const identifier = z.string().trim().min(1, "must be a non-empty identifier");
 const text = z.string().trim().min(1, "must be non-empty");
@@ -183,6 +186,50 @@ export const bridgeEvidenceSchema = z
   .superRefine((bridge, ctx) => refineUniqueRanks(bridge.signals, ctx, ["signals"]));
 export type BridgeEvidence = z.output<typeof bridgeEvidenceSchema>;
 
+const conditionedEntitySchema = z.strictObject({
+  id: identifier,
+  label: text,
+  rank,
+  numeric: numericEvidenceSchema.optional(),
+  provenance: provenanceList,
+});
+
+/**
+ * Brand-conditioned territory evidence: the entities ONE call returns inside a territory scope when
+ * conditioned on a subject. Order and values are comparable only inside that call, so values must be
+ * declared `within_call` and the list must be `single_call` (verified later against provenance).
+ */
+export const conditionedEntityEvidenceSchema = z
+  .strictObject({
+    conditionedOn: z.strictObject({ id: identifier, label: text }),
+    territory: z.strictObject({ id: identifier, label: text }),
+    entityType: text.optional(),
+    requestedLimit: z.number().int().min(1).optional(),
+    truncated: z.boolean().optional(),
+    /** May be empty: an observed empty result is evidence, provided it carries provenance. */
+    entities: z.array(conditionedEntitySchema),
+    comparisonScope: z.literal("single_call"),
+    provenance: provenanceList,
+  })
+  .superRefine((evidence, ctx) => {
+    const ids = new Set<string>();
+    evidence.entities.forEach((entity, index) => {
+      if (ids.has(entity.id)) ctx.addIssue({ code: "custom", path: ["entities", index, "id"], message: `duplicate entity id "${entity.id}"` });
+      ids.add(entity.id);
+      if (entity.numeric !== undefined && entity.numeric.comparisonScope !== "within_call") {
+        ctx.addIssue({ code: "custom", path: ["entities", index, "numeric", "comparisonScope"], message: "conditioned entity values come from one call and must be within_call" });
+      }
+    });
+    refineUniqueRanks(evidence.entities, ctx, ["entities"]);
+    if (evidence.entities.length === 0 && evidence.provenance.length === 0) {
+      ctx.addIssue({ code: "custom", path: ["provenance"], message: "an empty conditioned result needs provenance, or it cannot be told apart from 'not collected'" });
+    }
+    if (evidence.requestedLimit !== undefined && evidence.entities.length > evidence.requestedLimit) {
+      ctx.addIssue({ code: "custom", path: ["entities"], message: "more entities than the requested limit" });
+    }
+  });
+export type ConditionedEntityEvidence = z.output<typeof conditionedEntityEvidenceSchema>;
+
 export const limitationSchema = z.strictObject({
   code: z.string().regex(/^[A-Z][A-Z0-9_]*$/, "limitation codes are UPPER_SNAKE_CASE"),
   detail: text,
@@ -191,7 +238,7 @@ export type Limitation = z.output<typeof limitationSchema>;
 
 export const evidencePacketSchema = z
   .strictObject({
-    schemaVersion: z.literal(EVIDENCE_PACKET_SCHEMA_VERSION),
+    schemaVersion: z.enum(SUPPORTED_EVIDENCE_PACKET_VERSIONS),
     /** Where the evidence came from. Synthetic and recorded packets must never be presented as live. */
     origin: z.enum(["live", "recorded", "synthetic"]),
     brand: culturalProfileSchema,
@@ -199,12 +246,17 @@ export const evidencePacketSchema = z
     audience: audienceEvidenceSchema.optional(),
     ranking: rankingEvidenceSchema.optional(),
     bridges: z.array(bridgeEvidenceSchema).optional(),
+    /** Brand-conditioned territory evidence (0.2+). Each item is one call. */
+    conditionedEntities: z.array(conditionedEntityEvidenceSchema).optional(),
     limitations: z.array(limitationSchema),
     provenance: provenanceList,
   })
   .superRefine((packet, ctx) => {
     if (packet.brand.subject.id === packet.target.subject.id) {
       ctx.addIssue({ code: "custom", path: ["target", "subject", "id"], message: "brand and target must be different subjects" });
+    }
+    if (packet.conditionedEntities !== undefined && packet.schemaVersion === "ce-evidence/0.1") {
+      ctx.addIssue({ code: "custom", path: ["conditionedEntities"], message: "conditionedEntities requires schemaVersion ce-evidence/0.2" });
     }
   });
 export type EvidencePacket = z.output<typeof evidencePacketSchema>;
@@ -241,5 +293,6 @@ const _contractAlignment: [
   Same<ResolvedEntity, SharedResolvedEntity>,
   Same<InterpretableMetric, SharedInterpretableMetric>,
   Same<Limitation, SharedLimitation>,
-] = [true, true, true, true, true, true];
+  Same<ConditionedEntityEvidence, SharedConditionedEntityEvidence>,
+] = [true, true, true, true, true, true, true];
 void _contractAlignment;

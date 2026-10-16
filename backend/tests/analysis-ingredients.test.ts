@@ -7,7 +7,7 @@ import { packet, profile, ranked, signal } from "./fixtures/synthetic/evidence.j
 describe("analyzeEvidencePacket (pipeline)", () => {
   it("produces typed AnalysisIngredients with no score and an undefined distance formula", () => {
     const result = analyzeEvidencePacket(packet());
-    expect(result.schemaVersion).toBe("ce-ingredients/0.1");
+    expect(result.schemaVersion).toBe("ce-ingredients/0.2");
     expect(result.evidenceOrigin).toBe("synthetic");
     expect(result.distanceProxy.formula).toBe("NOT_DEFINED");
     expect(result.distanceProxy.jaccardOverlap).toMatchObject({ status: "available", value: 3 / 8 });

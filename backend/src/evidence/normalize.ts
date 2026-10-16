@@ -7,6 +7,8 @@
  *   - signals are sorted by rank (unranked last), then id;
  *   - ranking candidates are sorted by id. Rank order is applied later, and only if the ranking's
  *     single-call scope is verified;
+ *   - conditioned entity lists are sorted by their explicit rank (each list is one call), and the
+ *     lists themselves by territory, then subject;
  *   - provenance lists are deduplicated and sorted.
  *
  * Normalization never invents values. Every change it makes is reported as an engine limitation.
@@ -50,6 +52,15 @@ export function normalizeEvidencePacket(packet: EvidencePacket): NormalizedEvide
         .map((candidate) => ({ ...candidate, provenance: mergeProvenance(candidate.provenance) })),
       provenance: mergeProvenance(packet.ranking.provenance),
     };
+  }
+  if (packet.conditionedEntities !== undefined) {
+    normalized.conditionedEntities = packet.conditionedEntities
+      .map((evidence) => ({
+        ...evidence,
+        entities: [...evidence.entities].sort((a, b) => a.rank - b.rank || compareStrings(a.id, b.id)).map((entity) => ({ ...entity, provenance: mergeProvenance(entity.provenance) })),
+        provenance: mergeProvenance(evidence.provenance),
+      }))
+      .sort((a, b) => compareStrings(a.territory.id, b.territory.id) || compareStrings(a.conditionedOn.id, b.conditionedOn.id) || compareStrings(JSON.stringify(a.provenance), JSON.stringify(b.provenance)));
   }
   if (packet.bridges !== undefined) {
     normalized.bridges = packet.bridges.map((bridge, index) => ({

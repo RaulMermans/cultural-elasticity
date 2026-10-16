@@ -18,7 +18,10 @@
     "check:secrets": "node scripts/check-secrets.mjs",
     "eval:methodology": "pnpm --filter backend eval:methodology",
     "eval:live": "pnpm --filter backend eval:live",
-    "feasibility:qloo": "pnpm --filter backend feasibility:qloo"
+    "eval:elasticity": "pnpm --filter backend eval:elasticity",
+    "methodology:jacquemus": "pnpm --filter backend methodology:jacquemus",
+    "feasibility:qloo": "pnpm --filter backend feasibility:qloo",
+    "capture:elasticity": "pnpm --filter backend capture:elasticity"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

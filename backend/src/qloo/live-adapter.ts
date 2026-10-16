@@ -14,6 +14,7 @@
 import type {
   AudienceEvidence,
   BridgeEvidence,
+  ConditionedEntityEvidence,
   CulturalProfile,
   CulturalSignal,
   EvidencePacketInput,
@@ -162,6 +163,48 @@ export function rankingFromRank(call: LiveCall, rankedAgainst: string, targetCan
   };
 }
 
+export type ConditionedScope = {
+  /** The subject the request was conditioned on (signal), normally the brand. */
+  conditionedOn: { id: string; label: string };
+  /** The territory scope the results were filtered to (a pinned Qloo tag). */
+  territory: { id: string; label: string };
+  entityType: string;
+  requestedLimit: number;
+};
+
+/**
+ * One `recommend` call with signal = brand and a territory tag filter → ConditionedEntityEvidence.
+ * [live 2026-10-16] Validated for Jacquemus × urn:tag:interests:qloo:boutique_hospitality (places) and,
+ * in Sprint 2, for brand-type results filtered by industry/segment tags. Rank = Qloo's returned order;
+ * affinity is within_call with no scale. An empty `ok` result is kept as an observed empty list.
+ */
+export function conditionedEntitiesFromRecommend(call: LiveCall, scope: ConditionedScope): ConditionedEntityEvidence {
+  requireOk(call);
+  const provenance = [callProvenance(call)];
+  const entities = toEntitySignals(call.operation, call.envelope);
+  return {
+    conditionedOn: scope.conditionedOn,
+    territory: scope.territory,
+    entityType: scope.entityType,
+    requestedLimit: scope.requestedLimit,
+    truncated: entities.length >= scope.requestedLimit,
+    entities: entities.map((entity, index) => ({
+      id: entity.qlooId,
+      label: entity.label.trim() || entity.qlooId,
+      rank: index + 1,
+      ...(entity.affinity !== undefined && { numeric: { value: entity.affinity, comparisonScope: "within_call" as const } }),
+      provenance,
+    })),
+    comparisonScope: "single_call",
+    provenance,
+  };
+}
+
+/** An `empty` envelope is an observed result with no entities, not a failure. */
+export function emptyConditionedEvidence(call: LiveCall, scope: ConditionedScope): ConditionedEntityEvidence {
+  return { conditionedOn: scope.conditionedOn, territory: scope.territory, entityType: scope.entityType, requestedLimit: scope.requestedLimit, truncated: false, entities: [], comparisonScope: "single_call", provenance: [callProvenance(call)] };
+}
+
 function toJson(value: unknown): JsonValue {
   const sanitized = sanitizeForEvidence(value);
   return JSON.parse(JSON.stringify(sanitized ?? null)) as JsonValue;
@@ -206,19 +249,28 @@ export type LivePacketParts = {
   audience?: AudienceEvidence;
   ranking?: RankingEvidence;
   bridges?: BridgeEvidence[];
+  conditionedEntities?: ConditionedEntityEvidence[];
   limitations: Limitation[];
 };
 
 export function assembleLivePacket(parts: LivePacketParts): EvidencePacketInput {
-  const all = [parts.brand.provenance, parts.target.provenance, parts.audience?.provenance ?? [], parts.ranking?.provenance ?? [], ...(parts.bridges ?? []).map((b) => b.provenance)].flat();
+  const all = [
+    parts.brand.provenance,
+    parts.target.provenance,
+    parts.audience?.provenance ?? [],
+    parts.ranking?.provenance ?? [],
+    ...(parts.bridges ?? []).map((b) => b.provenance),
+    ...(parts.conditionedEntities ?? []).map((c) => c.provenance),
+  ].flat();
   return {
-    schemaVersion: "ce-evidence/0.1",
+    schemaVersion: "ce-evidence/0.2",
     origin: "live",
     brand: parts.brand,
     target: parts.target,
     ...(parts.audience && { audience: parts.audience }),
     ...(parts.ranking && { ranking: parts.ranking }),
     ...(parts.bridges && { bridges: parts.bridges }),
+    ...(parts.conditionedEntities && { conditionedEntities: parts.conditionedEntities }),
     limitations: parts.limitations,
     provenance: all,
   };

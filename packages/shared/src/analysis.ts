@@ -4,7 +4,7 @@
 // Provider-independent by design. Nothing here names Qloo or any upstream payload shape.
 // There is deliberately no score, no weight and no composite metric in these types.
 
-export const ANALYSIS_INGREDIENTS_SCHEMA_VERSION = "ce-ingredients/0.1" as const;
+export const ANALYSIS_INGREDIENTS_SCHEMA_VERSION = "ce-ingredients/0.2" as const;
 
 // ---- Evidence primitives (mirrored by the backend's zod schemas; alignment is type-checked there) ----
 
@@ -67,6 +67,35 @@ export type InterpretableMetric = {
   direction: MetricDirection;
   scale?: { min?: number; max?: number };
   comparisonScope: ComparisonScope;
+  provenance: ProvenanceRef[];
+};
+
+/**
+ * Entities a provider returns INSIDE a territory scope when the request is conditioned on a subject
+ * (normally the brand): "which entities in territory T does Qloo associate with brand B?".
+ * The whole list comes from ONE call: order and values are comparable only inside it, never across
+ * territories or calls.
+ */
+export type ConditionedEntity = {
+  id: string;
+  label: string;
+  /** 1-based position in the call's returned order. */
+  rank: number;
+  numeric?: NumericEvidence;
+  provenance: ProvenanceRef[];
+};
+
+export type ConditionedEntityEvidence = {
+  conditionedOn: { id: string; label: string };
+  /** The territory scope, e.g. a pinned concept the request was filtered to. */
+  territory: { id: string; label: string };
+  /** Entity type returned, when known (e.g. a place or brand URN). */
+  entityType?: string;
+  /** Limit requested from the provider; `truncated` is true when the list reached it. */
+  requestedLimit?: number;
+  truncated?: boolean;
+  entities: ConditionedEntity[];
+  comparisonScope: "single_call";
   provenance: ProvenanceRef[];
 };
 
@@ -253,6 +282,41 @@ export type BridgeIngredients = {
   limitations: Limitation[];
 };
 
+// ---- Brand-conditioned territory evidence ----
+
+/**
+ * Descriptive view of one conditioned-entity list. "Does the provider find entities inside this
+ * territory when conditioned on the brand?" Values stay on the call's own scale; nothing here is
+ * comparable across territories or calls.
+ */
+export type ConditionedEvidenceView = {
+  territoryId: string;
+  territoryLabel: string;
+  conditionedOn: string;
+  status: "available" | "empty" | "not_comparable";
+  /** SUPPORTED ≥ 5 entities, SPARSE 1–4, EMPTY 0 (observed). Describes coverage, not closeness. */
+  support: "SUPPORTED" | "SPARSE" | "EMPTY";
+  entityCount: number;
+  requestedLimit: number | null;
+  truncated: boolean | null;
+  scope: RankingScopeCheck;
+  /** Top entities in the call's returned order. */
+  topEntities: { id: string; label: string; rank: number; value: number | null }[];
+  /** Raw within-call spread (max − min); null unless every entity carries a comparable value. */
+  withinCallValueRange: number | null;
+  /** Raw within-call difference between the 1st and the 5th (or last) entity. */
+  withinCallTopFiveGap: number | null;
+  provenance: ProvenanceRef[];
+  limitations: Limitation[];
+};
+
+export type ConditionedIngredients = {
+  status: "available" | "unavailable";
+  items: ConditionedEvidenceView[];
+  provenance: ProvenanceRef[];
+  limitations: Limitation[];
+};
+
 // ---- Distance-proxy ingredients (no formula) ----
 
 export type DistanceProxyIngredients = {
@@ -287,6 +351,7 @@ export type EvidenceQuality = {
     comparisonValidity: QualityIndicator;
     audienceSemantics: QualityIndicator;
     bridgeEvidence: QualityIndicator;
+    conditionedEvidence: QualityIndicator;
   };
   overall: {
     level: "HIGH" | "MEDIUM" | "LOW";
@@ -311,6 +376,7 @@ export type AnalysisIngredients = {
   audience: AudienceIngredients;
   ranking: RankingIngredients;
   bridges: BridgeIngredients;
+  conditioned: ConditionedIngredients;
   distanceProxy: DistanceProxyIngredients;
   evidenceQuality: EvidenceQuality;
   limitations: Limitation[];

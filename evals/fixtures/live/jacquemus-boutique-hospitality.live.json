@@ -1,7 +1,7 @@
 {
   "fixtureType": "live",
   "notice": "LIVE: sanitized evidence captured from the Qloo hackathon API. Values are query-relative and comparable only within one call (same correlationId).",
-  "captureDate": "2026-10-16T11:02:41.537Z",
+  "captureDate": "2026-10-16T12:02:50.902Z",
   "apiEnvironment": "https://hackathon.api.qloo.com",
   "harnessVersion": "0.1.26",
   "provenanceSource": "qloo-hackathon-api",
@@ -10,211 +10,211 @@
       "id": "brand.resolve",
       "operation": "describe",
       "outcome": "ok",
-      "correlationId": "exec-9b89847e-7f0f-4d13-884e-6a97be8c9a61"
+      "correlationId": "exec-ea579a5f-c3bf-40fb-89ee-6d40bf63ebd3"
     },
     {
       "id": "territory.find_tags.Boutique Hospitality",
       "operation": "find_tags",
       "outcome": "ok",
-      "correlationId": "exec-0c543a29-cfbe-4174-a84b-de29e306e0c7"
+      "correlationId": "exec-18822e3c-0f09-4a94-b38b-97337f22a13f"
     },
     {
       "id": "territory.find_tags.Boutique Hotel",
       "operation": "find_tags",
       "outcome": "ok",
-      "correlationId": "exec-f7b8f84d-73b1-4ef1-a365-99944ce3d506"
+      "correlationId": "exec-2485fcd9-2dc5-497d-a9f3-834e4c313305"
     },
     {
       "id": "territory.find_tags.Luxury Hospitality",
       "operation": "find_tags",
       "outcome": "ok",
-      "correlationId": "exec-1d7c45ee-e5e2-40ba-ad83-ad135eb883ba"
+      "correlationId": "exec-eaa7bb91-8b22-4897-8359-61fe71905858"
     },
     {
       "id": "territory.find_tags.Hospitality",
       "operation": "find_tags",
       "outcome": "ok",
-      "correlationId": "exec-8f5d8ae1-46f1-4a75-9479-456df32fbf5d"
+      "correlationId": "exec-1a46698a-1f6d-4444-b75f-3154e187e3fb"
     },
     {
       "id": "territory.find_tags.Hotels",
       "operation": "find_tags",
       "outcome": "ok",
-      "correlationId": "exec-65d5e831-53e2-429b-b837-16137c817fd4"
+      "correlationId": "exec-9e31399f-7c41-4c85-b92f-905184c77909"
     },
     {
       "id": "territory.find_tags.Design Hotel",
       "operation": "find_tags",
       "outcome": "ok",
-      "correlationId": "exec-fc25d8b9-808d-4540-a7be-f94670627506"
+      "correlationId": "exec-5a2725a0-5006-4e05-aae4-3764a48bef5d"
     },
     {
       "id": "brand.tags",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84"
+      "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5"
     },
     {
       "id": "brand.tags.repeat",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-88af8779-4412-4c43-8657-6a1bce359a8e"
+      "correlationId": "exec-1d6b7681-bced-4ab4-9e60-50552874e6ad"
     },
     {
       "id": "brand.tags.take_5",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-06601cc0-c7d3-47c1-a13d-40c03314bc6f"
+      "correlationId": "exec-d0104b83-21bc-4a5c-bbb3-d37e16c356d9"
     },
     {
       "id": "brand.tags.take_10",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-59bb71e2-82ba-4e5d-8fdd-1ebea35c7f24"
+      "correlationId": "exec-a1df4e51-ccc2-474f-968f-d8a99f05a5ff"
     },
     {
       "id": "brand.tags.take_15",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-cab25e92-4810-4807-bf21-a07c2c43a028"
+      "correlationId": "exec-f7ad36e7-62c6-4872-a661-5d66d5b92e7c"
     },
     {
       "id": "target.exemplar_tags.TRUNK(HOTEL)",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7"
+      "correlationId": "exec-1fc220fd-447c-4f11-b810-755eb0249184"
     },
     {
       "id": "target.exemplar_tags.Pikes Ibiza",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b"
+      "correlationId": "exec-84a5dcaf-de32-40e2-8e95-3c5f7fcb9a50"
     },
     {
       "id": "target.exemplar_tags.The Culver Hotel",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c"
+      "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9"
     },
     {
       "id": "target.exemplar_tags.Posada Margherita",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312"
+      "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a"
     },
     {
       "id": "target.exemplar_tags.Hôtel Particulier",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249"
+      "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430"
     },
     {
       "id": "target.exemplar_tags.Room Mate Aitana",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06"
+      "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71"
     },
     {
       "id": "target.exemplar_tags.The Box House Hotel",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991"
+      "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95"
     },
     {
       "id": "target.exemplar_tags.The Margi",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879"
+      "correlationId": "exec-54c8b3ff-e1d1-4152-9ee9-907f6756110e"
     },
     {
       "id": "target.exemplar_tags.Great John Street Hotel",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd"
+      "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22"
     },
     {
       "id": "target.exemplar_tags.The Crow's Nest",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880"
+      "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e"
     },
     {
       "id": "target.joint_tags",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-10789f16-9371-49dd-96a6-e9efe524340d"
+      "correlationId": "exec-00a0df3a-617f-480e-ada5-49c803cea33e"
     },
     {
       "id": "brand.related",
       "operation": "recommend",
       "outcome": "ok",
-      "correlationId": "exec-9023bac9-1203-4b05-b6d7-ce3bbc979dbc"
+      "correlationId": "exec-71a2f31e-48f7-4b6e-891b-d8c6026c89b9"
     },
     {
       "id": "target.brand_conditioned",
       "operation": "recommend",
       "outcome": "ok",
-      "correlationId": "exec-4d8611d9-7347-4647-8997-d3c30d125062"
+      "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841"
     },
     {
       "id": "audience.compare",
       "operation": "compare_audiences",
       "outcome": "ok",
-      "correlationId": "exec-860b55d8-7f32-4f2d-b9a9-a32f917328b8"
+      "correlationId": "exec-bd318f32-68c2-4087-89fc-f4632f6e3cee"
     },
     {
       "id": "audience.demographics",
       "operation": "audience_demographics",
       "outcome": "ok",
-      "correlationId": "exec-c6e98c03-57f9-4031-a899-39dc259f3579"
+      "correlationId": "exec-e7f3e176-133e-4047-8b1f-4f343cc634b3"
     },
     {
       "id": "ranking.primary",
       "operation": "rank",
       "outcome": "ok",
-      "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27"
+      "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da"
     },
     {
       "id": "ranking.primary.repeat",
       "operation": "rank",
       "outcome": "ok",
-      "correlationId": "exec-ecaf215c-ee23-499d-a4cf-1e337b5db120"
+      "correlationId": "exec-cf1ab70d-ea75-465a-b07b-97a42b300a55"
     },
     {
       "id": "ranking.alternate",
       "operation": "rank",
       "outcome": "ok",
-      "correlationId": "exec-b8154b63-8941-47c9-93c7-7e7d21c8cc9a"
+      "correlationId": "exec-f67e4bf1-70ae-48c2-8a18-1b4d9b948394"
     },
     {
       "id": "bridge.joint.Boutique Hospitality",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043"
+      "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd"
     },
     {
       "id": "bridge.related.Boutique Hospitality",
       "operation": "recommend",
       "outcome": "ok",
-      "correlationId": "exec-a9a99769-515d-4142-91f4-a0b8485356db"
+      "correlationId": "exec-b4fc6b22-f01b-4872-87bf-4a494dc8edd0"
     },
     {
       "id": "bridge.joint.Gaming Hardware",
       "operation": "entity_tags",
       "outcome": "ok",
-      "correlationId": "exec-bca1f267-4877-413f-a686-9377dbea303d"
+      "correlationId": "exec-7dbbbffd-23b2-4efa-ae2a-e15df722fca0"
     },
     {
       "id": "bridge.related.Gaming Hardware",
       "operation": "recommend",
       "outcome": "ok",
-      "correlationId": "exec-ec8e88a5-b5fd-4e4c-85d4-657f9617481b"
+      "correlationId": "exec-d82ec5a8-8a8c-40ba-9855-2c13f705fd0f"
     },
     {
       "id": "momentum.trends",
       "operation": "trends",
       "outcome": "ok",
-      "correlationId": "exec-a83db44c-e8e3-4f89-b74b-3197b13cf971"
+      "correlationId": "exec-de652260-2b72-414b-8f82-6da59028a37c"
     }
   ],
   "limitations": [
@@ -500,7 +500,7 @@
     "rankings": [
       {
         "label": "primary",
-        "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+        "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da",
         "order": [
           {
             "label": "HAY",
@@ -530,7 +530,7 @@
       },
       {
         "label": "alternate",
-        "correlationId": "exec-b8154b63-8941-47c9-93c7-7e7d21c8cc9a",
+        "correlationId": "exec-f67e4bf1-70ae-48c2-8a18-1b4d9b948394",
         "order": [
           {
             "label": "Aesop",
@@ -657,7 +657,7 @@
     }
   },
   "packet": {
-    "schemaVersion": "ce-evidence/0.1",
+    "schemaVersion": "ce-evidence/0.2",
     "origin": "live",
     "brand": {
       "subject": {
@@ -669,8 +669,8 @@
           {
             "source": "qloo-hackathon-api",
             "operation": "describe",
-            "correlationId": "exec-9b89847e-7f0f-4d13-884e-6a97be8c9a61",
-            "capturedAt": "2026-10-16T10:58:38.577Z"
+            "correlationId": "exec-ea579a5f-c3bf-40fb-89ee-6d40bf63ebd3",
+            "capturedAt": "2026-10-16T11:58:51.021Z"
           }
         ]
       },
@@ -688,8 +688,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -706,8 +706,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -724,8 +724,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -742,8 +742,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -760,8 +760,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -778,8 +778,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -796,8 +796,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -814,8 +814,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -832,8 +832,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -850,8 +850,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -868,8 +868,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -886,8 +886,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -904,8 +904,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -922,8 +922,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -940,8 +940,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -958,8 +958,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -976,8 +976,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -994,8 +994,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -1012,8 +1012,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         },
@@ -1030,8 +1030,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-              "capturedAt": "2026-10-16T10:59:27.596Z"
+              "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+              "capturedAt": "2026-10-16T11:59:40.038Z"
             }
           ]
         }
@@ -1041,8 +1041,8 @@
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-          "capturedAt": "2026-10-16T10:59:27.596Z"
+          "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+          "capturedAt": "2026-10-16T11:59:40.038Z"
         }
       ]
     },
@@ -1056,62 +1056,62 @@
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
-            "capturedAt": "2026-10-16T11:00:02.604Z"
+            "correlationId": "exec-1fc220fd-447c-4f11-b810-755eb0249184",
+            "capturedAt": "2026-10-16T12:00:15.050Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
-            "capturedAt": "2026-10-16T11:00:09.607Z"
+            "correlationId": "exec-84a5dcaf-de32-40e2-8e95-3c5f7fcb9a50",
+            "capturedAt": "2026-10-16T12:00:22.052Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-            "capturedAt": "2026-10-16T11:00:16.607Z"
+            "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+            "capturedAt": "2026-10-16T12:00:29.054Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-            "capturedAt": "2026-10-16T11:00:23.611Z"
+            "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+            "capturedAt": "2026-10-16T12:00:36.082Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-            "capturedAt": "2026-10-16T11:00:30.613Z"
+            "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+            "capturedAt": "2026-10-16T12:00:43.083Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-            "capturedAt": "2026-10-16T11:00:37.673Z"
+            "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+            "capturedAt": "2026-10-16T12:00:50.085Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-            "capturedAt": "2026-10-16T11:00:44.674Z"
+            "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+            "capturedAt": "2026-10-16T12:00:57.087Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
-            "capturedAt": "2026-10-16T11:00:51.679Z"
+            "correlationId": "exec-54c8b3ff-e1d1-4152-9ee9-907f6756110e",
+            "capturedAt": "2026-10-16T12:01:04.088Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-            "capturedAt": "2026-10-16T11:00:58.680Z"
+            "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+            "capturedAt": "2026-10-16T12:01:11.110Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-            "capturedAt": "2026-10-16T11:01:05.686Z"
+            "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+            "capturedAt": "2026-10-16T12:01:18.110Z"
           }
         ]
       },
@@ -1125,44 +1125,44 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1175,44 +1175,44 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
-              "capturedAt": "2026-10-16T11:00:09.607Z"
+              "correlationId": "exec-84a5dcaf-de32-40e2-8e95-3c5f7fcb9a50",
+              "capturedAt": "2026-10-16T12:00:22.052Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1225,38 +1225,38 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
-              "capturedAt": "2026-10-16T11:00:02.604Z"
+              "correlationId": "exec-1fc220fd-447c-4f11-b810-755eb0249184",
+              "capturedAt": "2026-10-16T12:00:15.050Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
-              "capturedAt": "2026-10-16T11:00:51.679Z"
+              "correlationId": "exec-54c8b3ff-e1d1-4152-9ee9-907f6756110e",
+              "capturedAt": "2026-10-16T12:01:04.088Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1269,32 +1269,32 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
-              "capturedAt": "2026-10-16T11:00:02.604Z"
+              "correlationId": "exec-1fc220fd-447c-4f11-b810-755eb0249184",
+              "capturedAt": "2026-10-16T12:00:15.050Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
-              "capturedAt": "2026-10-16T11:00:09.607Z"
+              "correlationId": "exec-84a5dcaf-de32-40e2-8e95-3c5f7fcb9a50",
+              "capturedAt": "2026-10-16T12:00:22.052Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         },
@@ -1307,32 +1307,32 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1345,26 +1345,26 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1377,26 +1377,26 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1409,26 +1409,26 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1441,26 +1441,26 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         },
@@ -1473,26 +1473,26 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
-              "capturedAt": "2026-10-16T11:00:02.604Z"
+              "correlationId": "exec-1fc220fd-447c-4f11-b810-755eb0249184",
+              "capturedAt": "2026-10-16T12:00:15.050Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
-              "capturedAt": "2026-10-16T11:00:51.679Z"
+              "correlationId": "exec-54c8b3ff-e1d1-4152-9ee9-907f6756110e",
+              "capturedAt": "2026-10-16T12:01:04.088Z"
             }
           ]
         },
@@ -1505,20 +1505,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             }
           ]
         },
@@ -1531,20 +1531,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
-              "capturedAt": "2026-10-16T11:00:51.679Z"
+              "correlationId": "exec-54c8b3ff-e1d1-4152-9ee9-907f6756110e",
+              "capturedAt": "2026-10-16T12:01:04.088Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1557,20 +1557,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
-              "capturedAt": "2026-10-16T11:00:09.607Z"
+              "correlationId": "exec-84a5dcaf-de32-40e2-8e95-3c5f7fcb9a50",
+              "capturedAt": "2026-10-16T12:00:22.052Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         },
@@ -1583,20 +1583,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
-              "capturedAt": "2026-10-16T11:00:51.679Z"
+              "correlationId": "exec-54c8b3ff-e1d1-4152-9ee9-907f6756110e",
+              "capturedAt": "2026-10-16T12:01:04.088Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         },
@@ -1609,20 +1609,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1635,20 +1635,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1661,20 +1661,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         },
@@ -1687,20 +1687,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1713,20 +1713,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1739,20 +1739,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         },
@@ -1765,20 +1765,20 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1791,14 +1791,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         },
@@ -1811,14 +1811,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1831,14 +1831,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
-              "capturedAt": "2026-10-16T11:00:09.607Z"
+              "correlationId": "exec-84a5dcaf-de32-40e2-8e95-3c5f7fcb9a50",
+              "capturedAt": "2026-10-16T12:00:22.052Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         },
@@ -1851,14 +1851,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-              "capturedAt": "2026-10-16T11:00:16.607Z"
+              "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+              "capturedAt": "2026-10-16T12:00:29.054Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             }
           ]
         },
@@ -1871,14 +1871,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-              "capturedAt": "2026-10-16T11:01:05.686Z"
+              "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+              "capturedAt": "2026-10-16T12:01:18.110Z"
             }
           ]
         },
@@ -1891,14 +1891,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         },
@@ -1911,14 +1911,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             }
           ]
         },
@@ -1931,14 +1931,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-              "capturedAt": "2026-10-16T11:00:23.611Z"
+              "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+              "capturedAt": "2026-10-16T12:00:36.082Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-              "capturedAt": "2026-10-16T11:00:44.674Z"
+              "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+              "capturedAt": "2026-10-16T12:00:57.087Z"
             }
           ]
         },
@@ -1951,14 +1951,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
-              "capturedAt": "2026-10-16T11:00:02.604Z"
+              "correlationId": "exec-1fc220fd-447c-4f11-b810-755eb0249184",
+              "capturedAt": "2026-10-16T12:00:15.050Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
-              "capturedAt": "2026-10-16T11:00:51.679Z"
+              "correlationId": "exec-54c8b3ff-e1d1-4152-9ee9-907f6756110e",
+              "capturedAt": "2026-10-16T12:01:04.088Z"
             }
           ]
         },
@@ -1971,14 +1971,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
-              "capturedAt": "2026-10-16T11:00:09.607Z"
+              "correlationId": "exec-84a5dcaf-de32-40e2-8e95-3c5f7fcb9a50",
+              "capturedAt": "2026-10-16T12:00:22.052Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-              "capturedAt": "2026-10-16T11:00:37.673Z"
+              "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+              "capturedAt": "2026-10-16T12:00:50.085Z"
             }
           ]
         },
@@ -1991,14 +1991,14 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-              "capturedAt": "2026-10-16T11:00:30.613Z"
+              "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+              "capturedAt": "2026-10-16T12:00:43.083Z"
             },
             {
               "source": "qloo-hackathon-api",
               "operation": "entity_tags",
-              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-              "capturedAt": "2026-10-16T11:00:58.680Z"
+              "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+              "capturedAt": "2026-10-16T12:01:11.110Z"
             }
           ]
         }
@@ -2008,62 +2008,62 @@
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
-          "capturedAt": "2026-10-16T11:00:02.604Z"
+          "correlationId": "exec-1fc220fd-447c-4f11-b810-755eb0249184",
+          "capturedAt": "2026-10-16T12:00:15.050Z"
         },
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
-          "capturedAt": "2026-10-16T11:00:09.607Z"
+          "correlationId": "exec-84a5dcaf-de32-40e2-8e95-3c5f7fcb9a50",
+          "capturedAt": "2026-10-16T12:00:22.052Z"
         },
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-          "capturedAt": "2026-10-16T11:00:16.607Z"
+          "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+          "capturedAt": "2026-10-16T12:00:29.054Z"
         },
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-          "capturedAt": "2026-10-16T11:00:23.611Z"
+          "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+          "capturedAt": "2026-10-16T12:00:36.082Z"
         },
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-          "capturedAt": "2026-10-16T11:00:30.613Z"
+          "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+          "capturedAt": "2026-10-16T12:00:43.083Z"
         },
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-          "capturedAt": "2026-10-16T11:00:37.673Z"
+          "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+          "capturedAt": "2026-10-16T12:00:50.085Z"
         },
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-          "capturedAt": "2026-10-16T11:00:44.674Z"
+          "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+          "capturedAt": "2026-10-16T12:00:57.087Z"
         },
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
-          "capturedAt": "2026-10-16T11:00:51.679Z"
+          "correlationId": "exec-54c8b3ff-e1d1-4152-9ee9-907f6756110e",
+          "capturedAt": "2026-10-16T12:01:04.088Z"
         },
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-          "capturedAt": "2026-10-16T11:00:58.680Z"
+          "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+          "capturedAt": "2026-10-16T12:01:11.110Z"
         },
         {
           "source": "qloo-hackathon-api",
           "operation": "entity_tags",
-          "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-          "capturedAt": "2026-10-16T11:01:05.686Z"
+          "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+          "capturedAt": "2026-10-16T12:01:18.110Z"
         }
       ]
     },
@@ -2523,8 +2523,8 @@
         {
           "source": "qloo-hackathon-api",
           "operation": "compare_audiences",
-          "correlationId": "exec-860b55d8-7f32-4f2d-b9a9-a32f917328b8",
-          "capturedAt": "2026-10-16T11:01:33.749Z"
+          "correlationId": "exec-bd318f32-68c2-4087-89fc-f4632f6e3cee",
+          "capturedAt": "2026-10-16T12:01:46.211Z"
         }
       ]
     },
@@ -2544,8 +2544,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "rank",
-              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
-              "capturedAt": "2026-10-16T11:01:47.953Z"
+              "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da",
+              "capturedAt": "2026-10-16T12:02:00.208Z"
             }
           ]
         },
@@ -2561,8 +2561,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "rank",
-              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
-              "capturedAt": "2026-10-16T11:01:47.953Z"
+              "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da",
+              "capturedAt": "2026-10-16T12:02:00.208Z"
             }
           ]
         },
@@ -2578,8 +2578,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "rank",
-              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
-              "capturedAt": "2026-10-16T11:01:47.953Z"
+              "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da",
+              "capturedAt": "2026-10-16T12:02:00.208Z"
             }
           ]
         },
@@ -2595,8 +2595,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "rank",
-              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
-              "capturedAt": "2026-10-16T11:01:47.953Z"
+              "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da",
+              "capturedAt": "2026-10-16T12:02:00.208Z"
             }
           ]
         },
@@ -2612,8 +2612,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "rank",
-              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
-              "capturedAt": "2026-10-16T11:01:47.953Z"
+              "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da",
+              "capturedAt": "2026-10-16T12:02:00.208Z"
             }
           ]
         },
@@ -2629,8 +2629,8 @@
             {
               "source": "qloo-hackathon-api",
               "operation": "rank",
-              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
-              "capturedAt": "2026-10-16T11:01:47.953Z"
+              "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da",
+              "capturedAt": "2026-10-16T12:02:00.208Z"
             }
           ]
         }
@@ -2640,8 +2640,8 @@
         {
           "source": "qloo-hackathon-api",
           "operation": "rank",
-          "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
-          "capturedAt": "2026-10-16T11:01:47.953Z"
+          "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da",
+          "capturedAt": "2026-10-16T12:02:00.208Z"
         }
       ]
     },
@@ -2661,8 +2661,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2678,8 +2678,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2695,8 +2695,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2712,8 +2712,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2729,8 +2729,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2746,8 +2746,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2763,8 +2763,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2780,8 +2780,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2797,8 +2797,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2814,8 +2814,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2831,8 +2831,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2848,8 +2848,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2865,8 +2865,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2882,8 +2882,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2899,8 +2899,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2916,8 +2916,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2933,8 +2933,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2950,8 +2950,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2967,8 +2967,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           },
@@ -2984,8 +2984,8 @@
               {
                 "source": "qloo-hackathon-api",
                 "operation": "entity_tags",
-                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-                "capturedAt": "2026-10-16T11:02:08.962Z"
+                "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+                "capturedAt": "2026-10-16T12:02:21.212Z"
               }
             ]
           }
@@ -2994,8 +2994,8 @@
           {
             "source": "qloo-hackathon-api",
             "operation": "entity_tags",
-            "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-            "capturedAt": "2026-10-16T11:02:08.962Z"
+            "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+            "capturedAt": "2026-10-16T12:02:21.212Z"
           }
         ]
       },
@@ -3006,14 +3006,380 @@
           {
             "source": "qloo-hackathon-api",
             "operation": "recommend",
-            "correlationId": "exec-9023bac9-1203-4b05-b6d7-ce3bbc979dbc",
-            "capturedAt": "2026-10-16T11:01:19.688Z"
+            "correlationId": "exec-71a2f31e-48f7-4b6e-891b-d8c6026c89b9",
+            "capturedAt": "2026-10-16T12:01:32.136Z"
           },
           {
             "source": "qloo-hackathon-api",
             "operation": "recommend",
-            "correlationId": "exec-a9a99769-515d-4142-91f4-a0b8485356db",
-            "capturedAt": "2026-10-16T11:02:15.963Z"
+            "correlationId": "exec-b4fc6b22-f01b-4872-87bf-4a494dc8edd0",
+            "capturedAt": "2026-10-16T12:02:28.214Z"
+          }
+        ]
+      }
+    ],
+    "conditionedEntities": [
+      {
+        "conditionedOn": {
+          "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+          "label": "Jacquemus"
+        },
+        "territory": {
+          "id": "urn:tag:interests:qloo:boutique_hospitality",
+          "label": "Boutique Hospitality"
+        },
+        "entityType": "urn:entity:place",
+        "requestedLimit": 20,
+        "truncated": true,
+        "entities": [
+          {
+            "id": "21D578B2-BFD7-4669-BAF6-BE0C03D6D565",
+            "label": "Hôtel Mansart",
+            "rank": 1,
+            "numeric": {
+              "value": 0.958233290344024,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "09DA23CF-C8B9-404E-B156-73B547C558BF",
+            "label": "Hôtel Splendor",
+            "rank": 2,
+            "numeric": {
+              "value": 0.9525274202606193,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "61220981-F789-4635-9947-5D5212408AAF",
+            "label": "Grands Boulevards Experimental",
+            "rank": 3,
+            "numeric": {
+              "value": 0.9477132046764652,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "A7F17E6B-331E-4816-BDB1-9F60EB19809C",
+            "label": "Restaurant Les Passerelles",
+            "rank": 4,
+            "numeric": {
+              "value": 0.9469530009087284,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "7D72F85D-D182-4F6C-AEBE-F1D45B058884",
+            "label": "Georgian House Hotel",
+            "rank": 5,
+            "numeric": {
+              "value": 0.9395655545079976,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "879E18D5-83BF-468C-91A9-88B25F5C44E1",
+            "label": "Hôtel Whistler Paris - 10e arrondissement",
+            "rank": 6,
+            "numeric": {
+              "value": 0.9383803497443323,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "9A818639-22E5-491F-8DEE-249DB5A40766",
+            "label": "Hôtel Le Relais Madeleine - 4 étoiles",
+            "rank": 7,
+            "numeric": {
+              "value": 0.9300982493892549,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "3643017F-1D2F-407D-B6CF-041EAF2C53BB",
+            "label": "Hôtel de Sèze",
+            "rank": 8,
+            "numeric": {
+              "value": 0.9275569704921276,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "286A2F5F-2FC0-4306-9AC4-F29D9CEC0C20",
+            "label": "Seethrough Mykonos",
+            "rank": 9,
+            "numeric": {
+              "value": 0.9267934321057728,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "83588B3A-498A-4528-A85A-8BE2A70C01D2",
+            "label": "The Rookery",
+            "rank": 10,
+            "numeric": {
+              "value": 0.9260018847172972,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "8C070067-51AE-45C2-A478-58707E47BD31",
+            "label": "Room Mate Aitana",
+            "rank": 11,
+            "numeric": {
+              "value": 0.9255652281423629,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "4CF499E1-5CDA-4940-89A1-770331A48635",
+            "label": "Hotel Le K2 Djola",
+            "rank": 12,
+            "numeric": {
+              "value": 0.9254635551548656,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "F454BC6A-18B6-4EAB-96F7-6E92992899AF",
+            "label": "Hôtel des Lices Saint-Tropez",
+            "rank": 13,
+            "numeric": {
+              "value": 0.9245417692570902,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "05DCDDAC-3A81-4208-B8BC-C0F532EA75BC",
+            "label": "Royal Emeraude Hotel Dinard - MGallery Collection",
+            "rank": 14,
+            "numeric": {
+              "value": 0.9243040188651831,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "F53AFADA-14FF-4A40-A66C-7A21D696827D",
+            "label": "Hotel Verlaine",
+            "rank": 15,
+            "numeric": {
+              "value": 0.924260496077396,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "EC994679-89C4-4049-9770-F7EB4C3DA721",
+            "label": "HM Balanguera",
+            "rank": 16,
+            "numeric": {
+              "value": 0.923815829483568,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "69556E15-115B-40F1-9B98-93E4C14BCB3E",
+            "label": "Grand Tonic Hôtel & SPA Nuxe",
+            "rank": 17,
+            "numeric": {
+              "value": 0.923668834647742,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "D82995CB-DEC3-40A1-AF0B-87D76E59ACCC",
+            "label": "The Leonard Hotel",
+            "rank": 18,
+            "numeric": {
+              "value": 0.9234285991333127,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "31A0D074-EB70-4918-8B4A-B0E786E4B43B",
+            "label": "Le Pre de la Mer",
+            "rank": 19,
+            "numeric": {
+              "value": 0.9229056089745205,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          },
+          {
+            "id": "3174554B-EA83-422C-838B-7177EB3A7D48",
+            "label": "Hôtel Beige - 4 étoiles - Paris 9e",
+            "rank": 20,
+            "numeric": {
+              "value": 0.9224695828017146,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "recommend",
+                "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+                "capturedAt": "2026-10-16T12:01:39.137Z"
+              }
+            ]
+          }
+        ],
+        "comparisonScope": "single_call",
+        "provenance": [
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "recommend",
+            "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+            "capturedAt": "2026-10-16T12:01:39.137Z"
           }
         ]
       }
@@ -3060,98 +3426,104 @@
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
-        "capturedAt": "2026-10-16T10:59:27.596Z"
+        "correlationId": "exec-4f2a0833-a217-437d-9b3b-02c643bd37c5",
+        "capturedAt": "2026-10-16T11:59:40.038Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
-        "capturedAt": "2026-10-16T11:00:02.604Z"
+        "correlationId": "exec-1fc220fd-447c-4f11-b810-755eb0249184",
+        "capturedAt": "2026-10-16T12:00:15.050Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
-        "capturedAt": "2026-10-16T11:00:09.607Z"
+        "correlationId": "exec-84a5dcaf-de32-40e2-8e95-3c5f7fcb9a50",
+        "capturedAt": "2026-10-16T12:00:22.052Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
-        "capturedAt": "2026-10-16T11:00:16.607Z"
+        "correlationId": "exec-52e77006-8da5-4942-be7e-c288b5d29fe9",
+        "capturedAt": "2026-10-16T12:00:29.054Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
-        "capturedAt": "2026-10-16T11:00:23.611Z"
+        "correlationId": "exec-ccde2d51-1ada-41cb-ae91-456eef947b7a",
+        "capturedAt": "2026-10-16T12:00:36.082Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
-        "capturedAt": "2026-10-16T11:00:30.613Z"
+        "correlationId": "exec-4ce95ed1-af88-4fcf-8eeb-b7ac954ea430",
+        "capturedAt": "2026-10-16T12:00:43.083Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
-        "capturedAt": "2026-10-16T11:00:37.673Z"
+        "correlationId": "exec-9964d837-6dbf-489e-a6f2-06a594275e71",
+        "capturedAt": "2026-10-16T12:00:50.085Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
-        "capturedAt": "2026-10-16T11:00:44.674Z"
+        "correlationId": "exec-64df968c-d232-4cce-912d-c8ce0ab68c95",
+        "capturedAt": "2026-10-16T12:00:57.087Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
-        "capturedAt": "2026-10-16T11:00:51.679Z"
+        "correlationId": "exec-54c8b3ff-e1d1-4152-9ee9-907f6756110e",
+        "capturedAt": "2026-10-16T12:01:04.088Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
-        "capturedAt": "2026-10-16T11:00:58.680Z"
+        "correlationId": "exec-e19cd032-b157-46b7-90ad-937348eacd22",
+        "capturedAt": "2026-10-16T12:01:11.110Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
-        "capturedAt": "2026-10-16T11:01:05.686Z"
+        "correlationId": "exec-96c7c768-afe1-4b50-9c91-3cacf04a4a7e",
+        "capturedAt": "2026-10-16T12:01:18.110Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "compare_audiences",
-        "correlationId": "exec-860b55d8-7f32-4f2d-b9a9-a32f917328b8",
-        "capturedAt": "2026-10-16T11:01:33.749Z"
+        "correlationId": "exec-bd318f32-68c2-4087-89fc-f4632f6e3cee",
+        "capturedAt": "2026-10-16T12:01:46.211Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "rank",
-        "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
-        "capturedAt": "2026-10-16T11:01:47.953Z"
+        "correlationId": "exec-c79c19bc-192f-4ce7-8fbf-95ee6c32c6da",
+        "capturedAt": "2026-10-16T12:02:00.208Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "entity_tags",
-        "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
-        "capturedAt": "2026-10-16T11:02:08.962Z"
+        "correlationId": "exec-b0c1366b-bd91-4e13-8af4-e354d0160ebd",
+        "capturedAt": "2026-10-16T12:02:21.212Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "recommend",
-        "correlationId": "exec-9023bac9-1203-4b05-b6d7-ce3bbc979dbc",
-        "capturedAt": "2026-10-16T11:01:19.688Z"
+        "correlationId": "exec-71a2f31e-48f7-4b6e-891b-d8c6026c89b9",
+        "capturedAt": "2026-10-16T12:01:32.136Z"
       },
       {
         "source": "qloo-hackathon-api",
         "operation": "recommend",
-        "correlationId": "exec-a9a99769-515d-4142-91f4-a0b8485356db",
-        "capturedAt": "2026-10-16T11:02:15.963Z"
+        "correlationId": "exec-b4fc6b22-f01b-4872-87bf-4a494dc8edd0",
+        "capturedAt": "2026-10-16T12:02:28.214Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "recommend",
+        "correlationId": "exec-9c0aa2a5-f605-46cf-b6f8-804d5653a841",
+        "capturedAt": "2026-10-16T12:01:39.137Z"
       }
     ]
   }

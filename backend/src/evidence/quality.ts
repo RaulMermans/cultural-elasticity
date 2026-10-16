@@ -9,14 +9,14 @@
  * fail verification does cap the level at MEDIUM.
  */
 import type { EvidenceQuality, QualityIndicator, QualityLevel } from "@cultural-elasticity/shared";
-import { compareNumeric, verifyRankingScope } from "./comparability.js";
+import { compareNumeric, verifyConditionedScope, verifyRankingScope } from "./comparability.js";
 import { hasCorrelation } from "./provenance.js";
 import type { BridgeEvidence, CulturalProfile, EvidencePacket, Limitation, ProvenanceRef } from "./schema.js";
 
 export const OVERALL_RULE =
   "LOW if any core indicator (resolution, profileCoverage, provenance) is insufficient; HIGH if all core indicators are good " +
   "and no comparison requested by the evidence had to be refused (comparisonValidity is not limited); otherwise MEDIUM. " +
-  "Absent optional evidence (audience, ranking, bridges) never lowers the level.";
+  "Absent optional evidence (audience, ranking, bridges, conditioned entities) never lowers the level.";
 
 const CORE = ["resolution", "profileCoverage", "provenance"] as const;
 
@@ -38,6 +38,7 @@ export function assessEvidenceQuality(packet: EvidencePacket): EvidenceQuality {
     comparisonValidity: assessComparisonValidity(packet, limitations),
     audienceSemantics: assessAudienceSemantics(packet, limitations),
     bridgeEvidence: assessBridgeEvidence(packet, limitations),
+    conditionedEvidence: assessConditionedEvidence(packet),
   };
 
   const core = CORE.map((name) => [name, indicators[name].level] as const);
@@ -105,6 +106,11 @@ function assessProvenance(packet: EvidencePacket, limitations: Limitation[]): Qu
     ...(packet.ranking?.candidates ?? []).map((candidate) => ({ label: `ranking candidate "${candidate.id}"`, provenance: candidate.provenance })),
     ...(packet.audience?.interpretableMetrics ?? []).map((metric) => ({ label: `audience metric "${metric.id}"`, provenance: metric.provenance })),
     ...(packet.bridges ?? []).flatMap((bridge, index) => bridge.signals.map((signal) => ({ label: `bridge #${index + 1} signal "${signal.id}"`, provenance: signal.provenance }))),
+    ...(packet.conditionedEntities ?? []).flatMap((evidence) =>
+      evidence.entities.length === 0
+        ? [{ label: `conditioned ${evidence.territory.id} (empty result)`, provenance: evidence.provenance }]
+        : evidence.entities.map((entity) => ({ label: `conditioned ${evidence.territory.id} entity "${entity.id}"`, provenance: entity.provenance })),
+    ),
   ];
   const missing = items.filter((item) => item.provenance.length === 0).map((item) => item.label);
   const uncorrelated = items.filter((item) => item.provenance.length > 0 && !hasCorrelation(item.provenance)).map((item) => item.label);
@@ -159,6 +165,16 @@ function assessComparisonValidity(packet: EvidencePacket, limitations: Limitatio
     }
   }
 
+  for (const evidence of packet.conditionedEntities ?? []) {
+    attempted += 1;
+    const scope = verifyConditionedScope(evidence);
+    if (!scope.verified) {
+      refused += 1;
+      reasons.push(`conditioned evidence for ${evidence.territory.id} unverified: ${scope.reason}`);
+      limitations.push({ code: "CONDITIONED_SCOPE_UNVERIFIED", detail: `${evidence.territory.id}: ${scope.reason}` });
+    }
+  }
+
   if (attempted === 0) return indicator("not_applicable", ["no numeric comparisons were requested by the evidence"]);
   return indicator(refused === 0 ? "good" : "limited", reasons);
 }
@@ -180,6 +196,16 @@ function assessBridgeEvidence(packet: EvidencePacket, limitations: Limitation[])
   const observed = bridges.length - unverifiable;
   if (observed === 0) return indicator("unavailable", ["no observed bridge evidence"]);
   return indicator("good", [`${observed} observed bridge evidence item(s)`]);
+}
+
+function assessConditionedEvidence(packet: EvidencePacket): QualityIndicator {
+  const items = packet.conditionedEntities ?? [];
+  if (items.length === 0) return indicator("unavailable", ["no brand-conditioned territory evidence"]);
+  const unverified = items.filter((evidence) => !verifyConditionedScope(evidence).verified).length;
+  const empty = items.filter((evidence) => evidence.entities.length === 0).length;
+  const reasons = [`${items.length} conditioned list(s); ${empty} observed empty`];
+  if (unverified > 0) return indicator("limited", [...reasons, `${unverified} list(s) do not trace to a single call`]);
+  return indicator("good", reasons);
 }
 
 function summarize(labels: string[]): string {

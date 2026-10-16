@@ -111,6 +111,12 @@ export function runLiveEval(dir: string = LIVE_FIXTURES_DIR): FixtureClassReport
         if (i.bridges.signals.some((s) => s.numeric !== undefined && (s.numeric.comparisonScope !== "within_call" || s.numeric.scale !== undefined))) return "bridge value with non-call scope or invented scale";
         return !/strength/i.test(JSON.stringify(i.bridges)) || "strength field present";
       }),
+      check(`${file}.conditioned`, "brand-conditioned territory evidence is in the packet slot: one verified single call, within_call values", () => {
+        const items = p.conditionedEntities ?? [];
+        if (items.length === 0) return "no conditionedEntities in the packet";
+        if (i.conditioned.items.some((item) => !item.scope.verified)) return "conditioned list does not trace to one call";
+        return items.every((c) => c.entities.every((e) => e.numeric === undefined || (e.numeric.comparisonScope === "within_call" && e.numeric.scale === undefined))) || "conditioned value with non-call scope or invented scale";
+      }),
       check(`${file}.gates`, "core gates G1 and G2 pass in the captured run", () => (["G1", "G2"].every((id) => f.gates.find((g) => g.id === id)?.status === "PASS")) || JSON.stringify(f.gates.map((g) => [g.id, g.status]))),
     );
   }

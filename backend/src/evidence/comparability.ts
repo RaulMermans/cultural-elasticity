@@ -12,7 +12,7 @@
  *        cross_call_verified  a scale is declared (verification is meaningless without one)
  */
 import { singleCorrelationId } from "./provenance.js";
-import type { NumericEvidence, ProvenanceRef, RankingEvidence } from "./schema.js";
+import type { ConditionedEntityEvidence, NumericEvidence, ProvenanceRef, RankingEvidence } from "./schema.js";
 
 export type ComparisonContext = "same_profile" | "cross_profile" | "same_ranking";
 
@@ -63,14 +63,26 @@ export type RankingScopeVerification = { verified: true; correlationId: string }
  */
 export function verifyRankingScope(ranking: RankingEvidence): RankingScopeVerification {
   if (ranking.comparisonScope !== "single_call") return { verified: false, reason: "ranking comparison scope is not declared single_call" };
+  return verifySingleCall(ranking.candidates, ranking.provenance, "candidate");
+}
+
+/**
+ * Same rule for a brand-conditioned entity list: every entity and the list itself must trace to one
+ * correlation id. An empty list is verified by its own provenance alone.
+ */
+export function verifyConditionedScope(evidence: ConditionedEntityEvidence): RankingScopeVerification {
+  return verifySingleCall(evidence.entities, evidence.provenance, "entity");
+}
+
+function verifySingleCall(items: readonly { id: string; provenance: readonly ProvenanceRef[] }[], listProvenance: readonly ProvenanceRef[], noun: string): RankingScopeVerification {
   const calls = new Set<string>();
-  for (const candidate of ranking.candidates) {
-    const call = singleCorrelationId(candidate.provenance);
-    if (call === undefined) return { verified: false, reason: `candidate "${candidate.id}" does not trace to exactly one identifiable call` };
+  for (const item of items) {
+    const call = singleCorrelationId(item.provenance);
+    if (call === undefined) return { verified: false, reason: `${noun} "${item.id}" does not trace to exactly one identifiable call` };
     calls.add(call);
   }
-  for (const ref of ranking.provenance) if (ref.correlationId !== undefined) calls.add(ref.correlationId);
-  if (calls.size !== 1) return { verified: false, reason: `declared single_call, but candidates trace to ${calls.size} different calls` };
+  for (const ref of listProvenance) if (ref.correlationId !== undefined) calls.add(ref.correlationId);
+  if (calls.size !== 1) return { verified: false, reason: `declared single_call, but ${noun}s trace to ${calls.size} different calls` };
   return { verified: true, correlationId: [...calls][0] as string };
 }
 

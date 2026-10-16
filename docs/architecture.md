@@ -11,9 +11,12 @@ Cultural Evidence Core           backend/src/evidence + backend/src/analysis    
       ↓
 AnalysisIngredients              packages/shared/src/analysis.ts                   ← stable downstream boundary
       ↓
-Future Elasticity Methodology    (not built: no formula, weights or score yet)
+Cultural Elasticity Methodology  backend/src/methodology                           ← Sprint 2: deterministic, no LLM, no agent, no I/O
+  (MethodologyInput: brand + territory representations + rank panels + exemplar profiles + conditioned lists)
       ↓
-Future Agent Interpretation      (not built: may choose investigations and explain ingredients, never produce numbers)
+CulturalElasticityResult         packages/shared/src/methodology.ts                ← position · robustness · coherence · quality · class · trace
+      ↓
+Future Agent Interpretation      (not built: may choose investigations and explain results, never produce numbers)
       ↓
 Frontend (Next.js, Vercel)       ← talks only to the backend; never sees Qloo or its credential
 ```
@@ -24,6 +27,7 @@ Provider-specific shapes (harness envelopes, Qloo entity/tag records, `compare_a
 
 - Sprint 0: the frontend shell, `/health`, the Qloo adapter, the Qloo-side evidence record (`contracts/qloo.ts`) and the feasibility workflow.
 - Sprint 1: the canonical `EvidencePacket`, the Cultural Evidence Core, `AnalysisIngredients`, `POST /api/analysis/ingredients` (offline, development only), `/dev/analysis` (development only) and the methodology eval harness.
+- Sprint 2: `EvidencePacket.conditionedEntities` (brand-conditioned territory evidence, `ce-evidence/0.2`) end to end; the Cultural Elasticity Methodology v0 (`backend/src/methodology`); the live benchmark capture (`backend/src/capture`, `pnpm capture:elasticity`); `POST /api/methodology/analyze` and `/dev/methodology` (development only); `pnpm eval:elasticity` and `pnpm methodology:jacquemus`. See [sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md](sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md).
 - Sprint 0B: the hackathon host safety gate (`qloo/environment.ts`), the live Qloo → `EvidencePacket` adapter (`qloo/live-adapter.ts`, written from live output), the pinned live investigation (`feasibility/live.ts`, `live-config.ts`) and the live and recorded eval class (`pnpm eval:live`). The Sprint 1 engine ran on live data unchanged.
 
 ## Cultural Evidence Core pipeline
@@ -35,6 +39,20 @@ unknown input → zod validation → normalization (dedupe, sort, provenance mer
 ```
 
 Comparability is enforced in code (`evidence/comparability.ts`): values from separate calls, unknown scopes or mismatched scales are refused, never normalized together.
+
+## Cultural Elasticity Methodology pipeline (Sprint 2)
+
+```
+MethodologyInput (zod; structural errors → 400)
+  → panels: one rank call each, verified single-call scope, positions from explicit ranks only
+  → ordinal aggregation: median rank percentile across aggregated panels (repeats only test determinism)
+  → representation robustness: spread across exemplar panels; INSUFFICIENT < 2 exemplars; LOW cap on missing evidence
+  → territory evidence: one EvidencePacket per exemplar (set-only tags) → Cultural Evidence Core → evidence quality
+  → operational-tags-v1 → set coherence RAW and CULTURAL_FILTERED (explanatory, not a classification input)
+  → classification (PROVISIONAL) → index gate A–G → CulturalElasticityResult + trace → invariant validation
+```
+
+The methodology imports no LLM, agent, Fastify, MCP, transport or `child_process` code (a test enforces this). It never compares raw values across calls and never emits a 0–100 index while the decision is REJECTED_FOR_NOW.
 
 ## Qloo integration boundary
 
@@ -76,4 +94,5 @@ The two deploy independently. No platform-specific configuration has been added 
 | Methodology (offline) | Synthetic EvidencePackets | `evals/fixtures/synthetic/` → `pnpm eval:methodology` |
 | Integration | Recorded real harness outputs and the real harness binary (no network) | `backend/tests/fixtures/recorded/`, `feasibility-script.test.ts` |
 | Live (captured) | Sanitized hackathon-API captures | `evals/fixtures/live/` → `pnpm eval:live` (offline, structural) |
-| Live Qloo | Real credential, real responses, hackathon host only | `pnpm feasibility:qloo [-- --write-fixture]` |
+| Methodology benchmark (captured live) | 6 brands × 6 territories, human-curated labels, brand-level calibration/held-out split | `evals/benchmarks/cultural-elasticity-v0/` → `pnpm eval:elasticity` (offline) |
+| Live Qloo | Real credential, real responses, hackathon host only | `pnpm feasibility:qloo [-- --write-fixture]`, `pnpm capture:elasticity [-- --write-fixtures]` |
