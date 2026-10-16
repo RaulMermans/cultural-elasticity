@@ -12,7 +12,15 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
       level: options.logLevel ?? "info",
       // Defence in depth: no route handles credentials, but never let one reach a log line.
       redact: {
-        paths: ["req.headers.authorization", "req.headers['x-api-key']", "*.QLOO_API_KEY", "*.apiKey", "*.api_key"],
+        paths: [
+          "req.headers.authorization",
+          "req.headers['x-api-key']",
+          "*.headers['x-api-key']",
+          "*.headers['X-Api-Key']",
+          "*.QLOO_API_KEY",
+          "*.apiKey",
+          "*.api_key",
+        ],
         censor: "[redacted]",
       },
     },

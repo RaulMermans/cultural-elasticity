@@ -13,6 +13,11 @@ const envSchema = z.object({
     .transform((value) => (value && value.trim().length > 0 ? value.trim() : undefined)),
   // Override for the harness executable; defaults to the pinned dependency's bin.
   QLOO_BIN: z.string().min(1).optional(),
+  // Non-secret, backend-only. No default: live runs fail closed without it (see qloo/environment.ts).
+  QLOO_API_BASE_URL: z
+    .string()
+    .optional()
+    .transform((value) => (value && value.trim().length > 0 ? value.trim() : undefined)),
 });
 
 export type BackendConfig = {
@@ -22,6 +27,8 @@ export type BackendConfig = {
   qloo: {
     hasCredential: boolean;
     bin: string | undefined;
+    /** As configured; validated by requireHackathonBaseUrl before any live call. */
+    apiBaseUrl: string | undefined;
   };
 };
 
@@ -41,6 +48,6 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): BackendConfig 
     port: parsed.PORT,
     host: parsed.HOST,
     logLevel: parsed.LOG_LEVEL,
-    qloo: { hasCredential: parsed.QLOO_API_KEY !== undefined, bin: parsed.QLOO_BIN },
+    qloo: { hasCredential: parsed.QLOO_API_KEY !== undefined, bin: parsed.QLOO_BIN, apiBaseUrl: parsed.QLOO_API_BASE_URL },
   };
 }

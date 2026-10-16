@@ -1,6 +1,6 @@
 # Cultural Evidence Core
 
-**Status:** Sprint 1 complete on synthetic data only. `LIVE_QLOO_VALIDATION_NOT_RUN`: Sprint 0B (live Qloo) is still blocked on a credential. Nothing in this document is evidence about Qloo's live behaviour or about any real brand.
+**Status:** Sprint 1 was built and tested on synthetic data only. **Update (Sprint 0B, 2026-10-16):** the engine has since run **unchanged** on the first live hackathon-API packet; see [../sprint-0/QLOO_TECHNICAL_FEASIBILITY.md § Live AnalysisIngredients](../sprint-0/QLOO_TECHNICAL_FEASIBILITY.md#live-analysisingredients). The "blocked on live Qloo" items below are answered there. Synthetic results in this document are still not evidence about Qloo.
 
 ## Purpose
 

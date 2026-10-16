@@ -17,6 +17,7 @@
     "typecheck": "pnpm -r typecheck",
     "check:secrets": "node scripts/check-secrets.mjs",
     "eval:methodology": "pnpm --filter backend eval:methodology",
+    "eval:live": "pnpm --filter backend eval:live",
     "feasibility:qloo": "pnpm --filter backend feasibility:qloo"
   },
   "devDependencies": {

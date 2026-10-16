@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { harnessChildEnv, QLOO_HACKATHON_ORIGIN } from "../src/qloo/environment.js";
 import { QlooTransportError } from "../src/qloo/errors.js";
 import { defaultHarnessBinPath, HarnessExecTransport, scrubSecrets } from "../src/qloo/transport.js";
 
@@ -9,7 +10,7 @@ const TEST_KEY = "test-key-not-real-0123456789";
 function transport(mode: string, timeoutMs?: number) {
   return new HarnessExecTransport({
     binPath: fakeBin,
-    env: { ...process.env, FAKE_QLOO_MODE: mode, QLOO_API_KEY: TEST_KEY },
+    env: harnessChildEnv({ ...process.env, FAKE_QLOO_MODE: mode, QLOO_API_KEY: TEST_KEY }, QLOO_HACKATHON_ORIGIN),
     ...(timeoutMs ? { timeoutMs } : {}),
   });
 }
@@ -51,5 +52,10 @@ describe("scrubSecrets", () => {
     expect(scrubSecrets(`a ${TEST_KEY} b`, { QLOO_API_KEY: TEST_KEY })).toBe("a [redacted] b");
     expect(scrubSecrets("nothing here", { QLOO_API_KEY: TEST_KEY })).toBe("nothing here");
     expect(scrubSecrets("no key set", {})).toBe("no key set");
+  });
+
+  it("redacts X-Api-Key header values even when the key is not known to the process", () => {
+    expect(scrubSecrets('{"X-Api-Key":"abc123def456"}', {})).toBe('{"X-Api-Key":"[redacted]"}');
+    expect(scrubSecrets("x-api-key: abc123def456 next", {})).toBe("x-api-key: [redacted] next");
   });
 });

@@ -11,7 +11,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "feasibility:qloo": "tsx scripts/qloo-feasibility.ts",
-    "eval:methodology": "tsx scripts/eval-methodology.ts"
+    "eval:methodology": "tsx scripts/eval-methodology.ts",
+    "eval:live": "tsx scripts/eval-live.ts"
   },
   "dependencies": {
     "@cultural-elasticity/shared": "workspace:*",
