@@ -8,13 +8,26 @@ Rules for any human or AI agent working in this repository.
 
 ## Non-negotiables
 
-1. **Never fabricate Qloo evidence.** No invented entity IDs, tags, affinities, schemas or "example" responses presented as real. Synthetic test fixtures must be labelled SYNTHETIC, use placeholder IDs, and live under `backend/tests/fixtures/synthetic/` (unit tests) or `evals/fixtures/synthetic/` (methodology evals, `"fixtureType": "synthetic"`).
+1. **Never fabricate Qloo evidence.** No invented entity IDs, tags, affinities, schemas or "example" responses presented as real. Synthetic test fixtures must be labelled SYNTHETIC, use placeholder IDs, and live under `backend/tests/fixtures/synthetic/` (unit tests) or `evals/fixtures/synthetic/` (methodology evals and the agent's synthetic world, `"fixtureType": "synthetic"`). Agent eval scenarios live in `evals/agent/` and are labelled synthetic too.
 2. **Deterministic code owns every number.** Scores, rankings, overlaps and any future Elasticity metric are computed by tested code from Qloo evidence.
 3. **LLMs may not invent core scores.** The agent may choose what to investigate and may interpret an evidence packet. It may not produce, adjust or "estimate" a metric.
 4. **No secrets in the repo, logs, prompts, docs or fixtures.** `QLOO_API_KEY` is read only by the backend and the Qloo harness child process. Run `pnpm check:secrets` before committing.
 5. **Report mocked and live validation separately.** Never describe fixture-based results as live, and never call work complete on mocks when live validation is required. If live validation could not run, say `LIVE_QLOO_VALIDATION_NOT_RUN` and list what is unverified.
 6. **Do not present unsupported metrics as fact.** Qloo exposes no graph distance. Use "Cultural Distance Proxy" and "Qloo-supported intermediate cultural signals", never "distance" or "path".
 7. **Preserve provenance.** Every Qloo-derived number keeps the correlation ID of the call it came from, and affinities are compared only within one call.
+
+## Generalization (permanent, from Sprint 3)
+
+1. **No benchmark-specific brand, territory, exemplar or label** may be encoded in production methodology or agent logic.
+2. **Benchmark data may only be imported by evaluation code.** Direction is eval → product, never product → eval (`tests/agent-generalization.test.ts` enforces it).
+3. **The runtime resolves entities and territory representations dynamically** from Qloo evidence.
+4. **Different cases may follow different evidence and methodology routes.** Never force one fixed workflow on every territory.
+5. **Unsupported evidence degrades capability; it never triggers fabrication.** Missing measures are reported as unavailable, never as zero or prose.
+6. **LLM output never owns deterministic numerical truth.** Routes, positions, robustness, quality and classes come from code.
+7. **Every agent claim must trace to a deterministic result or to Qloo evidence.** Model synthesis passes the claim validator or is replaced by the deterministic template.
+8. **Adding a new Qloo-resolvable brand or territory must not require methodology code changes.**
+
+Agent runs report the model honestly: a run driven by the scripted model or the baseline reference policy is not a live agent-model validation (`LIVE_AGENT_MODEL_VALIDATION_NOT_RUN`).
 
 ## Engineering
 
@@ -33,5 +46,6 @@ Rules for any human or AI agent working in this repository.
 ```sh
 pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:secrets
 pnpm eval:methodology   # offline, synthetic; never report as Qloo validation
+pnpm eval:agent         # offline, synthetic world; never report as Qloo or live-model validation
 pnpm feasibility:qloo   # live; report its result separately
 ```

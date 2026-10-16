@@ -29,6 +29,7 @@ jobs:
       - run: pnpm eval:methodology
       - run: pnpm eval:live
       - run: pnpm eval:elasticity
+      - run: pnpm eval:agent
       - run: pnpm build
       - name: Secret leakage check (repo + browser bundle)
         run: pnpm check:secrets

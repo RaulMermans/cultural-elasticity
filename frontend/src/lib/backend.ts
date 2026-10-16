@@ -1,5 +1,13 @@
 import "server-only";
-import { isAnalysisIngredients, isCulturalElasticityResult, isHealthResponse, type AnalysisIngredients, type CulturalElasticityResult } from "@cultural-elasticity/shared";
+import {
+  isAgentRunResponse,
+  isAnalysisIngredients,
+  isCulturalElasticityResult,
+  isHealthResponse,
+  type AgentRunResponse,
+  type AnalysisIngredients,
+  type CulturalElasticityResult,
+} from "@cultural-elasticity/shared";
 
 export type BackendStatus = "connected" | "unavailable";
 
@@ -62,6 +70,30 @@ export async function postMethodology(input: unknown): Promise<MethodologyResult
     const body: unknown = await response.json();
     if (response.ok && isCulturalElasticityResult(body)) return { status: "ok", result: body };
     return { status: "rejected", detail: JSON.stringify(body).slice(0, 2000) };
+  } catch {
+    return { status: "unavailable" };
+  }
+}
+
+export type AgentResponse = { status: "ok"; response: AgentRunResponse } | { status: "rejected"; detail: string } | { status: "unavailable" };
+
+/**
+ * Development only: runs (or continues) an agent investigation through the backend. A live run makes
+ * spaced Qloo calls and can take several minutes, hence the long timeout.
+ */
+export async function postAgent(path: "/api/agent/analyze" | "/api/agent/continue", body: unknown): Promise<AgentResponse> {
+  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  try {
+    const response = await fetch(new URL(path, baseUrl), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+      cache: "no-store",
+      signal: AbortSignal.timeout(15 * 60_000),
+    });
+    const json: unknown = await response.json();
+    if (response.ok && isAgentRunResponse(json)) return { status: "ok", response: json };
+    return { status: "rejected", detail: JSON.stringify(json).slice(0, 2000) };
   } catch {
     return { status: "unavailable" };
   }

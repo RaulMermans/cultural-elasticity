@@ -1,0 +1,736 @@
+{
+ "fixtureType": "synthetic",
+ "notice": "SYNTHETIC agent-runtime world. Fictional names, placeholder SYN- ids, hand-written tag sets. Not Qloo evidence; never cite it as such. Used by the ScriptedToolProvider in backend tests and pnpm eval:agent.",
+ "tags": [
+  {
+   "id": "urn:tag:industry:syn:boutique_stays",
+   "name": "Boutique Stays",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:design_stays",
+   "name": "Design Stays",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:tableware",
+   "name": "Tableware",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:furniture",
+   "name": "Furniture",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:trail_gear",
+   "name": "Trail Gear",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:gaming_peripherals",
+   "name": "Gaming Peripherals",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:skincare",
+   "name": "Skincare",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:interests:syn:esports",
+   "name": "Esports",
+   "type": "urn:tag:interests:syn"
+  },
+  {
+   "id": "urn:tag:interests:syn:slow_travel",
+   "name": "Slow Travel",
+   "type": "urn:tag:interests:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:moonlight_rituals",
+   "name": "Moonlight Rituals",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:fashion",
+   "name": "Fashion",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:outdoor_apparel",
+   "name": "Outdoor Apparel",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:video_games",
+   "name": "Video Games",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:specialty_food",
+   "name": "Specialty Food",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:interests:syn:sailing",
+   "name": "Sailing",
+   "type": "urn:tag:interests:syn"
+  },
+  {
+   "id": "urn:tag:interests:syn:cabin_culture",
+   "name": "Cabin Culture",
+   "type": "urn:tag:interests:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:minimalism",
+   "name": "Minimalism",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:mediterranean",
+   "name": "Mediterranean Living",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:design_culture",
+   "name": "Design Culture",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:luxury",
+   "name": "Luxury",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:coastal",
+   "name": "Coastal",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:craft",
+   "name": "Craft",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:outdoors",
+   "name": "Outdoors",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:sustainability",
+   "name": "Sustainability",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:heritage",
+   "name": "Heritage",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:tech",
+   "name": "Technology",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:gaming_culture",
+   "name": "Gaming Culture",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:wellness_ritual",
+   "name": "Wellness Rituals",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:streetwear",
+   "name": "Streetwear",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:slow_living",
+   "name": "Slow Living",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:family_play",
+   "name": "Family Play",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:credit_card:syn:card_accepted",
+   "name": "Card Accepted",
+   "type": "urn:tag:credit_card:syn"
+  }
+ ],
+ "entities": [
+  {
+   "id": "SYN-BR-0001",
+   "name": "Northwind Atelier",
+   "type": "brand",
+   "popularity": 0.97,
+   "tags": [
+    "urn:tag:industry:syn:fashion",
+    "urn:tag:keyword:syn:minimalism",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:luxury",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:streetwear"
+   ]
+  },
+  {
+   "id": "SYN-BR-0002",
+   "name": "Kestrel Outfitters",
+   "type": "brand",
+   "popularity": 0.95,
+   "tags": [
+    "urn:tag:industry:syn:outdoor_apparel",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:sustainability",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:heritage",
+    "urn:tag:keyword:syn:craft"
+   ]
+  },
+  {
+   "id": "SYN-BR-0003",
+   "name": "Lumen Play",
+   "type": "brand",
+   "popularity": 0.96,
+   "tags": [
+    "urn:tag:industry:syn:video_games",
+    "urn:tag:keyword:syn:tech",
+    "urn:tag:keyword:syn:gaming_culture",
+    "urn:tag:keyword:syn:family_play",
+    "urn:tag:keyword:syn:design_culture"
+   ]
+  },
+  {
+   "id": "SYN-BR-0004",
+   "name": "Saffron & Salt",
+   "type": "brand",
+   "popularity": 0.88,
+   "tags": [
+    "urn:tag:industry:syn:specialty_food",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:wellness_ritual",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:sustainability"
+   ]
+  },
+  {
+   "id": "SYN-BR-0005",
+   "name": "Meridian Audio Works",
+   "type": "brand",
+   "popularity": 0.62,
+   "tags": [
+    "urn:tag:keyword:syn:tech",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:heritage"
+   ]
+  },
+  {
+   "id": "SYN-BR-0006",
+   "name": "Meridian Lending",
+   "type": "brand",
+   "popularity": 0.48,
+   "tags": [
+    "urn:tag:keyword:syn:heritage",
+    "urn:tag:keyword:syn:sustainability"
+   ]
+  },
+  {
+   "id": "SYN-BR-0007",
+   "name": "Harbor Goods",
+   "type": "brand",
+   "popularity": 0.71,
+   "tags": [
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:slow_living"
+   ]
+  },
+  {
+   "id": "SYN-BR-0101",
+   "name": "Larkspur Hotels",
+   "type": "brand",
+   "popularity": 0.93,
+   "tags": [
+    "urn:tag:industry:syn:boutique_stays",
+    "urn:tag:industry:syn:design_stays",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:luxury",
+    "urn:tag:keyword:syn:coastal"
+   ]
+  },
+  {
+   "id": "SYN-BR-0102",
+   "name": "Tidewell Inns",
+   "type": "brand",
+   "popularity": 0.86,
+   "tags": [
+    "urn:tag:industry:syn:boutique_stays",
+    "urn:tag:industry:syn:design_stays",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:mediterranean"
+   ]
+  },
+  {
+   "id": "SYN-BR-0103",
+   "name": "Quillon House",
+   "type": "brand",
+   "popularity": 0.9,
+   "tags": [
+    "urn:tag:industry:syn:boutique_stays",
+    "urn:tag:industry:syn:design_stays",
+    "urn:tag:keyword:syn:luxury",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:minimalism"
+   ]
+  },
+  {
+   "id": "SYN-BR-0104",
+   "name": "Marrow & Vine Hotels",
+   "type": "brand",
+   "popularity": 0.78,
+   "tags": [
+    "urn:tag:industry:syn:boutique_stays",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:keyword:syn:wellness_ritual",
+    "urn:tag:keyword:syn:slow_living"
+   ]
+  },
+  {
+   "id": "SYN-BR-0105",
+   "name": "Larkspur Hotels Collection",
+   "type": "brand",
+   "popularity": 0.91,
+   "tags": [
+    "urn:tag:industry:syn:boutique_stays",
+    "urn:tag:industry:syn:design_stays",
+    "urn:tag:keyword:syn:luxury",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:coastal"
+   ]
+  },
+  {
+   "id": "SYN-BR-0106",
+   "name": "Verve Lodge",
+   "type": "brand",
+   "popularity": 0.66,
+   "tags": [
+    "urn:tag:industry:syn:design_stays",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:tech"
+   ]
+  },
+  {
+   "id": "SYN-BR-0201",
+   "name": "Ashgrove Ceramics",
+   "type": "brand",
+   "popularity": 0.84,
+   "tags": [
+    "urn:tag:industry:syn:tableware",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:minimalism",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:heritage"
+   ]
+  },
+  {
+   "id": "SYN-BR-0202",
+   "name": "Kilnhouse",
+   "type": "brand",
+   "popularity": 0.8,
+   "tags": [
+    "urn:tag:industry:syn:tableware",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:minimalism"
+   ]
+  },
+  {
+   "id": "SYN-BR-0203",
+   "name": "Pale Clay Co",
+   "type": "brand",
+   "popularity": 0.74,
+   "tags": [
+    "urn:tag:industry:syn:tableware",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:slow_living"
+   ]
+  },
+  {
+   "id": "SYN-BR-0204",
+   "name": "Ferrow Porcelain",
+   "type": "brand",
+   "popularity": 0.89,
+   "tags": [
+    "urn:tag:industry:syn:tableware",
+    "urn:tag:keyword:syn:heritage",
+    "urn:tag:keyword:syn:luxury"
+   ]
+  },
+  {
+   "id": "SYN-BR-0301",
+   "name": "Oakline Studio",
+   "type": "brand",
+   "popularity": 0.83,
+   "tags": [
+    "urn:tag:industry:syn:furniture",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:minimalism",
+    "urn:tag:keyword:syn:craft"
+   ]
+  },
+  {
+   "id": "SYN-BR-0302",
+   "name": "Strand Furniture",
+   "type": "brand",
+   "popularity": 0.79,
+   "tags": [
+    "urn:tag:industry:syn:furniture",
+    "urn:tag:keyword:syn:heritage",
+    "urn:tag:keyword:syn:design_culture"
+   ]
+  },
+  {
+   "id": "SYN-BR-0303",
+   "name": "Norrow Design",
+   "type": "brand",
+   "popularity": 0.87,
+   "tags": [
+    "urn:tag:industry:syn:furniture",
+    "urn:tag:keyword:syn:minimalism",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:tech"
+   ]
+  },
+  {
+   "id": "SYN-BR-0401",
+   "name": "Ridgeback Supply",
+   "type": "brand",
+   "popularity": 0.82,
+   "tags": [
+    "urn:tag:industry:syn:trail_gear",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:sustainability",
+    "urn:tag:keyword:syn:heritage",
+    "urn:tag:interests:syn:sailing"
+   ]
+  },
+  {
+   "id": "SYN-BR-0402",
+   "name": "Cairnfield",
+   "type": "brand",
+   "popularity": 0.77,
+   "tags": [
+    "urn:tag:industry:syn:trail_gear",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:coastal"
+   ]
+  },
+  {
+   "id": "SYN-BR-0403",
+   "name": "Summitry",
+   "type": "brand",
+   "popularity": 0.85,
+   "tags": [
+    "urn:tag:industry:syn:trail_gear",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:tech",
+    "urn:tag:keyword:syn:sustainability"
+   ]
+  },
+  {
+   "id": "SYN-BR-0501",
+   "name": "Voltclaw",
+   "type": "brand",
+   "popularity": 0.92,
+   "tags": [
+    "urn:tag:industry:syn:gaming_peripherals",
+    "urn:tag:keyword:syn:tech",
+    "urn:tag:keyword:syn:gaming_culture",
+    "urn:tag:keyword:syn:streetwear"
+   ]
+  },
+  {
+   "id": "SYN-BR-0502",
+   "name": "Pixelforge Gear",
+   "type": "brand",
+   "popularity": 0.86,
+   "tags": [
+    "urn:tag:industry:syn:gaming_peripherals",
+    "urn:tag:keyword:syn:tech",
+    "urn:tag:keyword:syn:gaming_culture"
+   ]
+  },
+  {
+   "id": "SYN-BR-0503",
+   "name": "Hexbyte",
+   "type": "brand",
+   "popularity": 0.81,
+   "tags": [
+    "urn:tag:industry:syn:gaming_peripherals",
+    "urn:tag:keyword:syn:tech",
+    "urn:tag:keyword:syn:gaming_culture",
+    "urn:tag:keyword:syn:design_culture"
+   ]
+  },
+  {
+   "id": "SYN-BR-0601",
+   "name": "Dewpoint Skin",
+   "type": "brand",
+   "popularity": 0.88,
+   "tags": [
+    "urn:tag:industry:syn:skincare",
+    "urn:tag:keyword:syn:wellness_ritual",
+    "urn:tag:keyword:syn:minimalism",
+    "urn:tag:keyword:syn:sustainability"
+   ]
+  },
+  {
+   "id": "SYN-BR-0602",
+   "name": "Mossbloom",
+   "type": "brand",
+   "popularity": 0.76,
+   "tags": [
+    "urn:tag:industry:syn:skincare",
+    "urn:tag:keyword:syn:wellness_ritual",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:craft"
+   ]
+  },
+  {
+   "id": "SYN-BR-0603",
+   "name": "Saltair Botanics",
+   "type": "brand",
+   "popularity": 0.83,
+   "tags": [
+    "urn:tag:industry:syn:skincare",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:wellness_ritual",
+    "urn:tag:keyword:syn:mediterranean"
+   ]
+  },
+  {
+   "id": "SYN-BR-0701",
+   "name": "Arena Nine",
+   "type": "brand",
+   "popularity": 0.73,
+   "tags": [
+    "urn:tag:interests:syn:esports",
+    "urn:tag:keyword:syn:gaming_culture",
+    "urn:tag:keyword:syn:tech",
+    "urn:tag:keyword:syn:streetwear"
+   ]
+  },
+  {
+   "id": "SYN-BR-0801",
+   "name": "Calder & Finch",
+   "type": "brand",
+   "popularity": 0.9,
+   "tags": [
+    "urn:tag:industry:syn:fashion",
+    "urn:tag:keyword:syn:minimalism",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:luxury"
+   ]
+  },
+  {
+   "id": "SYN-BR-0802",
+   "name": "Rue Solenne",
+   "type": "brand",
+   "popularity": 0.87,
+   "tags": [
+    "urn:tag:industry:syn:fashion",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:keyword:syn:luxury",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:streetwear"
+   ]
+  },
+  {
+   "id": "SYN-BR-0803",
+   "name": "Ostra Label",
+   "type": "brand",
+   "popularity": 0.8,
+   "tags": [
+    "urn:tag:industry:syn:fashion",
+    "urn:tag:keyword:syn:streetwear",
+    "urn:tag:keyword:syn:design_culture",
+    "urn:tag:keyword:syn:minimalism"
+   ]
+  },
+  {
+   "id": "SYN-BR-0901",
+   "name": "Fernline",
+   "type": "brand",
+   "popularity": 0.84,
+   "tags": [
+    "urn:tag:industry:syn:outdoor_apparel",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:sustainability",
+    "urn:tag:industry:syn:trail_gear",
+    "urn:tag:interests:syn:cabin_culture"
+   ]
+  },
+  {
+   "id": "SYN-BR-0902",
+   "name": "Bluff & Bracken",
+   "type": "brand",
+   "popularity": 0.88,
+   "tags": [
+    "urn:tag:industry:syn:outdoor_apparel",
+    "urn:tag:keyword:syn:heritage",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:interests:syn:sailing",
+    "urn:tag:interests:syn:cabin_culture"
+   ]
+  },
+  {
+   "id": "SYN-BR-1001",
+   "name": "Starfold Studios",
+   "type": "brand",
+   "popularity": 0.91,
+   "tags": [
+    "urn:tag:industry:syn:video_games",
+    "urn:tag:keyword:syn:gaming_culture",
+    "urn:tag:keyword:syn:tech",
+    "urn:tag:keyword:syn:family_play"
+   ]
+  },
+  {
+   "id": "SYN-BR-1002",
+   "name": "Tinbox Games",
+   "type": "brand",
+   "popularity": 0.79,
+   "tags": [
+    "urn:tag:industry:syn:video_games",
+    "urn:tag:keyword:syn:family_play",
+    "urn:tag:keyword:syn:design_culture"
+   ]
+  },
+  {
+   "id": "SYN-BR-1101",
+   "name": "Brine & Bloom",
+   "type": "brand",
+   "popularity": 0.72,
+   "tags": [
+    "urn:tag:industry:syn:specialty_food",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:coastal"
+   ]
+  },
+  {
+   "id": "SYN-BR-1102",
+   "name": "Olea Pantry",
+   "type": "brand",
+   "popularity": 0.75,
+   "tags": [
+    "urn:tag:industry:syn:specialty_food",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:sustainability"
+   ]
+  },
+  {
+   "id": "SYN-BR-1201",
+   "name": "Gullwing Marine",
+   "type": "brand",
+   "popularity": 0.8,
+   "tags": [
+    "urn:tag:interests:syn:sailing",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:outdoors"
+   ]
+  },
+  {
+   "id": "SYN-BR-1301",
+   "name": "Hearthstead",
+   "type": "brand",
+   "popularity": 0.77,
+   "tags": [
+    "urn:tag:interests:syn:cabin_culture",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:slow_living"
+   ]
+  },
+  {
+   "id": "SYN-BR-1302",
+   "name": "Pinecraft Co",
+   "type": "brand",
+   "popularity": 0.74,
+   "tags": [
+    "urn:tag:interests:syn:cabin_culture",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:outdoors"
+   ]
+  },
+  {
+   "id": "SYN-PL-0001",
+   "name": "Harbor Lantern Guesthouse",
+   "type": "place",
+   "popularity": 0.69,
+   "tags": [
+    "urn:tag:interests:syn:slow_travel",
+    "urn:tag:keyword:syn:coastal",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:credit_card:syn:card_accepted"
+   ]
+  },
+  {
+   "id": "SYN-PL-0002",
+   "name": "Olive Terrace Retreat",
+   "type": "place",
+   "popularity": 0.81,
+   "tags": [
+    "urn:tag:interests:syn:slow_travel",
+    "urn:tag:keyword:syn:mediterranean",
+    "urn:tag:keyword:syn:wellness_ritual",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:credit_card:syn:card_accepted"
+   ]
+  },
+  {
+   "id": "SYN-PL-0003",
+   "name": "Fjordside Cabins",
+   "type": "place",
+   "popularity": 0.77,
+   "tags": [
+    "urn:tag:interests:syn:slow_travel",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:coastal"
+   ]
+  }
+ ],
+ "ambiguousNames": [
+  {
+   "name": "Meridian",
+   "candidates": [
+    "SYN-BR-0005",
+    "SYN-BR-0006"
+   ]
+  },
+  {
+   "name": "Harbor",
+   "candidates": [
+    "SYN-BR-0007",
+    "SYN-PL-0001"
+   ]
+  }
+ ]
+}
