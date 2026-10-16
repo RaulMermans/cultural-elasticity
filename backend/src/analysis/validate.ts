@@ -44,6 +44,13 @@ export function findInvariantViolations(result: AnalysisIngredients): InvariantV
   stability.points.forEach((point, index) => ratio(`stability.points.${index}.jaccard`, point.jaccard));
   ratio("ranking.target.relativeRankPercentile.value", ranking.target?.relativeRankPercentile.value);
   ratio("bridges.numericCoverage", bridges.numericCoverage);
+  result.conditioned.items.forEach((item, index) => {
+    const expectedTop = item.scope.verified ? Math.min(5, item.entityCount) : 0;
+    if (item.topEntities.length !== expectedTop) {
+      violations.push({ path: `conditioned.items.${index}.topEntities`, message: "top entities must be shown exactly when the single-call scope is verified" });
+    }
+    if (item.withinCallValueRange !== null && item.withinCallValueRange < 0) violations.push({ path: `conditioned.items.${index}.withinCallValueRange`, message: "negative range" });
+  });
   ratio("distanceProxy.jaccardOverlap.value", distanceProxy.jaccardOverlap.value);
   ratio("distanceProxy.overlapCoefficient.value", distanceProxy.overlapCoefficient.value);
 

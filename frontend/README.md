@@ -1,6 +1,6 @@
 # frontend
 
-Next.js (App Router) shell for Cultural Elasticity. During Sprint 0 it only shows whether the backend is reachable.
+Next.js (App Router) shell for Cultural Elasticity. It shows whether the backend is reachable. Development-only pages: `/dev/analysis` (Sprint 1 ingredients) and `/dev/methodology` (Sprint 2 methodology result for a live benchmark fixture).
 
 ```sh
 pnpm --filter frontend dev     # http://localhost:3000

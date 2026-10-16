@@ -1,5 +1,6 @@
 export * from "./adjacency.js";
 export * from "./bridges.js";
+export * from "./conditioned.js";
 export * from "./coverage.js";
 export * from "./distance.js";
 export * from "./ingredient.js";

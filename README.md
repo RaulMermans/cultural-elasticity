@@ -4,7 +4,11 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 0B — live Qloo validation complete
+## Current status: Sprint 2 — Cultural Elasticity Methodology v0
+
+- **Sprint 2** defined the first evidence-backed methodology (`elasticity-v0.1`). For a brand and up to six candidate territories it reports **relative position** (from single-call Qloo rank panels, aggregated by rank only), **representation robustness** (does the position survive swapping territory exemplars?), **cultural coherence** (shared tag sets, RAW and operational-filtered), **evidence quality** and a **PROVISIONAL classification**: natural adjacency, credible stretch, uncertain / representation-sensitive or cultural break. **No 0–100 score:** the Relative Elasticity Index was rejected for now after its gate failed on a 6-brand live benchmark. Live benchmark results: 51/57 pairwise orderings correct (24/29 on held-out brands, 22/22 strong-vs-weak). See [docs/sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md](docs/sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md).
+
+Earlier sprints:
 
 - **Sprint 0B** ran the pinned Jacquemus → Boutique Hospitality investigation against the **Qloo hackathon API** (`https://hackathon.api.qloo.com`) through the official harness. Decision: **CONDITIONAL GO**. G1 (brand) and G2 (territory) pass; profile, audience, ranking and bridge evidence are usable only in reduced form. See [docs/sprint-0/QLOO_TECHNICAL_FEASIBILITY.md](docs/sprint-0/QLOO_TECHNICAL_FEASIBILITY.md).
 - **Sprint 1** built the provider-independent `EvidencePacket`, a deterministic ingredient engine and an offline methodology eval harness. It ran unchanged on the first live packet. It produces no score. See [docs/sprint-1/CULTURAL_EVIDENCE_CORE.md](docs/sprint-1/CULTURAL_EVIDENCE_CORE.md).
@@ -21,9 +25,10 @@ Sprint 0 asks one question: can the official Qloo tooling provide enough real, s
 
 ```
 Qloo           = cultural evidence      (official @qloo/qloo-harness: exec / MCP)
-Evidence Core  = deterministic ingredients (backend/src/evidence, backend/src/analysis; no score yet)
+Evidence Core  = deterministic ingredients (backend/src/evidence, backend/src/analysis)
+Methodology    = Cultural Elasticity v0 (backend/src/methodology; deterministic, no LLM; no 0–100 score)
 Agent          = investigation + interpretation (not built yet)
-Frontend       = strategy interface (Sprint 0: health page only)
+Frontend       = strategy interface (health page + developer pages /dev/analysis, /dev/methodology)
 ```
 
 ```
@@ -33,12 +38,14 @@ backend/           Fastify API + Qloo adapter + feasibility investigation
   src/contracts/   Qloo-side evidence record derived from the verified Qloo contract
   src/evidence/    Canonical provider-independent EvidencePacket, normalization, comparability, quality
   src/analysis/    Deterministic ingredient calculators → AnalysisIngredients
-  src/api/         HTTP routes (/health, POST /api/analysis/ingredients)
+  src/methodology/ Cultural Elasticity Methodology v0 → CulturalElasticityResult
+  src/capture/     Sprint 2 pinned live benchmark capture (Qloo → MethodologyInput)
+  src/api/         HTTP routes (/health, POST /api/analysis/ingredients, POST /api/methodology/analyze)
   src/feasibility/ Sprint 0 evidence-collection workflow
-  scripts/         qloo-feasibility.ts (live investigation), eval-methodology.ts / eval-live.ts (offline evals)
+  scripts/         live runs (qloo-feasibility, elasticity-capture) and offline evals (eval-methodology, eval-live, eval-elasticity)
 packages/shared/   Types shared across the frontend/backend boundary
 docs/              Architecture, methodology, sprint reports
-evals/             Fixture policy, synthetic methodology fixtures, sanitized live Qloo evidence
+evals/             Fixture policy, synthetic fixtures, sanitized live Qloo evidence, the cultural-elasticity-v0 benchmark
 ```
 
 See [docs/architecture.md](docs/architecture.md).
@@ -59,10 +66,14 @@ pnpm build
 pnpm check:secrets     # repo + browser-bundle credential scan
 pnpm eval:methodology  # offline methodology evals (synthetic fixtures; not Qloo validation)
 pnpm eval:live         # offline structural checks over captured live + recorded fixtures (no network)
+pnpm eval:elasticity   # offline methodology benchmark over captured live evidence (no network)
+pnpm methodology:jacquemus            # Jacquemus × 6 territories through the methodology (offline replay)
+pnpm methodology:jacquemus -- --live  # refresh the Jacquemus evidence from Qloo first
 pnpm feasibility:qloo  # live Qloo investigation (needs a credential; hackathon host only)
+pnpm capture:elasticity -- --write-fixtures   # live benchmark capture (6 brands, ~100 calls)
 ```
 
-Open http://localhost:3000. It shows `Backend: connected` when the API is up. In development, http://localhost:3000/dev/analysis runs a synthetic fixture through the analysis endpoint. `GET http://127.0.0.1:4000/health` returns `{"status":"ok","service":"cultural-elasticity-api"}`.
+Open http://localhost:3000. It shows `Backend: connected` when the API is up. In development, http://localhost:3000/dev/analysis runs a synthetic fixture through the analysis endpoint, and http://localhost:3000/dev/methodology runs a live benchmark fixture through the methodology (panels, robustness, RAW vs filtered overlap, classification, index gate, trace). `GET http://127.0.0.1:4000/health` returns `{"status":"ok","service":"cultural-elasticity-api"}`.
 
 Docker is optional and used only for backend deployment portability (`docker build -f backend/Dockerfile .`).
 

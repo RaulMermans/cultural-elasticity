@@ -20,6 +20,7 @@ import {
   liveCall,
   mutualRelatedBridge,
   pinnedSubject,
+  conditionedEntitiesFromRecommend,
   rankingFromRank,
   recurringSignalProfile,
   type LiveCall,
@@ -49,7 +50,8 @@ export class LiveCollector {
     return (this.options.sleep ?? ((t: number) => new Promise<void>((r) => setTimeout(r, t))))(ms);
   }
 
-  async call<O extends QlooOperation>(id: string, operation: O, input: QlooOperationInput[O]): Promise<LiveCall | undefined> {
+  /** `acceptEmpty` returns `empty` envelopes too, for evidence where an observed empty result matters. */
+  async call<O extends QlooOperation>(id: string, operation: O, input: QlooOperationInput[O], options: { acceptEmpty?: boolean } = {}): Promise<LiveCall | undefined> {
     for (let attempt = 1; ; attempt += 1) {
       const wait = this.lastCall + this.options.spacingMs - Date.now();
       if (wait > 0) await this.sleep(wait);
@@ -74,7 +76,7 @@ export class LiveCollector {
       if (status === "partial" || status === "degraded") this.flags.push({ code: `QLOO_${status.toUpperCase()}`, detail: `${id}: Qloo marked this result ${status} (${(call.envelope.warnings ?? []).join("; ") || "no detail"})` });
       const outcome = status === "needs_input" ? "needs_input" : status === "empty" ? "empty" : "ok";
       this.steps.push({ id, operation, outcome, correlationId: execution.correlation_id, detail: `${status}; results=${Array.isArray(call.envelope.results) ? call.envelope.results.length : typeof call.envelope.results}`, attempts: attempt });
-      return outcome === "ok" ? call : undefined;
+      return outcome === "ok" || (outcome === "empty" && options.acceptEmpty === true) ? call : undefined;
     }
   }
 }
@@ -226,7 +228,7 @@ export async function runLiveInvestigation(collector: LiveCollector, config: Liv
   const jointTarget = await collector.call("target.joint_tags", "entity_tags", { entities: config.territory.exemplars.map((e) => e.id), limit: L });
 
   const brandRelated = await collector.call("brand.related", "recommend", { target_type: "brand", signals: [config.brand.id], limit: L, explain: false });
-  const conditioned = await collector.call("target.brand_conditioned", "recommend", { target_type: "place", signals: [config.brand.id], include_tags: [config.territory.pinnedTag.id], limit: L, explain: false });
+  const conditioned = await collector.call("target.brand_conditioned", "recommend", { target_type: "place", signals: [config.brand.id], include_tags: [config.territory.pinnedTag.id], limit: L, explain: false }, { acceptEmpty: true });
 
   // Audience + demographics (opaque).
   const compare = await collector.call("audience.compare", "compare_audiences", { group_a: [config.brand.id], group_b: config.territory.exemplars.slice(0, config.audienceExemplarCap).map((e) => e.id), limit: 10 });
@@ -283,6 +285,17 @@ export async function runLiveInvestigation(collector: LiveCollector, config: Liv
     ...(compare && { audience: audienceFromCompare(compare) }),
     ...(rankPrimary && { ranking: rankingFromRank(rankPrimary, config.brand.id, targetCandidate) }),
     bridges: bridgeEvidence,
+    // Sprint 2: the brand-conditioned territory query now has a canonical packet slot.
+    ...(conditioned && {
+      conditionedEntities: [
+        conditionedEntitiesFromRecommend(conditioned, {
+          conditionedOn: { id: config.brand.id, label: config.brand.label },
+          territory: { id: config.territory.pinnedTag.id, label: config.territory.pinnedTag.label },
+          entityType: "urn:entity:place",
+          requestedLimit: L,
+        }),
+      ],
+    }),
     limitations,
   });
   const ingredients = analyzeEvidencePacket(packet);

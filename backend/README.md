@@ -17,6 +17,9 @@ pnpm --filter backend eval:methodology  # offline methodology evals on synthetic
 | `src/config/env.ts` | Env parsing. Exposes only *whether* a Qloo credential exists. |
 | `src/api/health.ts` | `GET /health` |
 | `src/api/analysis.ts` | `POST /api/analysis/ingredients`: EvidencePacket → AnalysisIngredients (offline, development only) |
+| `src/api/methodology.ts` | `POST /api/methodology/analyze`: MethodologyInput → CulturalElasticityResult (deterministic, offline, development only) |
+| `src/methodology/` | Cultural Elasticity Methodology v0: panels, rank-only aggregation, robustness, operational tag filter, set coherence, classification, index gate, benchmark calibration |
+| `src/capture/` | Sprint 2 pinned live capture (`elasticity-config.ts` holds every exemplar and concept judgement) |
 | `src/evidence/` | Canonical provider-independent `EvidencePacket` schema, normalization, comparability rules, provenance, evidence quality |
 | `src/analysis/` | Deterministic ingredient calculators (overlap, coverage/stability, audience, ranking, bridges, distance-proxy ingredients) and output invariants |
 | `src/qloo/types.ts` | Workflow inputs and contract constants, each marked `[contract]`, `[harness]` or `[live]` |

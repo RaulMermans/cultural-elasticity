@@ -13,6 +13,7 @@ import { assessEvidenceQuality } from "../evidence/quality.js";
 import { EvidenceValidationError, parseEvidencePacket, type EvidencePacket, type Limitation } from "../evidence/schema.js";
 import { analyzeAudienceEvidence } from "./adjacency.js";
 import { analyzeBridges } from "./bridges.js";
+import { analyzeConditioned } from "./conditioned.js";
 import { profileCoverageReport, topNSensitivity } from "./coverage.js";
 import { buildDistanceProxyIngredients } from "./distance.js";
 import { computeOverlap } from "./overlap.js";
@@ -34,6 +35,7 @@ export function computeAnalysisIngredients({ packet, limitations: normalizationL
   const audience = analyzeAudienceEvidence(packet.audience);
   const ranking = analyzeRanking(packet.ranking, brand.subject.id);
   const bridges = analyzeBridges(packet.bridges);
+  const conditioned = analyzeConditioned(packet.conditionedEntities, brand.subject.id);
   const distanceProxy = buildDistanceProxyIngredients({ overlap, coverage: profileCoverage, stability, audience, ranking, bridges, brandId: brand.subject.id });
   const evidenceQuality = assessEvidenceQuality(packet);
 
@@ -47,6 +49,7 @@ export function computeAnalysisIngredients({ packet, limitations: normalizationL
     audience,
     ranking,
     bridges,
+    conditioned,
     distanceProxy,
     evidenceQuality,
     limitations: dedupeLimitations([
@@ -58,6 +61,7 @@ export function computeAnalysisIngredients({ packet, limitations: normalizationL
       ...audience.limitations,
       ...ranking.limitations,
       ...bridges.limitations,
+      ...conditioned.limitations,
     ]),
     provenance: allProvenance(packet),
   };
@@ -84,5 +88,6 @@ function allProvenance(packet: EvidencePacket) {
     ...(packet.audience ? [packet.audience.provenance, ...packet.audience.interpretableMetrics.map((m) => m.provenance)] : []),
     ...(packet.ranking ? [packet.ranking.provenance, ...packet.ranking.candidates.map((c) => c.provenance)] : []),
     ...(packet.bridges ?? []).flatMap((bridge) => [bridge.provenance, ...bridge.signals.map((s) => s.provenance)]),
+    ...(packet.conditionedEntities ?? []).flatMap((evidence) => [evidence.provenance, ...evidence.entities.map((e) => e.provenance)]),
   );
 }

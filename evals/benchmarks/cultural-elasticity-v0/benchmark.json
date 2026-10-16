@@ -1,0 +1,101 @@
+{
+  "benchmarkVersion": "cultural-elasticity-benchmark-v0",
+  "notice": "HUMAN-CURATED EVALUATION LABELS, NOT OBJECTIVE TRUTH. Labels express a prior expectation of relative cultural proximity between a brand and candidate territories. They make no claim that any brand has extended, or would succeed, in any territory. Pairwise assertions (A should rank above B) are the primary test; absolute labels are secondary.",
+  "labelProvenance": {
+    "curator": "Implementing agent (Claude), Sprint 2, pending review by the project owner",
+    "recordedAt": "2026-10-16T11:38:44Z",
+    "method": "Written from general brand knowledge before the Sprint 2 live capture. For five brands no Qloo evidence about the brand had been seen when the labels were written (labelsWrittenBlind = true). Jacquemus labels were written after the Sprint 0B live results had been seen, so Jacquemus is assigned to the calibration subset and never to held-out evaluation."
+  },
+  "labelScale": {
+    "expected_strong": "expected near the top of this candidate set for this brand",
+    "expected_mid": "expected in the middle of this candidate set",
+    "expected_weak": "expected near the bottom of this candidate set (includes deliberate weak controls)"
+  },
+  "split": {
+    "unit": "brand",
+    "rule": "Split by brand, fixed before any Sprint 2 capture. A brand contributes cases to exactly one subset.",
+    "calibration": ["jacquemus", "muji", "alienware"],
+    "heldOut": ["patagonia", "lululemon", "nintendo"]
+  },
+  "territorySet": ["boutique_hospitality", "ceramics", "furniture", "sailing_marine", "wellness", "gaming_hardware"],
+  "brands": [
+    {
+      "key": "jacquemus",
+      "label": "Jacquemus",
+      "labelsWrittenBlind": false,
+      "labels": [
+        { "territory": "boutique_hospitality", "label": "expected_strong", "rationale": "Paris fashion house built on a Mediterranean lifestyle image; design-led hospitality is an adjacent lifestyle expression of the same taste community." },
+        { "territory": "ceramics", "label": "expected_mid", "rationale": "Home and table objects are a common lifestyle extension for fashion houses, but craft ceramics audiences are not fashion audiences." },
+        { "territory": "furniture", "label": "expected_mid", "rationale": "Design furniture shares a design-literate audience with fashion, without a direct product link." },
+        { "territory": "wellness", "label": "expected_mid", "rationale": "Beauty and self-care sit next to fashion; the wellness exemplars are heterogeneous." },
+        { "territory": "sailing_marine", "label": "expected_weak", "rationale": "The territory is represented by technical outdoor and boat-shoe heritage brands, far from Paris high fashion despite seaside imagery." },
+        { "territory": "gaming_hardware", "label": "expected_weak", "rationale": "Weak control: performance PC peripherals share little taste or audience with high fashion." }
+      ]
+    },
+    {
+      "key": "muji",
+      "label": "Muji",
+      "labelsWrittenBlind": true,
+      "labels": [
+        { "territory": "furniture", "label": "expected_strong", "rationale": "Minimalist household goods retailer whose core range includes simple furniture; Scandinavian design furniture shares the functional-minimal aesthetic." },
+        { "territory": "ceramics", "label": "expected_strong", "rationale": "Simple tableware is part of Muji's core household range; craft and heritage ceramics share the everyday-object focus." },
+        { "territory": "wellness", "label": "expected_mid", "rationale": "Aroma and skincare products are adjacent, but the wellness exemplars include a luxury resort and lifestyle media." },
+        { "territory": "boutique_hospitality", "label": "expected_mid", "rationale": "Design-led lodging is a plausible lifestyle expression of a minimalist design brand, but not its core." },
+        { "territory": "sailing_marine", "label": "expected_weak", "rationale": "Technical sailing apparel and nautical footwear are unrelated to minimalist household goods." },
+        { "territory": "gaming_hardware", "label": "expected_weak", "rationale": "Weak control: RGB gaming peripherals are aesthetically opposite to Muji's no-brand minimalism." }
+      ]
+    },
+    {
+      "key": "alienware",
+      "label": "Alienware",
+      "labelsWrittenBlind": true,
+      "labels": [
+        { "territory": "gaming_hardware", "label": "expected_strong", "rationale": "Gaming PC brand; the territory exemplars are its direct category peers." },
+        { "territory": "boutique_hospitality", "label": "expected_weak", "rationale": "Weak control: design hotels share little with a gaming hardware audience." },
+        { "territory": "ceramics", "label": "expected_weak", "rationale": "Weak control: craft and heritage ceramics are unrelated to gaming hardware." },
+        { "territory": "furniture", "label": "expected_weak", "rationale": "The furniture exemplars are design-furniture brands, not gaming chairs." },
+        { "territory": "sailing_marine", "label": "expected_weak", "rationale": "Weak control: no shared category or taste community." },
+        { "territory": "wellness", "label": "expected_weak", "rationale": "Weak control: luxury wellness and skincare share little with gaming hardware." }
+      ]
+    },
+    {
+      "key": "patagonia",
+      "label": "Patagonia",
+      "labelsWrittenBlind": true,
+      "labels": [
+        { "territory": "sailing_marine", "label": "expected_strong", "rationale": "Outdoor technical apparel brand; the territory includes outdoor/sailing apparel and nautical heritage brands." },
+        { "territory": "wellness", "label": "expected_mid", "rationale": "Outdoor activity overlaps with active wellbeing, but the wellness exemplars lean luxury and beauty." },
+        { "territory": "boutique_hospitality", "label": "expected_weak", "rationale": "Urban design hotels are far from an outdoor and environmental brand." },
+        { "territory": "ceramics", "label": "expected_weak", "rationale": "No category or audience link expected." },
+        { "territory": "furniture", "label": "expected_weak", "rationale": "Design furniture is not expected to be close to an outdoor apparel brand." },
+        { "territory": "gaming_hardware", "label": "expected_weak", "rationale": "Weak control: indoor gaming hardware versus outdoor activity." }
+      ]
+    },
+    {
+      "key": "lululemon",
+      "label": "Lululemon",
+      "labelsWrittenBlind": true,
+      "labels": [
+        { "territory": "wellness", "label": "expected_strong", "rationale": "Yoga and athleisure brand built around wellbeing; wellness is its core cultural territory." },
+        { "territory": "sailing_marine", "label": "expected_mid", "rationale": "Active outdoor apparel is adjacent to athletic apparel, without a sailing focus." },
+        { "territory": "boutique_hospitality", "label": "expected_mid", "rationale": "Lifestyle hotels and members' clubs share an urban, affluent, wellness-aware audience." },
+        { "territory": "furniture", "label": "expected_weak", "rationale": "No category or audience link expected." },
+        { "territory": "ceramics", "label": "expected_weak", "rationale": "No category or audience link expected." },
+        { "territory": "gaming_hardware", "label": "expected_weak", "rationale": "Weak control: sedentary gaming hardware versus active wellbeing." }
+      ]
+    },
+    {
+      "key": "nintendo",
+      "label": "Nintendo",
+      "labelsWrittenBlind": true,
+      "labels": [
+        { "territory": "gaming_hardware", "label": "expected_strong", "rationale": "Video game console maker; gaming peripherals share the gaming audience." },
+        { "territory": "wellness", "label": "expected_mid", "rationale": "Fitness and wellbeing titles exist in Nintendo's catalogue, a weak but real link to wellbeing." },
+        { "territory": "boutique_hospitality", "label": "expected_weak", "rationale": "Weak control: design hotels are unrelated to family video games." },
+        { "territory": "ceramics", "label": "expected_weak", "rationale": "Weak control: no shared category or taste community." },
+        { "territory": "furniture", "label": "expected_weak", "rationale": "Weak control: design furniture is unrelated to family video games." },
+        { "territory": "sailing_marine", "label": "expected_weak", "rationale": "Weak control: no shared category or taste community." }
+      ]
+    }
+  ]
+}

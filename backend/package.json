@@ -12,7 +12,10 @@
     "test": "vitest run",
     "feasibility:qloo": "tsx scripts/qloo-feasibility.ts",
     "eval:methodology": "tsx scripts/eval-methodology.ts",
-    "eval:live": "tsx scripts/eval-live.ts"
+    "eval:live": "tsx scripts/eval-live.ts",
+    "capture:elasticity": "tsx scripts/elasticity-capture.ts",
+    "eval:elasticity": "tsx scripts/eval-elasticity.ts",
+    "methodology:jacquemus": "tsx scripts/methodology-jacquemus.ts"
   },
   "dependencies": {
     "@cultural-elasticity/shared": "workspace:*",
