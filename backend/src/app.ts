@@ -1,5 +1,6 @@
 import Fastify, { type FastifyInstance } from "fastify";
-import { healthRoutes } from "./routes/health.js";
+import { analysisRoutes } from "./api/analysis.js";
+import { healthRoutes } from "./api/health.js";
 
 export type BuildAppOptions = {
   logLevel?: string;
@@ -18,5 +19,6 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
   });
 
   app.register(healthRoutes);
+  app.register(analysisRoutes);
   return app;
 }

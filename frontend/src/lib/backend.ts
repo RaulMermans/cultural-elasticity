@@ -1,5 +1,5 @@
 import "server-only";
-import { isHealthResponse } from "@cultural-elasticity/shared";
+import { isAnalysisIngredients, isHealthResponse, type AnalysisIngredients } from "@cultural-elasticity/shared";
 
 export type BackendStatus = "connected" | "unavailable";
 
@@ -16,5 +16,29 @@ export async function getBackendHealth(): Promise<BackendStatus> {
     return isHealthResponse(await response.json()) ? "connected" : "unavailable";
   } catch {
     return "unavailable";
+  }
+}
+
+export type AnalysisResult =
+  | { status: "ok"; ingredients: AnalysisIngredients }
+  | { status: "rejected"; detail: string }
+  | { status: "unavailable" };
+
+/** Development only: sends an EvidencePacket to the backend's offline analysis endpoint. */
+export async function postAnalysisIngredients(packet: unknown): Promise<AnalysisResult> {
+  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  try {
+    const response = await fetch(new URL("/api/analysis/ingredients", baseUrl), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(packet),
+      cache: "no-store",
+      signal: AbortSignal.timeout(5000),
+    });
+    const body: unknown = await response.json();
+    if (response.ok && isAnalysisIngredients(body)) return { status: "ok", ingredients: body };
+    return { status: "rejected", detail: JSON.stringify(body).slice(0, 2000) };
+  } catch {
+    return { status: "unavailable" };
   }
 }

@@ -1,0 +1,1077 @@
+{
+  "fixtureType": "synthetic",
+  "notice": "SYNTHETIC: hand-written methodology test data. Not Qloo output and not evidence about any real brand, place or audience.",
+  "caseId": "A",
+  "name": "high-overlap",
+  "title": "High overlap / coherent territory",
+  "description": "16 of 20 ranked signals shared, complete untruncated profiles, verified cross-call values, audience metric, single-call ranking and bridges.",
+  "expectedProperties": [
+    "shared signal count greater than cases B and C",
+    "weighted shared overlap available",
+    "evidence quality HIGH"
+  ],
+  "packet": {
+    "schemaVersion": "ce-evidence/0.1",
+    "origin": "synthetic",
+    "brand": {
+      "subject": {
+        "id": "syn-brand-a",
+        "label": "Synthetic Brand A",
+        "type": "brand",
+        "resolution": "confirmed",
+        "provenance": [
+          {
+            "source": "synthetic-fixture",
+            "operation": "resolve",
+            "correlationId": "syn-corr-a-brand-resolve",
+            "capturedAt": "2026-01-01T00:00:00Z"
+          }
+        ]
+      },
+      "signals": [
+        {
+          "id": "syn-sig-001",
+          "label": "Synthetic signal 001",
+          "category": "category-beta",
+          "rank": 1,
+          "numeric": {
+            "value": 1.0,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-002",
+          "label": "Synthetic signal 002",
+          "category": "category-gamma",
+          "rank": 2,
+          "numeric": {
+            "value": 0.97,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-003",
+          "label": "Synthetic signal 003",
+          "category": "category-delta",
+          "rank": 3,
+          "numeric": {
+            "value": 0.94,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-004",
+          "label": "Synthetic signal 004",
+          "category": "category-alpha",
+          "rank": 4,
+          "numeric": {
+            "value": 0.91,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-005",
+          "label": "Synthetic signal 005",
+          "category": "category-beta",
+          "rank": 5,
+          "numeric": {
+            "value": 0.88,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-006",
+          "label": "Synthetic signal 006",
+          "category": "category-gamma",
+          "rank": 6,
+          "numeric": {
+            "value": 0.85,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-007",
+          "label": "Synthetic signal 007",
+          "category": "category-delta",
+          "rank": 7,
+          "numeric": {
+            "value": 0.82,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-008",
+          "label": "Synthetic signal 008",
+          "category": "category-alpha",
+          "rank": 8,
+          "numeric": {
+            "value": 0.79,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-009",
+          "label": "Synthetic signal 009",
+          "category": "category-beta",
+          "rank": 9,
+          "numeric": {
+            "value": 0.76,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-010",
+          "label": "Synthetic signal 010",
+          "category": "category-gamma",
+          "rank": 10,
+          "numeric": {
+            "value": 0.73,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-011",
+          "label": "Synthetic signal 011",
+          "category": "category-delta",
+          "rank": 11,
+          "numeric": {
+            "value": 0.7,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-012",
+          "label": "Synthetic signal 012",
+          "category": "category-alpha",
+          "rank": 12,
+          "numeric": {
+            "value": 0.67,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-013",
+          "label": "Synthetic signal 013",
+          "category": "category-beta",
+          "rank": 13,
+          "numeric": {
+            "value": 0.64,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-014",
+          "label": "Synthetic signal 014",
+          "category": "category-gamma",
+          "rank": 14,
+          "numeric": {
+            "value": 0.61,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-015",
+          "label": "Synthetic signal 015",
+          "category": "category-delta",
+          "rank": 15,
+          "numeric": {
+            "value": 0.58,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-016",
+          "label": "Synthetic signal 016",
+          "category": "category-alpha",
+          "rank": 16,
+          "numeric": {
+            "value": 0.55,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-017",
+          "label": "Synthetic signal 017",
+          "category": "category-beta",
+          "rank": 17,
+          "numeric": {
+            "value": 0.52,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-018",
+          "label": "Synthetic signal 018",
+          "category": "category-gamma",
+          "rank": 18,
+          "numeric": {
+            "value": 0.49,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-019",
+          "label": "Synthetic signal 019",
+          "category": "category-delta",
+          "rank": 19,
+          "numeric": {
+            "value": 0.46,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-020",
+          "label": "Synthetic signal 020",
+          "category": "category-alpha",
+          "rank": 20,
+          "numeric": {
+            "value": 0.43,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        }
+      ],
+      "truncated": false,
+      "provenance": [
+        {
+          "source": "synthetic-fixture",
+          "operation": "profile",
+          "correlationId": "syn-corr-a-brand-profile",
+          "capturedAt": "2026-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "target": {
+      "subject": {
+        "id": "syn-territory-a",
+        "label": "Synthetic Territory A",
+        "type": "territory_exemplar",
+        "resolution": "confirmed",
+        "provenance": [
+          {
+            "source": "synthetic-fixture",
+            "operation": "resolve",
+            "correlationId": "syn-corr-a-target-resolve",
+            "capturedAt": "2026-01-01T00:00:00Z"
+          }
+        ]
+      },
+      "signals": [
+        {
+          "id": "syn-sig-003",
+          "label": "Synthetic signal 003",
+          "category": "category-delta",
+          "rank": 1,
+          "numeric": {
+            "value": 1.0,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-001",
+          "label": "Synthetic signal 001",
+          "category": "category-beta",
+          "rank": 2,
+          "numeric": {
+            "value": 0.97,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-002",
+          "label": "Synthetic signal 002",
+          "category": "category-gamma",
+          "rank": 3,
+          "numeric": {
+            "value": 0.94,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-005",
+          "label": "Synthetic signal 005",
+          "category": "category-beta",
+          "rank": 4,
+          "numeric": {
+            "value": 0.91,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-004",
+          "label": "Synthetic signal 004",
+          "category": "category-alpha",
+          "rank": 5,
+          "numeric": {
+            "value": 0.88,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-006",
+          "label": "Synthetic signal 006",
+          "category": "category-gamma",
+          "rank": 6,
+          "numeric": {
+            "value": 0.85,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-008",
+          "label": "Synthetic signal 008",
+          "category": "category-alpha",
+          "rank": 7,
+          "numeric": {
+            "value": 0.82,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-007",
+          "label": "Synthetic signal 007",
+          "category": "category-delta",
+          "rank": 8,
+          "numeric": {
+            "value": 0.79,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-009",
+          "label": "Synthetic signal 009",
+          "category": "category-beta",
+          "rank": 9,
+          "numeric": {
+            "value": 0.76,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-010",
+          "label": "Synthetic signal 010",
+          "category": "category-gamma",
+          "rank": 10,
+          "numeric": {
+            "value": 0.73,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-012",
+          "label": "Synthetic signal 012",
+          "category": "category-alpha",
+          "rank": 11,
+          "numeric": {
+            "value": 0.7,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-011",
+          "label": "Synthetic signal 011",
+          "category": "category-delta",
+          "rank": 12,
+          "numeric": {
+            "value": 0.67,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-013",
+          "label": "Synthetic signal 013",
+          "category": "category-beta",
+          "rank": 13,
+          "numeric": {
+            "value": 0.64,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-014",
+          "label": "Synthetic signal 014",
+          "category": "category-gamma",
+          "rank": 14,
+          "numeric": {
+            "value": 0.61,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-016",
+          "label": "Synthetic signal 016",
+          "category": "category-alpha",
+          "rank": 15,
+          "numeric": {
+            "value": 0.58,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-015",
+          "label": "Synthetic signal 015",
+          "category": "category-delta",
+          "rank": 16,
+          "numeric": {
+            "value": 0.55,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-041",
+          "label": "Synthetic signal 041",
+          "category": "category-beta",
+          "rank": 17,
+          "numeric": {
+            "value": 0.52,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-042",
+          "label": "Synthetic signal 042",
+          "category": "category-gamma",
+          "rank": 18,
+          "numeric": {
+            "value": 0.49,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-043",
+          "label": "Synthetic signal 043",
+          "category": "category-delta",
+          "rank": 19,
+          "numeric": {
+            "value": 0.46,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-044",
+          "label": "Synthetic signal 044",
+          "category": "category-alpha",
+          "rank": 20,
+          "numeric": {
+            "value": 0.43,
+            "scale": "synthetic-scale-1",
+            "comparisonScope": "cross_call_verified"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-a-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        }
+      ],
+      "truncated": false,
+      "provenance": [
+        {
+          "source": "synthetic-fixture",
+          "operation": "profile",
+          "correlationId": "syn-corr-a-target-profile",
+          "capturedAt": "2026-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "audience": {
+      "fields": {
+        "note": "synthetic opaque passthrough"
+      },
+      "interpretableMetrics": [
+        {
+          "id": "syn-metric-audience-overlap",
+          "label": "Synthetic audience overlap share",
+          "value": 0.62,
+          "direction": "higher_is_closer",
+          "scale": {
+            "min": 0,
+            "max": 1
+          },
+          "comparisonScope": "within_call",
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "audience_compare",
+              "correlationId": "syn-corr-a-audience",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        }
+      ],
+      "provenance": [
+        {
+          "source": "synthetic-fixture",
+          "operation": "audience_compare",
+          "correlationId": "syn-corr-a-audience",
+          "capturedAt": "2026-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "ranking": {
+      "rankedAgainst": "syn-brand-a",
+      "targetCandidateId": "syn-territory-a",
+      "candidates": [
+        {
+          "id": "syn-territory-a",
+          "label": "Synthetic Territory A",
+          "rank": 1,
+          "numeric": {
+            "value": 0.9,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-a-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-candidate-a-1",
+          "label": "Synthetic candidate 1",
+          "rank": 2,
+          "numeric": {
+            "value": 0.75,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-a-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-candidate-a-2",
+          "label": "Synthetic candidate 2",
+          "rank": 3,
+          "numeric": {
+            "value": 0.6,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-a-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-candidate-a-3",
+          "label": "Synthetic candidate 3",
+          "rank": 4,
+          "numeric": {
+            "value": 0.45,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-a-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-candidate-a-4",
+          "label": "Synthetic candidate 4",
+          "rank": 5,
+          "numeric": {
+            "value": 0.3,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-a-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        }
+      ],
+      "comparisonScope": "single_call",
+      "provenance": [
+        {
+          "source": "synthetic-fixture",
+          "operation": "rank",
+          "correlationId": "syn-corr-a-rank",
+          "capturedAt": "2026-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "bridges": [
+      {
+        "semantics": "shared_signal",
+        "signals": [
+          {
+            "id": "syn-sig-001",
+            "label": "Synthetic signal 001",
+            "category": "category-beta",
+            "provenance": [
+              {
+                "source": "synthetic-fixture",
+                "operation": "bridge",
+                "correlationId": "syn-corr-a-bridge-shared_signal",
+                "capturedAt": "2026-01-01T00:00:00Z"
+              }
+            ]
+          },
+          {
+            "id": "syn-sig-002",
+            "label": "Synthetic signal 002",
+            "category": "category-gamma",
+            "provenance": [
+              {
+                "source": "synthetic-fixture",
+                "operation": "bridge",
+                "correlationId": "syn-corr-a-bridge-shared_signal",
+                "capturedAt": "2026-01-01T00:00:00Z"
+              }
+            ]
+          },
+          {
+            "id": "syn-sig-003",
+            "label": "Synthetic signal 003",
+            "category": "category-delta",
+            "provenance": [
+              {
+                "source": "synthetic-fixture",
+                "operation": "bridge",
+                "correlationId": "syn-corr-a-bridge-shared_signal",
+                "capturedAt": "2026-01-01T00:00:00Z"
+              }
+            ]
+          }
+        ],
+        "provenance": [
+          {
+            "source": "synthetic-fixture",
+            "operation": "bridge",
+            "correlationId": "syn-corr-a-bridge-shared_signal",
+            "capturedAt": "2026-01-01T00:00:00Z"
+          }
+        ]
+      },
+      {
+        "semantics": "joint_signal",
+        "signals": [
+          {
+            "id": "syn-sig-045",
+            "label": "Synthetic signal 045",
+            "category": "category-beta",
+            "provenance": [
+              {
+                "source": "synthetic-fixture",
+                "operation": "bridge",
+                "correlationId": "syn-corr-a-bridge-joint_signal",
+                "capturedAt": "2026-01-01T00:00:00Z"
+              }
+            ]
+          },
+          {
+            "id": "syn-sig-046",
+            "label": "Synthetic signal 046",
+            "category": "category-gamma",
+            "provenance": [
+              {
+                "source": "synthetic-fixture",
+                "operation": "bridge",
+                "correlationId": "syn-corr-a-bridge-joint_signal",
+                "capturedAt": "2026-01-01T00:00:00Z"
+              }
+            ]
+          }
+        ],
+        "provenance": [
+          {
+            "source": "synthetic-fixture",
+            "operation": "bridge",
+            "correlationId": "syn-corr-a-bridge-joint_signal",
+            "capturedAt": "2026-01-01T00:00:00Z"
+          }
+        ]
+      }
+    ],
+    "limitations": [
+      {
+        "code": "SYNTHETIC_FIXTURE",
+        "detail": "synthetic methodology fixture; not provider evidence"
+      }
+    ],
+    "provenance": [
+      {
+        "source": "synthetic-fixture",
+        "operation": "assemble_packet",
+        "correlationId": "syn-corr-a-packet",
+        "capturedAt": "2026-01-01T00:00:00Z"
+      }
+    ]
+  }
+}

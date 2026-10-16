@@ -4,7 +4,12 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 0 — Technical Feasibility
+## Current status: Sprint 1 — Cultural Evidence Core
+
+- **Sprint 1** built the provider-independent `EvidencePacket`, a deterministic ingredient engine and an offline methodology eval harness. It produces no score yet. Results are on synthetic fixtures only. See [docs/sprint-1/CULTURAL_EVIDENCE_CORE.md](docs/sprint-1/CULTURAL_EVIDENCE_CORE.md).
+- **Sprint 0B** (live Qloo validation) is blocked on a credential: `LIVE_QLOO_VALIDATION_NOT_RUN`.
+
+## Sprint 0 — Technical Feasibility
 
 Sprint 0 asks one question: can the official Qloo tooling provide enough real, structured evidence for a defensible Elasticity methodology?
 
@@ -15,7 +20,7 @@ Sprint 0 asks one question: can the official Qloo tooling provide enough real, s
 
 ```
 Qloo           = cultural evidence      (official @qloo/qloo-harness: exec / MCP)
-Elasticity     = deterministic measurement (backend; not built yet)
+Evidence Core  = deterministic ingredients (backend/src/evidence, backend/src/analysis; no score yet)
 Agent          = investigation + interpretation (not built yet)
 Frontend       = strategy interface (Sprint 0: health page only)
 ```
@@ -24,12 +29,15 @@ Frontend       = strategy interface (Sprint 0: health page only)
 frontend/          Next.js app (server-side calls to the backend only; never to Qloo)
 backend/           Fastify API + Qloo adapter + feasibility investigation
   src/qloo/        QlooClient interface, harness transport, envelope normalization, errors
-  src/contracts/   Evidence contracts (EvidencePacket etc.) derived from the verified Qloo contract
+  src/contracts/   Qloo-side evidence record derived from the verified Qloo contract
+  src/evidence/    Canonical provider-independent EvidencePacket, normalization, comparability, quality
+  src/analysis/    Deterministic ingredient calculators → AnalysisIngredients
+  src/api/         HTTP routes (/health, POST /api/analysis/ingredients)
   src/feasibility/ Sprint 0 evidence-collection workflow
-  scripts/         qloo-feasibility.ts (live investigation entry point)
+  scripts/         qloo-feasibility.ts (live investigation), eval-methodology.ts (offline evals)
 packages/shared/   Types shared across the frontend/backend boundary
 docs/              Architecture, methodology, sprint reports
-evals/             Fixture policy and (future) recorded live evidence
+evals/             Fixture policy, synthetic methodology fixtures, (future) recorded live evidence
 ```
 
 See [docs/architecture.md](docs/architecture.md).
@@ -48,10 +56,11 @@ pnpm lint
 pnpm typecheck
 pnpm build
 pnpm check:secrets     # repo + browser-bundle credential scan
+pnpm eval:methodology  # offline methodology evals (synthetic fixtures; not Qloo validation)
 pnpm feasibility:qloo  # live Qloo investigation (needs a credential)
 ```
 
-Open http://localhost:3000. It shows `Backend: connected` when the API is up. `GET http://127.0.0.1:4000/health` returns `{"status":"ok","service":"cultural-elasticity-api"}`.
+Open http://localhost:3000. It shows `Backend: connected` when the API is up. In development, http://localhost:3000/dev/analysis runs a synthetic fixture through the analysis endpoint. `GET http://127.0.0.1:4000/health` returns `{"status":"ok","service":"cultural-elasticity-api"}`.
 
 Docker is optional and used only for backend deployment portability (`docker build -f backend/Dockerfile .`).
 

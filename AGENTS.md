@@ -8,7 +8,7 @@ Rules for any human or AI agent working in this repository.
 
 ## Non-negotiables
 
-1. **Never fabricate Qloo evidence.** No invented entity IDs, tags, affinities, schemas or "example" responses presented as real. Synthetic test fixtures must be labelled SYNTHETIC, use placeholder IDs, and live under `backend/tests/fixtures/synthetic/`.
+1. **Never fabricate Qloo evidence.** No invented entity IDs, tags, affinities, schemas or "example" responses presented as real. Synthetic test fixtures must be labelled SYNTHETIC, use placeholder IDs, and live under `backend/tests/fixtures/synthetic/` (unit tests) or `evals/fixtures/synthetic/` (methodology evals, `"fixtureType": "synthetic"`).
 2. **Deterministic code owns every number.** Scores, rankings, overlaps and any future Elasticity metric are computed by tested code from Qloo evidence.
 3. **LLMs may not invent core scores.** The agent may choose what to investigate and may interpret an evidence packet. It may not produce, adjust or "estimate" a metric.
 4. **No secrets in the repo, logs, prompts, docs or fixtures.** `QLOO_API_KEY` is read only by the backend and the Qloo harness child process. Run `pnpm check:secrets` before committing.
@@ -32,5 +32,6 @@ Rules for any human or AI agent working in this repository.
 
 ```sh
 pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:secrets
+pnpm eval:methodology   # offline, synthetic; never report as Qloo validation
 pnpm feasibility:qloo   # live; report its result separately
 ```
