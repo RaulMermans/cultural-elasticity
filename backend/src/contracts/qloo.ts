@@ -1,5 +1,7 @@
 /**
- * Internal evidence contracts (Sprint 0, preliminary).
+ * Qloo-side evidence record (Sprint 0, preliminary). This is adapter input, NOT the canonical packet:
+ * the analytical engine consumes only the provider-independent EvidencePacket in ../evidence/schema.ts.
+ * Mapping this record to that packet is Sprint 0B/2 work, to be written from live-observed output.
  *
  * Derived from what the Qloo harness 0.1.26 verifiably emits (see backend/src/qloo/types.ts for the
  * [contract]/[harness]/[live] levels). Shapes Qloo does not type, such as compare_audiences results,

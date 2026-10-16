@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Cultural Elasticity",
-  description: "Sprint 0 — Qloo technical feasibility",
+  description: "Sprint 1 — Cultural Evidence Core",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

@@ -2,6 +2,8 @@
 
 **Status:** preliminary. There are no weights, no formula and no Elasticity Score. They will be defined only after live Qloo evidence passes the Sprint 0 gates. See [../sprint-0/QLOO_TECHNICAL_FEASIBILITY.md](../sprint-0/QLOO_TECHNICAL_FEASIBILITY.md) §13 and §17.
 
+The deterministic ingredients a methodology may draw on now exist (Sprint 1). See [../sprint-1/CULTURAL_EVIDENCE_CORE.md](../sprint-1/CULTURAL_EVIDENCE_CORE.md). They are still not combined.
+
 ## Principles
 
 1. **Evidence before formula.** Every ingredient must come from a Qloo workflow whose output has been observed live and typed.

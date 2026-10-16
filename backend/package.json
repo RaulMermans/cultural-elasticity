@@ -10,7 +10,8 @@
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "feasibility:qloo": "tsx scripts/qloo-feasibility.ts"
+    "feasibility:qloo": "tsx scripts/qloo-feasibility.ts",
+    "eval:methodology": "tsx scripts/eval-methodology.ts"
   },
   "dependencies": {
     "@cultural-elasticity/shared": "workspace:*",

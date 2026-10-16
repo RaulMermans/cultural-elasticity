@@ -1,0 +1,545 @@
+{
+  "fixtureType": "synthetic",
+  "notice": "SYNTHETIC: hand-written methodology test data. Not Qloo output and not evidence about any real brand, place or audience.",
+  "caseId": "F",
+  "name": "truncated-profiles",
+  "title": "Truncated profiles",
+  "description": "Both profiles are truncated top-10 lists sharing 4 signals.",
+  "expectedProperties": [
+    "quality surfaces BRAND_PROFILE_TRUNCATED and TARGET_PROFILE_TRUNCATED",
+    "profileCoverage indicator limited",
+    "overlap ingredients carry truncation limitations"
+  ],
+  "packet": {
+    "schemaVersion": "ce-evidence/0.1",
+    "origin": "synthetic",
+    "brand": {
+      "subject": {
+        "id": "syn-brand-f",
+        "label": "Synthetic Brand F",
+        "type": "brand",
+        "resolution": "confirmed",
+        "provenance": [
+          {
+            "source": "synthetic-fixture",
+            "operation": "resolve",
+            "correlationId": "syn-corr-f-brand-resolve",
+            "capturedAt": "2026-01-01T00:00:00Z"
+          }
+        ]
+      },
+      "signals": [
+        {
+          "id": "syn-sig-001",
+          "label": "Synthetic signal 001",
+          "category": "category-beta",
+          "rank": 1,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-002",
+          "label": "Synthetic signal 002",
+          "category": "category-gamma",
+          "rank": 2,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-003",
+          "label": "Synthetic signal 003",
+          "category": "category-delta",
+          "rank": 3,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-004",
+          "label": "Synthetic signal 004",
+          "category": "category-alpha",
+          "rank": 4,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-005",
+          "label": "Synthetic signal 005",
+          "category": "category-beta",
+          "rank": 5,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-006",
+          "label": "Synthetic signal 006",
+          "category": "category-gamma",
+          "rank": 6,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-007",
+          "label": "Synthetic signal 007",
+          "category": "category-delta",
+          "rank": 7,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-008",
+          "label": "Synthetic signal 008",
+          "category": "category-alpha",
+          "rank": 8,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-009",
+          "label": "Synthetic signal 009",
+          "category": "category-beta",
+          "rank": 9,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-010",
+          "label": "Synthetic signal 010",
+          "category": "category-gamma",
+          "rank": 10,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-brand-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        }
+      ],
+      "truncated": true,
+      "provenance": [
+        {
+          "source": "synthetic-fixture",
+          "operation": "profile",
+          "correlationId": "syn-corr-f-brand-profile",
+          "capturedAt": "2026-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "target": {
+      "subject": {
+        "id": "syn-territory-f",
+        "label": "Synthetic Territory F",
+        "type": "territory_exemplar",
+        "resolution": "confirmed",
+        "provenance": [
+          {
+            "source": "synthetic-fixture",
+            "operation": "resolve",
+            "correlationId": "syn-corr-f-target-resolve",
+            "capturedAt": "2026-01-01T00:00:00Z"
+          }
+        ]
+      },
+      "signals": [
+        {
+          "id": "syn-sig-001",
+          "label": "Synthetic signal 001",
+          "category": "category-beta",
+          "rank": 1,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-002",
+          "label": "Synthetic signal 002",
+          "category": "category-gamma",
+          "rank": 2,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-003",
+          "label": "Synthetic signal 003",
+          "category": "category-delta",
+          "rank": 3,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-004",
+          "label": "Synthetic signal 004",
+          "category": "category-alpha",
+          "rank": 4,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-031",
+          "label": "Synthetic signal 031",
+          "category": "category-delta",
+          "rank": 5,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-032",
+          "label": "Synthetic signal 032",
+          "category": "category-alpha",
+          "rank": 6,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-033",
+          "label": "Synthetic signal 033",
+          "category": "category-beta",
+          "rank": 7,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-034",
+          "label": "Synthetic signal 034",
+          "category": "category-gamma",
+          "rank": 8,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-035",
+          "label": "Synthetic signal 035",
+          "category": "category-delta",
+          "rank": 9,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-sig-036",
+          "label": "Synthetic signal 036",
+          "category": "category-alpha",
+          "rank": 10,
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "profile",
+              "correlationId": "syn-corr-f-target-profile",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        }
+      ],
+      "truncated": true,
+      "provenance": [
+        {
+          "source": "synthetic-fixture",
+          "operation": "profile",
+          "correlationId": "syn-corr-f-target-profile",
+          "capturedAt": "2026-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "audience": {
+      "fields": {
+        "note": "synthetic opaque passthrough"
+      },
+      "interpretableMetrics": [
+        {
+          "id": "syn-metric-audience-overlap",
+          "label": "Synthetic audience overlap share",
+          "value": 0.4,
+          "direction": "higher_is_closer",
+          "scale": {
+            "min": 0,
+            "max": 1
+          },
+          "comparisonScope": "within_call",
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "audience_compare",
+              "correlationId": "syn-corr-f-audience",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        }
+      ],
+      "provenance": [
+        {
+          "source": "synthetic-fixture",
+          "operation": "audience_compare",
+          "correlationId": "syn-corr-f-audience",
+          "capturedAt": "2026-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "ranking": {
+      "rankedAgainst": "syn-brand-f",
+      "targetCandidateId": "syn-territory-f",
+      "candidates": [
+        {
+          "id": "syn-candidate-f-1",
+          "label": "Synthetic candidate 1",
+          "rank": 1,
+          "numeric": {
+            "value": 0.9,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-f-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-territory-f",
+          "label": "Synthetic Territory F",
+          "rank": 2,
+          "numeric": {
+            "value": 0.75,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-f-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-candidate-f-2",
+          "label": "Synthetic candidate 2",
+          "rank": 3,
+          "numeric": {
+            "value": 0.6,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-f-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-candidate-f-3",
+          "label": "Synthetic candidate 3",
+          "rank": 4,
+          "numeric": {
+            "value": 0.45,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-f-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "syn-candidate-f-4",
+          "label": "Synthetic candidate 4",
+          "rank": 5,
+          "numeric": {
+            "value": 0.3,
+            "scale": "synthetic-rank-scale",
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "synthetic-fixture",
+              "operation": "rank",
+              "correlationId": "syn-corr-f-rank",
+              "capturedAt": "2026-01-01T00:00:00Z"
+            }
+          ]
+        }
+      ],
+      "comparisonScope": "single_call",
+      "provenance": [
+        {
+          "source": "synthetic-fixture",
+          "operation": "rank",
+          "correlationId": "syn-corr-f-rank",
+          "capturedAt": "2026-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "bridges": [
+      {
+        "semantics": "shared_signal",
+        "signals": [
+          {
+            "id": "syn-sig-001",
+            "label": "Synthetic signal 001",
+            "category": "category-beta",
+            "provenance": [
+              {
+                "source": "synthetic-fixture",
+                "operation": "bridge",
+                "correlationId": "syn-corr-f-bridge-shared_signal",
+                "capturedAt": "2026-01-01T00:00:00Z"
+              }
+            ]
+          },
+          {
+            "id": "syn-sig-002",
+            "label": "Synthetic signal 002",
+            "category": "category-gamma",
+            "provenance": [
+              {
+                "source": "synthetic-fixture",
+                "operation": "bridge",
+                "correlationId": "syn-corr-f-bridge-shared_signal",
+                "capturedAt": "2026-01-01T00:00:00Z"
+              }
+            ]
+          }
+        ],
+        "provenance": [
+          {
+            "source": "synthetic-fixture",
+            "operation": "bridge",
+            "correlationId": "syn-corr-f-bridge-shared_signal",
+            "capturedAt": "2026-01-01T00:00:00Z"
+          }
+        ]
+      }
+    ],
+    "limitations": [
+      {
+        "code": "SYNTHETIC_FIXTURE",
+        "detail": "synthetic methodology fixture; not provider evidence"
+      }
+    ],
+    "provenance": [
+      {
+        "source": "synthetic-fixture",
+        "operation": "assemble_packet",
+        "correlationId": "syn-corr-f-packet",
+        "capturedAt": "2026-01-01T00:00:00Z"
+      }
+    ]
+  }
+}

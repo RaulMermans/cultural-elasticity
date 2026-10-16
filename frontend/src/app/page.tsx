@@ -9,8 +9,8 @@ export default async function Home() {
   return (
     <main>
       <h1>CULTURAL ELASTICITY</h1>
-      <p className="sprint">Sprint 0</p>
-      <p>Qloo Technical Feasibility</p>
+      <p className="sprint">Sprint 1</p>
+      <p>Cultural Evidence Core</p>
       <p>
         Backend: <strong data-status={backend}>{backend}</strong>
       </p>
