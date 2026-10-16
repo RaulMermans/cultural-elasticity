@@ -1,0 +1,12 @@
+packages:
+  - frontend
+  - backend
+  - packages/*
+
+# pnpm 10 blocks dependency lifecycle scripts by default. Allow only what the toolchain needs.
+onlyBuiltDependencies:
+  - esbuild
+# Transitive deps of @qloo/qloo-harness's model runtime; not needed for `qloo exec`.
+ignoredBuiltDependencies:
+  - "@google/genai"
+  - protobufjs

@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Secrets — never commit real credentials
+.env
+.env.*
+!.env.example
+
+# Local Qloo harness state, if QLOO_HOME is pointed inside the repo
+.qloo/
+
+# Unreviewed live feasibility output (review + sanitize before promoting to evals/fixtures/live)
+backend/feasibility-output/
+
+.DS_Store
+*.log

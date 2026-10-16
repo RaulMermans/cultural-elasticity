@@ -1,0 +1,32 @@
+:root {
+  color-scheme: light dark;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 3rem 1rem;
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+h1 {
+  letter-spacing: 0.2em;
+  font-size: 1.5rem;
+}
+
+.sprint {
+  margin-bottom: 0;
+  opacity: 0.7;
+}
+
+[data-status="connected"] {
+  color: #15803d;
+}
+
+[data-status="unavailable"] {
+  color: #b91c1c;
+}
