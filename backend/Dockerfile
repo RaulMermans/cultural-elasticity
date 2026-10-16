@@ -2,7 +2,7 @@
 # Build from the repository root (the backend depends on the shared workspace package):
 #   docker build -f backend/Dockerfile -t cultural-elasticity-api .
 #   docker run --rm -p 4000:4000 --env-file backend/.env cultural-elasticity-api
-# The image contains no credentials. Supply QLOO_API_KEY at runtime only.
+# The image contains no credentials. Supply QLOO_API_KEY and QLOO_API_BASE_URL (https://hackathon.api.qloo.com) at runtime only.
 # The official Qloo harness (stdio MCP / exec) runs inside this container, which is why the backend
 # targets a container-capable runtime rather than browser or ordinary serverless execution.
 

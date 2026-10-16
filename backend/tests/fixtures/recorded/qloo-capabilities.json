@@ -1,7 +1,8 @@
 {
   "_recorded": {
     "source": "qloo mcp tools/call qloo_capabilities (harness 0.1.26), offline",
-    "recordedAt": "2026-10-16"
+    "recordedAt": "2026-10-16",
+    "historical": "HISTORICAL Sprint 0A capture, offline, no credential, no API request. upstream.production_server is the harness contract's descriptive default upstream, not the environment this project uses: hackathon runs target https://hackathon.api.qloo.com (see backend/src/qloo/environment.ts)."
   },
   "contract_version": "1.0.0",
   "contract_checksum": "sha256:762bdcc5e14ff797b6de739d2658a83f78af35e68d7a5a3449455be6046924f5",

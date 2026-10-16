@@ -4,16 +4,17 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 1 — Cultural Evidence Core
+## Current status: Sprint 0B — live Qloo validation complete
 
-- **Sprint 1** built the provider-independent `EvidencePacket`, a deterministic ingredient engine and an offline methodology eval harness. It produces no score yet. Results are on synthetic fixtures only. See [docs/sprint-1/CULTURAL_EVIDENCE_CORE.md](docs/sprint-1/CULTURAL_EVIDENCE_CORE.md).
-- **Sprint 0B** (live Qloo validation) is blocked on a credential: `LIVE_QLOO_VALIDATION_NOT_RUN`.
+- **Sprint 0B** ran the pinned Jacquemus → Boutique Hospitality investigation against the **Qloo hackathon API** (`https://hackathon.api.qloo.com`) through the official harness. Decision: **CONDITIONAL GO**. G1 (brand) and G2 (territory) pass; profile, audience, ranking and bridge evidence are usable only in reduced form. See [docs/sprint-0/QLOO_TECHNICAL_FEASIBILITY.md](docs/sprint-0/QLOO_TECHNICAL_FEASIBILITY.md).
+- **Sprint 1** built the provider-independent `EvidencePacket`, a deterministic ingredient engine and an offline methodology eval harness. It ran unchanged on the first live packet. It produces no score. See [docs/sprint-1/CULTURAL_EVIDENCE_CORE.md](docs/sprint-1/CULTURAL_EVIDENCE_CORE.md).
+- **Sprint 0A** was contract-only (no credential). Its findings are kept, labelled historical, in the same feasibility document.
 
 ## Sprint 0 — Technical Feasibility
 
 Sprint 0 asks one question: can the official Qloo tooling provide enough real, structured evidence for a defensible Elasticity methodology?
 
-- Result: **CONDITIONAL GO**, at the contract level only. Live Qloo validation has **not run** yet because no credential was available.
+- Result: **CONDITIONAL GO** on live hackathon-API evidence (2026-10-16). Sprint 0A's earlier CONDITIONAL GO was contract-level only.
 - Full assessment: [docs/sprint-0/QLOO_TECHNICAL_FEASIBILITY.md](docs/sprint-0/QLOO_TECHNICAL_FEASIBILITY.md)
 
 ## Architecture
@@ -34,10 +35,10 @@ backend/           Fastify API + Qloo adapter + feasibility investigation
   src/analysis/    Deterministic ingredient calculators → AnalysisIngredients
   src/api/         HTTP routes (/health, POST /api/analysis/ingredients)
   src/feasibility/ Sprint 0 evidence-collection workflow
-  scripts/         qloo-feasibility.ts (live investigation), eval-methodology.ts (offline evals)
+  scripts/         qloo-feasibility.ts (live investigation), eval-methodology.ts / eval-live.ts (offline evals)
 packages/shared/   Types shared across the frontend/backend boundary
 docs/              Architecture, methodology, sprint reports
-evals/             Fixture policy, synthetic methodology fixtures, (future) recorded live evidence
+evals/             Fixture policy, synthetic methodology fixtures, sanitized live Qloo evidence
 ```
 
 See [docs/architecture.md](docs/architecture.md).
@@ -57,7 +58,8 @@ pnpm typecheck
 pnpm build
 pnpm check:secrets     # repo + browser-bundle credential scan
 pnpm eval:methodology  # offline methodology evals (synthetic fixtures; not Qloo validation)
-pnpm feasibility:qloo  # live Qloo investigation (needs a credential)
+pnpm eval:live         # offline structural checks over captured live + recorded fixtures (no network)
+pnpm feasibility:qloo  # live Qloo investigation (needs a credential; hackathon host only)
 ```
 
 Open http://localhost:3000. It shows `Backend: connected` when the API is up. In development, http://localhost:3000/dev/analysis runs a synthetic fixture through the analysis endpoint. `GET http://127.0.0.1:4000/health` returns `{"status":"ok","service":"cultural-elasticity-api"}`.
@@ -66,23 +68,24 @@ Docker is optional and used only for backend deployment portability (`docker bui
 
 ## Qloo setup
 
-The backend uses the official harness `@qloo/qloo-harness` 0.1.26, installed as a pinned workspace dependency. You don't need a global install. Useful commands:
+The backend uses the official harness `@qloo/qloo-harness` 0.1.26, installed as a pinned workspace dependency. You don't need a global install.
+
+**Hackathon keys work only against `https://hackathon.api.qloo.com`**, not `api.qloo.com` or `staging.api.qloo.com`. The harness **defaults to production** unless told otherwise. Never run the `qloo` CLI by hand with a hackathon key unless both `QLOO_BASE_URL` and `QLOO_TRUSTED_BASE_URL` are set to the hackathon origin. The project's own code does this for you and refuses to run otherwise.
+
+To enable live calls:
 
 ```sh
-pnpm --filter backend exec qloo doctor            # readiness (no network)
-pnpm --filter backend exec qloo explore           # interactive discovery (TTY + model login)
-pnpm --filter backend exec qloo exec find_tags --input '{"query":"boutique hotel"}'
+cp .env.example backend/.env    # then set QLOO_API_KEY; keep QLOO_API_BASE_URL=https://hackathon.api.qloo.com
+pnpm feasibility:qloo
 ```
 
-To enable live calls, either:
+`pnpm feasibility:qloo` checks, in order: credential present → `QLOO_API_BASE_URL` is exactly the hackathon origin (fails closed with `QLOO_HACKATHON_BASE_URL_REQUIRED` / `QLOO_WRONG_ENVIRONMENT`, no default) → the harness itself, offline via `qloo doctor`, reports that origin (`LIVE_QLOO_HOST_VERIFIED`). Only then does it call Qloo. Exit codes: 3 = `LIVE_QLOO_VALIDATION_NOT_RUN` (no key), 4 = `LIVE_QLOO_HOST_NOT_VERIFIED` (nothing sent). It never substitutes mocked data.
+
+Offline harness inspection is safe without a key:
 
 ```sh
-cp .env.example backend/.env    # then set QLOO_API_KEY in backend/.env
-# or
-pnpm --filter backend exec qloo setup
+pnpm --filter backend exec qloo doctor            # readiness (no network without --network)
 ```
-
-Without a credential, `pnpm feasibility:qloo` prints `LIVE_QLOO_VALIDATION_NOT_RUN`, lists what remains unverified, and exits 3. It never substitutes mocked data.
 
 ## ⚠️ Secrets
 

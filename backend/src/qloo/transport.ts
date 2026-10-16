@@ -10,6 +10,7 @@ import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
+import { harnessChildEnv, QlooEnvironmentError, requireHackathonBaseUrl } from "./environment.js";
 import { QlooTransportError } from "./errors.js";
 import type { QlooOperation } from "./types.js";
 
@@ -44,6 +45,10 @@ export type HarnessExecTransportOptions = {
   /** Path to the harness bin script. Defaults to the pinned @qloo/qloo-harness dependency. */
   binPath?: string;
   timeoutMs?: number;
+  /**
+   * Child environment. Must route the harness to the hackathon origin (see harnessChildEnv).
+   * Defaults to harnessChildEnv(process.env, QLOO_API_BASE_URL), which throws when that is unset.
+   */
   env?: NodeJS.ProcessEnv;
 };
 
@@ -52,10 +57,24 @@ export function defaultHarnessBinPath(): string {
   return join(dirname(entry), "bin.js");
 }
 
-/** Removes the credential from any text that could end up in an error message or log. */
+const API_KEY_HEADER = /(x-api-key["']?\s*[:=]\s*["']?)[^\s"',}]+/giu;
+
+/** Removes the credential, and any X-Api-Key header value, from text that could reach an error or log. */
 export function scrubSecrets(text: string, env: NodeJS.ProcessEnv = process.env): string {
   const key = env.QLOO_API_KEY?.trim();
-  return key && key.length >= 4 ? text.split(key).join("[redacted]") : text;
+  const withoutKey = key && key.length >= 4 ? text.split(key).join("[redacted]") : text;
+  return withoutKey.replace(API_KEY_HEADER, "$1[redacted]");
+}
+
+/**
+ * Refuses a child environment that would let the harness choose its own upstream: QLOO_BASE_URL
+ * must be the validated hackathon origin and QLOO_TRUSTED_BASE_URL must equal it.
+ */
+export function assertHackathonRouting(env: NodeJS.ProcessEnv): void {
+  const origin = requireHackathonBaseUrl(env.QLOO_BASE_URL);
+  if (env.QLOO_TRUSTED_BASE_URL !== origin) {
+    throw new QlooEnvironmentError("QLOO_WRONG_ENVIRONMENT", "QLOO_TRUSTED_BASE_URL must equal the hackathon origin for harness calls.");
+  }
 }
 
 export class HarnessExecTransport implements QlooTransport {
@@ -67,7 +86,8 @@ export class HarnessExecTransport implements QlooTransport {
   constructor(options: HarnessExecTransportOptions = {}) {
     this.binPath = options.binPath ?? defaultHarnessBinPath();
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-    this.env = options.env ?? process.env;
+    this.env = options.env ?? harnessChildEnv(process.env, requireHackathonBaseUrl(process.env.QLOO_API_BASE_URL));
+    assertHackathonRouting(this.env);
   }
 
   execute(operation: QlooOperation, input: unknown): Promise<TransportResult> {

@@ -1,0 +1,3158 @@
+{
+  "fixtureType": "live",
+  "notice": "LIVE: sanitized evidence captured from the Qloo hackathon API. Values are query-relative and comparable only within one call (same correlationId).",
+  "captureDate": "2026-10-16T11:02:41.537Z",
+  "apiEnvironment": "https://hackathon.api.qloo.com",
+  "harnessVersion": "0.1.26",
+  "provenanceSource": "qloo-hackathon-api",
+  "sourceOperations": [
+    {
+      "id": "brand.resolve",
+      "operation": "describe",
+      "outcome": "ok",
+      "correlationId": "exec-9b89847e-7f0f-4d13-884e-6a97be8c9a61"
+    },
+    {
+      "id": "territory.find_tags.Boutique Hospitality",
+      "operation": "find_tags",
+      "outcome": "ok",
+      "correlationId": "exec-0c543a29-cfbe-4174-a84b-de29e306e0c7"
+    },
+    {
+      "id": "territory.find_tags.Boutique Hotel",
+      "operation": "find_tags",
+      "outcome": "ok",
+      "correlationId": "exec-f7b8f84d-73b1-4ef1-a365-99944ce3d506"
+    },
+    {
+      "id": "territory.find_tags.Luxury Hospitality",
+      "operation": "find_tags",
+      "outcome": "ok",
+      "correlationId": "exec-1d7c45ee-e5e2-40ba-ad83-ad135eb883ba"
+    },
+    {
+      "id": "territory.find_tags.Hospitality",
+      "operation": "find_tags",
+      "outcome": "ok",
+      "correlationId": "exec-8f5d8ae1-46f1-4a75-9479-456df32fbf5d"
+    },
+    {
+      "id": "territory.find_tags.Hotels",
+      "operation": "find_tags",
+      "outcome": "ok",
+      "correlationId": "exec-65d5e831-53e2-429b-b837-16137c817fd4"
+    },
+    {
+      "id": "territory.find_tags.Design Hotel",
+      "operation": "find_tags",
+      "outcome": "ok",
+      "correlationId": "exec-fc25d8b9-808d-4540-a7be-f94670627506"
+    },
+    {
+      "id": "brand.tags",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84"
+    },
+    {
+      "id": "brand.tags.repeat",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-88af8779-4412-4c43-8657-6a1bce359a8e"
+    },
+    {
+      "id": "brand.tags.take_5",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-06601cc0-c7d3-47c1-a13d-40c03314bc6f"
+    },
+    {
+      "id": "brand.tags.take_10",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-59bb71e2-82ba-4e5d-8fdd-1ebea35c7f24"
+    },
+    {
+      "id": "brand.tags.take_15",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-cab25e92-4810-4807-bf21-a07c2c43a028"
+    },
+    {
+      "id": "target.exemplar_tags.TRUNK(HOTEL)",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7"
+    },
+    {
+      "id": "target.exemplar_tags.Pikes Ibiza",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b"
+    },
+    {
+      "id": "target.exemplar_tags.The Culver Hotel",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c"
+    },
+    {
+      "id": "target.exemplar_tags.Posada Margherita",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312"
+    },
+    {
+      "id": "target.exemplar_tags.Hôtel Particulier",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249"
+    },
+    {
+      "id": "target.exemplar_tags.Room Mate Aitana",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06"
+    },
+    {
+      "id": "target.exemplar_tags.The Box House Hotel",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991"
+    },
+    {
+      "id": "target.exemplar_tags.The Margi",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879"
+    },
+    {
+      "id": "target.exemplar_tags.Great John Street Hotel",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd"
+    },
+    {
+      "id": "target.exemplar_tags.The Crow's Nest",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880"
+    },
+    {
+      "id": "target.joint_tags",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-10789f16-9371-49dd-96a6-e9efe524340d"
+    },
+    {
+      "id": "brand.related",
+      "operation": "recommend",
+      "outcome": "ok",
+      "correlationId": "exec-9023bac9-1203-4b05-b6d7-ce3bbc979dbc"
+    },
+    {
+      "id": "target.brand_conditioned",
+      "operation": "recommend",
+      "outcome": "ok",
+      "correlationId": "exec-4d8611d9-7347-4647-8997-d3c30d125062"
+    },
+    {
+      "id": "audience.compare",
+      "operation": "compare_audiences",
+      "outcome": "ok",
+      "correlationId": "exec-860b55d8-7f32-4f2d-b9a9-a32f917328b8"
+    },
+    {
+      "id": "audience.demographics",
+      "operation": "audience_demographics",
+      "outcome": "ok",
+      "correlationId": "exec-c6e98c03-57f9-4031-a899-39dc259f3579"
+    },
+    {
+      "id": "ranking.primary",
+      "operation": "rank",
+      "outcome": "ok",
+      "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27"
+    },
+    {
+      "id": "ranking.primary.repeat",
+      "operation": "rank",
+      "outcome": "ok",
+      "correlationId": "exec-ecaf215c-ee23-499d-a4cf-1e337b5db120"
+    },
+    {
+      "id": "ranking.alternate",
+      "operation": "rank",
+      "outcome": "ok",
+      "correlationId": "exec-b8154b63-8941-47c9-93c7-7e7d21c8cc9a"
+    },
+    {
+      "id": "bridge.joint.Boutique Hospitality",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043"
+    },
+    {
+      "id": "bridge.related.Boutique Hospitality",
+      "operation": "recommend",
+      "outcome": "ok",
+      "correlationId": "exec-a9a99769-515d-4142-91f4-a0b8485356db"
+    },
+    {
+      "id": "bridge.joint.Gaming Hardware",
+      "operation": "entity_tags",
+      "outcome": "ok",
+      "correlationId": "exec-bca1f267-4877-413f-a686-9377dbea303d"
+    },
+    {
+      "id": "bridge.related.Gaming Hardware",
+      "operation": "recommend",
+      "outcome": "ok",
+      "correlationId": "exec-ec8e88a5-b5fd-4e4c-85d4-657f9617481b"
+    },
+    {
+      "id": "momentum.trends",
+      "operation": "trends",
+      "outcome": "ok",
+      "correlationId": "exec-a83db44c-e8e3-4f89-b74b-3197b13cf971"
+    }
+  ],
+  "limitations": [
+    "Affinity and response popularity have no documented scale or direction; compare only within one correlationId.",
+    "compare_audiences, audience_demographics and trends fields are undocumented beyond demographics direction; kept opaque.",
+    "Target profile is derived (recurring tags across pinned exemplars), not a Qloo object.",
+    "Live values can change between captures; regression checks assert structure, not exact floats."
+  ],
+  "decision": "CONDITIONAL GO",
+  "gates": [
+    {
+      "id": "G1",
+      "name": "Confirmed brand identity",
+      "tier": "CORE",
+      "status": "PASS",
+      "observed": "resolved 93A50AC5-FCF2-4F47-87C0-E821E0B9F823 (match=exact); pinned matches=true"
+    },
+    {
+      "id": "G2",
+      "name": "Confirmed target territory representation",
+      "tier": "CORE",
+      "status": "PASS",
+      "observed": "pinned tag in tag search=true; 10/10 pinned exemplars returned tags; 20 brand-conditioned territory entities"
+    },
+    {
+      "id": "G3",
+      "name": "Sufficient stable cultural profile evidence",
+      "tier": "CORE",
+      "status": "PARTIAL",
+      "observed": "brand SUFFICIENT_SET_ONLY [C7 affinity range below 0.01 (values do not discriminate)]; target INSUFFICIENT [C4 cultural share below 0.5]"
+    },
+    {
+      "id": "G4",
+      "name": "Interpretable audience evidence",
+      "tier": "ENHANCEMENT",
+      "status": "PARTIAL",
+      "observed": "compare_audiences returned 2 numeric field path(s), none documented; demographics returned (single-entity skew, direction documented, not comparable across calls)"
+    },
+    {
+      "id": "G5",
+      "name": "Valid candidate-relative evidence",
+      "tier": "ENHANCEMENT",
+      "status": "PARTIAL",
+      "observed": "6 candidates with within-call affinity; repeat identical=true; 4/5 territories change position when the exemplar changes"
+    },
+    {
+      "id": "G6",
+      "name": "Useful intermediate cultural bridge evidence",
+      "tier": "ENHANCEMENT",
+      "status": "PARTIAL",
+      "observed": "qualitative only (B): joint tags and mutually related brands exist, but no documented strength or path semantics"
+    }
+  ],
+  "observations": {
+    "brandResolution": {
+      "resolvedId": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+      "match": "exact",
+      "pinnedMatches": true
+    },
+    "pinnedTagSeenInSearch": true,
+    "exemplarsWithTags": 10,
+    "brandConditionedTerritory": [
+      {
+        "label": "Hôtel Mansart",
+        "affinity": 0.958233290344024
+      },
+      {
+        "label": "Hôtel Splendor",
+        "affinity": 0.9525274202606193
+      },
+      {
+        "label": "Grands Boulevards Experimental",
+        "affinity": 0.9477132046764652
+      },
+      {
+        "label": "Restaurant Les Passerelles",
+        "affinity": 0.9469530009087284
+      },
+      {
+        "label": "Georgian House Hotel",
+        "affinity": 0.9395655545079976
+      },
+      {
+        "label": "Hôtel Whistler Paris - 10e arrondissement",
+        "affinity": 0.9383803497443323
+      },
+      {
+        "label": "Hôtel Le Relais Madeleine - 4 étoiles",
+        "affinity": 0.9300982493892549
+      },
+      {
+        "label": "Hôtel de Sèze",
+        "affinity": 0.9275569704921276
+      },
+      {
+        "label": "Seethrough Mykonos",
+        "affinity": 0.9267934321057728
+      },
+      {
+        "label": "The Rookery",
+        "affinity": 0.9260018847172972
+      },
+      {
+        "label": "Room Mate Aitana",
+        "affinity": 0.9255652281423629
+      },
+      {
+        "label": "Hotel Le K2 Djola",
+        "affinity": 0.9254635551548656
+      },
+      {
+        "label": "Hôtel des Lices Saint-Tropez",
+        "affinity": 0.9245417692570902
+      },
+      {
+        "label": "Royal Emeraude Hotel Dinard - MGallery Collection",
+        "affinity": 0.9243040188651831
+      },
+      {
+        "label": "Hotel Verlaine",
+        "affinity": 0.924260496077396
+      },
+      {
+        "label": "HM Balanguera",
+        "affinity": 0.923815829483568
+      },
+      {
+        "label": "Grand Tonic Hôtel & SPA Nuxe",
+        "affinity": 0.923668834647742
+      },
+      {
+        "label": "The Leonard Hotel",
+        "affinity": 0.9234285991333127
+      },
+      {
+        "label": "Le Pre de la Mer",
+        "affinity": 0.9229056089745205
+      },
+      {
+        "label": "Hôtel Beige - 4 étoiles - Paris 9e",
+        "affinity": 0.9224695828017146
+      }
+    ],
+    "relatedBrands": [
+      {
+        "label": "Céline",
+        "affinity": 0.949938244753506
+      },
+      {
+        "label": "Tagwalk",
+        "affinity": 0.9471290693120162
+      },
+      {
+        "label": "Narciso Rodriguez",
+        "affinity": 0.9461645799159593
+      },
+      {
+        "label": "Isabel Marant",
+        "affinity": 0.9442905691317975
+      },
+      {
+        "label": "Dries Van Noten",
+        "affinity": 0.9391940308430573
+      },
+      {
+        "label": "Vetements",
+        "affinity": 0.9370654228043847
+      },
+      {
+        "label": "Helmut Lang",
+        "affinity": 0.9351380218569174
+      },
+      {
+        "label": "Yasmine Eslami",
+        "affinity": 0.9347470187061128
+      },
+      {
+        "label": "Alexandre Vauthier",
+        "affinity": 0.9315211992131425
+      },
+      {
+        "label": "Miista",
+        "affinity": 0.9313782056115674
+      },
+      {
+        "label": "Olivier Theyskens",
+        "affinity": 0.9312274910841761
+      },
+      {
+        "label": "Martin Margiela",
+        "affinity": 0.9295540313539575
+      },
+      {
+        "label": "Acne Studios",
+        "affinity": 0.9294986174335075
+      },
+      {
+        "label": "Halpern",
+        "affinity": 0.9290272737345108
+      },
+      {
+        "label": "R13",
+        "affinity": 0.9283803424569415
+      },
+      {
+        "label": "The Row",
+        "affinity": 0.9272587220563003
+      },
+      {
+        "label": "Fabrizio Viti",
+        "affinity": 0.9272169428981487
+      },
+      {
+        "label": "Alexander Wang",
+        "affinity": 0.9271856415626784
+      },
+      {
+        "label": "Mugler",
+        "affinity": 0.9264266381419772
+      },
+      {
+        "label": "Jil Sander",
+        "affinity": 0.9263173590847856
+      }
+    ],
+    "sufficiency": {
+      "brand": {
+        "role": "brand",
+        "signals": 20,
+        "numericCoverage": 1,
+        "namespaces": 14,
+        "culturalShare": 0.75,
+        "affinityRange": 0.0010470320260471677,
+        "tiesAtMax": 9,
+        "repeatJaccard": 1,
+        "crossTakeJaccard": {
+          "5": 0.6666666666666666,
+          "10": 1,
+          "15": 1
+        },
+        "verdict": "SUFFICIENT_SET_ONLY",
+        "failed": [
+          "C7 affinity range below 0.01 (values do not discriminate)"
+        ]
+      },
+      "target": {
+        "role": "target",
+        "signals": 32,
+        "numericCoverage": 0,
+        "namespaces": 7,
+        "culturalShare": 0.4375,
+        "affinityRange": null,
+        "tiesAtMax": null,
+        "repeatJaccard": null,
+        "crossTakeJaccard": {},
+        "verdict": "INSUFFICIENT",
+        "failed": [
+          "C4 cultural share below 0.5"
+        ]
+      }
+    },
+    "audience": {
+      "returned": true,
+      "numericFieldPaths": [
+        "a[].popularity",
+        "b[].popularity"
+      ],
+      "documentedSemantics": false
+    },
+    "demographics": {
+      "returned": true,
+      "numericFieldPaths": [
+        "[].query.age.24_and_younger",
+        "[].query.age.25_to_29",
+        "[].query.age.30_to_34",
+        "[].query.age.35_to_44",
+        "[].query.age.45_to_54",
+        "[].query.age.55_and_older",
+        "[].query.gender.female",
+        "[].query.gender.male"
+      ]
+    },
+    "rankings": [
+      {
+        "label": "primary",
+        "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+        "order": [
+          {
+            "label": "HAY",
+            "affinity": 0.8208837621099565
+          },
+          {
+            "label": "Ace Hotel",
+            "affinity": 0.7965052614605463
+          },
+          {
+            "label": "Heath Ceramics",
+            "affinity": 0.7356735965745975
+          },
+          {
+            "label": "Six Senses",
+            "affinity": 0.703873515807522
+          },
+          {
+            "label": "Razer",
+            "affinity": 0.6121788379688812
+          },
+          {
+            "label": "Helly Hansen",
+            "affinity": 0.6038248633538794
+          }
+        ]
+      },
+      {
+        "label": "alternate",
+        "correlationId": "exec-b8154b63-8941-47c9-93c7-7e7d21c8cc9a",
+        "order": [
+          {
+            "label": "Aesop",
+            "affinity": 0.8576769592922325
+          },
+          {
+            "label": "The Hoxton",
+            "affinity": 0.8430888675615072
+          },
+          {
+            "label": "VITRA",
+            "affinity": 0.8104378675880028
+          },
+          {
+            "label": "Sebago",
+            "affinity": 0.7940510837494011
+          },
+          {
+            "label": "Heath Ceramics",
+            "affinity": 0.7356735965745975
+          },
+          {
+            "label": "Steel Series",
+            "affinity": 0.5625746639072856
+          }
+        ]
+      }
+    ],
+    "rankingRepeatIdentical": true,
+    "exemplarSensitivity": {
+      "hospitalityJointTagJaccard": {
+        "recurring_vs_joint": 0.061224489795918366
+      },
+      "rankPositionChanges": [
+        {
+          "territory": "Boutique Hospitality",
+          "primary": 2,
+          "alternate": 2
+        },
+        {
+          "territory": "Furniture",
+          "primary": 1,
+          "alternate": 3
+        },
+        {
+          "territory": "Sailing / marine lifestyle",
+          "primary": 6,
+          "alternate": 4
+        },
+        {
+          "territory": "Wellness",
+          "primary": 4,
+          "alternate": 1
+        },
+        {
+          "territory": "Gaming Hardware",
+          "primary": 5,
+          "alternate": 6
+        }
+      ]
+    },
+    "bridges": [
+      {
+        "label": "Boutique Hospitality",
+        "jointTags": [
+          "Identifies as women-owned",
+          "Expensive",
+          "Beetroot Salad",
+          "japanese drama",
+          "Ready To Wear",
+          "electronic",
+          "indie",
+          "based on manga",
+          "Observant",
+          "Chic",
+          "french",
+          "Restaurant",
+          "Bar",
+          "Fries",
+          "female protagonist",
+          "Handbags",
+          "indie pop",
+          "Breakfast Burrito",
+          "French",
+          "friendship"
+        ],
+        "mutualRelated": []
+      },
+      {
+        "label": "Gaming Hardware",
+        "jointTags": [
+          "electronic",
+          "Expensive",
+          "Beetroot Salad",
+          "Inexpensive",
+          "VISA",
+          "Identifies as veteran-owned",
+          "anime animation",
+          "High-Fashion Consumers",
+          "French-Inspired",
+          "Fashion Designer",
+          "playful designs",
+          "Young Creatives",
+          "Fashion Designers",
+          "warmth",
+          "French Fashion",
+          "Fashion",
+          "Artistic Heritage",
+          "French",
+          "Artsy",
+          "Observant"
+        ],
+        "mutualRelated": []
+      }
+    ],
+    "trends": {
+      "returned": true,
+      "numericFieldPaths": [
+        "[].points[].population_percent_delta",
+        "[].points[].population_percentile",
+        "[].points[].population_rank_velocity",
+        "[].points[].velocity_fold_change"
+      ]
+    }
+  },
+  "packet": {
+    "schemaVersion": "ce-evidence/0.1",
+    "origin": "live",
+    "brand": {
+      "subject": {
+        "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+        "label": "Jacquemus",
+        "type": "urn:entity:brand",
+        "resolution": "confirmed",
+        "provenance": [
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "describe",
+            "correlationId": "exec-9b89847e-7f0f-4d13-884e-6a97be8c9a61",
+            "capturedAt": "2026-10-16T10:58:38.577Z"
+          }
+        ]
+      },
+      "signals": [
+        {
+          "id": "urn:tag:credit_card:place:visa",
+          "label": "VISA",
+          "category": "urn:tag:credit_card:place",
+          "rank": 1,
+          "numeric": {
+            "value": 1,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:media:france",
+          "label": "France",
+          "category": "urn:tag:genre:media",
+          "rank": 2,
+          "numeric": {
+            "value": 1,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:place:restaurant:french",
+          "label": "French",
+          "category": "urn:tag:genre:place",
+          "rank": 3,
+          "numeric": {
+            "value": 1,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:hotel_rating:place:five_star",
+          "label": "Five Star",
+          "category": "urn:tag:hotel_rating:place",
+          "rank": 4,
+          "numeric": {
+            "value": 1,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:music:electronic",
+          "label": "electronic",
+          "category": "urn:tag:genre:music",
+          "rank": 5,
+          "numeric": {
+            "value": 1,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:person:model",
+          "label": "Model",
+          "category": "urn:tag:genre:person",
+          "rank": 6,
+          "numeric": {
+            "value": 1,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:inclusivity:place:identifies_as_women_owned",
+          "label": "Identifies as women-owned",
+          "category": "urn:tag:inclusivity:place",
+          "rank": 7,
+          "numeric": {
+            "value": 1,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:cost_description:place:expensive",
+          "label": "Expensive",
+          "category": "urn:tag:cost_description:place",
+          "rank": 8,
+          "numeric": {
+            "value": 1,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:beetroot_salad",
+          "label": "Beetroot Salad",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 9,
+          "numeric": {
+            "value": 1,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:keyword:media:france",
+          "label": "france",
+          "category": "urn:tag:keyword:media",
+          "rank": 10,
+          "numeric": {
+            "value": 0.9998639525029178,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:keyword:media:paris_france",
+          "label": "paris france",
+          "category": "urn:tag:keyword:media",
+          "rank": 11,
+          "numeric": {
+            "value": 0.9997855917667238,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:customer_segment:qloo:high_fashion_consumers",
+          "label": "High-Fashion Consumers",
+          "category": "urn:tag:customer_segment:qloo",
+          "rank": 12,
+          "numeric": {
+            "value": 0.9997461002586604,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:aesthetic_property:qloo:french_inspired",
+          "label": "French-Inspired",
+          "category": "urn:tag:aesthetic_property:qloo",
+          "rank": 13,
+          "numeric": {
+            "value": 0.9995867899939608,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:customer_identity:qloo:fashion_forward_consumers",
+          "label": "Fashion-forward consumers",
+          "category": "urn:tag:customer_identity:qloo",
+          "rank": 14,
+          "numeric": {
+            "value": 0.9995859213250518,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:product_service:qloo:ready_to_wear",
+          "label": "Ready To Wear",
+          "category": "urn:tag:product_service:qloo",
+          "rank": 15,
+          "numeric": {
+            "value": 0.9994352241763685,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:occupation:qloo:fashion_designer",
+          "label": "Fashion Designer",
+          "category": "urn:tag:occupation:qloo",
+          "rank": 16,
+          "numeric": {
+            "value": 0.9992740516530705,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:keyword:qloo:playful_designs",
+          "label": "playful designs",
+          "category": "urn:tag:keyword:qloo",
+          "rank": 17,
+          "numeric": {
+            "value": 0.9991749679154189,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:influencer_appeal:qloo:young_creatives",
+          "label": "Young Creatives",
+          "category": "urn:tag:influencer_appeal:qloo",
+          "rank": 18,
+          "numeric": {
+            "value": 0.9990481061574745,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:category:qloo:fashion_designers",
+          "label": "Fashion Designers",
+          "category": "urn:tag:category:qloo",
+          "rank": 19,
+          "numeric": {
+            "value": 0.998991340287345,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:keyword:media:gay",
+          "label": "gay",
+          "category": "urn:tag:keyword:media",
+          "rank": 20,
+          "numeric": {
+            "value": 0.9989529679739528,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+              "capturedAt": "2026-10-16T10:59:27.596Z"
+            }
+          ]
+        }
+      ],
+      "truncated": true,
+      "provenance": [
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+          "capturedAt": "2026-10-16T10:59:27.596Z"
+        }
+      ]
+    },
+    "target": {
+      "subject": {
+        "id": "urn:tag:interests:qloo:boutique_hospitality",
+        "label": "Boutique Hospitality",
+        "type": "territory:qloo_tag+exemplars",
+        "resolution": "confirmed",
+        "provenance": [
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
+            "capturedAt": "2026-10-16T11:00:02.604Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
+            "capturedAt": "2026-10-16T11:00:09.607Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+            "capturedAt": "2026-10-16T11:00:16.607Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+            "capturedAt": "2026-10-16T11:00:23.611Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+            "capturedAt": "2026-10-16T11:00:30.613Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+            "capturedAt": "2026-10-16T11:00:37.673Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+            "capturedAt": "2026-10-16T11:00:44.674Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
+            "capturedAt": "2026-10-16T11:00:51.679Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+            "capturedAt": "2026-10-16T11:00:58.680Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+            "capturedAt": "2026-10-16T11:01:05.686Z"
+          }
+        ]
+      },
+      "signals": [
+        {
+          "id": "urn:tag:genre:brand:fashion",
+          "label": "Fashion",
+          "category": "urn:tag:genre:brand",
+          "rank": 1,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:place:restaurant:bar",
+          "label": "Bar",
+          "category": "urn:tag:genre:place",
+          "rank": 2,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
+              "capturedAt": "2026-10-16T11:00:09.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:tiramisu",
+          "label": "Tiramisu",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 3,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
+              "capturedAt": "2026-10-16T11:00:02.604Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
+              "capturedAt": "2026-10-16T11:00:51.679Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:inclusivity:place:lgbtq_friendly",
+          "label": "LGBTQ+ friendly",
+          "category": "urn:tag:inclusivity:place",
+          "rank": 4,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
+              "capturedAt": "2026-10-16T11:00:02.604Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
+              "capturedAt": "2026-10-16T11:00:09.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:avocado_toast",
+          "label": "Avocado Toast",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 5,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:media:cooking",
+          "label": "Cooking",
+          "category": "urn:tag:genre:media",
+          "rank": 6,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:music:electronic",
+          "label": "electronic",
+          "category": "urn:tag:genre:music",
+          "rank": 7,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:person:model",
+          "label": "Model",
+          "category": "urn:tag:genre:person",
+          "rank": 8,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:hotel_rating:place:four_star",
+          "label": "Four Star",
+          "category": "urn:tag:hotel_rating:place",
+          "rank": 9,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:place:restaurant:french",
+          "label": "French",
+          "category": "urn:tag:genre:place",
+          "rank": 10,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
+              "capturedAt": "2026-10-16T11:00:02.604Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
+              "capturedAt": "2026-10-16T11:00:51.679Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:cost_description:place:expensive",
+          "label": "Expensive",
+          "category": "urn:tag:cost_description:place",
+          "rank": 11,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:hotel_rating:place:five_star",
+          "label": "Five Star",
+          "category": "urn:tag:hotel_rating:place",
+          "rank": 12,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
+              "capturedAt": "2026-10-16T11:00:51.679Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:music:house",
+          "label": "house",
+          "category": "urn:tag:genre:music",
+          "rank": 13,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
+              "capturedAt": "2026-10-16T11:00:09.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:place:hotel",
+          "label": "Hotel",
+          "category": "urn:tag:genre:place",
+          "rank": 14,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
+              "capturedAt": "2026-10-16T11:00:51.679Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:credit_card:place:discover",
+          "label": "Discover",
+          "category": "urn:tag:credit_card:place",
+          "rank": 15,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:french_fries",
+          "label": "French Fries",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 16,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:chicken_wings",
+          "label": "Chicken Wings",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 17,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:fries",
+          "label": "Fries",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 18,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:toast",
+          "label": "Toast",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 19,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:steak_tartare",
+          "label": "Steak Tartare",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 20,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:eggs_benedict",
+          "label": "Eggs Benedict",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 21,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:media:cookbooks",
+          "label": "Cookbooks",
+          "category": "urn:tag:genre:media",
+          "rank": 22,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:music:indie",
+          "label": "indie",
+          "category": "urn:tag:genre:music",
+          "rank": 23,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:place:restaurant:british",
+          "label": "British",
+          "category": "urn:tag:genre:place",
+          "rank": 24,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
+              "capturedAt": "2026-10-16T11:00:09.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:avocado",
+          "label": "Avocado",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 25,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+              "capturedAt": "2026-10-16T11:00:16.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:burrata",
+          "label": "Burrata",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 26,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+              "capturedAt": "2026-10-16T11:01:05.686Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:fish",
+          "label": "Fish",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 27,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:salad",
+          "label": "Salad",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 28,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:decor:qloo:artistic",
+          "label": "Artistic",
+          "category": "urn:tag:decor:qloo",
+          "rank": 29,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+              "capturedAt": "2026-10-16T11:00:23.611Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+              "capturedAt": "2026-10-16T11:00:44.674Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:place:restaurant:cafe",
+          "label": "Cafe",
+          "category": "urn:tag:genre:place",
+          "rank": 30,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
+              "capturedAt": "2026-10-16T11:00:02.604Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
+              "capturedAt": "2026-10-16T11:00:51.679Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:specialty_dish:place:tarta_queso",
+          "label": "Tarta Queso",
+          "category": "urn:tag:specialty_dish:place",
+          "rank": 31,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
+              "capturedAt": "2026-10-16T11:00:09.607Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+              "capturedAt": "2026-10-16T11:00:37.673Z"
+            }
+          ]
+        },
+        {
+          "id": "urn:tag:genre:brand:fashion:casual",
+          "label": "Casual",
+          "category": "urn:tag:genre:brand",
+          "rank": 32,
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+              "capturedAt": "2026-10-16T11:00:30.613Z"
+            },
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "entity_tags",
+              "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+              "capturedAt": "2026-10-16T11:00:58.680Z"
+            }
+          ]
+        }
+      ],
+      "truncated": true,
+      "provenance": [
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
+          "capturedAt": "2026-10-16T11:00:02.604Z"
+        },
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
+          "capturedAt": "2026-10-16T11:00:09.607Z"
+        },
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+          "capturedAt": "2026-10-16T11:00:16.607Z"
+        },
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+          "capturedAt": "2026-10-16T11:00:23.611Z"
+        },
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+          "capturedAt": "2026-10-16T11:00:30.613Z"
+        },
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+          "capturedAt": "2026-10-16T11:00:37.673Z"
+        },
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+          "capturedAt": "2026-10-16T11:00:44.674Z"
+        },
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
+          "capturedAt": "2026-10-16T11:00:51.679Z"
+        },
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+          "capturedAt": "2026-10-16T11:00:58.680Z"
+        },
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "entity_tags",
+          "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+          "capturedAt": "2026-10-16T11:01:05.686Z"
+        }
+      ]
+    },
+    "audience": {
+      "fields": {
+        "compare_results": {
+          "tags": [],
+          "a": [
+            {
+              "tag_id": "urn:tag:genre:brand:fashion:casual",
+              "name": "Casual",
+              "type": "urn:tag",
+              "subtype": "urn:tag:genre:brand",
+              "entity_id": "00AEDD18-6E68-4327-843E-8E8E52A03B85",
+              "popularity": 0.99765635,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:product_service:qloo:accessories",
+              "name": "Accessories",
+              "type": "urn:tag",
+              "subtype": "urn:tag:product_service:qloo",
+              "entity_id": "03B7E5AD-D7A1-4F4A-878E-BC61FA80728D",
+              "popularity": 0.9863987,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:emotional_tone:qloo:playfulness",
+              "name": "Playfulness",
+              "type": "urn:tag",
+              "subtype": "urn:tag:emotional_tone:qloo",
+              "entity_id": "045F456A-2289-4C8B-8B3D-49BC974E4569",
+              "popularity": 0.9323865,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:genre:brand:fashion:footwear",
+              "name": "Footwear",
+              "type": "urn:tag",
+              "subtype": "urn:tag:genre:brand",
+              "entity_id": "076A63A5-8FF8-4961-91E1-4237CCBA8D83",
+              "popularity": 0.9953524,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:keyword:qloo:french_fashion",
+              "name": "French fashion",
+              "type": "urn:tag",
+              "subtype": "urn:tag:keyword:qloo",
+              "entity_id": "0780F3B9-A212-42ED-A55D-3FB176CBFAAA",
+              "popularity": 0.80036056,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:lifestyle:qloo:art_and_design",
+              "name": "art and design",
+              "type": "urn:tag",
+              "subtype": "urn:tag:lifestyle:qloo",
+              "entity_id": "0CA1DC69-E84C-40BD-BCEC-6551FE9DF19D",
+              "popularity": 0.18663909,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:customer_identity:qloo:creatives",
+              "name": "Creatives",
+              "type": "urn:tag",
+              "subtype": "urn:tag:customer_identity:qloo",
+              "entity_id": "10F20B87-1D9E-4238-B2CD-09CF8ADBF4C0",
+              "popularity": 0.97881806,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:influencer_appeal:qloo:travel_bloggers",
+              "name": "Travel bloggers",
+              "type": "urn:tag",
+              "subtype": "urn:tag:influencer_appeal:qloo",
+              "entity_id": "12B15EA1-161F-4D35-BBDD-F86B29267866",
+              "popularity": 0.92240226,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:personal_style:qloo:minimalist",
+              "name": "Minimalist",
+              "type": "urn:tag",
+              "subtype": "urn:tag:personal_style:qloo",
+              "entity_id": "1346B315-594D-4581-B1C9-9C98155E8672",
+              "popularity": 0.9715032,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:lifestyle:qloo:artistic",
+              "name": "Artistic",
+              "type": "urn:tag",
+              "subtype": "urn:tag:lifestyle:qloo",
+              "entity_id": "18948895-766C-43BA-BA89-C99331D6A1F5",
+              "popularity": 0.9800777,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:personal_style:qloo:chic",
+              "name": "Chic",
+              "type": "urn:tag",
+              "subtype": "urn:tag:personal_style:qloo",
+              "entity_id": "1902ABF0-0340-4029-9B9E-301BB91DC3BA",
+              "popularity": 0.9709601,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:personal_style:qloo:edgy",
+              "name": "Edgy",
+              "type": "urn:tag",
+              "subtype": "urn:tag:personal_style:qloo",
+              "entity_id": "1D86AC76-D47A-4FCF-9F5A-B344530868A4",
+              "popularity": 0.97257787,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:cultural_relevance:qloo:inclusivity",
+              "name": "Inclusivity",
+              "type": "urn:tag",
+              "subtype": "urn:tag:cultural_relevance:qloo",
+              "entity_id": "281132AD-A699-4A19-9FF9-7CC81E852BC7",
+              "popularity": 0.9716072,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:keyword:qloo:french",
+              "name": "French",
+              "type": "urn:tag",
+              "subtype": "urn:tag:keyword:qloo",
+              "entity_id": "2B934410-A8C1-4A64-BC3B-1A88A0E85F2F",
+              "popularity": 0.849057,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:keyword:qloo:playful_designs",
+              "name": "playful designs",
+              "type": "urn:tag",
+              "subtype": "urn:tag:keyword:qloo",
+              "entity_id": "3035912D-ECF5-4577-A69C-1B1D2F883246",
+              "popularity": 0.626456,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:keyword:qloo:designer",
+              "name": "Designer",
+              "type": "urn:tag",
+              "subtype": "urn:tag:keyword:qloo",
+              "entity_id": "3426672E-2F7F-4AE8-AA88-76D1B8B30227",
+              "popularity": 0.9002727,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:customer_segment:qloo:creative_professionals",
+              "name": "Creative Professionals",
+              "type": "urn:tag",
+              "subtype": "urn:tag:customer_segment:qloo",
+              "entity_id": "37937656-6247-48AD-8C49-6277F469796A",
+              "popularity": 0.8885435,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:lifestyle:qloo:modern",
+              "name": "modern",
+              "type": "urn:tag",
+              "subtype": "urn:tag:lifestyle:qloo",
+              "entity_id": "3AFB23F4-335C-4FE0-B204-A8B07D86C103",
+              "popularity": 0.97193074,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:customer_identity:qloo:trendsetters",
+              "name": "Trendsetters",
+              "type": "urn:tag",
+              "subtype": "urn:tag:customer_identity:qloo",
+              "entity_id": "493A26FE-E813-43AC-8647-B3F367EDEB3C",
+              "popularity": 0.98867524,
+              "query": {
+                "count": "1"
+              }
+            },
+            {
+              "tag_id": "urn:tag:customer_segment:qloo:high_fashion_consumers",
+              "name": "High fashion consumers",
+              "type": "urn:tag",
+              "subtype": "urn:tag:customer_segment:qloo",
+              "entity_id": "548B0E10-BCEB-4628-AD11-2464FAE2C1F8",
+              "popularity": 0.39128223,
+              "query": {
+                "count": "1"
+              }
+            }
+          ],
+          "b": [
+            {
+              "tag_id": "urn:tag:category:place:hotel",
+              "name": "Hotel",
+              "type": "urn:tag",
+              "subtype": "urn:tag:category:place",
+              "entity_id": "115D478B-BFC9-4C1D-9EF0-6038B8399587",
+              "popularity": 0.99998266,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:amenity:qloo:private_bathroom",
+              "name": "Private bathroom",
+              "type": "urn:tag",
+              "subtype": "urn:tag:amenity:qloo",
+              "entity_id": "2DD20C6E-D12C-4EB0-95C5-9C8DF61FF42B",
+              "popularity": 0.8190349,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:genre:place:hotel",
+              "name": "Hotel",
+              "type": "urn:tag",
+              "subtype": "urn:tag:genre:place",
+              "entity_id": "65FC1452-2BF8-4114-808D-E91C89665C6F",
+              "popularity": 0.99999195,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:dining_option:qloo:restaurant",
+              "name": "Restaurant",
+              "type": "urn:tag",
+              "subtype": "urn:tag:dining_option:qloo",
+              "entity_id": "660D9D39-5372-4EE9-BAB3-9D26696D36A6",
+              "popularity": 0.960918,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:room_type:qloo:standard",
+              "name": "Standard",
+              "type": "urn:tag",
+              "subtype": "urn:tag:room_type:qloo",
+              "entity_id": "668AC65F-B69D-44D3-8524-4D97EF03E1DB",
+              "popularity": 0.7510285,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:genre:place",
+              "name": "Place",
+              "type": "urn:tag",
+              "subtype": "urn:tag:genre:place",
+              "entity_id": "69142520-E6CC-47A4-A12E-526BC0B5A764",
+              "popularity": 1,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:amenity:qloo:safe",
+              "name": "Safe",
+              "type": "urn:tag",
+              "subtype": "urn:tag:amenity:qloo",
+              "entity_id": "C2CD1EB8-0ED6-43A2-8261-CCE3A48F8455",
+              "popularity": 0.9131113,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:dining_option:qloo:room_service",
+              "name": "Room Service",
+              "type": "urn:tag",
+              "subtype": "urn:tag:dining_option:qloo",
+              "entity_id": "C6EEBAA6-832B-4C3D-8F13-848F04EB3AB1",
+              "popularity": 0.93719375,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:amenity:qloo:free_wi_fi",
+              "name": "Free Wi-Fi",
+              "type": "urn:tag",
+              "subtype": "urn:tag:amenity:qloo",
+              "entity_id": "CE7FA9F7-3E9D-4A4E-BB60-8CB7084234AC",
+              "popularity": 0.99213046,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:amenity:qloo:room_service",
+              "name": "Room Service",
+              "type": "urn:tag",
+              "subtype": "urn:tag:amenity:qloo",
+              "entity_id": "6E99C16B-88FD-407E-A0E4-A3483E295072",
+              "popularity": 0.96371454,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:amenity:qloo:flat_screen_tv",
+              "name": "Flat Screen TV",
+              "type": "urn:tag",
+              "subtype": "urn:tag:amenity:qloo",
+              "entity_id": "703A577D-F19A-438D-9889-BA66AA46E087",
+              "popularity": 0.96812886,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:dining_option:qloo:outdoor_dining",
+              "name": "Outdoor dining",
+              "type": "urn:tag",
+              "subtype": "urn:tag:dining_option:qloo",
+              "entity_id": "5037AB11-8DA5-426C-926B-0E00DA8C80E5",
+              "popularity": 0.5305653,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:amenity:qloo:daily_housekeeping",
+              "name": "Daily Housekeeping",
+              "type": "urn:tag",
+              "subtype": "urn:tag:amenity:qloo",
+              "entity_id": "3271FA4F-8966-486F-8923-9C96E4858131",
+              "popularity": 0.699443,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:amenity:qloo:concierge",
+              "name": "Concierge",
+              "type": "urn:tag",
+              "subtype": "urn:tag:amenity:qloo",
+              "entity_id": "1D820B4C-12E9-48F2-B826-39EC43774DBF",
+              "popularity": 0.04416659,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:room_type:qloo:suite",
+              "name": "Suite",
+              "type": "urn:tag",
+              "subtype": "urn:tag:room_type:qloo",
+              "entity_id": "81C5F51D-D6ED-42A5-BA40-A3649345699C",
+              "popularity": 0.92612326,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:amenity:qloo:hair_dryer",
+              "name": "Hair dryer",
+              "type": "urn:tag",
+              "subtype": "urn:tag:amenity:qloo",
+              "entity_id": "42627451-E454-4267-AAEA-A5CD152AB8B1",
+              "popularity": 0.833445,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:room_type:qloo:family_room",
+              "name": "Family Room",
+              "type": "urn:tag",
+              "subtype": "urn:tag:room_type:qloo",
+              "entity_id": "8D734C7C-2662-4FD6-8A09-90535C4FBCFC",
+              "popularity": 0.9131113,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:dining_option:qloo:bar",
+              "name": "Bar",
+              "type": "urn:tag",
+              "subtype": "urn:tag:dining_option:qloo",
+              "entity_id": "F266949D-DA78-4D80-9F4D-A27FCEE5A3DA",
+              "popularity": 0.9731441,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:hotel_rating:place:four_star",
+              "name": "Four Star",
+              "type": "urn:tag",
+              "subtype": "urn:tag:hotel_rating:place",
+              "entity_id": "9144EC72-CABD-48F6-AC46-46939DAF6B9B",
+              "popularity": 0.99979657,
+              "query": {
+                "count": "3"
+              }
+            },
+            {
+              "tag_id": "urn:tag:ambience:qloo:welcoming",
+              "name": "Welcoming",
+              "type": "urn:tag",
+              "subtype": "urn:tag:ambience:qloo",
+              "entity_id": "F9AD32D6-7BAC-42C9-9B10-926B784EC97F",
+              "popularity": 0.99159884,
+              "query": {
+                "count": "3"
+              }
+            }
+          ],
+          "matchEntities": []
+        }
+      },
+      "interpretableMetrics": [],
+      "provenance": [
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "compare_audiences",
+          "correlationId": "exec-860b55d8-7f32-4f2d-b9a9-a32f917328b8",
+          "capturedAt": "2026-10-16T11:01:33.749Z"
+        }
+      ]
+    },
+    "ranking": {
+      "rankedAgainst": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+      "targetCandidateId": "DD515B0F-B984-49F1-B639-0FD3E1FC65D7",
+      "candidates": [
+        {
+          "id": "52C68410-550C-4AB5-8966-E1107D6D8EBD",
+          "label": "HAY",
+          "rank": 1,
+          "numeric": {
+            "value": 0.8208837621099565,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "rank",
+              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+              "capturedAt": "2026-10-16T11:01:47.953Z"
+            }
+          ]
+        },
+        {
+          "id": "DD515B0F-B984-49F1-B639-0FD3E1FC65D7",
+          "label": "Ace Hotel",
+          "rank": 2,
+          "numeric": {
+            "value": 0.7965052614605463,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "rank",
+              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+              "capturedAt": "2026-10-16T11:01:47.953Z"
+            }
+          ]
+        },
+        {
+          "id": "EE1DE5CF-185B-45E0-9C00-FBE776E2EE18",
+          "label": "Heath Ceramics",
+          "rank": 3,
+          "numeric": {
+            "value": 0.7356735965745975,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "rank",
+              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+              "capturedAt": "2026-10-16T11:01:47.953Z"
+            }
+          ]
+        },
+        {
+          "id": "AAEFD086-F7CF-4397-B3A5-8077E3DADD3D",
+          "label": "Six Senses",
+          "rank": 4,
+          "numeric": {
+            "value": 0.703873515807522,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "rank",
+              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+              "capturedAt": "2026-10-16T11:01:47.953Z"
+            }
+          ]
+        },
+        {
+          "id": "D73F5D9A-6A4B-447F-9041-09813F22F85E",
+          "label": "Razer",
+          "rank": 5,
+          "numeric": {
+            "value": 0.6121788379688812,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "rank",
+              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+              "capturedAt": "2026-10-16T11:01:47.953Z"
+            }
+          ]
+        },
+        {
+          "id": "9988753F-84A3-40F4-95A1-56680C40FB20",
+          "label": "Helly Hansen",
+          "rank": 6,
+          "numeric": {
+            "value": 0.6038248633538794,
+            "comparisonScope": "within_call"
+          },
+          "provenance": [
+            {
+              "source": "qloo-hackathon-api",
+              "operation": "rank",
+              "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+              "capturedAt": "2026-10-16T11:01:47.953Z"
+            }
+          ]
+        }
+      ],
+      "comparisonScope": "single_call",
+      "provenance": [
+        {
+          "source": "qloo-hackathon-api",
+          "operation": "rank",
+          "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+          "capturedAt": "2026-10-16T11:01:47.953Z"
+        }
+      ]
+    },
+    "bridges": [
+      {
+        "semantics": "joint_signal",
+        "signals": [
+          {
+            "id": "urn:tag:inclusivity:place:identifies_as_women_owned",
+            "label": "Identifies as women-owned",
+            "category": "urn:tag:inclusivity:place",
+            "numeric": {
+              "value": 1,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:cost_description:place:expensive",
+            "label": "Expensive",
+            "category": "urn:tag:cost_description:place",
+            "numeric": {
+              "value": 1,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:specialty_dish:place:beetroot_salad",
+            "label": "Beetroot Salad",
+            "category": "urn:tag:specialty_dish:place",
+            "numeric": {
+              "value": 1,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:keyword:media:japanese_drama",
+            "label": "japanese drama",
+            "category": "urn:tag:keyword:media",
+            "numeric": {
+              "value": 0.9997942894758496,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:product_service:qloo:ready_to_wear",
+            "label": "Ready To Wear",
+            "category": "urn:tag:product_service:qloo",
+            "numeric": {
+              "value": 0.9994352241763685,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:genre:music:electronic",
+            "label": "electronic",
+            "category": "urn:tag:genre:music",
+            "numeric": {
+              "value": 0.9992673992673993,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:genre:music:indie",
+            "label": "indie",
+            "category": "urn:tag:genre:music",
+            "numeric": {
+              "value": 0.9990902213728301,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:keyword:media:based_on_manga",
+            "label": "based on manga",
+            "category": "urn:tag:keyword:media",
+            "numeric": {
+              "value": 0.9986903759142856,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:style:qloo:observant",
+            "label": "Observant",
+            "category": "urn:tag:style:qloo",
+            "numeric": {
+              "value": 0.9983419449371481,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:lifestyle:qloo:chic",
+            "label": "Chic",
+            "category": "urn:tag:lifestyle:qloo",
+            "numeric": {
+              "value": 0.9982453983616267,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:keyword:media:french",
+            "label": "french",
+            "category": "urn:tag:keyword:media",
+            "numeric": {
+              "value": 0.9975097971019082,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:genre:place:restaurant",
+            "label": "Restaurant",
+            "category": "urn:tag:genre:place",
+            "numeric": {
+              "value": 0.9974958263772955,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:genre:place:restaurant:bar",
+            "label": "Bar",
+            "category": "urn:tag:genre:place",
+            "numeric": {
+              "value": 0.9973059607542626,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:specialty_dish:place:fries",
+            "label": "Fries",
+            "category": "urn:tag:specialty_dish:place",
+            "numeric": {
+              "value": 0.9969656074919233,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:keyword:media:female_protagonist",
+            "label": "female protagonist",
+            "category": "urn:tag:keyword:media",
+            "numeric": {
+              "value": 0.9967262048578514,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:product_service:qloo:handbags",
+            "label": "Handbags",
+            "category": "urn:tag:product_service:qloo",
+            "numeric": {
+              "value": 0.9960346135780612,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:genre:music:indie_pop",
+            "label": "indie pop",
+            "category": "urn:tag:genre:music",
+            "numeric": {
+              "value": 0.995982640547858,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:specialty_dish:place:breakfast_burrito",
+            "label": "Breakfast Burrito",
+            "category": "urn:tag:specialty_dish:place",
+            "numeric": {
+              "value": 0.9959595959595959,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:genre:place:restaurant:french",
+            "label": "French",
+            "category": "urn:tag:genre:place",
+            "numeric": {
+              "value": 0.9959016393442623,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          },
+          {
+            "id": "urn:tag:keyword:media:friendship",
+            "label": "friendship",
+            "category": "urn:tag:keyword:media",
+            "numeric": {
+              "value": 0.9958889233926249,
+              "comparisonScope": "within_call"
+            },
+            "provenance": [
+              {
+                "source": "qloo-hackathon-api",
+                "operation": "entity_tags",
+                "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+                "capturedAt": "2026-10-16T11:02:08.962Z"
+              }
+            ]
+          }
+        ],
+        "provenance": [
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "entity_tags",
+            "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+            "capturedAt": "2026-10-16T11:02:08.962Z"
+          }
+        ]
+      },
+      {
+        "semantics": "intermediate_signal",
+        "signals": [],
+        "provenance": [
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "recommend",
+            "correlationId": "exec-9023bac9-1203-4b05-b6d7-ce3bbc979dbc",
+            "capturedAt": "2026-10-16T11:01:19.688Z"
+          },
+          {
+            "source": "qloo-hackathon-api",
+            "operation": "recommend",
+            "correlationId": "exec-a9a99769-515d-4142-91f4-a0b8485356db",
+            "capturedAt": "2026-10-16T11:02:15.963Z"
+          }
+        ]
+      }
+    ],
+    "limitations": [
+      {
+        "code": "AFFINITY_SCALE_UNDOCUMENTED",
+        "detail": "Qloo documents no meaning, range or direction for response affinity; values are compared only within one call"
+      },
+      {
+        "code": "TARGET_IS_DERIVED_REPRESENTATION",
+        "detail": "target = tags recurring in ≥2 of 10 pinned exemplars of urn:tag:interests:qloo:boutique_hospitality; not a Qloo profile"
+      },
+      {
+        "code": "TERRITORY_EXEMPLARS_HUMAN_REVIEWED",
+        "detail": "exemplars came from a Qloo query (pinned tag ∩ hotel category, popularity ≥ 0.95) and were then human-reviewed"
+      },
+      {
+        "code": "RANKING_EXEMPLAR_APPROXIMATION",
+        "detail": "each candidate territory is represented by one brand exemplar; see config approximations"
+      },
+      {
+        "code": "OPERATIONAL_TAGS_PRESENT",
+        "detail": "tags in operational namespaces (credit_card, cost_description, specialty_dish, hotel_rating, inclusivity, amenity, offerings, service_option) are kept but are not taste signals"
+      },
+      {
+        "code": "NO_GRAPH_DISTANCE",
+        "detail": "Qloo exposes no graph distance, path or hop count"
+      },
+      {
+        "code": "EXEMPLAR_SUBSTITUTED",
+        "detail": "Ceramics: Astier de Villatte exists in Qloo only as urn:entity:place stores, not as a brand."
+      },
+      {
+        "code": "EXEMPLAR_SUBSTITUTED",
+        "detail": "Sailing / marine lifestyle: North Sails and Henri Lloyd exist only as place stores; Musto was not found. Helly Hansen (sailing heritage, outdoor) and Sebago (nautical footwear) are weak proxies."
+      },
+      {
+        "code": "EXEMPLAR_SUBSTITUTED",
+        "detail": "Wellness: Six Senses is also a hospitality brand, so it does not separate wellness from hospitality."
+      }
+    ],
+    "provenance": [
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-bbfc655f-f61f-44dd-859c-263f6ac95c84",
+        "capturedAt": "2026-10-16T10:59:27.596Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-fffc6bbd-c19b-41be-a775-d1f594c4ecb7",
+        "capturedAt": "2026-10-16T11:00:02.604Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-cb120cae-7095-4ae1-9c46-9dc6b883019b",
+        "capturedAt": "2026-10-16T11:00:09.607Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-17bcecda-064c-4bd8-bf98-23f51a5f862c",
+        "capturedAt": "2026-10-16T11:00:16.607Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-364bc774-28fe-497c-9f7e-880b6b806312",
+        "capturedAt": "2026-10-16T11:00:23.611Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-a057a0e2-402a-4257-9fd1-69388f216249",
+        "capturedAt": "2026-10-16T11:00:30.613Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-dc94f4d2-c745-4752-a36b-cde3782a1f06",
+        "capturedAt": "2026-10-16T11:00:37.673Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-ed3cefc0-6ad0-4801-b3bc-49a660296991",
+        "capturedAt": "2026-10-16T11:00:44.674Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-bbc0dfd7-66f2-4453-8b1a-83cbd1ebd879",
+        "capturedAt": "2026-10-16T11:00:51.679Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-548f5962-96fa-47da-a3c7-97cc87fb3cbd",
+        "capturedAt": "2026-10-16T11:00:58.680Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-42c8c6cc-b614-4c51-9b8a-650c71c18880",
+        "capturedAt": "2026-10-16T11:01:05.686Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "compare_audiences",
+        "correlationId": "exec-860b55d8-7f32-4f2d-b9a9-a32f917328b8",
+        "capturedAt": "2026-10-16T11:01:33.749Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "rank",
+        "correlationId": "exec-cfd19692-e04d-46a9-80ed-1a4d14b7ad27",
+        "capturedAt": "2026-10-16T11:01:47.953Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "entity_tags",
+        "correlationId": "exec-ce139cd6-60d0-45a6-b825-ccf46a18e043",
+        "capturedAt": "2026-10-16T11:02:08.962Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "recommend",
+        "correlationId": "exec-9023bac9-1203-4b05-b6d7-ce3bbc979dbc",
+        "capturedAt": "2026-10-16T11:01:19.688Z"
+      },
+      {
+        "source": "qloo-hackathon-api",
+        "operation": "recommend",
+        "correlationId": "exec-a9a99769-515d-4142-91f4-a0b8485356db",
+        "capturedAt": "2026-10-16T11:02:15.963Z"
+      }
+    ]
+  }
+}
