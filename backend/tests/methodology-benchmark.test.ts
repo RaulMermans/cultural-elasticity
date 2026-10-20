@@ -1,8 +1,8 @@
 /** Benchmark loader, brand-level calibration split and pairwise derivation. */
 import { describe, expect, it } from "vitest";
 import { loadBenchmark } from "../scripts/elasticity-harness.js";
-import { benchmarkSchema, pairwiseAssertions, subsetOf } from "../src/methodology/benchmark.js";
-import { calibrateThresholds, evaluatePairwise, summarizePairwise } from "../src/methodology/calibration.js";
+import { benchmarkSchema, pairwiseAssertions, subsetOf } from "../scripts/benchmark/benchmark.js";
+import { calibrateThresholds, evaluatePairwise, summarizePairwise } from "../scripts/benchmark/calibration.js";
 import { parseMethodologyInput } from "../src/methodology/contracts.js";
 import { analyzeElasticity } from "../src/methodology/elasticity.js";
 import { synInput } from "./fixtures/synthetic/methodology.js";

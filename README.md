@@ -41,10 +41,12 @@ backend/           Fastify API + Qloo adapter + feasibility investigation
   src/evidence/    Canonical provider-independent EvidencePacket, normalization, comparability, quality
   src/analysis/    Deterministic ingredient calculators → AnalysisIngredients
   src/methodology/ Cultural Elasticity Methodology v0 → CulturalElasticityResult
-  src/capture/     Sprint 2 pinned live benchmark capture (Qloo → MethodologyInput)
-  src/api/         HTTP routes (/health, POST /api/analysis/ingredients, POST /api/methodology/analyze)
-  src/feasibility/ Sprint 0 evidence-collection workflow
-  scripts/         live runs (qloo-feasibility, elasticity-capture) and offline evals (eval-methodology, eval-live, eval-elasticity)
+  src/agent/       Agentic investigation runtime: skills, typed tools, state, sufficiency, claim validation
+  src/api/         HTTP routes (/health, analysis, methodology, POST /api/agent/analyze + /continue)
+  scripts/         live runs and offline/live evals (eval:methodology, eval:live, eval:elasticity, eval:agent, eval:agent:live)
+  scripts/capture/     Sprint 2 pinned live benchmark capture (eval tooling, outside the production build)
+  scripts/feasibility/ Sprint 0/0B evidence-collection workflow and pins (eval tooling)
+  scripts/synthetic/   SYNTHETIC Qloo world transport for tests and eval:agent
 packages/shared/   Types shared across the frontend/backend boundary
 docs/              Architecture, methodology, sprint reports
 evals/             Fixture policy, synthetic fixtures, sanitized live Qloo evidence, the cultural-elasticity-v0 benchmark

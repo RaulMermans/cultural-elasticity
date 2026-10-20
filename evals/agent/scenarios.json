@@ -34,7 +34,7 @@
   {
    "id": "ir-compare",
    "category": "INTENT_ROUTING",
-   "description": "Three named territories route to compare_territories; only two are brand-rankable, so no comparison set exists and every territory is partial.",
+   "description": "Three named territories route to compare_territories; only two are brand-rankable, so no comparison set exists and every territory is partial. Sprint 4 expectation change: the generic reference strategy now adds a justified reference of the targets' entity type, so the two brand-represented targets reach a comparison set of 3 (FULL); the place-represented territory still cannot join a brand panel (PARTIAL, COMPARISON_SET_TOO_SMALL). Sprint 3 expected PARTIAL for all three because no reference was added when 3 targets were named.",
    "policy": "baseline",
    "request": {
     "userQuery": "For Saffron & Salt compare tableware, skincare and slow travel",
@@ -49,11 +49,11 @@
     "status": "COMPLETE",
     "intent": "compare_territories",
     "routes": {
-     "tableware": "PARTIAL_CULTURAL_ANALYSIS",
-     "skincare": "PARTIAL_CULTURAL_ANALYSIS",
+     "tableware": "FULL_RELATIVE_ANALYSIS",
+     "skincare": "FULL_RELATIVE_ANALYSIS",
      "slow_travel": "PARTIAL_CULTURAL_ANALYSIS"
     },
-    "methodologyRuns": 0,
+    "methodologyRuns": 1,
     "limitationCodes": [
      "COMPARISON_SET_TOO_SMALL"
     ],
@@ -385,7 +385,7 @@
   {
    "id": "dtd-near-duplicate",
    "category": "DYNAMIC_TERRITORY_DISCOVERY",
-   "description": "Two frontier candidates whose Qloo member pools overlap heavily are deduplicated before analysis.",
+   "description": "Two frontier candidates whose Qloo member pools overlap heavily are deduplicated before analysis. Sprint 4: structural duplicates are dropped right after resolution, before any representation call.",
    "policy": "scripted",
    "request": {
     "userQuery": "Where could Lumen Play expand?",
@@ -490,6 +490,17 @@
       "arguments": {
        "territoryKey": "design_stays",
        "tagId": "urn:tag:industry:syn:design_stays"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "declare_concept_only",
+      "arguments": {
+       "territoryKey": "boutique_stays",
+       "reason": "concept-level evidence only in this scenario"
       },
       "reasonSummary": "scenario step"
      }
@@ -939,7 +950,7 @@
   {
    "id": "ts-move-script",
    "category": "TOOL_SELECTION",
-   "description": "A scripted single move uses resolve \u2192 find tags \u2192 pool \u2192 represent \u2192 analyze.",
+   "description": "A scripted single move uses resolve → find tags → pool → represent → analyze.",
    "policy": "scripted",
    "request": {
     "userQuery": "Could Saffron & Salt enter tableware?"
@@ -1088,7 +1099,7 @@
   {
    "id": "ie-descriptive",
    "category": "INSUFFICIENT_EVIDENCE",
-   "description": "A concept analyzed without an exemplar panel yields descriptive brand-conditioned evidence only.",
+   "description": "A concept analyzed without an exemplar panel yields descriptive brand-conditioned evidence only. Sprint 4: concept-only evidence is an explicit recovery step (declare_concept_only); analyzing an anchored territory with unexplored candidates is refused.",
    "policy": "scripted",
    "request": {
     "userQuery": "Could Northwind Atelier make furniture?"
@@ -1136,6 +1147,17 @@
       "arguments": {
        "territoryKey": "furniture",
        "tagId": "urn:tag:industry:syn:furniture"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "declare_concept_only",
+      "arguments": {
+       "territoryKey": "furniture",
+       "reason": "concept-level evidence chosen instead of an exemplar panel"
       },
       "reasonSummary": "scenario step"
      }
@@ -1197,7 +1219,7 @@
   {
    "id": "bc-iterations",
    "category": "BUDGET_CONTROL",
-   "description": "A model that keeps calling tools is stopped at the iteration budget.",
+   "description": "A model that keeps calling tools is stopped at the iteration budget. (Sprint 4: the brand is resolved first; tag searches before that are not exposed.)",
    "policy": "scripted",
    "request": {
     "userQuery": "Where could Lumen Play expand?",
@@ -1216,6 +1238,18 @@
        "intent": "explore_frontier",
        "brand": "Lumen Play",
        "territories": []
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Lumen Play",
+       "type": "brand",
+       "role": "brand"
       },
       "reasonSummary": "scenario step"
      }
@@ -1733,6 +1767,1566 @@
      "cabin_culture": "urn:tag:interests:syn:cabin_culture"
     },
     "generalization": "G3+G4"
+   }
+  },
+  {
+   "id": "sk-quality-outlier",
+   "category": "SKILL_BUILD_REPRESENTATION",
+   "description": "A popular pool member whose Qloo profile shares nothing with its peers beyond the concept (an energy brand in a cafe pool) is detected as a WEAK peer outlier: it is never the primary exemplar. The brand's media-genre profile tags yield no references; references come from productive namespaces and a near-duplicate of the target is refused.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Velvet Tide move into cafe culture?",
+    "brand": "Velvet Tide",
+    "territories": [
+     "Cafe Culture"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "routes": {
+     "cafe_culture": "FULL_RELATIVE_ANALYSIS"
+    },
+    "primaryExemplars": {
+     "cafe_culture": "Kettle & Crema"
+    },
+    "qualityFinal": {
+     "cafe_culture:Voltrush Energy": "WEAK"
+    },
+    "absentTerritories": [
+     "espresso_ritual"
+    ],
+    "maxQlooCalls": 24,
+    "generalization": "G3"
+   }
+  },
+  {
+   "id": "sk-semantic-veto",
+   "category": "SKILL_BUILD_REPRESENTATION",
+   "description": "The model's advisory semantic judgment (mismatch) vetoes a candidate Qloo links to the concept; it is stored apart from the deterministic signals and the remaining exemplars stand.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Velvet Tide move into cafe culture?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Velvet Tide",
+       "territories": [
+        "Cafe Culture"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Velvet Tide",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Cafe Culture",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:product_category:syn:cafe_culture"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "tagId": "urn:tag:product_category:syn:cafe_culture"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1401"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1402"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1403"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1404"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1404",
+         "reason": "most popular member",
+         "semantic": {
+          "relevance": "mismatch",
+          "reason": "energy-drink and gaming culture, not cafe culture"
+         }
+        },
+        {
+         "id": "SYN-BR-1401",
+         "reason": "cafe brand",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "espresso and slow-living cafe culture"
+         }
+        },
+        {
+         "id": "SYN-BR-1402",
+         "reason": "roaster",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "specialty roasting"
+         }
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "cafe_culture"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "cafe_culture"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "exemplars": {
+     "cafe_culture": [
+      "Kettle & Crema",
+      "Bramble Roasters"
+     ]
+    },
+    "rejectedCodes": {
+     "cafe_culture": [
+      "EXEMPLAR_SEMANTIC_MISMATCH"
+     ]
+    },
+    "qualityFinal": {
+     "cafe_culture:Voltrush Energy": "REJECT"
+    },
+    "semanticJudgments": 3
+   }
+  },
+  {
+   "id": "sk-quality-weak-recovery",
+   "category": "SKILL_BUILD_REPRESENTATION",
+   "description": "When only weak exemplars survive, the representation is refused (no weak panel is forced through) and the agent recovers with concept-only evidence.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Velvet Tide move into cafe culture?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Velvet Tide",
+       "territories": [
+        "Cafe Culture"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Velvet Tide",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Cafe Culture",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:product_category:syn:cafe_culture"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "tagId": "urn:tag:product_category:syn:cafe_culture"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1401"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1402"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1403"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1404"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1401",
+         "reason": "r",
+         "semantic": {
+          "relevance": "weak",
+          "reason": "too generic"
+         }
+        },
+        {
+         "id": "SYN-BR-1402",
+         "reason": "r",
+         "semantic": {
+          "relevance": "weak",
+          "reason": "too generic"
+         }
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "declare_concept_only",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "reason": "only weak exemplars available"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "cafe_culture"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "cafe_culture"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "strategies": {
+     "cafe_culture": "CONDITIONED_ENTITY_EVIDENCE"
+    },
+    "exemplarCounts": {
+     "cafe_culture": 0
+    },
+    "rejectedCodes": {
+     "cafe_culture": [
+      "REPRESENTATION_QUALITY_WEAK"
+     ]
+    },
+    "capabilities": {
+     "cafe_culture": {
+      "relativePosition": "UNAVAILABLE",
+      "classification": "UNAVAILABLE"
+     }
+    }
+   }
+  },
+  {
+   "id": "sk-strategy-exhausted",
+   "category": "SKILL_BUILD_REPRESENTATION",
+   "description": "A (concept, entity type) strategy that failed twice is not retried: the runtime refuses the third brand attempt, and the agent recovers with another entity type Qloo has members for (places).",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Velvet Tide move into cafe culture?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Velvet Tide",
+       "territories": [
+        "Cafe Culture"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Velvet Tide",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Cafe Culture",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:product_category:syn:cafe_culture"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "tagId": "urn:tag:product_category:syn:cafe_culture"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-9999",
+         "reason": "invented"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-0008",
+         "reason": "the brand"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:product_category:syn:cafe_culture"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1401",
+         "reason": "cafe brand"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "SYN-PL-0201",
+         "reason": "cafe venue"
+        },
+        {
+         "id": "SYN-PL-0202",
+         "reason": "cafe venue"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "cafe_culture"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "cafe_culture"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "rejections": [
+     "STRATEGY_EXHAUSTED"
+    ],
+    "rejectedCodes": {
+     "cafe_culture": [
+      "ENTITY_UNRESOLVED",
+      "BRAND_AS_EXEMPLAR"
+     ]
+    },
+    "strategies": {
+     "cafe_culture": "PLACE_PANEL"
+    },
+    "exemplarCounts": {
+     "cafe_culture": 2
+    }
+   }
+  },
+  {
+   "id": "sk-reference-place-type",
+   "category": "SKILL_BUILD_COMPARISON_SET",
+   "description": "A target Qloo represents with places gets references probed and represented as places (comparison compatibility from evidence, never a fixed type), reaching a full relative analysis; a reference whose places largely coincide with the target's is refused as a near-duplicate.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Saffron & Salt open hot springs retreats?",
+    "brand": "Saffron & Salt",
+    "territories": [
+     "Hot Springs"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "strategies": {
+     "hot_springs": "PLACE_PANEL"
+    },
+    "routes": {
+     "hot_springs": "FULL_RELATIVE_ANALYSIS"
+    },
+    "absentTerritories": [
+     "wellness_rituals"
+    ],
+    "generalization": "G5"
+   }
+  },
+  {
+   "id": "sk-frontier-morph-duplicate",
+   "category": "SKILL_EXPLORE_FRONTIER",
+   "description": "Two frontier concepts from one word family (Bouldering / Boulderers) whose Qloo member pools do not overlap are still detected as near-duplicates (deterministic morphology layer) and the later one is dropped before analysis.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Where could Kestrel Outfitters expand?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Kestrel Outfitters",
+       "territories": []
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Kestrel Outfitters",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Bouldering",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "climbing culture next to outdoor apparel"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Boulderers",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "the climbing community"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Cabin Culture",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "retreat culture"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Bouldering",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Boulderers",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Cabin Culture",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:interests:syn:bouldering"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:lifestyle:syn:boulderers"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:interests:syn:cabin_culture"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "bouldering",
+       "tagId": "urn:tag:interests:syn:bouldering"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "boulderers",
+       "tagId": "urn:tag:lifestyle:syn:boulderers"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "cabin_culture",
+       "tagId": "urn:tag:interests:syn:cabin_culture"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "bouldering",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1501",
+         "reason": "r"
+        },
+        {
+         "id": "SYN-BR-1502",
+         "reason": "r"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "boulderers",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1503",
+         "reason": "r"
+        },
+        {
+         "id": "SYN-BR-1504",
+         "reason": "r"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cabin_culture",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1301",
+         "reason": "r"
+        },
+        {
+         "id": "SYN-BR-1302",
+         "reason": "r"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "bouldering",
+       "boulderers",
+       "cabin_culture"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "bouldering",
+       "cabin_culture"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "failureCodes": {
+     "boulderers": "DUPLICATE_TERRITORY"
+    },
+    "comparisonRejected": {
+     "boulderers": "dedup"
+    },
+    "dedupVerdicts": {
+     "boulderers": "NEAR_DUPLICATE"
+    },
+    "exemplarCounts": {
+     "bouldering": 2
+    }
+   }
+  },
+  {
+   "id": "sk-dedup-model-distinct",
+   "category": "SKILL_EXPLORE_FRONTIER",
+   "description": "The model's layer-3 judgment may mark a word-family match DISTINCT (recorded with its reason); both candidates are then kept.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Where could Kestrel Outfitters expand?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Kestrel Outfitters",
+       "territories": []
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Kestrel Outfitters",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Bouldering",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "climbing culture next to outdoor apparel"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Boulderers",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "the climbing community"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Cabin Culture",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "retreat culture"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Bouldering",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Boulderers",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Cabin Culture",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:interests:syn:bouldering"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:lifestyle:syn:boulderers"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:interests:syn:cabin_culture"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "bouldering",
+       "tagId": "urn:tag:interests:syn:bouldering"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "boulderers",
+       "tagId": "urn:tag:lifestyle:syn:boulderers"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "cabin_culture",
+       "tagId": "urn:tag:interests:syn:cabin_culture"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "bouldering",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1501",
+         "reason": "r"
+        },
+        {
+         "id": "SYN-BR-1502",
+         "reason": "r"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "boulderers",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1503",
+         "reason": "r"
+        },
+        {
+         "id": "SYN-BR-1504",
+         "reason": "r"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cabin_culture",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1301",
+         "reason": "r"
+        },
+        {
+         "id": "SYN-BR-1302",
+         "reason": "r"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "assess_concept_duplicates",
+      "arguments": {
+       "judgments": [
+        {
+         "a": "bouldering",
+         "b": "boulderers",
+         "verdict": "DISTINCT",
+         "reason": "the activity versus the community around it"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "bouldering",
+       "boulderers",
+       "cabin_culture"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "bouldering",
+       "cabin_culture"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "routes": {
+     "bouldering": "FULL_RELATIVE_ANALYSIS",
+     "boulderers": "FULL_RELATIVE_ANALYSIS"
+    },
+    "modelDedupApplied": 1
+   }
+  },
+  {
+   "id": "sk-frontier-two-channels",
+   "category": "SKILL_EXPLORE_FRONTIER",
+   "description": "Qloo-grounded candidates (from related brands' profiles) and an agent hypothesis are both validated against Qloo; the hypothesis with no Qloo members is dropped as HYPOTHESIS_UNSUPPORTED and the comparison-set construction records it.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Where could Kestrel Outfitters expand?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Kestrel Outfitters",
+       "territories": []
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Kestrel Outfitters",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-0002"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_related_entities",
+      "arguments": {
+       "entityId": "SYN-BR-0002",
+       "targetType": "brand",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Moonlight Rituals",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Sailing",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Trail Gear",
+       "limit": 3
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Sailing",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "rationale": "carried by related brands",
+       "evidenceTagIds": [
+        "urn:tag:interests:syn:sailing"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Trail Gear",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "rationale": "carried by related brands",
+       "evidenceTagIds": [
+        "urn:tag:industry:syn:trail_gear"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Moonlight Rituals",
+       "role": "frontier_candidate",
+       "origin": "agent_hypothesis",
+       "rationale": "lateral idea: night-time ritual culture"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "sailing",
+       "tagId": "urn:tag:interests:syn:sailing"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "trail_gear",
+       "tagId": "urn:tag:industry:syn:trail_gear"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "moonlight_rituals",
+       "tagId": "urn:tag:keyword:syn:moonlight_rituals"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:interests:syn:sailing"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:industry:syn:trail_gear"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:keyword:syn:moonlight_rituals"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "sailing",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1201",
+         "reason": "r"
+        },
+        {
+         "id": "SYN-BR-0401",
+         "reason": "r"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "trail_gear",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-0403",
+         "reason": "r"
+        },
+        {
+         "id": "SYN-BR-0402",
+         "reason": "r"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "sailing",
+       "trail_gear",
+       "moonlight_rituals"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "sailing",
+       "trail_gear"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "failureCodes": {
+     "moonlight_rituals": "HYPOTHESIS_UNSUPPORTED"
+    },
+    "comparisonRejected": {
+     "moonlight_rituals": "qloo_support"
+    },
+    "sources": {
+     "sailing": "qloo_grounded",
+     "moonlight_rituals": "agent_hypothesis"
+    }
+   }
+  },
+  {
+   "id": "sk-early-stop",
+   "category": "EVIDENCE_SUFFICIENCY_V2",
+   "description": "Calls whose rule-based expected value is NONE (a tag profile already collected, a tag query already run, an identical repeated call) are refused before reaching Qloo and counted as callsAvoided.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Velvet Tide move into cafe culture?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Velvet Tide",
+       "territories": [
+        "Cafe Culture"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Velvet Tide",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Cafe Culture",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:product_category:syn:cafe_culture"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "tagId": "urn:tag:product_category:syn:cafe_culture"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1401"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-1401"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:product_category:syn:cafe_culture"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Cafe Culture",
+       "limit": 8
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cafe_culture",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-1401",
+         "reason": "r"
+        },
+        {
+         "id": "SYN-BR-1402",
+         "reason": "r"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "cafe_culture"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "cafe_culture"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "rejections": [
+     "NO_VALUE_ACTION",
+     "DUPLICATE_ACTION"
+    ],
+    "minCallsAvoided": 3,
+    "exemplarCounts": {
+     "cafe_culture": 2
+    }
    }
   }
  ]

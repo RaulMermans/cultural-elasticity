@@ -8,10 +8,10 @@
  * descriptive measure over Qloo output (set overlap, counts, agreement).
  */
 import type { AnalysisIngredients } from "@cultural-elasticity/shared";
-import { analyzeEvidencePacket } from "../analysis/ingredients.js";
-import { setOverlap } from "../analysis/overlap.js";
-import type { EvidencePacketInput, Limitation } from "../evidence/schema.js";
-import { MAX_AUTOMATIC_RETRIES } from "../qloo/client.js";
+import { analyzeEvidencePacket } from "../../src/analysis/ingredients.js";
+import { setOverlap } from "../../src/analysis/overlap.js";
+import type { EvidencePacketInput, Limitation } from "../../src/evidence/schema.js";
+import { MAX_AUTOMATIC_RETRIES } from "../../src/qloo/client.js";
 import {
   assembleLivePacket,
   audienceFromCompare,
@@ -24,10 +24,10 @@ import {
   rankingFromRank,
   recurringSignalProfile,
   type LiveCall,
-} from "../qloo/live-adapter.js";
-import { numericFieldPaths, toEntitySignals, toTagSignals } from "../qloo/normalize.js";
-import type { QlooTransport } from "../qloo/transport.js";
-import type { QlooOperation, QlooOperationInput } from "../qloo/types.js";
+} from "../../src/qloo/live-adapter.js";
+import { numericFieldPaths, toEntitySignals, toTagSignals } from "../../src/qloo/normalize.js";
+import type { QlooTransport } from "../../src/qloo/transport.js";
+import type { QlooOperation, QlooOperationInput } from "../../src/qloo/types.js";
 import type { LiveInvestigationConfig, PinnedEntity } from "./live-config.js";
 
 export type LiveStep = { id: string; operation: QlooOperation; outcome: "ok" | "empty" | "needs_input" | "failed"; correlationId?: string; detail: string; attempts: number };

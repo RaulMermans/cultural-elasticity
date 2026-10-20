@@ -3,8 +3,9 @@
  * server-side refusal fallback). Selected only when ANTHROPIC_API_KEY is configured.
  *
  * Each decision is ONE stateless request: system prompt + the current AgentDecisionContext (built from
- * run state by code). The model answers with tool_use blocks; analyze / ask_user / finish are offered
- * as tools too, so every decision is structured. Tool choice is `auto` (forced tool choice is rejected
+ * run state by code, just in time: only the active skills' tools, actions and context sections). The model
+ * answers with tool_use blocks; the terminal actions the active skills allow (analyze / ask_user / finish)
+ * are offered as tools too, so every decision is structured. Tool choice is `auto` (forced tool choice is rejected
  * by the current models); a turn without tool calls is an invalid turn. The runtime validates every
  * decision; nothing the model returns is trusted as-is. The key is read from the environment by the
  * SDK and never logged or placed in a prompt.
@@ -55,19 +56,31 @@ export type AnthropicAgentModelOptions = {
   client?: Pick<Anthropic, "beta">;
 };
 
-type Usage = { input_tokens: number; output_tokens: number } | null | undefined;
-const usageOf = (usage: Usage) => (usage ? { inputTokens: usage.input_tokens, outputTokens: usage.output_tokens } : undefined);
+type Usage = { input_tokens: number; output_tokens: number; cache_read_input_tokens?: number | null; cache_creation_input_tokens?: number | null } | null | undefined;
+/** Provider-reported usage, with cache reads and writes kept separate from uncached input. */
+export const usageOf = (usage: Usage) =>
+  usage ? { inputTokens: usage.input_tokens, outputTokens: usage.output_tokens, cacheReadTokens: usage.cache_read_input_tokens ?? 0, cacheCreationTokens: usage.cache_creation_input_tokens ?? 0 } : undefined;
+
+/**
+ * Models that accept the server-side refusal fallback ("default" form). Claude Haiku 5.5 has no server-side
+ * fallback, so the parameter and its beta are omitted for it (and for any model not listed).
+ */
+const FALLBACK_MODELS = new Set(["claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"]);
 
 export class AnthropicAgentModel implements AgentModel {
   readonly info: AgentModelInfo;
   private readonly client: Pick<Anthropic, "beta">;
   private readonly model: string;
   private readonly effort: NonNullable<AnthropicAgentModelOptions["effort"]>;
+  private readonly fallback: { betas?: string[]; fallbacks?: "default" };
 
   constructor(options: AnthropicAgentModelOptions = {}) {
     this.model = options.model ?? DEFAULT_AGENT_MODEL;
     this.effort = options.effort ?? "high";
-    this.client = options.client ?? new Anthropic();
+    this.fallback = FALLBACK_MODELS.has(this.model) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const } : {};
+    // An org-level key that is not scoped to a workspace needs the workspace id on every request.
+    const workspace = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
+    this.client = options.client ?? new Anthropic(workspace ? { defaultHeaders: { "anthropic-workspace-id": workspace } } : {});
     this.info = { id: this.model, kind: "llm", live: true };
   }
 
@@ -82,18 +95,22 @@ export class AnthropicAgentModel implements AgentModel {
           input_schema: { ...schema, type: "object" as const, properties: { ...(schema.properties ?? {}), reasonSummary: REASON } },
         };
       }),
-      ...DECISION_TOOLS.map((t) => ({ ...t, input_schema: { ...t.input_schema } })),
+      ...DECISION_TOOLS.filter((t) => context.actions.includes(t.name)).map((t) => ({ ...t, input_schema: { ...t.input_schema } })),
     ];
     const response = await this.client.beta.messages.create({
       model: this.model,
       max_tokens: 16_000,
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
+      ...this.fallback,
       output_config: { effort: this.effort },
       system: [{ type: "text", text: AGENT_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
       tools: tools as never,
       tool_choice: { type: "auto" },
-      messages: [{ role: "user", content: `Current investigation state (JSON). Decide the next actions.\n${JSON.stringify(view)}` }],
+      messages: [
+        {
+          role: "user",
+          content: `${view.repair ? "Your previous answer for this turn was rejected by the runtime validator. Fix exactly the listed problems (see repair.rejections); use only the tools offered.\n" : ""}Current investigation state (JSON). Decide the next actions.\n${JSON.stringify(view)}`,
+        },
+      ],
     });
     const usage = usageOf(response.usage as Usage);
     if (response.stop_reason === "refusal") return { decisions: { invalid: "model refused" }, ...(usage && { usage }) };
@@ -117,8 +134,7 @@ export class AnthropicAgentModel implements AgentModel {
     const response = await this.client.beta.messages.create({
       model: this.model,
       max_tokens: 16_000,
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
+      ...this.fallback,
       output_config: { effort: this.effort, format: { type: "json_schema", schema: SYNTHESIS_SCHEMA } },
       system: SYNTHESIS_SYSTEM_PROMPT,
       messages: [

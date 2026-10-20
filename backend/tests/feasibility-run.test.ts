@@ -4,8 +4,8 @@
  */
 import { describe, expect, it } from "vitest";
 import { evidencePacketSchema } from "../src/contracts/qloo.js";
-import type { InvestigationConfig } from "../src/feasibility/config.js";
-import { runFeasibility } from "../src/feasibility/run.js";
+import type { InvestigationConfig } from "../scripts/feasibility/config.js";
+import { runFeasibility } from "../scripts/feasibility/run.js";
 import { HarnessQlooClient } from "../src/qloo/client.js";
 import { QlooNotConfiguredError, QlooTransportError } from "../src/qloo/errors.js";
 import type { QlooOperation, QlooStatus } from "../src/qloo/types.js";

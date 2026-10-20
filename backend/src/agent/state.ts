@@ -6,7 +6,7 @@
  * allowed-transition table and records every change in the trace.
  */
 import { randomUUID } from "node:crypto";
-import type { AgentAnalysisResult, AgentIntent, AgentModelInfo, AgentRunStatus, AgentTerritoryResult, AgentTrace, RepresentationFailureCode, TerritoryOrigin, TerritoryRole } from "@cultural-elasticity/shared";
+import type { AgentAnalysisResult, AgentIntent, AgentModelInfo, AgentRunStatus, AgentTerritoryResult, AgentTrace, CandidateSource, ConceptDedupVerdict, RepresentationFailureCode, SemanticRelevance, SkillRef, TerritoryOrigin, TerritoryRole } from "@cultural-elasticity/shared";
 import type { Limitation } from "../evidence/schema.js";
 import type { LiveCall } from "../qloo/live-adapter.js";
 import type { ConceptRef } from "../contracts/qloo.js";
@@ -35,6 +35,10 @@ export type ExemplarChoice = {
   selectionReason: string;
   conceptSupport: "tag_member" | "profile_tag";
   supportCorrelationId: string;
+  /** Representation-quality outcome (VALID primary first; WEAK only as an alternate). */
+  quality: "VALID" | "WEAK";
+  /** The model's advisory semantic judgment, if it gave one. Never Qloo evidence. */
+  semantic: { relevance: SemanticRelevance; reason: string } | null;
 };
 
 export type AcceptedRepresentation = {
@@ -46,6 +50,9 @@ export type AcceptedRepresentation = {
 };
 
 export type RejectedExemplar = { id: string | null; label: string; code: RepresentationFailureCode; reason: string };
+
+/** One representation attempt: which (concept, entity type) strategy was tried and how it ended. */
+export type StrategyAttempt = { conceptId: string; entityType: RankableType; attempt: number; outcome: "accepted" | "rejected" | "weak" };
 
 export type TerritoryStatus = "open" | "anchored" | "represented" | "analyzed" | "dropped";
 
@@ -61,6 +68,12 @@ export type TerritoryState = {
   attempts: number;
   rejectedExemplars: RejectedExemplar[];
   dropReason: { code: RepresentationFailureCode; detail: string } | null;
+  /** Where the hypothesis came from (comparison-set construction). */
+  source: CandidateSource;
+  sourceEvidence: string;
+  strategyLog: StrategyAttempt[];
+  /** Set when the agent deliberately chose concept-level evidence instead of an exemplar panel. */
+  conceptOnly: string | null;
 };
 
 export type BrandState = {
@@ -94,13 +107,24 @@ export type AgentRunState = {
   methodologyRuns: MethodologyRun[];
   /** partial / degraded flags and other run-level limitations. */
   flags: Limitation[];
-  usage: { iterations: number; qlooCalls: number; invalidTurnsInRow: number; inputTokens: number; outputTokens: number; retries: number };
+  usage: { iterations: number; qlooCalls: number; invalidTurnsInRow: number; inputTokens: number; outputTokens: number; retries: number; cacheReadTokens: number; cacheCreationTokens: number; uncachedInputTokens: number; synthesisAttempts: number; qlooLatencyMs: number };
   pendingQuestion: { question: string; ambiguity: string; options: { id: string; label: string; type?: string }[] } | null;
   clarifications: string[];
   finishRequested: boolean;
   /** True when the caller fixed maxQlooCalls; otherwise the interpreted intent sets the default budget. */
   qlooBudgetExplicit: boolean;
   final: AgentAnalysisResult | null;
+  /** Lower-cased find_tags queries → tag ids returned (resolution and alternate-concept recovery). */
+  searchedQueries: Map<string, string[]>;
+  /** `${tool}:${stable args}` of every executed tool call (repeated useless actions are refused). */
+  executedCalls: Set<string>;
+  /** Model layer-3 concept-dedup judgments (advisory; applied by explicit rules). */
+  dedupJudgments: { aKey: string; bKey: string; verdict: ConceptDedupVerdict; reason: string }[];
+  /** Skills active in the current turn (set by the runtime before the model is called). */
+  activeSkills: SkillRef[];
+  skillUsage: Map<string, { skill: SkillRef; turns: number; qlooCalls: number; toolCalls: number; exhausted: boolean; qlooSpent?: boolean }>;
+  /** Comparison-set candidates removed by deterministic checks (stage + code), for the construction trace. */
+  candidateRejections: { key: string; stage: "resolution" | "qloo_support" | "representation" | "evidence" | "dedup" | "diversity" | "budget" | "agent"; code: string; reason: string }[];
   startedAt: number;
   trace: AgentTrace;
   toolCallCounter: number;
@@ -128,12 +152,18 @@ export function createRunState(request: AgentRequest, model: AgentModelInfo, too
     results: new Map(),
     methodologyRuns: [],
     flags: [],
-    usage: { iterations: 0, qlooCalls: 0, invalidTurnsInRow: 0, inputTokens: 0, outputTokens: 0, retries: 0 },
+    usage: { iterations: 0, qlooCalls: 0, invalidTurnsInRow: 0, inputTokens: 0, outputTokens: 0, retries: 0, cacheReadTokens: 0, cacheCreationTokens: 0, uncachedInputTokens: 0, synthesisAttempts: 0, qlooLatencyMs: 0 },
     pendingQuestion: null,
     clarifications: [],
     finishRequested: false,
     qlooBudgetExplicit: limits?.maxQlooCalls !== undefined || request.limits?.maxQlooCalls !== undefined,
     final: null,
+    searchedQueries: new Map(),
+    executedCalls: new Set(),
+    dedupJudgments: [],
+    activeSkills: [],
+    skillUsage: new Map(),
+    candidateRejections: [],
     startedAt: Date.now(),
     toolCallCounter: 0,
     trace: {
@@ -152,6 +182,10 @@ export function createRunState(request: AgentRequest, model: AgentModelInfo, too
       territoryHypotheses: [],
       representations: [],
       sufficiency: [],
+      representationQuality: [],
+      conceptDedup: [],
+      earlyStops: [],
+      skillUsage: [],
       methodologyInvocations: [],
       synthesis: null,
       errors: [],
@@ -258,7 +292,7 @@ export function territoryKey(state: AgentRunState, label: string): string {
   return key;
 }
 
-export function addTerritory(state: AgentRunState, input: { label: string; role: TerritoryRole; origin: TerritoryOrigin; rationale: string }): TerritoryState {
+export function addTerritory(state: AgentRunState, input: { label: string; role: TerritoryRole; origin: TerritoryOrigin; rationale: string; source?: CandidateSource; sourceEvidence?: string }): TerritoryState {
   const territory: TerritoryState = {
     key: territoryKey(state, input.label),
     label: input.label.trim(),
@@ -271,6 +305,10 @@ export function addTerritory(state: AgentRunState, input: { label: string; role:
     attempts: 0,
     rejectedExemplars: [],
     dropReason: null,
+    source: input.source ?? (input.origin === "user" ? "user" : input.origin === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded"),
+    sourceEvidence: input.sourceEvidence ?? input.rationale,
+    strategyLog: [],
+    conceptOnly: null,
   };
   state.territories.push(territory);
   return territory;

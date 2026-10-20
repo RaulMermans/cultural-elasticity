@@ -12,10 +12,10 @@
  * It computes nothing. Every value keeps the correlation id of its call. A failed call leaves its
  * evidence absent (never zero), and the methodology reports the gap.
  */
-import type { Limitation, ProvenanceRef } from "../evidence/schema.js";
+import type { Limitation, ProvenanceRef } from "../../src/evidence/schema.js";
 import type { LiveCollector } from "../feasibility/live.js";
-import { METHODOLOGY_INPUT_SCHEMA_VERSION, type MethodologyInputRaw } from "../methodology/contracts.js";
-import { toTagSignals } from "../qloo/normalize.js";
+import { METHODOLOGY_INPUT_SCHEMA_VERSION, type MethodologyInputRaw } from "../../src/methodology/contracts.js";
+import { toTagSignals } from "../../src/qloo/normalize.js";
 import {
   brandProfileFromEntityTags,
   callProvenance,
@@ -23,7 +23,7 @@ import {
   pinnedSubject,
   rankingFromRank,
   type LiveCall,
-} from "../qloo/live-adapter.js";
+} from "../../src/qloo/live-adapter.js";
 import type { CaptureBrand, ElasticityCaptureConfig } from "./elasticity-config.js";
 
 export type BrandCapture = { brandKey: string; input?: MethodologyInputRaw; blockedReason?: string; stepIds: string[] };

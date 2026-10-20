@@ -1,0 +1,14 @@
+{
+ "fixtureType": "live-case-set",
+ "notice": "LIVE agent evaluation set (Sprint 4). Requests only: no Qloo evidence, no expected classes, no benchmark labels. Brands and territories are outside the Cultural Elasticity benchmark (unseen). Expectations are STRUCTURAL (status, ambiguity handling, graceful degradation) and are read only by the evaluator after a run; they never reach the runtime or a model.",
+ "version": "agent-live-v1",
+ "cases": [
+  { "id": "L-M1", "intent": "analyze_move", "tags": ["unseen_brand", "unseen_territory", "weak_pool_risk"], "note": "Aesop is not a benchmark brand, but it is a pinned exemplar in the Sprint 2 benchmark capture (Wellness); 'unseen' is weaker for this case", "request": { "userQuery": "Could Aesop credibly move into coffee?", "brand": "Aesop", "territories": ["Coffee"] }, "expect": { "status": "COMPLETE" } },
+  { "id": "L-M2", "intent": "analyze_move", "tags": ["unseen_brand", "unseen_territory"], "request": { "userQuery": "Could Yeti move into fly fishing?", "brand": "Yeti", "territories": ["Fly Fishing"] }, "expect": { "status": "COMPLETE" } },
+  { "id": "L-M3", "intent": "analyze_move", "tags": ["ambiguity", "unseen_territory"], "request": { "userQuery": "Could Le Creuset move into tea culture?", "brand": "Le Creuset", "territories": ["Tea"] }, "answer": "first_brand_option", "expect": { "needsInput": true } },
+  { "id": "L-C1", "intent": "compare_territories", "tags": ["unseen_brand", "unseen_territory"], "request": { "userQuery": "For Rapha, compare cycling cafes, mountaineering and coffee.", "brand": "Rapha", "territories": ["Cycling", "Mountaineering", "Coffee"] }, "expect": { "status": "COMPLETE" } },
+  { "id": "L-C2", "intent": "compare_territories", "tags": ["unseen_brand", "cannot_reach_full", "degrade_gracefully"], "request": { "userQuery": "For Liquid Death, compare heavy metal and moonlit gastronomy.", "brand": "Liquid Death", "territories": ["Heavy Metal", "Moonlit Gastronomy"] }, "expect": { "status": "COMPLETE", "degraded": ["moonlit_gastronomy"] } },
+  { "id": "L-E1", "intent": "explore_frontier", "tags": ["unseen_brand", "frontier"], "request": { "userQuery": "Where could Oatly credibly expand culturally?", "brand": "Oatly", "territories": [] }, "expect": { "status": "COMPLETE" } },
+  { "id": "L-E2", "intent": "explore_frontier", "tags": ["unseen_brand", "frontier"], "request": { "userQuery": "Where could Allbirds credibly expand culturally?", "brand": "Allbirds", "territories": [] }, "expect": { "status": "COMPLETE" } }
+ ]
+}

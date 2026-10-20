@@ -19,7 +19,8 @@ pnpm --filter backend eval:methodology  # offline methodology evals on synthetic
 | `src/api/analysis.ts` | `POST /api/analysis/ingredients`: EvidencePacket → AnalysisIngredients (offline, development only) |
 | `src/api/methodology.ts` | `POST /api/methodology/analyze`: MethodologyInput → CulturalElasticityResult (deterministic, offline, development only) |
 | `src/methodology/` | Cultural Elasticity Methodology v0: panels, rank-only aggregation, robustness, operational tag filter, set coherence, classification, index gate, benchmark calibration |
-| `src/capture/` | Sprint 2 pinned live capture (`elasticity-config.ts` holds every exemplar and concept judgement) |
+| `src/agent/` | Agentic investigation runtime (Sprint 3) with runtime skills, representation quality, concept dedup and sufficiency v2 (Sprint 4). See docs/sprint-4/AGENT_COMPETENCE_AND_SKILLS.md |
+| `scripts/capture/` | Sprint 2 pinned live capture (`elasticity-config.ts` holds every exemplar and concept judgement). Eval tooling, moved out of `src` in Sprint 4 |
 | `src/evidence/` | Canonical provider-independent `EvidencePacket` schema, normalization, comparability rules, provenance, evidence quality |
 | `src/analysis/` | Deterministic ingredient calculators (overlap, coverage/stability, audience, ranking, bridges, distance-proxy ingredients) and output invariants |
 | `src/qloo/types.ts` | Workflow inputs and contract constants, each marked `[contract]`, `[harness]` or `[live]` |
@@ -28,7 +29,8 @@ pnpm --filter backend eval:methodology  # offline methodology evals on synthetic
 | `src/qloo/normalize.ts` | Envelope validation and mapping to contracts. Sanitizes opaque outputs. |
 | `src/qloo/errors.ts` | Typed errors (not configured, workflow, contract, transport) |
 | `src/contracts/qloo.ts` | Qloo-side evidence record from the feasibility workflow (adapter input, not the canonical packet) |
-| `src/feasibility/` | Sprint 0 evidence workflow (`run.ts`) and the investigation config with every human assumption (`config.ts`) |
+| `scripts/feasibility/` | Sprint 0 evidence workflow (`run.ts`) and the investigation config with every human assumption (`config.ts`). Moved out of `src` in Sprint 4 |
+| `scripts/synthetic/` | SYNTHETIC Qloo world transport (`createScriptedToolProvider`) for tests and `pnpm eval:agent` |
 | `scripts/qloo-feasibility.ts` | CLI entry point: readiness, live run, sanitized report |
 | `scripts/eval-methodology.ts`, `scripts/methodology-harness.ts` | Offline methodology eval harness |
 

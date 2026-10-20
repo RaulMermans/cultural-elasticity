@@ -19,9 +19,21 @@ describe("agent API", () => {
     const res = await app().inject({ method: "POST", url: "/api/agent/analyze", payload: { query: "Could Northwind Atelier enter boutique hospitality?", brand: "Northwind Atelier", territories: ["Boutique Hospitality"], model: "baseline" } });
     expect(res.statusCode).toBe(200);
     const body = res.json();
-    expect(body).toMatchObject({ schemaVersion: "ce-agent-result/0.1", status: "COMPLETE", intent: "analyze_move", evidenceOrigin: "synthetic" });
+    expect(body).toMatchObject({ schemaVersion: "ce-agent-result/0.2", status: "COMPLETE", intent: "analyze_move", evidenceOrigin: "synthetic" });
     expect(body.territories.length).toBeGreaterThan(0);
     expect(body.trace.toolCalls.length).toBeGreaterThan(0);
+  });
+
+  it("exposes the Sprint 4 structured metadata for a future UI, and never the prompts", async () => {
+    const res = await app().inject({ method: "POST", url: "/api/agent/analyze", payload: { query: "Where could Kestrel Outfitters expand?", brand: "Kestrel Outfitters", territories: [], model: "baseline" } });
+    const body = res.json();
+    expect(body.skillsUsed.length).toBeGreaterThan(0);
+    expect(body.layers).toMatchObject({ qlooEvidence: expect.any(Object), systemAnalysis: expect.any(Object), agentInterpretation: expect.any(Object) });
+    expect(body.comparisonSetConstruction.note).toMatch(/comparison set/u);
+    expect(body.metrics).toMatchObject({ calls_avoided: expect.any(Number), model_attempts: expect.any(Number) });
+    expect(body.territories.every((t: { analysisRoute: string }) => typeof t.analysisRoute === "string")).toBe(true);
+    const text = JSON.stringify(body);
+    expect(text).not.toMatch(/You are the investigation layer|You explain deterministic Cultural Elasticity results/u);
   });
 
   it("returns a structured NEEDS_INPUT and continues the run", async () => {

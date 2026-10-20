@@ -60,6 +60,26 @@ const corr = (call: LiveCall) => call.envelope.execution.correlation_id;
 
 type Need = { key: string; required: boolean; priority: number; run: () => Promise<void> };
 
+/**
+ * Qloo calls the REQUIRED analysis evidence of the given territories still needs (brand profile, one primary
+ * rank panel per comparison group, primary exemplar profiles, brand-conditioned lists for territories outside a
+ * group). The runtime keeps this many calls in reserve: investigation may not spend them.
+ */
+export function analysisReserve(state: AgentRunState, territories: readonly TerritoryState[]): number {
+  const brand = state.brand.entity;
+  if (!brand || territories.length === 0) return 0;
+  const { groups } = planComparisonGroups(state, territories);
+  const grouped = new Set(groups.flatMap((g) => g.territoryKeys));
+  let reserve = state.profiles.has(brand.id) ? 0 : 1;
+  reserve += groups.length;
+  for (const t of territories) {
+    const primary = t.representation?.exemplars[0];
+    if (primary && !state.profiles.has(primary.id)) reserve += 1;
+    if (t.concept && !grouped.has(t.key)) reserve += 1;
+  }
+  return reserve;
+}
+
 export async function runAnalysis(state: AgentRunState, provider: AgentToolProvider, keys: readonly string[], openTrace: OpenTrace): Promise<AnalysisOutcome> {
   const brand = state.brand.entity;
   if (!brand) return { ok: false, code: "ENTITY_UNRESOLVED", reason: "the brand is not resolved" };
@@ -345,7 +365,7 @@ function conditionedSummary(view: ConditionedEvidenceView | null): AgentTerritor
 function representationView(state: AgentRunState, t: TerritoryState): AgentTerritoryResult["representation"] {
   const plan = planRepresentation(state, t);
   const rep = t.representation;
-  const exemplars = (rep?.exemplars ?? []).map((e, i) => ({ id: e.id, label: e.label, type: e.type, role: i === 0 ? ("primary" as const) : ("alternate" as const), selectionReason: e.selectionReason, conceptSupport: e.conceptSupport, popularity: e.popularity }));
+  const exemplars = (rep?.exemplars ?? []).map((e, i) => ({ id: e.id, label: e.label, type: e.type, role: i === 0 ? ("primary" as const) : ("alternate" as const), selectionReason: e.selectionReason, conceptSupport: e.conceptSupport, popularity: e.popularity, quality: e.quality }));
   const summary = !t.concept
     ? "no Qloo concept anchors this territory"
     : rep

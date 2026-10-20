@@ -9,8 +9,8 @@
  * The offline replay is NOT a new live validation; it says so in its output.
  */
 import { readFileSync, writeFileSync } from "node:fs";
-import { runElasticityCapture } from "../src/capture/elasticity-capture.js";
-import { ELASTICITY_CAPTURE } from "../src/capture/elasticity-config.js";
+import { runElasticityCapture } from "./capture/elasticity-capture.js";
+import { ELASTICITY_CAPTURE } from "./capture/elasticity-config.js";
 import { analyzeElasticity } from "../src/methodology/elasticity.js";
 import { scrubSecrets } from "../src/qloo/transport.js";
 import { buildElasticityFixture, elasticityFixtureSchema, fixturePath } from "./elasticity-fixture.js";

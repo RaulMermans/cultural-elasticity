@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 import type { AnalysisIngredients } from "@cultural-elasticity/shared";
 import { analyzeEvidencePacket } from "../src/analysis/ingredients.js";
 import { parseEvidencePacket, type EvidencePacket } from "../src/evidence/schema.js";
-import { LIVE_INVESTIGATION } from "../src/feasibility/live-config.js";
+import { LIVE_INVESTIGATION } from "./feasibility/live-config.js";
 import { QLOO_LIVE_SOURCE } from "../src/qloo/live-adapter.js";
 import { liveFixtureSchema, LIVE_FIXTURES_DIR, type LiveFixture } from "./live-fixture.js";
 

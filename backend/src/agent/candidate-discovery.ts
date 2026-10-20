@@ -5,8 +5,7 @@
  *   exemplarCandidates     brand-independent tag-member pools → eligible exemplar candidates, ordered by
  *                          evidence availability (Qloo popularity), with ineligible ones explained
  *   frontierConcepts       tags carried by Qloo-related entities but not by the brand (support-counted)
- *   territoryDuplicates    exact / near-duplicate territory hypotheses (same concept, label overlap,
- *                          overlapping member pools)
+ *   (territory deduplication lives in concept-dedup.ts)
  *   labelFamily            "X" vs "X Collection": the same name family, so not distinct exemplars
  *
  * No list of territories, brands or exemplars exists in this module.
@@ -14,7 +13,7 @@
 import { setOverlap } from "../analysis/overlap.js";
 import { matchOperationalRule } from "../methodology/operational-tags.js";
 import type { RankableType } from "./contracts.js";
-import type { AgentRunState, TerritoryState } from "./state.js";
+import type { AgentRunState } from "./state.js";
 
 const STOPWORDS = new Set(["the", "and", "for", "with", "of", "a", "an", "&", "co", "inc", "ltd", "group"]);
 
@@ -156,59 +155,4 @@ export function frontierConcepts(state: AgentRunState, minSupport = 2): Frontier
       return { tagId, label: tag?.label ?? tagId, type: tag?.type ?? "unknown", support: ids.size, supportingEntities: [...ids].map((id) => state.entities.get(id)?.label ?? id).sort() };
     })
     .sort((a, b) => b.support - a.support || a.label.localeCompare(b.label) || a.tagId.localeCompare(b.tagId));
-}
-
-export type DuplicateFinding = { key: string; duplicateOf: string; kind: "same_concept" | "near_duplicate"; detail: string };
-
-/** Member-pool Jaccard at or above this marks two territories as near-duplicates. */
-export const NEAR_DUPLICATE_POOL_JACCARD = 0.6;
-
-/**
- * Exact and near duplicates among active territory hypotheses (earlier hypotheses win):
- *   same_concept    anchored to the same Qloo concept id;
- *   near_duplicate  brand-independent member pools of the same type overlap with Jaccard ≥ 0.6, or
- *                   accepted exemplar sets share an entity.
- * Label wording alone never decides a duplicate (it only raises a warning the model can act on).
- */
-export function territoryDuplicates(state: AgentRunState, territories: TerritoryState[]): DuplicateFinding[] {
-  const findings: DuplicateFinding[] = [];
-  const poolOf = (t: TerritoryState) => {
-    if (!t.concept) return undefined;
-    const pools = state.pools.filter((p) => p.conditionedOn === null && p.tagIds.length === 1 && p.tagIds[0] === t.concept!.id && p.memberIds.length > 0);
-    return pools.length ? new Set(pools.flatMap((p) => p.memberIds)) : undefined;
-  };
-  for (let i = 0; i < territories.length; i += 1) {
-    const b = territories[i]!;
-    for (let j = 0; j < i; j += 1) {
-      const a = territories[j]!;
-      if (findings.some((f) => f.key === a.key)) continue;
-      if (a.concept && b.concept && a.concept.id === b.concept.id) {
-        findings.push({ key: b.key, duplicateOf: a.key, kind: "same_concept", detail: `both anchored to ${a.concept.id}` });
-        break;
-      }
-      const pa = poolOf(a);
-      const pb = poolOf(b);
-      if (pa && pb) {
-        const j2 = setOverlap(pa, pb).jaccard ?? 0;
-        if (j2 >= NEAR_DUPLICATE_POOL_JACCARD) {
-          findings.push({ key: b.key, duplicateOf: a.key, kind: "near_duplicate", detail: `Qloo member pools overlap (Jaccard ${Math.round(j2 * 100) / 100})` });
-          break;
-        }
-      }
-      const ea = new Set(a.representation?.exemplars.map((e) => e.id) ?? []);
-      const shared = (b.representation?.exemplars ?? []).filter((e) => ea.has(e.id));
-      if (shared.length > 0) {
-        findings.push({ key: b.key, duplicateOf: a.key, kind: "near_duplicate", detail: `shares exemplar(s) ${shared.map((e) => e.label).join(", ")}` });
-        break;
-      }
-    }
-  }
-  return findings;
-}
-
-/** Label-overlap warning only (never a deduplication by itself). */
-export function similarLabels(a: string, b: string): boolean {
-  const ta = new Set(labelTokens(a));
-  const tb = new Set(labelTokens(b));
-  return (setOverlap(ta, tb).jaccard ?? 0) >= 0.5;
 }

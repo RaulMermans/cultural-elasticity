@@ -1,6 +1,4 @@
 export * from "./aggregation.js";
-export * from "./benchmark.js";
-export * from "./calibration.js";
 export * from "./classification.js";
 export * from "./coherence.js";
 export * from "./config.js";

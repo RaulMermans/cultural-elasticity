@@ -51,11 +51,14 @@ describe("runtime control flow", () => {
   });
 
   it("rejects invalid model output and fails after the consecutive-invalid limit", async () => {
-    const model = new ScriptedAgentModel([{ invalid: "not json" }, [{ action: "dance" }], [call("interpret_request", { intent: "explore_frontier", brand: "Lumen Play", territories: [] })]]);
+    // Each invalid turn gets exactly one bounded repair attempt (the second script step answers it).
+    const model = new ScriptedAgentModel([{ invalid: "not json" }, [{ action: "dance" }], { invalid: "still not json" }, [{ action: "dance" }], [call("interpret_request", { intent: "explore_frontier", brand: "Lumen Play", territories: [] })]]);
     const result = asResult(await runtime(model).runtime.run({ userQuery: "q" }));
     expect(result.status).toBe("FAILED");
-    expect(result.trace.turns[0]!.invalidOutput).toBe("not json");
-    expect(result.trace.turns[1]!.decisions[0]).toMatchObject({ accepted: false, rejection: expect.stringMatching(/^INVALID_DECISION/u) });
+    expect(result.trace.turns[0]!.decisions[0]).toMatchObject({ accepted: false, rejection: expect.stringMatching(/^INVALID_MODEL_OUTPUT: not json/u) });
+    expect(result.trace.turns[0]!.decisions[1]).toMatchObject({ accepted: false, rejection: expect.stringMatching(/^INVALID_DECISION/u) });
+    expect(result.trace.turns[0]).toMatchObject({ modelAttempts: 2, firstAttemptValid: false, repairReason: expect.stringMatching(/INVALID_MODEL_OUTPUT/u) });
+    expect(result.metrics).toMatchObject({ repairs: 2, model_attempts: 4, first_attempt_valid_turns: 0, valid_after_repair_turns: 0 });
     expect(result.metrics.agent_iterations).toBe(2);
     expect(result.metrics.qloo_calls).toBe(0);
   });
@@ -67,7 +70,8 @@ describe("runtime control flow", () => {
     const result = asResult(await runtime(model).runtime.run({ userQuery: "q" }));
     const decisions = result.trace.turns[0]!.decisions;
     expect(decisions.find((d) => d.tool === "write_file")).toMatchObject({ accepted: false, rejection: expect.stringMatching(/^UNKNOWN_TOOL/u) });
-    expect(decisions.find((d) => d.action === "finish")).toMatchObject({ accepted: false, rejection: expect.stringMatching(/^NOTHING_ANALYZED/u) });
+    // finish is not offered by the skills active at this point (interpretation / brand resolution).
+    expect(decisions.find((d) => d.action === "finish")).toMatchObject({ accepted: false, rejection: expect.stringMatching(/^NOT_EXPOSED/u) });
     expect(decisions.find((d) => d.action === "ignored")).toBeUndefined();
   });
 
@@ -81,7 +85,7 @@ describe("runtime control flow", () => {
 
   it("stops at the iteration budget (BUDGET_EXHAUSTED), never loops", async () => {
     const forever: ScriptStep = () => [call("qloo_find_tags", { query: `x${Math.random()}` })];
-    const model = new ScriptedAgentModel([[call("interpret_request", { intent: "explore_frontier", brand: "Lumen Play", territories: [] })], ...Array.from({ length: 50 }, () => forever)]);
+    const model = new ScriptedAgentModel([[call("interpret_request", { intent: "explore_frontier", brand: "Lumen Play", territories: [] })], [call("qloo_resolve_entity", { name: "Lumen Play", type: "brand", role: "brand" })], ...Array.from({ length: 50 }, () => forever)]);
     const result = asResult(await runtime(model).runtime.run({ userQuery: "q", limits: { maxAgentIterations: 4 } }));
     expect(result.status).toBe("BUDGET_EXHAUSTED");
     expect(result.metrics.agent_iterations).toBe(4);

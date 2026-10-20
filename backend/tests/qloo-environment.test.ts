@@ -59,6 +59,13 @@ describe("harness child environment", () => {
     expect(env.TASTE_RESOLVER_URL).toBeUndefined();
   });
 
+  it("never passes model-provider credentials to the Qloo harness", () => {
+    const names = ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"];
+    const env = harnessChildEnv(Object.fromEntries([...names.map((n) => [n, "placeholder"]), ["KEEP", "1"]]), QLOO_HACKATHON_ORIGIN, "/tmp/isolated");
+    for (const n of names) expect(env[n]).toBeUndefined();
+    expect(env.KEEP).toBe("1");
+  });
+
   it("the transport refuses an environment that would let the harness default to production", () => {
     expect(code(() => assertHackathonRouting({}))).toBe("QLOO_HACKATHON_BASE_URL_REQUIRED");
     expect(code(() => assertHackathonRouting({ QLOO_BASE_URL: "https://api.qloo.com" }))).toBe("QLOO_WRONG_ENVIRONMENT");

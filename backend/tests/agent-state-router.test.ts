@@ -61,8 +61,10 @@ describe("deterministic intake", () => {
   });
 
   it("uses the spec's starting budgets per intent", () => {
-    expect(defaultLimits("analyze_move")).toMatchObject({ maxAgentIterations: 8, maxQlooCalls: 20, maxRepresentationAttemptsPerTerritory: 3, maxCandidateTerritories: 6, maxExemplarsPerTerritory: 3, maxRetryPerToolCall: 1 });
-    expect(defaultLimits("explore_frontier").maxQlooCalls).toBe(30);
+    // Sprint 4 budgets (candidate-profile quality checks and smaller just-in-time turns; see contracts.ts).
+    expect(defaultLimits("analyze_move")).toMatchObject({ maxAgentIterations: 12, maxQlooCalls: 24, maxRepresentationAttemptsPerTerritory: 3, maxCandidateTerritories: 6, maxExemplarsPerTerritory: 3, maxRetryPerToolCall: 1 });
+    expect(defaultLimits("compare_territories").maxQlooCalls).toBe(32);
+    expect(defaultLimits("explore_frontier").maxQlooCalls).toBe(32);
   });
 });
 

@@ -1,0 +1,228 @@
+/**
+ * The runtime skills (Sprint 4, all version 1). Each wraps a competency the runtime already had in
+ * Sprint 3, now with its own tool allowlist, context needs, budget and stopping conditions:
+ *
+ *   interpret_request              the goal → intent, brand, named territories
+ *   resolve_brand                  the brand → one Qloo entity (or a question to the user)
+ *   resolve_territory              each named / proposed territory → one Qloo concept (or dropped)
+ *   build_territory_representation each concept → validated exemplars, or a recovery path
+ *   build_comparison_set           single move / two-territory comparison → references of the same type
+ *   explore_candidate_territories  frontier → Qloo-grounded + agent-hypothesized candidates, validated
+ *   analyze_territories            ready territories → deterministic analysis, then finish
+ *
+ * Activation is just-in-time from state (see each `relevant`); several skills may be active in one turn
+ * (e.g. one territory is being represented while another is being resolved). Sequences adapt to evidence:
+ * no skill forces the next one.
+ */
+import type { AnalysisRoute } from "@cultural-elasticity/shared";
+import { z } from "zod";
+import { MIN_FRONTIER_SUPPORTED } from "../contracts.js";
+import { isReady, recoverable, territoryReadiness } from "../readiness.js";
+import { comparisonSetSize, referenceCandidates, referenceEntityType } from "../reference-strategy.js";
+import { MIN_COMPARISON_SET } from "../router.js";
+import { activeTerritories, remainingQlooCalls, type AgentRunState } from "../state.js";
+import type { SkillDefinition } from "./contracts.js";
+
+const ALL_ROUTES: readonly AnalysisRoute[] = ["FULL_RELATIVE_ANALYSIS", "PARTIAL_CULTURAL_ANALYSIS", "DESCRIPTIVE_ANALYSIS", "INSUFFICIENT_EVIDENCE"];
+const spent = (state: AgentRunState, id: string) => state.skillUsage.get(id)?.exhausted === true;
+/** Discovery skills (references, frontier) need Qloo calls: a spent Qloo budget ends them too. */
+const discoverySpent = (state: AgentRunState, id: string) => spent(state, id) || state.skillUsage.get(id)?.qlooSpent === true;
+const open = (state: AgentRunState) => activeTerritories(state).filter((t) => t.status !== "analyzed");
+const keys = z.array(z.string());
+
+/** Frontier candidates still viable: not dropped, and not analyzed as INSUFFICIENT_EVIDENCE. */
+export function viableFrontierCandidates(state: AgentRunState): number {
+  return activeTerritories(state).filter((t) => t.role === "frontier_candidate" && state.results.get(t.key)?.analysisRoute !== "INSUFFICIENT_EVIDENCE").length;
+}
+/** Frontier exploration aims for one candidate more than the minimum, so one weak candidate does not end the set. */
+export const FRONTIER_TARGET = MIN_FRONTIER_SUPPORTED + 1;
+
+export const interpretRequestSkill: SkillDefinition<{ userQuery: string }, { intent: string | null }> = {
+  id: "interpret_request",
+  version: 1,
+  purpose: "Turn the user's goal into a validated intent, brand and list of named territories.",
+  intents: ["analyze_move", "compare_territories", "explore_frontier"],
+  preconditions: ["no interpretation recorded yet"],
+  relevant: (state) => state.interpretation === null,
+  inputSchema: z.object({ userQuery: z.string() }),
+  focus: (state) => ({ userQuery: state.request.userQuery }),
+  outputSchema: z.object({ intent: z.string().nullable() }),
+  outcome: (state) => ({ intent: state.interpretation?.intent ?? null }),
+  allowedTools: ["interpret_request"],
+  allowedActions: ["ask_user"],
+  allowedRoutes: [],
+  contextRequirements: [],
+  budget: { maxTurns: 3, maxQlooCalls: 0 },
+  stoppingConditions: ["interpretation accepted", "goal materially ambiguous → ask the user"],
+  failureModes: ["MODEL_DECISION_ERROR", "TOOL_ARGUMENT_ERROR"],
+  evalIds: ["ir-move", "ir-compare", "ir-frontier", "ir-explicit-intent-wins"],
+  procedure: "Record intent, brand (as written) and the territories the user named with interpret_request. Fields fixed by the request must match. Ask the user only if the goal is materially ambiguous.",
+};
+
+export const resolveBrandSkill: SkillDefinition<{ query: string | null }, { brandId: string | null; ambiguous: boolean }> = {
+  id: "resolve_brand",
+  version: 1,
+  purpose: "Resolve the brand to exactly one Qloo entity; never pick silently among ambiguous candidates.",
+  intents: ["analyze_move", "compare_territories", "explore_frontier"],
+  preconditions: ["interpretation recorded", "brand not resolved"],
+  relevant: (state) => state.interpretation !== null && state.brand.entity === null,
+  inputSchema: z.object({ query: z.string().nullable() }),
+  focus: (state) => ({ query: state.brand.query }),
+  outputSchema: z.object({ brandId: z.string().nullable(), ambiguous: z.boolean() }),
+  outcome: (state) => ({ brandId: state.brand.entity?.id ?? null, ambiguous: state.brand.ambiguity !== null }),
+  allowedTools: ["qloo_resolve_entity"],
+  allowedActions: ["ask_user"],
+  allowedRoutes: [],
+  contextRequirements: [],
+  budget: { maxTurns: 5, maxQlooCalls: 4 },
+  stoppingConditions: ["brand resolved", "ambiguity → ask the user", "not found twice → INSUFFICIENT", "budget spent → INSUFFICIENT"],
+  failureModes: ["ENTITY_RESOLUTION_ERROR", "QLOO_TOOL_ERROR"],
+  evalIds: ["er-exact", "er-not-found", "er-type-evidence", "amb-ask", "amb-continue", "amb-no-silent-choice"],
+  procedure: "Resolve the brand with qloo_resolve_entity (role brand, type brand). If Qloo returns several candidates, ask the user which one; after an answer, resolve the chosen candidate id.",
+};
+
+export const resolveTerritorySkill: SkillDefinition<{ territories: string[] }, { anchored: string[]; unresolved: string[] }> = {
+  id: "resolve_territory",
+  // v2 (Sprint 4 live fix): per-territory Qloo budget; a spent Qloo budget no longer deactivates anchoring.
+  version: 2,
+  purpose: "Anchor each territory to one Qloo concept tag, choosing among tags by the Qloo members they carry; drop territories Qloo cannot express.",
+  intents: ["analyze_move", "compare_territories", "explore_frontier"],
+  preconditions: ["brand resolved", "an in-scope territory has no concept and resolution is possible"],
+  relevant: (state) => state.brand.entity !== null && !spent(state, "resolve_territory") && open(state).some((t) => territoryReadiness(state, t).state === "needs_concept"),
+  inputSchema: z.object({ territories: keys }),
+  focus: (state) => ({ territories: open(state).filter((t) => territoryReadiness(state, t).state === "needs_concept").map((t) => t.key) }),
+  outputSchema: z.object({ anchored: keys, unresolved: keys }),
+  outcome: (state) => ({ anchored: state.territories.filter((t) => t.concept).map((t) => t.key), unresolved: state.territories.filter((t) => !t.concept).map((t) => t.key) }),
+  allowedTools: ["qloo_find_tags", "qloo_recommend", "anchor_territory", "drop_territory"],
+  allowedActions: ["ask_user"],
+  allowedRoutes: [],
+  contextRequirements: ["observedTags"],
+  // 1 tag search + up to 3 brand and 3 place probes per territory (+1 spare): 8.
+  budget: { maxTurns: 5, maxQlooCalls: 8, perTerritory: true },
+  stoppingConditions: ["every territory anchored or dropped", "Qloo budget spent → anchor with the evidence already gathered", "turn budget spent → remaining territories reported unsupported"],
+  failureModes: ["TERRITORY_RESOLUTION_ERROR", "QLOO_DATA_LIMIT", "TOOL_SELECTION_ERROR"],
+  evalIds: ["er-exact", "ie-unmeasurable", "gen-unseen-brand-territory"],
+  procedure: "Search Qloo tags for the territory (qloo_find_tags). Prefer a tag named like the territory; when several fit, probe brand-independent pools (qloo_recommend, conditionOnBrand=false) and anchor the tag whose members best express it. Drop a territory only with a taxonomy code when Qloo has no concept for it.",
+};
+
+export const buildRepresentationSkill: SkillDefinition<{ territories: string[] }, { represented: string[]; conceptOnly: string[] }> = {
+  id: "build_territory_representation",
+  // v2 (Sprint 4 live fix): per-territory Qloo budget; a spent Qloo budget no longer deactivates validation.
+  version: 2,
+  purpose: "Represent each anchored territory with distinct, well-evidenced Qloo exemplars; recover with another strategy when the candidate pool is weak; never force a weak panel.",
+  intents: ["analyze_move", "compare_territories", "explore_frontier"],
+  preconditions: ["brand resolved", "an in-scope territory is anchored without a representation and strategies remain"],
+  relevant: (state) => state.brand.entity !== null && !spent(state, "build_territory_representation") && open(state).some((t) => territoryReadiness(state, t).state === "needs_representation" || recoverable(state, t)),
+  inputSchema: z.object({ territories: keys }),
+  focus: (state) => ({ territories: open(state).filter((t) => territoryReadiness(state, t).state === "needs_representation" || recoverable(state, t)).map((t) => t.key) }),
+  outputSchema: z.object({ represented: keys, conceptOnly: keys }),
+  outcome: (state) => ({ represented: state.territories.filter((t) => t.representation).map((t) => t.key), conceptOnly: state.territories.filter((t) => t.concept && !t.representation).map((t) => t.key) }),
+  allowedTools: ["qloo_recommend", "qloo_get_entity_tags", "validate_territory_representation", "declare_concept_only", "qloo_find_tags", "anchor_territory", "drop_territory"],
+  allowedActions: [],
+  allowedRoutes: ALL_ROUTES,
+  contextRequirements: ["exemplarCandidates", "representationRecovery"],
+  budget: { maxTurns: 6, maxQlooCalls: 8, perTerritory: true },
+  stoppingConditions: [
+    "a representation with ≥ 1 VALID exemplar is accepted (prefer 3 distinct ones)",
+    "a (concept, entity type) strategy failed twice → exhausted, try another type or concept",
+    "no strategy left → concept-only evidence (declare_concept_only)",
+  ],
+  failureModes: ["REPRESENTATION_ERROR", "EXEMPLAR_SEMANTIC_ERROR", "QLOO_DATA_LIMIT"],
+  evalIds: ["ex-quality-selection", "ex-single-member", "rv-brand-conditioned", "rv-fabricated-id", "rv-place-representation", "sk-quality-outlier", "sk-quality-weak-recovery", "sk-semantic-veto", "sk-strategy-exhausted"],
+  procedure:
+    "Fetch Qloo members of the concept (qloo_recommend, conditionOnBrand=false) for a fitting entity type. Fetch tag profiles of the leading candidates (qloo_get_entity_tags) so quality can be checked against peers. Propose up to 3 distinct exemplars with validate_territory_representation; you may attach a semantic judgment per exemplar (relevance strong/adequate/weak/mismatch + reason): it is advisory and can only remove a candidate. If the pool is weak, recover: another entity type, an alternate Qloo concept for the same territory, or declare_concept_only.",
+};
+
+export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | null; size: number }, { size: number; references: string[] }> = {
+  id: "build_comparison_set",
+  version: 1,
+  purpose: "Give a single move or a two-territory comparison a comparison set of ≥ 3 represented territories of one entity type, with justified references.",
+  intents: ["analyze_move", "compare_territories"],
+  preconditions: ["a target is represented", `fewer than ${MIN_COMPARISON_SET} represented territories of its entity type`, "reference candidates remain"],
+  relevant: (state) => {
+    const intent = state.interpretation?.intent;
+    if ((intent !== "analyze_move" && intent !== "compare_territories") || !state.brand.entity || discoverySpent(state, "build_comparison_set")) return false;
+    if (referenceEntityType(state) === null || comparisonSetSize(state) >= MIN_COMPARISON_SET) return false;
+    if (state.territories.length >= state.limits.maxCandidateTerritories || remainingQlooCalls(state) < 2) return false;
+    const brandProfiled = state.profiles.has(state.brand.entity.id);
+    const exemplarsProfiled = activeTerritories(state).every((t) => t.role !== "target" || (t.representation?.exemplars ?? []).every((e) => state.profiles.has(e.id)));
+    return !brandProfiled || !exemplarsProfiled || referenceCandidates(state).some((c) => c.usable !== false && c.namespaceYield !== "unproductive");
+  },
+  inputSchema: z.object({ entityType: z.string().nullable(), size: z.number() }),
+  focus: (state) => ({ entityType: referenceEntityType(state), size: comparisonSetSize(state) }),
+  outputSchema: z.object({ size: z.number(), references: keys }),
+  outcome: (state) => ({ size: comparisonSetSize(state), references: activeTerritories(state).filter((t) => t.role === "reference").map((t) => t.key) }),
+  allowedTools: ["qloo_get_entity_tags", "qloo_recommend", "propose_territory", "anchor_territory", "validate_territory_representation", "assess_concept_duplicates", "drop_territory"],
+  allowedActions: [],
+  allowedRoutes: ["FULL_RELATIVE_ANALYSIS"],
+  contextRequirements: ["referenceCandidates", "brandProfile", "exemplarCandidates", "conceptDedup"],
+  budget: { maxTurns: 4, maxQlooCalls: 10 },
+  stoppingConditions: [`≥ ${MIN_COMPARISON_SET} represented territories of one entity type`, "no usable reference candidate left → analysis stays partial", "budget spent"],
+  failureModes: ["REPRESENTATION_ERROR", "QLOO_DATA_LIMIT", "CONCEPT_DUPLICATION_ERROR"],
+  evalIds: ["ex-quality-selection", "sk-quality-outlier", "sk-reference-place-type", "ir-move"],
+  procedure:
+    "Pick reference concepts from referenceCandidates (each has a justification). Probe a candidate's brand-independent pool with the TARGET's entity type (qloo_recommend), then propose_territory (role reference, origin qloo_evidence, with the tag as evidence), anchor it and validate exemplars of that same type. Skip candidates that duplicate a target and namespaces that returned nothing.",
+};
+
+export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: number }, { candidates: string[]; dropped: string[] }> = {
+  id: "explore_candidate_territories",
+  version: 1,
+  purpose: "Generate distinct frontier candidates from two channels (Qloo-grounded concepts and agent hypotheses), each of which must still pass Qloo validation.",
+  intents: ["explore_frontier"],
+  preconditions: ["explore_frontier", "brand resolved", `fewer than ${FRONTIER_TARGET} viable candidates`, "room in the candidate and call budgets"],
+  relevant: (state) =>
+    state.interpretation?.intent === "explore_frontier" &&
+    state.brand.entity !== null &&
+    !discoverySpent(state, "explore_candidate_territories") &&
+    viableFrontierCandidates(state) < FRONTIER_TARGET &&
+    state.territories.length < state.limits.maxCandidateTerritories &&
+    remainingQlooCalls(state) >= 2,
+  inputSchema: z.object({ viable: z.number(), target: z.number() }),
+  focus: (state) => ({ viable: viableFrontierCandidates(state), target: FRONTIER_TARGET }),
+  outputSchema: z.object({ candidates: keys, dropped: keys }),
+  outcome: (state) => ({ candidates: activeTerritories(state).filter((t) => t.role === "frontier_candidate").map((t) => t.key), dropped: state.territories.filter((t) => t.status === "dropped").map((t) => t.key) }),
+  allowedTools: ["qloo_get_entity_tags", "qloo_related_entities", "qloo_find_tags", "qloo_recommend", "propose_territory", "anchor_territory", "assess_concept_duplicates", "drop_territory"],
+  allowedActions: [],
+  allowedRoutes: ALL_ROUTES,
+  contextRequirements: ["brandProfile", "relatedEntities", "frontierConcepts", "conceptDedup"],
+  budget: { maxTurns: 6, maxQlooCalls: 20 },
+  stoppingConditions: [`${FRONTIER_TARGET} viable, distinct candidates`, "candidate or call budget reached", "no Qloo-supported concept left"],
+  failureModes: ["CONCEPT_DUPLICATION_ERROR", "TERRITORY_RESOLUTION_ERROR", "QLOO_DATA_LIMIT"],
+  evalIds: ["ir-frontier", "dtd-unsupported-hypothesis", "dtd-near-duplicate", "sk-frontier-two-channels", "sk-frontier-morph-duplicate", "sk-dedup-model-distinct"],
+  procedure:
+    "Channel A (Qloo-grounded): fetch the brand profile and Qloo-related brands' profiles; frontierConcepts lists concepts they carry that the brand does not. Channel B (agent hypothesis): you may propose a non-obvious lateral territory (origin agent_hypothesis); it must then be found in Qloo tags, anchored, and shown to have Qloo members, or it is dropped. Aim for candidates that are culturally different from each other; label likely duplicates with assess_concept_duplicates.",
+};
+
+export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { analyzed: string[] }> = {
+  id: "analyze_territories",
+  version: 1,
+  purpose: "Run the deterministic analysis for ready territories and finish when sufficiency allows.",
+  intents: ["analyze_move", "compare_territories", "explore_frontier"],
+  preconditions: ["brand resolved", "a territory is ready (validated panel, or concept-only/unsupported with nothing left to try), a result exists, or every territory is analyzed"],
+  relevant: (state) => state.brand.entity !== null && (open(state).length === 0 || state.results.size > 0 || open(state).some((t) => isReady(territoryReadiness(state, t)))),
+  inputSchema: z.object({ ready: keys }),
+  focus: (state) => ({ ready: open(state).filter((t) => isReady(territoryReadiness(state, t))).map((t) => t.key) }),
+  outputSchema: z.object({ analyzed: keys }),
+  outcome: (state) => ({ analyzed: state.territories.filter((t) => t.status === "analyzed").map((t) => t.key) }),
+  allowedTools: ["assess_evidence_sufficiency", "drop_territory"],
+  allowedActions: ["analyze", "finish"],
+  allowedRoutes: ALL_ROUTES,
+  contextRequirements: ["analysisResults"],
+  // Passive skill (available whenever something is ready): bounded by the run's iteration budget (30 max).
+  budget: { maxTurns: 30, maxQlooCalls: 0 },
+  stoppingConditions: ["deterministic sufficiency is SUFFICIENT or INSUFFICIENT", "no material evidence gap remains"],
+  failureModes: ["ANALYSIS_ROUTE_ERROR", "EVIDENCE_SUFFICIENCY_ERROR", "METHODOLOGY_ERROR"],
+  evalIds: ["ie-descriptive", "ie-unmeasurable", "bc-qloo-budget", "fs-faithful", "sk-early-stop"],
+  procedure: "Analyze ready territories together (one call per comparison set is best: analysis of ≥ 3 represented territories of one type yields a relative position). Finish when sufficiency allows. The route, every number and every class come from deterministic code.",
+};
+
+/** Registry order is the attribution order for shared tools (earlier skill wins). */
+export const SKILLS: readonly SkillDefinition[] = [
+  interpretRequestSkill,
+  resolveBrandSkill,
+  resolveTerritorySkill,
+  buildRepresentationSkill,
+  buildComparisonSetSkill,
+  exploreCandidatesSkill,
+  analyzeTerritoriesSkill,
+] as unknown as readonly SkillDefinition[];

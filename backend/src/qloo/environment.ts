@@ -98,6 +98,8 @@ const ROUTING_VARIABLES = [
 export function harnessChildEnv(baseEnv: NodeJS.ProcessEnv, origin: string, qlooHome?: string): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = { ...baseEnv };
   for (const name of ROUTING_VARIABLES) delete env[name];
+  // Least privilege: the Qloo harness never needs model-provider credentials.
+  for (const name of Object.keys(env)) if (name.startsWith("ANTHROPIC_")) delete env[name];
   env.QLOO_BASE_URL = origin;
   env.QLOO_TRUSTED_BASE_URL = origin;
   env.QLOO_HOME = qlooHome ?? mkdtempSync(join(tmpdir(), "ce-qloo-home-"));

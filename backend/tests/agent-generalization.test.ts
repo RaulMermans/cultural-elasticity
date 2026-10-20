@@ -1,6 +1,7 @@
 /**
  * Generalization gates G1–G5 and benchmark isolation.
- *   G1  production backend code never imports evals/benchmarks (or the benchmark capture configs)
+ *   G1  production backend code never imports evals/benchmarks, capture configs, feasibility pins or the
+ *       synthetic world (Sprint 4: all of them live under backend/scripts/, outside the production build)
  *   G2  no benchmark brand / territory / exemplar in runtime source (comments stripped; one documented
  *       calibration-provenance string allowed)
  *   G3  an unseen brand runs end to end with no code change
@@ -12,7 +13,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AgentAnalysisResult } from "@cultural-elasticity/shared";
 import { describe, expect, it } from "vitest";
-import { ELASTICITY_CAPTURE } from "../src/capture/elasticity-config.js";
+import { ELASTICITY_CAPTURE } from "../scripts/capture/elasticity-config.js";
 import { AGENT_SYSTEM_PROMPT, SYNTHESIS_SYSTEM_PROMPT } from "../src/agent/prompts.js";
 import { AGENT_TOOLS } from "../src/agent/tool-registry.js";
 import { runtime } from "./fixtures/synthetic/agent.js";
@@ -68,19 +69,29 @@ describe("G1 benchmark isolation (imports)", () => {
     for (const entry of RUNTIME_ENTRIES) for (const f of reachable(entry)) graph.add(f);
     const rel = [...graph].map((f) => relative(SRC, f));
     expect(rel.some((f) => f.startsWith("capture/") || f.startsWith("feasibility/"))).toBe(false);
+    // Nothing outside src (scripts, tests, evals) is reachable from a production entry point.
+    expect(rel.filter((f) => f.startsWith(".."))).toEqual([]);
     for (const f of graph) {
       const text = readFileSync(f, "utf8");
       expect(text, relative(SRC, f)).not.toMatch(/evals\/benchmarks|benchmark\.json|cultural-elasticity-v0/u);
     }
   });
 
+  it("capture configs, feasibility pins and the synthetic world are not in production src (Sprint 4 move)", () => {
+    const all = files(SRC).map((f) => relative(SRC, f));
+    expect(all.filter((f) => f.startsWith("capture/") || f.startsWith("feasibility/") || f.includes("synthetic-world"))).toEqual([]);
+    for (const f of files(SRC)) expect(stripComments(readFileSync(f, "utf8")), relative(SRC, f)).not.toMatch(/evals\/fixtures|world\.json|scripts\//u);
+  });
+
   it("no source file anywhere in src loads benchmark data, and runtime code never references benchmark labels", () => {
-    // methodology/benchmark.ts defines the label SCHEMA used by eval scripts; it loads nothing and is unreachable from runtime entries.
+    // The benchmark label schema and calibration live in scripts/benchmark/ since Sprint 4 (not in src at all).
     for (const f of files(SRC)) expect(stripComments(readFileSync(f, "utf8")), relative(SRC, f)).not.toMatch(/evals\/benchmarks|benchmark\.json/u);
     const graph = new Set<string>();
     for (const entry of RUNTIME_ENTRIES) for (const f of reachable(entry)) graph.add(f);
     for (const f of graph) expect(readFileSync(f, "utf8"), relative(SRC, f)).not.toMatch(/expected_(strong|mid|weak)/u);
     expect([...graph].map((f) => relative(SRC, f))).not.toContain("methodology/benchmark.ts");
+    expect(files(SRC).map((f) => relative(SRC, f)).filter((f) => /benchmark|calibration/u.test(f))).toEqual([]);
+    for (const f of files(SRC)) expect(stripComments(readFileSync(f, "utf8")), relative(SRC, f)).not.toMatch(/expected_(strong|mid|weak)/u);
   });
 });
 
@@ -157,8 +168,16 @@ describe("G3/G4/G5 generalization (synthetic world, baseline reference policy)",
 
   it("full methodology runs only on a valid comparison set", async () => {
     const compare = await run("Saffron & Salt", ["Tableware", "Skincare", "Slow Travel"]);
-    expect(compare.methodologyRuns).toHaveLength(0);
-    for (const t of compare.territories) expect(t.limitations.map((l) => l.code)).toEqual(expect.arrayContaining(["COMPARISON_SET_TOO_SMALL"]));
+    // Sprint 4: a justified same-type reference completes the brand-represented set; the place-represented
+    // territory cannot join a brand panel and stays outside any comparison set.
+    for (const m of compare.methodologyRuns) {
+      expect(m.territoryKeys.length).toBeGreaterThanOrEqual(3);
+      const types = new Set(m.territoryKeys.map((k) => compare.territories.find((t) => t.key === k)!.representation.entityType));
+      expect(types.size).toBe(1);
+    }
+    const slow = compare.territories.find((t) => t.key === "slow_travel")!;
+    expect(slow.limitations.map((l) => l.code)).toContain("COMPARISON_SET_TOO_SMALL");
+    expect(slow.relativePosition).toBeNull();
     const move = await run("Northwind Atelier", ["Boutique Hospitality"]);
     expect(move.methodologyRuns).toHaveLength(1);
     expect(move.methodologyRuns[0]!.territoryKeys.length).toBeGreaterThanOrEqual(3);

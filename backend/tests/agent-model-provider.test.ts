@@ -16,7 +16,7 @@ function mockClient(response: unknown) {
   return { client: client as never, requests };
 }
 
-const context = { runId: "r", iteration: 1, userQuery: "q", tools: [{ name: "qloo_find_tags", description: "d", inputSchema: { type: "object", properties: { query: { type: "string" } }, required: ["query"] } }] } as unknown as AgentDecisionContext;
+const context = { runId: "r", iteration: 1, userQuery: "q", actions: ["analyze", "ask_user", "finish"], repair: null, tools: [{ name: "qloo_find_tags", description: "d", inputSchema: { type: "object", properties: { query: { type: "string" } }, required: ["query"] } }] } as unknown as AgentDecisionContext;
 
 describe("AnthropicAgentModel (mocked client)", () => {
   it("defaults to the current Opus model with auto tool choice, adaptive effort and refusal fallbacks", async () => {
@@ -27,6 +27,17 @@ describe("AnthropicAgentModel (mocked client)", () => {
     const toolNames = (requests[0]!.tools as { name: string }[]).map((t) => t.name);
     expect(toolNames).toEqual(["qloo_find_tags", "analyze", "ask_user", "finish"]);
     expect(JSON.stringify(requests[0])).not.toMatch(/API_KEY|x-api-key/iu);
+  });
+
+  it("sends the server-side refusal fallback only to models that support it (not Haiku 5.5)", async () => {
+    const opus = mockClient({ stop_reason: "tool_use", usage: { input_tokens: 1, output_tokens: 1 }, content: [] });
+    await new AnthropicAgentModel({ client: opus.client }).decide(context);
+    expect(opus.requests[0]).toMatchObject({ fallbacks: "default", betas: ["server-side-fallback-2026-07-01"] });
+    const haiku = mockClient({ stop_reason: "tool_use", usage: { input_tokens: 1, output_tokens: 1 }, content: [] });
+    await new AnthropicAgentModel({ client: haiku.client, model: "claude-haiku-5-5" }).decide(context);
+    expect(haiku.requests[0]).toMatchObject({ model: "claude-haiku-5-5" });
+    expect(haiku.requests[0]).not.toHaveProperty("fallbacks");
+    expect(haiku.requests[0]).not.toHaveProperty("betas");
   });
 
   it("maps tool_use blocks to structured decisions and strips reasonSummary from arguments", async () => {
@@ -44,7 +55,7 @@ describe("AnthropicAgentModel (mocked client)", () => {
       { action: "call_tool", tool: "qloo_find_tags", arguments: { query: "pottery" }, reasonSummary: "need a concept" },
       { action: "analyze", targetIds: ["pottery"], reasonSummary: "ready" },
     ]);
-    expect(turn.usage).toEqual({ inputTokens: 100, outputTokens: 20 });
+    expect(turn.usage).toEqual({ inputTokens: 100, outputTokens: 20, cacheReadTokens: 0, cacheCreationTokens: 0 });
   });
 
   it("treats prose-only answers and refusals as invalid turns", async () => {

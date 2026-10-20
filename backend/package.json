@@ -6,7 +6,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json",
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
@@ -17,7 +17,8 @@
     "eval:elasticity": "tsx scripts/eval-elasticity.ts",
     "methodology:jacquemus": "tsx scripts/methodology-jacquemus.ts",
     "agent:run": "tsx scripts/agent-run.ts",
-    "eval:agent": "tsx scripts/eval-agent.ts"
+    "eval:agent": "tsx scripts/eval-agent.ts",
+    "eval:agent:live": "tsx scripts/eval-agent-live.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.131.0",
