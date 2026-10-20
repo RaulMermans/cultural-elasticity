@@ -12,11 +12,11 @@
  */
 import type { CulturalElasticityResult, ElasticityClass } from "@cultural-elasticity/shared";
 import { expectationOf, subsetOf, type Benchmark, type Expectation, type PairwiseAssertion } from "./benchmark.js";
-import type { ClassificationThresholds } from "./classification.js";
-import { CALIBRATION_GRID } from "./config.js";
-import type { MethodologyInput } from "./contracts.js";
-import { computeElasticity } from "./elasticity.js";
-import { round } from "./stats.js";
+import type { ClassificationThresholds } from "../../src/methodology/classification.js";
+import { CALIBRATION_GRID } from "../../src/methodology/config.js";
+import type { MethodologyInput } from "../../src/methodology/contracts.js";
+import { computeElasticity } from "../../src/methodology/elasticity.js";
+import { round } from "../../src/methodology/stats.js";
 
 export const EXPECTED_CLASS: Record<Expectation, ElasticityClass> = {
   expected_strong: "NATURAL_ADJACENCY",

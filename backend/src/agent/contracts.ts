@@ -27,8 +27,13 @@ export const investigationLimitsSchema = z.strictObject({
 });
 export type InvestigationLimits = z.output<typeof investigationLimitsSchema>;
 
+/**
+ * Sprint 4 limits. Turns are smaller (just-in-time context) and a representation now includes candidate
+ * tag profiles for the quality check, so the iteration and call budgets were raised from 8 / 20-30-30.
+ * Early stopping (no-value and duplicate calls are refused) keeps runs from spending budget they don't need.
+ */
 const BASE_LIMITS: Omit<InvestigationLimits, "maxQlooCalls"> = {
-  maxAgentIterations: 8,
+  maxAgentIterations: 12,
   maxRepresentationAttemptsPerTerritory: 3,
   maxCandidateTerritories: 6,
   maxExemplarsPerTerritory: 3,
@@ -38,8 +43,11 @@ const BASE_LIMITS: Omit<InvestigationLimits, "maxQlooCalls"> = {
   toolTimeoutMs: 300_000,
 };
 
+/** Frontier exploration stops proposing once this many candidates have a non-INSUFFICIENT analysis. */
+export const MIN_FRONTIER_SUPPORTED = 3;
+
 /** Starting engineering limits (Sprint 3 spec §25). Configurable per request. */
-export const DEFAULT_QLOO_CALLS: Record<AgentIntent, number> = { analyze_move: 20, compare_territories: 30, explore_frontier: 30 };
+export const DEFAULT_QLOO_CALLS: Record<AgentIntent, number> = { analyze_move: 24, compare_territories: 32, explore_frontier: 32 };
 
 export function defaultLimits(intent: AgentIntent | undefined): InvestigationLimits {
   return { ...BASE_LIMITS, maxQlooCalls: DEFAULT_QLOO_CALLS[intent ?? "explore_frontier"] };
@@ -107,8 +115,11 @@ export type AgentDecision = z.output<typeof agentDecisionSchema>;
 export type ModelTurn = {
   /** Raw decisions (validated by the runtime), or the reason the model output could not be parsed. */
   decisions: unknown[] | { invalid: string };
-  usage?: { inputTokens: number; outputTokens: number };
+  /** Provider-reported usage. inputTokens excludes cache reads/writes, which are reported separately. */
+  usage?: ModelUsage;
 };
+
+export type ModelUsage = { inputTokens: number; outputTokens: number; cacheReadTokens?: number; cacheCreationTokens?: number };
 
 // ---- Synthesis ----
 

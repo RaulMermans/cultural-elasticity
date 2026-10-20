@@ -4,12 +4,11 @@
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { createScriptedToolProvider } from "../../../src/agent/factory.js";
 import { BaselinePolicyModel } from "../../../src/agent/model/baseline.js";
 import type { AgentModel } from "../../../src/agent/model/provider.js";
 import { AgentRuntime } from "../../../src/agent/runtime.js";
 import { createRunState, transition, type AgentRunState } from "../../../src/agent/state.js";
-import { syntheticWorldSchema, type SyntheticFault, type SyntheticWorld } from "../../../src/agent/synthetic-world.js";
+import { createScriptedToolProvider, syntheticWorldSchema, type SyntheticFault, type SyntheticWorld } from "../../../scripts/synthetic/synthetic-world.js";
 import type { AgentRequest, InvestigationLimits } from "../../../src/agent/contracts.js";
 
 export const WORLD_PATH = fileURLToPath(new URL("../../../../evals/fixtures/synthetic/agent/world.json", import.meta.url));

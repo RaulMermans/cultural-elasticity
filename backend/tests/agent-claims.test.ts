@@ -15,8 +15,10 @@ describe("claim validator", () => {
   it("accepts statements that restate deterministic results", async () => {
     const r = await fullResult();
     const t = r.territories.find((x) => x.key === "boutique_hospitality")!;
-    expect(t.classification?.label).toBe("CREDIBLE_STRETCH");
-    const ok = synth(`Boutique Hospitality sits at position ${t.relativePosition!.position} of ${t.relativePosition!.of}; Qloo evidence makes it a credible stretch relative to this comparison set, with high robustness.`);
+    expect(t.analysisRoute).toBe("FULL_RELATIVE_ANALYSIS");
+    // Restate whatever class and robustness level the methodology assigned (the claim must match them).
+    const phrase = { NATURAL_ADJACENCY: "a natural adjacency", CREDIBLE_STRETCH: "a credible stretch", UNCERTAIN_REPRESENTATION_SENSITIVE: "uncertain and representation-sensitive", CULTURAL_BREAK: "a cultural break" }[t.classification!.label as string];
+    const ok = synth(`Boutique Hospitality sits at position ${t.relativePosition!.position} of ${t.relativePosition!.of}; Qloo evidence makes it ${phrase} relative to this comparison set, with ${t.robustness!.level.toLowerCase()} robustness.`);
     expect(validateClaims(ok, r.territories, ["Northwind Atelier"])).toEqual([]);
   });
 
@@ -50,9 +52,12 @@ describe("claim validator", () => {
 
   it("checks robustness and evidence-quality levels against each territory", async () => {
     const r = await fullResult();
-    const t = r.territories.find((x) => x.robustness?.level === "INSUFFICIENT")!;
-    expect(validateClaims(synth("ok.", [{ territoryKey: t.key, text: "Robustness is high." }]), r.territories).join(" ")).toMatch(/robustness HIGH does not match/u);
-    expect(validateClaims(synth("ok.", [{ territoryKey: t.key, text: "Evidence quality is low." }]), r.territories).join(" ")).toMatch(/evidence quality LOW/u);
+    const t = r.territories.find((x) => x.robustness !== null && x.evidenceQuality !== null)!;
+    const wrongRobustness = t.robustness!.level === "HIGH" ? "low" : "high";
+    const wrongQuality = t.evidenceQuality!.level === "LOW" ? "high" : "low";
+    expect(validateClaims(synth("ok.", [{ territoryKey: t.key, text: `Robustness is ${wrongRobustness}.` }]), r.territories).join(" ")).toMatch(new RegExp(`robustness ${wrongRobustness.toUpperCase()} does not match`, "u"));
+    expect(validateClaims(synth("ok.", [{ territoryKey: t.key, text: `Evidence quality is ${wrongQuality}.` }]), r.territories).join(" ")).toMatch(new RegExp(`evidence quality ${wrongQuality.toUpperCase()}`, "u"));
+    expect(validateClaims(synth("ok.", [{ territoryKey: t.key, text: `Robustness is ${t.robustness!.level.toLowerCase()}.` }]), r.territories)).toEqual([]);
     expect(validateClaims(synth("ok.", [{ territoryKey: "nope", text: "x" }]), r.territories).join(" ")).toMatch(/unknown territory/u);
   });
 

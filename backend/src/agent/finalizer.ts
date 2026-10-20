@@ -8,8 +8,10 @@
  * The synthesis can explain results. It cannot change a route, class, level or number: those are
  * copied from deterministic code into the result regardless of what the model wrote.
  */
-import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentTerritoryResult, type Limitation } from "@cultural-elasticity/shared";
+import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type Limitation } from "@cultural-elasticity/shared";
 import { unanalyzedResult } from "./analysis-runner.js";
+import { classifyRunFailure } from "./failure-taxonomy.js";
+import { comparisonSetConstruction } from "./frontier.js";
 import { validateClaims } from "./claim-validator.js";
 import { synthesisSchema, type Synthesis } from "./contracts.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
@@ -62,8 +64,50 @@ function templateFollowUps(results: AgentTerritoryResult[]): string[] {
   return [...new Set(out)].slice(0, 6);
 }
 
+/** USD per million tokens for models with a known first-party price; others report cost as unavailable. */
+const MODEL_PRICES: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
+  "claude-opus-5-5": { input: 4, output: 20, cacheRead: 0.2, cacheWrite: 5 },
+  // Prompts up to 100K tokens (every agent turn is far below); cache read/write at the standard 0.1× / 1.25×.
+  "claude-haiku-5-5": { input: 0.1, output: 0.5, cacheRead: 0.01, cacheWrite: 0.125 },
+};
+
+/** Rejection codes that are valid-schema actions the current state does not support. */
+const UNSUPPORTED_STATE_CODES = new Set([
+  "WRONG_PHASE",
+  "NOT_EXPOSED",
+  "PRECONDITION",
+  "NEEDS_USER_INPUT",
+  "NOT_READY",
+  "FINISH_BEFORE_SUFFICIENCY",
+  "NOTHING_ANALYZED",
+  "NOTHING_TO_ANALYZE",
+  "NO_OPEN_AMBIGUITY",
+  "EVIDENCE_SUFFICIENT",
+  "STRATEGY_EXHAUSTED",
+  "DUPLICATE_ACTION",
+  "NO_VALUE_ACTION",
+  "EARLY_STOP",
+  "SKILL_BUDGET_EXHAUSTED",
+  "ANALYSIS_RESERVE",
+  "BUDGET_EXHAUSTED",
+  "UNKNOWN_RESULT_IDS",
+]);
+
+export function modelCostUsd(state: AgentRunState): number | null {
+  const price = state.model.kind === "llm" ? MODEL_PRICES[state.model.id] : undefined;
+  if (!price) return null;
+  const u = state.usage;
+  const usd = (u.uncachedInputTokens * price.input + u.cacheReadTokens * price.cacheRead + u.cacheCreationTokens * price.cacheWrite + u.outputTokens * price.output) / 1_000_000;
+  return Math.round(usd * 10_000) / 10_000;
+}
+
 export function computeMetrics(state: AgentRunState, results: AgentTerritoryResult[]): AgentMetrics {
   const calls = state.trace.toolCalls;
+  const turns = state.trace.turns;
+  const codes = turns.flatMap((t) => t.decisions.flatMap((d) => (d.rejection ? [d.rejection.split(":")[0]!] : [])));
+  const sizes = turns.flatMap((t) => (t.contextChars !== undefined ? [t.contextChars] : []));
+  const tokens = turns.flatMap((t) => (t.contextTokensEstimate !== undefined ? [t.contextTokensEstimate] : []));
+  const avg = (values: number[]) => (values.length === 0 ? null : Math.round(values.reduce((a, b) => a + b, 0) / values.length));
   const executed = calls.filter((c) => c.status !== "rejected");
   const succeeded = executed.filter((c) => c.status === "ok" || c.status === "empty");
   const count = (route: string) => results.filter((r) => r.analysisRoute === route).length;
@@ -87,6 +131,48 @@ export function computeMetrics(state: AgentRunState, results: AgentTerritoryResu
     model_output_tokens: state.usage.outputTokens,
     retry_count: state.usage.retries,
     budget_exhausted: state.status === "BUDGET_EXHAUSTED",
+    model_turns: turns.length,
+    model_attempts: turns.reduce((n, t) => n + (t.modelAttempts ?? 1), 0),
+    first_attempt_valid_turns: turns.filter((t) => t.firstAttemptValid).length,
+    valid_after_repair_turns: turns.filter((t) => t.decisions.some((d) => d.accepted)).length,
+    repairs: turns.filter((t) => (t.modelAttempts ?? 1) > 1).length,
+    unknown_tool_attempts: codes.filter((c) => c === "UNKNOWN_TOOL").length,
+    invalid_argument_attempts: codes.filter((c) => c === "INVALID_ARGUMENTS" || c === "INVALID_DECISION").length,
+    unsupported_state_actions: codes.filter((c) => UNSUPPORTED_STATE_CODES.has(c)).length,
+    synthesis_attempts: state.usage.synthesisAttempts,
+    calls_avoided: state.trace.earlyStops.reduce((n, e) => n + e.callsAvoided, 0),
+    avg_context_chars: avg(sizes),
+    max_context_chars: sizes.length ? Math.max(...sizes) : null,
+    avg_context_tokens_estimate: avg(tokens),
+    model_latency_ms: turns.reduce((n, t) => n + t.latencyMs, 0),
+    qloo_latency_ms: state.usage.qlooLatencyMs,
+    model_cost_usd: modelCostUsd(state),
+  };
+}
+
+function layers(state: AgentRunState, results: AgentTerritoryResult[], summary: { text: string; source: "model" | "deterministic_template"; passed: boolean }, followUps: string[]): AgentResultLayers {
+  const decisions = state.trace.representationQuality;
+  const brand = state.brand.entity;
+  return {
+    qlooEvidence: {
+      brand: brand ? { id: brand.id, label: brand.label, correlationId: brand.call.envelope.execution.correlation_id } : null,
+      concepts: state.territories.flatMap((t) => (t.concept ? [{ territoryKey: t.key, id: t.concept.id, label: t.concept.label, correlationIds: (state.tags.get(t.concept.id)?.sources ?? []).map((x) => x.correlationId) }] : [])),
+      exemplars: state.territories.flatMap((t) => (t.representation?.exemplars ?? []).map((e) => ({ territoryKey: t.key, id: e.id, label: e.label, conceptSupport: e.conceptSupport, supportCorrelationId: e.supportCorrelationId }))),
+      qlooCalls: state.usage.qlooCalls,
+    },
+    systemAnalysis: {
+      routes: results.map((r) => ({ territoryKey: r.key, route: r.analysisRoute, classification: r.classification?.label ?? null, position: r.relativePosition?.position ?? null, robustness: r.robustness?.level ?? null })),
+      methodologyRunIds: state.methodologyRuns.map((m) => m.id),
+      finalSufficiency: assessEvidenceSufficiency(state).verdict,
+      representationDecisions: { valid: decisions.filter((d) => d.final === "VALID").length, weak: decisions.filter((d) => d.final === "WEAK").length, rejected: decisions.filter((d) => d.final === "REJECT").length },
+    },
+    agentInterpretation: {
+      summary: summary.text,
+      source: summary.source,
+      claimValidationPassed: summary.passed,
+      semanticJudgments: decisions.flatMap((d) => (d.modelAssessment ? [{ territoryKey: d.territoryKey, label: d.label, relevance: d.modelAssessment.relevance, reason: d.modelAssessment.reason }] : [])),
+      followUpOptions: followUps,
+    },
   };
 }
 
@@ -97,6 +183,7 @@ function runLimitations(state: AgentRunState, results: AgentTerritoryResult[]): 
   ];
   if (results.some((r) => r.analysisRoute === "FULL_RELATIVE_ANALYSIS")) out.push({ code: "RELATIVE_TO_COMPARISON_SET", detail: "positions and classes hold only for the comparison set shown with each territory" });
   if (state.toolProvider.mode === "scripted") out.push({ code: "SYNTHETIC_EVIDENCE", detail: "evidence came from the scripted SYNTHETIC world, not from Qloo; never cite it as Qloo evidence" });
+  if (state.interpretation?.intent === "explore_frontier" || results.some((r) => r.role === "reference")) out.push({ code: "COMPARISON_SET_DEPENDENT", detail: "relative position depends on the comparison set; see comparisonSetConstruction for how it was assembled and what was rejected" });
   if (state.model.kind !== "llm") out.push({ code: "AGENT_POLICY_NOT_LLM", detail: `investigation decisions were made by the deterministic ${state.model.kind} policy "${state.model.id}", not by a live language model` });
   const seen = new Set<string>();
   for (const flag of state.flags) {
@@ -134,9 +221,13 @@ export async function finalize(state: AgentRunState, model: AgentModel): Promise
   const extraLabels = brandLabel ? [brandLabel] : [];
   if (results.length > 0 && state.status !== "FAILED" && model.synthesize) {
     for (attempts = 1; attempts <= 2; attempts += 1) {
+      state.usage.synthesisAttempts += 1;
       const turn = await model.synthesize(context, violations);
       if (turn.usage) {
-        state.usage.inputTokens += turn.usage.inputTokens;
+        state.usage.inputTokens += turn.usage.inputTokens + (turn.usage.cacheReadTokens ?? 0) + (turn.usage.cacheCreationTokens ?? 0);
+        state.usage.uncachedInputTokens += turn.usage.inputTokens;
+        state.usage.cacheReadTokens += turn.usage.cacheReadTokens ?? 0;
+        state.usage.cacheCreationTokens += turn.usage.cacheCreationTokens ?? 0;
         state.usage.outputTokens += turn.usage.outputTokens;
       }
       if ("invalid" in turn) {
@@ -165,7 +256,8 @@ export async function finalize(state: AgentRunState, model: AgentModel): Promise
   const territoryNotes = new Map(final.territoryNotes.map((n) => [n.territoryKey, n.text]));
   const summaryText = [final.summary, ...results.filter((r) => territoryNotes.has(r.key)).map((r) => `${r.label}: ${territoryNotes.get(r.key)}`)].join("\n");
   const status = state.status === "FAILED" ? "FAILED" : state.status === "BUDGET_EXHAUSTED" ? "BUDGET_EXHAUSTED" : "COMPLETE";
-  return {
+  const summary = { text: summaryText, source, claimValidation: { passed: finalViolations.length === 0, violations } };
+  const result: AgentAnalysisResult = {
     schemaVersion: AGENT_RESULT_SCHEMA_VERSION,
     runId: state.runId,
     status,
@@ -175,18 +267,25 @@ export async function finalize(state: AgentRunState, model: AgentModel): Promise
     brand: state.brand.entity ? { id: state.brand.entity.id, label: state.brand.entity.label, type: state.brand.entity.type, resolution: state.brand.entity.resolution } : null,
     territories: results,
     methodologyRuns: state.methodologyRuns,
-    summary: { text: summaryText, source, claimValidation: { passed: finalViolations.length === 0, violations } },
+    summary,
     followUpOptions: final.followUpOptions,
     limitations: runLimitations(state, results),
     evidenceOrigin: state.toolProvider.mode === "live" ? "live" : "synthetic",
     model: state.model,
     trace: state.trace,
     metrics: computeMetrics(state, results),
+    skillsUsed: [...state.skillUsage.values()].map((u) => u.skill),
+    comparisonSetConstruction: comparisonSetConstruction(state, results),
+    layers: layers(state, results, { text: summaryText, source, passed: finalViolations.length === 0 }, final.followUpOptions),
+    failureCategory: null,
   };
+  result.failureCategory = classifyRunFailure(result);
+  return result;
 }
 
 export function needsInputResponse(state: AgentRunState): AgentNeedsInputResponse {
   const question = state.pendingQuestion!;
+  state.trace.skillUsage = [...state.skillUsage.values()].map(({ skill, turns, qlooCalls, toolCalls }) => ({ skill, turns, qlooCalls, toolCalls }));
   return {
     schemaVersion: AGENT_RESULT_SCHEMA_VERSION,
     runId: state.runId,

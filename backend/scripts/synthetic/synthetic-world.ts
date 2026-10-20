@@ -1,6 +1,7 @@
 /**
  * SYNTHETIC Qloo world: a deterministic QlooTransport for the ScriptedToolProvider (tests and
- * `pnpm eval:agent`). It is a TEST INSTRUMENT, not Qloo evidence.
+ * `pnpm eval:agent`). It is a TEST INSTRUMENT, not Qloo evidence. Sprint 4 moved it out of backend/src:
+ * production code cannot import it (tests/agent-generalization.test.ts enforces this).
  *
  * World data lives in evals/fixtures/synthetic/ (fictional names, placeholder `SYN-` ids,
  * `"fixtureType": "synthetic"`). This module only simulates the harness envelope shapes observed live
@@ -15,8 +16,9 @@
  * Similarity is a Jaccard over world tag sets: a fixed synthetic rule, not a model of Qloo.
  */
 import { z } from "zod";
-import { QLOO_RESULT_SCHEMA_VERSION, type QlooOperation } from "../qloo/types.js";
-import type { QlooTransport, TransportResult } from "../qloo/transport.js";
+import { QLOO_RESULT_SCHEMA_VERSION, type QlooOperation } from "../../src/qloo/types.js";
+import type { QlooTransport, TransportResult } from "../../src/qloo/transport.js";
+import { QlooToolProvider, SYNTHETIC_SOURCE } from "../../src/agent/tool-provider.js";
 
 const worldTagSchema = z.strictObject({ id: z.string().min(1), name: z.string().min(1), type: z.string().min(1), popularity: z.number().optional() });
 const worldEntitySchema = z.strictObject({
@@ -199,4 +201,11 @@ export class SyntheticWorldTransport implements QlooTransport {
         return { status: "error", fields: { error: { code: "SYNTHETIC_UNSUPPORTED", layer: "harness", retryable: false, recovery: `${operation} is not simulated` }, results: [] } };
     }
   }
+}
+
+/** The scripted (synthetic) tool provider: a TEST TOOL. Evidence is labelled synthetic end to end. */
+export function createScriptedToolProvider(world: SyntheticWorld, faults: SyntheticFault[] = []): QlooToolProvider & { world: SyntheticWorldTransport } {
+  const transport = new SyntheticWorldTransport(world, faults);
+  const provider = new QlooToolProvider(transport, { name: "synthetic-world", mode: "scripted", evidenceSource: SYNTHETIC_SOURCE, spacingMs: 0, rateLimitWaitMs: 0, sleep: async () => {} });
+  return Object.assign(provider, { world: transport });
 }

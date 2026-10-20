@@ -19,9 +19,9 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadLocalEnvFile } from "../src/config/env.js";
-import { CONTRACT_LIMITATIONS } from "../src/feasibility/run.js";
-import { LiveCollector, runLiveInvestigation, type LiveRunResult } from "../src/feasibility/live.js";
-import { LIVE_INVESTIGATION } from "../src/feasibility/live-config.js";
+import { CONTRACT_LIMITATIONS } from "./feasibility/run.js";
+import { LiveCollector, runLiveInvestigation, type LiveRunResult } from "./feasibility/live.js";
+import { LIVE_INVESTIGATION } from "./feasibility/live-config.js";
 import {
   harnessChildEnv,
   LIVE_QLOO_HOST_NOT_VERIFIED,

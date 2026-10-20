@@ -6,7 +6,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { loadLocalEnvFile } from "../src/config/env.js";
-import { LiveCollector } from "../src/feasibility/live.js";
+import { LiveCollector } from "./feasibility/live.js";
 import { harnessChildEnv, LIVE_QLOO_HOST_NOT_VERIFIED, LIVE_QLOO_HOST_VERIFIED, QlooEnvironmentError, requireHackathonBaseUrl, verifyHarnessHost } from "../src/qloo/environment.js";
 import { defaultHarnessBinPath, HarnessExecTransport } from "../src/qloo/transport.js";
 

@@ -12,10 +12,12 @@
  */
 import type { AgentRunStatus, AgentToolCallTrace } from "@cultural-elasticity/shared";
 import { z } from "zod";
-import { similarLabels } from "./candidate-discovery.js";
+import { applyConceptDedup, canonicalTagName, deterministicDuplicate } from "./concept-dedup.js";
 import { AGENT_INTENTS, DEFAULT_QLOO_CALLS, RANKABLE_TYPES, shortEntityType, type RankableType } from "./contracts.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { callQloo, describedEntity, PROFILE_TAKE, recordFindTags, recordPool, recordProfile, recordRelated, recordResolved } from "./qloo-gateway.js";
+import { strategyExhausted } from "./readiness.js";
+import { referenceCandidates } from "./reference-strategy.js";
 import { validateTerritoryRepresentation } from "./representation-planner.js";
 import { resolveInterpretation } from "./router.js";
 import { activeTerritories, addTerritory, derivePhase, findTerritory, recordEntity, type AgentRunState } from "./state.js";
@@ -88,7 +90,7 @@ const interpretRequest: AgentTool<{ intent: (typeof AGENT_INTENTS)[number]; bran
 const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier_candidate"; origin: "agent_hypothesis" | "qloo_evidence"; rationale: string; evidenceTagIds?: string[] | undefined }> = {
   name: "propose_territory",
   description:
-    "Add a territory hypothesis. role=frontier_candidate (explore_frontier only) or role=reference (a comparison territory that lets the methodology place targets relative to a set of ≥3 territories). origin=qloo_evidence requires evidenceTagIds already returned by Qloo in this run. A hypothesis is only a hypothesis: it must still be anchored to a Qloo concept and represented before it can be analyzed.",
+    "Add a territory hypothesis. role=frontier_candidate (explore_frontier only) or role=reference (a comparison territory that lets the methodology place targets relative to a set of ≥3 territories). origin=qloo_evidence requires evidenceTagIds already returned by Qloo in this run; origin=agent_hypothesis is a lateral idea that must still be found in Qloo, anchored and shown to have Qloo members, or it is dropped. Exact duplicates of an existing territory (same or plural label) are refused.",
   permission: "local_computation",
   inputSchema: z.strictObject({ label: text.max(120), role: z.enum(["reference", "frontier_candidate"]), origin: z.enum(["agent_hypothesis", "qloo_evidence"]), rationale: text.max(400), evidenceTagIds: z.array(text).max(5).optional() }),
   maxQlooCalls: 0,
@@ -96,7 +98,9 @@ const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier
   precondition(state, input) {
     if (state.territories.length >= state.limits.maxCandidateTerritories) return `at most ${state.limits.maxCandidateTerritories} territories per run`;
     if (input.role === "frontier_candidate" && state.interpretation?.intent !== "explore_frontier") return "frontier candidates belong to explore_frontier; use role=reference";
-    if (state.territories.some((t) => t.label.toLowerCase() === input.label.trim().toLowerCase())) return `"${input.label}" is already a territory`;
+    const proposed = { label: input.label, conceptId: input.evidenceTagIds?.length === 1 ? input.evidenceTagIds[0]! : null };
+    const dup = state.territories.find((o) => o.status !== "dropped" && deterministicDuplicate({ label: o.label, conceptId: o.concept?.id ?? null }, proposed)?.verdict === "DUPLICATE");
+    if (dup) return `"${input.label}" duplicates the territory ${dup.key} (${deterministicDuplicate({ label: dup.label, conceptId: dup.concept?.id ?? null }, proposed)!.basis})`;
     if (input.origin === "qloo_evidence") {
       if (!input.evidenceTagIds?.length) return "origin qloo_evidence requires evidenceTagIds";
       const missing = input.evidenceTagIds.find((id) => !state.tags.has(id));
@@ -105,9 +109,11 @@ const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier
     return undefined;
   },
   async execute({ state }, input) {
-    const t = addTerritory(state, { label: input.label, role: input.role, origin: input.origin, rationale: input.rationale });
-    const similar = state.territories.filter((o) => o.key !== t.key && similarLabels(o.label, t.label)).map((o) => o.label);
-    return { status: "ok", summary: `added ${t.key}${similar.length ? ` (label resembles ${similar.join(", ")}; check it is meaningfully distinct)` : ""}`, data: { key: t.key } };
+    const reference = input.role === "reference" ? referenceCandidates(state).find((c) => input.evidenceTagIds?.includes(c.tagId)) : undefined;
+    const evidence = input.origin === "qloo_evidence" ? `Qloo tag(s) ${(input.evidenceTagIds ?? []).join(", ")}${reference ? `; ${reference.justification}` : ""}` : `agent hypothesis: ${input.rationale}`;
+    const t = addTerritory(state, { label: input.label, role: input.role, origin: input.origin, rationale: input.rationale, source: input.role === "reference" ? "reference_strategy" : input.origin === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded", sourceEvidence: evidence.slice(0, 400) });
+    const near = state.territories.filter((o) => o.key !== t.key && o.status !== "dropped" && deterministicDuplicate({ label: o.label, conceptId: o.concept?.id ?? null }, { label: t.label, conceptId: null })?.verdict === "NEAR_DUPLICATE").map((o) => o.label);
+    return { status: "ok", summary: `added ${t.key}${near.length ? ` (word-family match with ${near.join(", ")}: it will be dropped as a near-duplicate unless assess_concept_duplicates judges it distinct)` : ""}`, data: { key: t.key } };
   },
 };
 
@@ -124,6 +130,10 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
     if (t.status === "analyzed") return "territory already analyzed";
     const dup = activeTerritories(state).find((o) => o.key !== t.key && o.concept?.id === input.tagId);
     if (dup) return `concept ${input.tagId} already anchors ${dup.key} (duplicate territory)`;
+    if (t.role !== "target") {
+      const canonical = activeTerritories(state).find((o) => o.key !== t.key && o.concept && canonicalTagName(o.concept.id) === canonicalTagName(input.tagId));
+      if (canonical) return `concept ${input.tagId} has the same canonical name as ${canonical.concept!.id}, which anchors ${canonical.key} (duplicate concept in another namespace)`;
+    }
     return observedTag(state, input.tagId);
   },
   async execute({ state }, input) {
@@ -137,12 +147,14 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
   },
 };
 
-const validateRepresentation: AgentTool<{ territoryKey: string; entityType: RankableType; exemplars: { id: string; reason: string }[] }> = {
+const semanticSchema = z.strictObject({ relevance: z.enum(["strong", "adequate", "weak", "mismatch"]), reason: text.max(300) });
+
+const validateRepresentation: AgentTool<{ territoryKey: string; entityType: RankableType; exemplars: { id: string; reason: string; semantic?: { relevance: "strong" | "adequate" | "weak" | "mismatch"; reason: string } | undefined }[] }> = {
   name: "validate_territory_representation",
   description:
-    "Propose exemplar entities (1–3, preferably 3, ids returned by Qloo in this run) that represent an anchored territory, each with a short selection reason. Deterministic validation checks Qloo links each one to the territory concept through brand-independent evidence, one entity type, no duplicates, no name-family duplicates, not the brand. Valid exemplars are accepted; rejections come back with reasons. Limited attempts per territory.",
+    "Propose exemplar entities (1–3, preferably 3, ids returned by Qloo in this run) that represent an anchored territory, each with a short selection reason and optionally your semantic judgment (relevance strong|adequate|weak|mismatch + reason). The deterministic quality evaluator checks Qloo links each one to the concept through brand-independent evidence, one entity type, no duplicates or name families, not the brand, and — when peer profiles are known — that it is not a cultural outlier among Qloo's members. Your judgment is advisory: it can remove a candidate, never add Qloo support. If only weak exemplars survive, the representation is refused. A (concept, type) strategy that fails twice is exhausted.",
   permission: "local_computation",
-  inputSchema: z.strictObject({ territoryKey: text, entityType: rankableType, exemplars: z.array(z.strictObject({ id: text, reason: text.max(300) })).min(1).max(6) }),
+  inputSchema: z.strictObject({ territoryKey: text, entityType: rankableType, exemplars: z.array(z.strictObject({ id: text, reason: text.max(300), semantic: semanticSchema.optional() })).min(1).max(6) }),
   maxQlooCalls: 0,
   phases: AFTER_BRAND,
   precondition(state, input) {
@@ -150,23 +162,73 @@ const validateRepresentation: AgentTool<{ territoryKey: string; entityType: Rank
     if (!t || t.status === "dropped") return `unknown territory ${input.territoryKey}`;
     if (t.status === "analyzed") return "territory already analyzed";
     if (t.attempts >= state.limits.maxRepresentationAttemptsPerTerritory) return `representation attempts exhausted (${state.limits.maxRepresentationAttemptsPerTerritory})`;
+    if (t.concept && strategyExhausted(t, t.concept.id, input.entityType)) return `STRATEGY_EXHAUSTED: ${input.entityType} exemplars for ${t.concept.label} failed twice; try another entity type, an alternate Qloo concept, or declare_concept_only`;
     return undefined;
   },
   async execute({ state }, input) {
     const t = findTerritory(state, input.territoryKey)!;
     t.attempts += 1;
-    const validation = validateTerritoryRepresentation(state, { territoryKey: t.key, entityType: input.entityType, exemplars: input.exemplars });
+    const proposal = { territoryKey: t.key, entityType: input.entityType, exemplars: input.exemplars.map((e) => ({ id: e.id, reason: e.reason, ...(e.semantic && { semantic: { relevance: e.semantic.relevance.toUpperCase() as "STRONG" | "ADEQUATE" | "WEAK" | "MISMATCH", reason: e.semantic.reason } }) })) };
+    const validation = validateTerritoryRepresentation(state, proposal, t.attempts);
+    state.trace.representationQuality.push(...validation.decisions);
     for (const r of validation.rejected) if (!t.rejectedExemplars.some((x) => x.id === r.id && x.code === r.code)) t.rejectedExemplars.push(r);
+    if (t.concept) t.strategyLog.push({ conceptId: t.concept.id, entityType: input.entityType, attempt: t.attempts, outcome: validation.accepted ? "accepted" : validation.failure.code === "REPRESENTATION_QUALITY_WEAK" ? "weak" : "rejected" });
     state.trace.representations.push({ territoryKey: t.key, attempt: t.attempts, accepted: validation.accepted ? validation.representation.exemplars.map((e) => e.label) : [], rejected: validation.rejected.map(({ label, code, reason }) => ({ label, code, reason })) });
     const rejected = validation.rejected.map((r) => ({ id: r.id, label: r.label, code: r.code, reason: r.reason }));
-    if (!validation.accepted) return { status: "failed", summary: `${validation.failure.code}: ${validation.failure.detail}`, errorCode: validation.failure.code, data: { rejected, attemptsLeft: state.limits.maxRepresentationAttemptsPerTerritory - t.attempts } };
+    const quality = validation.decisions.map((d) => ({ id: d.candidateId, label: d.label, final: d.final, rule: d.rule, weakSignals: d.deterministic.reasons.filter((r) => /^(PEER_OUTLIER|CONCEPT_ABSENT|quality unverified)/u.test(r)) }));
+    if (!validation.accepted) return { status: "failed", summary: `${validation.failure.code}: ${validation.failure.detail}`, errorCode: validation.failure.code, data: { rejected, quality, attemptsLeft: state.limits.maxRepresentationAttemptsPerTerritory - t.attempts } };
     t.representation = validation.representation;
     t.status = "represented";
     return {
       status: "ok",
-      summary: `${t.key}: accepted ${validation.representation.exemplars.map((e) => e.label).join(", ")}; diversity ${validation.representation.diversity}${rejected.length ? `; rejected ${rejected.length}` : ""}`,
-      data: { accepted: validation.representation.exemplars.map((e) => ({ id: e.id, label: e.label, support: e.conceptSupport })), rejected, diversity: validation.representation.diversityDetail },
+      summary: `${t.key}: accepted ${validation.representation.exemplars.map((e) => `${e.label}${e.quality === "WEAK" ? " (weak alternate)" : ""}`).join(", ")}; diversity ${validation.representation.diversity}${rejected.length ? `; rejected ${rejected.length}` : ""}`,
+      data: { accepted: validation.representation.exemplars.map((e) => ({ id: e.id, label: e.label, support: e.conceptSupport, quality: e.quality })), rejected, quality, diversity: validation.representation.diversityDetail },
     };
+  },
+};
+
+const declareConceptOnly: AgentTool<{ territoryKey: string; reason: string }> = {
+  name: "declare_concept_only",
+  description:
+    "Recovery step: represent an anchored territory by concept-level evidence only (brand-conditioned Qloo results for the concept) instead of an exemplar panel, when Qloo's candidates are weak or absent. The territory then gets a partial or descriptive route, never a relative position. Use it instead of forcing a weak panel.",
+  permission: "local_computation",
+  inputSchema: z.strictObject({ territoryKey: text, reason: text.max(300) }),
+  maxQlooCalls: 0,
+  phases: AFTER_BRAND,
+  precondition(state, input) {
+    const t = findTerritory(state, input.territoryKey);
+    if (!t || t.status === "dropped") return `unknown territory ${input.territoryKey}`;
+    if (t.status === "analyzed") return "territory already analyzed";
+    if (!t.concept) return "anchor the territory to a Qloo concept first";
+    if (t.representation) return "the territory already has a validated representation";
+    return undefined;
+  },
+  async execute({ state }, input) {
+    const t = findTerritory(state, input.territoryKey)!;
+    t.conceptOnly = input.reason.trim();
+    return { status: "ok", summary: `${t.key}: concept-only evidence (${t.concept!.label}); no exemplar panel` };
+  },
+};
+
+const assessConceptDuplicates: AgentTool<{ judgments: { a: string; b: string; verdict: "DUPLICATE" | "NEAR_DUPLICATE" | "DISTINCT"; reason: string }[] }> = {
+  name: "assess_concept_duplicates",
+  description:
+    "Give your semantic judgment on whether pairs of territory hypotheses are the same cultural concept (DUPLICATE / NEAR_DUPLICATE / DISTINCT, with a concise reason). Advisory layer 3 of the concept deduplicator: it cannot override an exact deterministic duplicate or Qloo structural overlap; it may mark a word-family match as distinct, or flag a pair the deterministic layers missed. Duplicated generated candidates are dropped; user targets are only flagged.",
+  permission: "local_computation",
+  inputSchema: z.strictObject({ judgments: z.array(z.strictObject({ a: text, b: text, verdict: z.enum(["DUPLICATE", "NEAR_DUPLICATE", "DISTINCT"]), reason: text.max(300) })).min(1).max(10) }),
+  maxQlooCalls: 0,
+  phases: AFTER_BRAND,
+  precondition(state, input) {
+    for (const j of input.judgments) {
+      for (const key of [j.a, j.b]) if (!state.territories.some((t) => t.key === key && t.status !== "dropped")) return `unknown territory ${key}`;
+      if (j.a === j.b) return "a pair needs two different territories";
+    }
+    return undefined;
+  },
+  async execute({ state }, input) {
+    for (const j of input.judgments) state.dedupJudgments.push({ aKey: j.a, bKey: j.b, verdict: j.verdict, reason: j.reason.trim() });
+    const dropped = applyConceptDedup(state, activeTerritories(state));
+    return { status: "ok", summary: `${input.judgments.length} judgment(s) recorded${dropped.length ? `; dropped ${dropped.join(", ")}` : ""}`, data: { dropped, decisions: state.trace.conceptDedup.slice(-10).map((d) => ({ a: d.a.key, b: d.b.key, verdict: d.verdict, layer: d.layer, action: d.action })) } };
   },
 };
 
@@ -186,6 +248,7 @@ const dropTerritory: AgentTool<{ territoryKey: string; code: "TERRITORY_UNRESOLV
     const t = findTerritory(state, input.territoryKey)!;
     t.status = "dropped";
     t.dropReason = { code: input.code, detail: input.reason };
+    state.candidateRejections.push({ key: t.key, stage: input.code === "DUPLICATE_TERRITORY" ? "dedup" : input.code === "NO_VALID_REPRESENTATION" ? "representation" : input.code === "QLOO_EMPTY" ? "qloo_support" : "resolution", code: input.code, reason: input.reason });
     return { status: "ok", summary: `${t.key} dropped (${input.code})` };
   },
 };
@@ -269,8 +332,13 @@ const findTags: AgentTool<{ query: string; limit: number }> = {
   async execute({ state, provider, trace }, input) {
     const result = await callQloo(state, provider, trace, "find_tags", { query: input.query, semantic: true, limit: input.limit });
     if (result.outcome === "failed") return failed(result.code, result.detail);
-    if (result.outcome !== "ok") return { status: "empty", summary: `no Qloo tags for "${input.query}"`, data: { query: input.query, tags: [] } };
+    const key = input.query.trim().toLowerCase();
+    if (result.outcome !== "ok") {
+      if (!state.searchedQueries.has(key)) state.searchedQueries.set(key, []);
+      return { status: "empty", summary: `no Qloo tags for "${input.query}"`, data: { query: input.query, tags: [] } };
+    }
     const tags = recordFindTags(state, result.call, input.query);
+    state.searchedQueries.set(key, [...new Set([...(state.searchedQueries.get(key) ?? []), ...tags.map((t) => t.qlooId)])]);
     return { status: "ok", summary: `${tags.length} tag(s)`, data: { query: input.query, tags: tags.map((t) => ({ id: t.qlooId, label: t.label, namespace: t.type ?? null })) } };
   },
 };
@@ -353,6 +421,8 @@ export const AGENT_TOOLS: readonly AgentTool<never>[] = [
   proposeTerritory,
   anchorTerritory,
   validateRepresentation,
+  declareConceptOnly,
+  assessConceptDuplicates,
   dropTerritory,
   sufficiencyTool,
 ] as unknown as readonly AgentTool<never>[];

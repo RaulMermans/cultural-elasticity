@@ -9,8 +9,8 @@
  */
 import { readFileSync } from "node:fs";
 import type { CulturalElasticityResult } from "@cultural-elasticity/shared";
-import { benchmarkSchema, pairwiseAssertions, subsetOf, type Benchmark } from "../src/methodology/benchmark.js";
-import { calibrateThresholds, classCases, evaluatePairwise, summarizePairwise, type CalibrationOutcome, type PairwiseSummary } from "../src/methodology/calibration.js";
+import { benchmarkSchema, pairwiseAssertions, subsetOf, type Benchmark } from "./benchmark/benchmark.js";
+import { calibrateThresholds, classCases, evaluatePairwise, summarizePairwise, type CalibrationOutcome, type PairwiseSummary } from "./benchmark/calibration.js";
 import { CLASSIFICATION_POLICY, METHODOLOGY_VERSION, RELATIVE_INDEX_DECISION } from "../src/methodology/config.js";
 import { parseMethodologyInput, type MethodologyInput } from "../src/methodology/contracts.js";
 import { analyzeElasticity } from "../src/methodology/elasticity.js";

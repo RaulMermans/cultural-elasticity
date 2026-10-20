@@ -12,8 +12,8 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { runElasticityCapture } from "../src/capture/elasticity-capture.js";
-import { ELASTICITY_CAPTURE } from "../src/capture/elasticity-config.js";
+import { runElasticityCapture } from "./capture/elasticity-capture.js";
+import { ELASTICITY_CAPTURE } from "./capture/elasticity-config.js";
 import { parseMethodologyInput } from "../src/methodology/contracts.js";
 import { scrubSecrets } from "../src/qloo/transport.js";
 import { buildElasticityFixture, EVIDENCE_DIR, fixturePath } from "./elasticity-fixture.js";

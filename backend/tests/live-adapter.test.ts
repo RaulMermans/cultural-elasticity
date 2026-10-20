@@ -5,8 +5,8 @@
 import { describe, expect, it } from "vitest";
 import { analyzeEvidencePacket } from "../src/analysis/ingredients.js";
 import { parseEvidencePacket } from "../src/evidence/schema.js";
-import { assessProfileSufficiency, decide, evaluateLiveGates, LiveCollector, runLiveInvestigation, type LiveGate } from "../src/feasibility/live.js";
-import { LIVE_INVESTIGATION, type LiveInvestigationConfig } from "../src/feasibility/live-config.js";
+import { assessProfileSufficiency, decide, evaluateLiveGates, LiveCollector, runLiveInvestigation, type LiveGate } from "../scripts/feasibility/live.js";
+import { LIVE_INVESTIGATION, type LiveInvestigationConfig } from "../scripts/feasibility/live-config.js";
 import {
   audienceFromCompare,
   brandProfileFromEntityTags,

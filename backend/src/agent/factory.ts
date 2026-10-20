@@ -16,8 +16,7 @@ import { AgentNotConfiguredError } from "./errors.js";
 import { AnthropicAgentModel } from "./model/anthropic.js";
 import { BaselinePolicyModel } from "./model/baseline.js";
 import type { AgentModel } from "./model/provider.js";
-import { SyntheticWorldTransport, type SyntheticFault, type SyntheticWorld } from "./synthetic-world.js";
-import { QlooToolProvider, SYNTHETIC_SOURCE } from "./tool-provider.js";
+import { QlooToolProvider } from "./tool-provider.js";
 
 export const LIVE_AGENT_MODEL_VALIDATION_NOT_RUN = "LIVE_AGENT_MODEL_VALIDATION_NOT_RUN";
 
@@ -32,7 +31,11 @@ export function createAgentModel(choice: ModelChoice = "auto", env: NodeJS.Proce
   if (!hasModelCredential(env)) {
     throw new AgentNotConfiguredError("AGENT_MODEL_NOT_CONFIGURED", `no ANTHROPIC_API_KEY is configured (${LIVE_AGENT_MODEL_VALIDATION_NOT_RUN}). Use the baseline reference policy explicitly if you only need to exercise the runtime.`);
   }
-  return new AnthropicAgentModel({ ...(env.AGENT_MODEL?.trim() && { model: env.AGENT_MODEL.trim() }) });
+  const effort = env.AGENT_EFFORT?.trim();
+  return new AnthropicAgentModel({
+    ...(env.AGENT_MODEL?.trim() && { model: env.AGENT_MODEL.trim() }),
+    ...(effort && ["low", "medium", "high", "xhigh", "max"].includes(effort) && { effort: effort as "low" | "medium" | "high" | "xhigh" | "max" }),
+  });
 }
 
 export function createLiveToolProvider(env: NodeJS.ProcessEnv = process.env): QlooToolProvider {
@@ -51,11 +54,4 @@ export function createLiveToolProvider(env: NodeJS.ProcessEnv = process.env): Ql
   const transport = exec ? new HarnessExecTransport({ env: childEnv, timeoutMs: 90_000 }) : new HarnessMcpTransport({ env: childEnv, timeoutMs: 90_000 });
   const spacing = Number(env.QLOO_CALL_SPACING_MS ?? 7_000);
   return new QlooToolProvider(transport, { name: exec ? "qloo-harness-exec" : "qloo-mcp", mode: "live", spacingMs: Number.isFinite(spacing) && spacing >= 0 ? spacing : 7_000 });
-}
-
-/** The scripted (synthetic) tool provider: a TEST TOOL. Evidence is labelled synthetic end to end. */
-export function createScriptedToolProvider(world: SyntheticWorld, faults: SyntheticFault[] = []): QlooToolProvider & { world: SyntheticWorldTransport } {
-  const transport = new SyntheticWorldTransport(world, faults);
-  const provider = new QlooToolProvider(transport, { name: "synthetic-world", mode: "scripted", evidenceSource: SYNTHETIC_SOURCE, spacingMs: 0, rateLimitWaitMs: 0, sleep: async () => {} });
-  return Object.assign(provider, { world: transport });
 }

@@ -1,4 +1,4 @@
-import type { QlooInsightsType, QlooSearchType } from "../qloo/types.js";
+import type { QlooInsightsType, QlooSearchType } from "../../src/qloo/types.js";
 
 /**
  * The Sprint 0 investigation. Every human judgement call lives here, visibly, rather than in code.

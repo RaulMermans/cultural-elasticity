@@ -27,6 +27,21 @@ Rules for any human or AI agent working in this repository.
 7. **Every agent claim must trace to a deterministic result or to Qloo evidence.** Model synthesis passes the claim validator or is replaced by the deterministic template.
 8. **Adding a new Qloo-resolvable brand or territory must not require methodology code changes.**
 
+## Agent runtime and skills (permanent, from Sprint 4)
+
+1. **The runtime owns truth and control; the model proposes actions.** State, permissions, tool availability, budgets, retries, validation, methodology, sufficiency, claim validation and stopping belong to code.
+2. **Skills are bounded, reusable competencies, not autonomous agents.** Each declares its tools, actions, context needs, budget, stopping conditions and failure modes (`backend/src/agent/skills/`).
+3. **Tools stay atomic and typed.** A skill groups tools; it never becomes a tool or a script.
+4. **Only relevant skills and tools enter model context.** Skills are selected just in time from state; the executor refuses tools no active skill exposes.
+5. **No benchmark-specific logic in the production runtime.** Capture configs, feasibility pins and the synthetic world live in `backend/scripts/`, never in `backend/src/`.
+6. **Representation quality must be validated** (`representation-quality.ts`) before a panel is used; a weak panel is never forced through to reach a fuller route.
+7. **Different cases may use different evidence paths** (entity types, recovery strategies, concept-only evidence).
+8. **Unsupported cases remain unsupported.** Hypotheses without Qloo support are dropped, never analyzed as real.
+9. **Runtime decisions and skill versions must be traceable** (per turn and per tool call).
+10. **Skill improvements require eval evidence before promotion.** Changing a skill's procedure, tools, stopping conditions or output semantics bumps its version.
+11. **No automatic self-modification.** No skill, prompt or memory is edited by the runtime or the model; `SkillEvalOutcome` is an offline review input only.
+12. **No model output may override deterministic methodology.** Model judgments (semantic relevance, concept duplicates) are advisory, stored apart from Qloo evidence, and combined only by explicit rules that can remove, never add, support.
+
 Agent runs report the model honestly: a run driven by the scripted model or the baseline reference policy is not a live agent-model validation (`LIVE_AGENT_MODEL_VALIDATION_NOT_RUN`).
 
 ## Engineering
@@ -47,5 +62,6 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:secrets
 pnpm eval:methodology   # offline, synthetic; never report as Qloo validation
 pnpm eval:agent         # offline, synthetic world; never report as Qloo or live-model validation
+pnpm eval:agent:live    # live Qloo; BASELINE and LIVE_MODEL arms reported separately (model arm needs ANTHROPIC_API_KEY)
 pnpm feasibility:qloo   # live; report its result separately
 ```

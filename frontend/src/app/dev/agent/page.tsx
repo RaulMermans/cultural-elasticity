@@ -28,7 +28,10 @@ function Timeline({ response }: { response: AgentRunResponse }) {
         {response.trace.toolCalls.map((call) => (
           <tr key={call.id}>
             <td>{call.iteration}</td>
-            <td>{call.tool}</td>
+            <td>
+              {call.tool}
+              {call.skill && <div className="notice">{`${call.skill.id} v${call.skill.version}`}{call.expectedValue && ` · value ${call.expectedValue}`}</div>}
+            </td>
             <td>{call.permission}</td>
             <td>{call.status}</td>
             <td>
@@ -40,6 +43,123 @@ function Timeline({ response }: { response: AgentRunResponse }) {
         ))}
       </tbody>
     </table>
+  );
+}
+
+function Turns({ response }: { response: AgentRunResponse }) {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>It.</th>
+          <th>Active skills (version)</th>
+          <th>Tools / actions exposed</th>
+          <th>Context</th>
+          <th>Model attempts</th>
+          <th>Decisions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {response.trace.turns.map((t) => (
+          <tr key={t.iteration}>
+            <td>{t.iteration}</td>
+            <td>{(t.skills ?? []).map((s) => `${s.id} v${s.version}`).join(", ") || "—"}</td>
+            <td className="notice">{(t.toolsExposed ?? []).join(", ")}</td>
+            <td>
+              {t.contextChars ?? "—"} chars (~{t.contextTokensEstimate ?? "—"} tok)
+              {t.usage && <div className="notice">provider: {t.usage.inputTokens} in / {t.usage.outputTokens} out</div>}
+            </td>
+            <td>
+              {t.modelAttempts ?? 1}
+              {t.repairReason && <div className="notice">repair: {t.repairReason}</div>}
+            </td>
+            <td>
+              {t.decisions.map((d, i) => (
+                <div key={i} className={d.accepted ? undefined : "notice"}>
+                  {d.accepted ? "✓" : "✗"} {d.tool ?? d.action} {d.reasonSummary && `— ${d.reasonSummary}`} {d.rejection && `(${d.rejection})`}
+                </div>
+              ))}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function Quality({ result }: { result: AgentAnalysisResult }) {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Territory</th>
+          <th>Attempt</th>
+          <th>Candidate</th>
+          <th>Deterministic</th>
+          <th>Model judgment (advisory)</th>
+          <th>Final</th>
+        </tr>
+      </thead>
+      <tbody>
+        {result.trace.representationQuality.map((d, i) => (
+          <tr key={i}>
+            <td>{d.territoryKey}</td>
+            <td>{d.attempt}</td>
+            <td>{d.label}</td>
+            <td>
+              {d.deterministic.level}
+              <div className="notice">{d.deterministic.reasons.join("; ")}</div>
+            </td>
+            <td>{d.modelAssessment ? `${d.modelAssessment.relevance}: ${d.modelAssessment.reason}` : "—"}</td>
+            <td>
+              {d.final}
+              <div className="notice">{d.rule}</div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function ComparisonSet({ result }: { result: AgentAnalysisResult }) {
+  const cs = result.comparisonSetConstruction;
+  return (
+    <>
+      <p className="notice">{cs.note}</p>
+      <ul>
+        {cs.proposed.map((p) => (
+          <li key={p.key}>
+            <strong>{p.label}</strong> ({p.role}, {p.source}) — {p.evidence}
+          </li>
+        ))}
+      </ul>
+      {cs.rejected.length > 0 && (
+        <>
+          <p>Rejected</p>
+          <ul>
+            {cs.rejected.map((r) => (
+              <li key={r.key}>
+                {r.label}: {r.stage} · {r.code} — {r.reason}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      <p>
+        Diversity: {cs.diversity.assessment} — {cs.diversity.detail}
+      </p>
+      {cs.dedupDecisions.length > 0 && (
+        <ul>
+          {cs.dedupDecisions.map((d, i) => (
+            <li key={i}>
+              {d.a.label} / {d.b.label}: {d.verdict} ({d.layer}: {d.basis}) → {d.action}
+              {d.modelJudgment && ` · model: ${d.modelJudgment.verdict} (${d.modelJudgment.applied ? "applied" : "not applied"}) — ${d.modelJudgment.reason}`}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   );
 }
 
@@ -197,13 +317,44 @@ export default async function DevAgentPage({ searchParams }: { searchParams: Pro
               </ul>
             </>
           )}
+          {outcome.response.status !== "NEEDS_INPUT" && (
+            <>
+              <h3>Representation quality decisions</h3>
+              <Quality result={outcome.response as AgentAnalysisResult} />
+              <h3>Comparison-set construction and concept deduplication</h3>
+              <ComparisonSet result={outcome.response as AgentAnalysisResult} />
+              <h3>Skills used</h3>
+              <p>{(outcome.response as AgentAnalysisResult).skillsUsed.map((s) => `${s.id} v${s.version}`).join(", ")}</p>
+            </>
+          )}
+          <h3>Model turns (skills, exposure, context, repairs)</h3>
+          <Turns response={outcome.response} />
+          <h3>Budgets</h3>
+          <p>
+            Qloo {outcome.response.metrics.qloo_calls} / {outcome.response.trace.limits.maxQlooCalls} · iterations {outcome.response.metrics.agent_iterations} / {outcome.response.trace.limits.maxAgentIterations} · calls avoided {outcome.response.metrics.calls_avoided} · model cost{" "}
+            {outcome.response.metrics.model_cost_usd ?? "n/a"}
+          </p>
+          <ul>
+            {outcome.response.trace.skillUsage.map((u) => (
+              <li key={u.skill.id}>
+                {u.skill.id} v{u.skill.version}: {u.turns} turn(s), {u.qlooCalls} Qloo call(s), {u.toolCalls} tool call(s)
+              </li>
+            ))}
+            {outcome.response.trace.earlyStops.map((e, i) => (
+              <li key={`stop-${i}`} className="notice">
+                it. {e.iteration} refused {e.tool} ({e.code}, {e.callsAvoided} call(s) avoided): {e.reason}
+              </li>
+            ))}
+          </ul>
           <h3>Tool timeline</h3>
           <Timeline response={outcome.response} />
-          <h3>Evidence sufficiency decisions</h3>
+          <h3>Evidence sufficiency decisions (with next-action value)</h3>
           <ul>
             {outcome.response.trace.sufficiency.map((s, i) => (
               <li key={i}>
-                it. {s.iteration}: {s.verdict} — {s.reasons.join("; ")}
+                it. {s.iteration}: {s.verdict}
+                {s.materialGap === false && " · no material gap"} — {s.reasons.join("; ")}
+                {s.nextActions && s.nextActions.length > 0 && <div className="notice">{s.nextActions.map((a) => `${a.action}${a.target ? `(${a.target})` : ""}: ${a.value}`).join(" · ")}</div>}
               </li>
             ))}
           </ul>

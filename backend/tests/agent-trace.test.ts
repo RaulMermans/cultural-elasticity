@@ -27,7 +27,7 @@ describe("agent trace", () => {
     expect(invocation.correlationIds).toHaveLength(invocation.panelIds.length);
     expect(trace.synthesis).toMatchObject({ source: "deterministic_template" });
     expect(trace.statusTransitions.at(-1)!.to).toBe("COMPLETE");
-    expect(trace.limits).toMatchObject({ maxAgentIterations: 8, maxQlooCalls: 20 });
+    expect(trace.limits).toMatchObject({ maxAgentIterations: 12, maxQlooCalls: 24 });
   });
 
   it("keeps provenance: every Qloo-facing call and every analyzed territory traces to correlation ids", async () => {

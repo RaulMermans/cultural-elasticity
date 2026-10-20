@@ -5,7 +5,7 @@
  */
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
-import type { LiveRunResult } from "../src/feasibility/live.js";
+import type { LiveRunResult } from "./feasibility/live.js";
 import { QLOO_HACKATHON_ORIGIN } from "../src/qloo/environment.js";
 import { QLOO_LIVE_SOURCE } from "../src/qloo/live-adapter.js";
 

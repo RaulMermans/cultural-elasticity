@@ -15,11 +15,11 @@ import {
   type RankedCandidate,
   type ResolvedConcept,
   type TagCandidateSet,
-} from "../contracts/qloo.js";
-import type { QlooClient, QlooOutcome } from "../qloo/client.js";
-import { QlooContractError, QlooWorkflowError } from "../qloo/errors.js";
-import { toConceptRefs, type ResolutionIssue } from "../qloo/normalize.js";
-import { QLOO_CONTRACT_CHECKSUM } from "../qloo/types.js";
+} from "../../src/contracts/qloo.js";
+import type { QlooClient, QlooOutcome } from "../../src/qloo/client.js";
+import { QlooContractError, QlooWorkflowError } from "../../src/qloo/errors.js";
+import { toConceptRefs, type ResolutionIssue } from "../../src/qloo/normalize.js";
+import { QLOO_CONTRACT_CHECKSUM } from "../../src/qloo/types.js";
 import { DEFAULT_INVESTIGATION, type InvestigationConfig } from "./config.js";
 
 export type StepOutcome = "ok" | "empty" | "needs_input" | "failed" | "skipped";

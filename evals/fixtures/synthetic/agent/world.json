@@ -161,6 +161,51 @@
    "id": "urn:tag:credit_card:syn:card_accepted",
    "name": "Card Accepted",
    "type": "urn:tag:credit_card:syn"
+  },
+  {
+   "id": "urn:tag:product_category:syn:cafe_culture",
+   "name": "Cafe Culture",
+   "type": "urn:tag:product_category:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:espresso_ritual",
+   "name": "Espresso Ritual",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:extreme_energy",
+   "name": "Extreme Energy",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:genre:syn:indie_film",
+   "name": "Indie Film",
+   "type": "urn:tag:genre:syn"
+  },
+  {
+   "id": "urn:tag:genre:syn:dream_pop",
+   "name": "Dream Pop",
+   "type": "urn:tag:genre:syn"
+  },
+  {
+   "id": "urn:tag:genre:syn:coming_of_age",
+   "name": "Coming Of Age",
+   "type": "urn:tag:genre:syn"
+  },
+  {
+   "id": "urn:tag:interests:syn:bouldering",
+   "name": "Bouldering",
+   "type": "urn:tag:interests:syn"
+  },
+  {
+   "id": "urn:tag:lifestyle:syn:boulderers",
+   "name": "Boulderers",
+   "type": "urn:tag:lifestyle:syn"
+  },
+  {
+   "id": "urn:tag:interests:syn:hot_springs",
+   "name": "Hot Springs",
+   "type": "urn:tag:interests:syn"
   }
  ],
  "entities": [
@@ -714,6 +759,167 @@
     "urn:tag:keyword:syn:outdoors",
     "urn:tag:keyword:syn:slow_living",
     "urn:tag:keyword:syn:coastal"
+   ]
+  },
+  {
+   "id": "SYN-BR-0008",
+   "name": "Velvet Tide",
+   "type": "brand",
+   "popularity": 0.83,
+   "tags": [
+    "urn:tag:genre:syn:indie_film",
+    "urn:tag:genre:syn:dream_pop",
+    "urn:tag:genre:syn:coming_of_age",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:minimalism"
+   ]
+  },
+  {
+   "id": "SYN-BR-1401",
+   "name": "Kettle & Crema",
+   "type": "brand",
+   "popularity": 0.84,
+   "tags": [
+    "urn:tag:product_category:syn:cafe_culture",
+    "urn:tag:keyword:syn:espresso_ritual",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:craft"
+   ]
+  },
+  {
+   "id": "SYN-BR-1402",
+   "name": "Bramble Roasters",
+   "type": "brand",
+   "popularity": 0.79,
+   "tags": [
+    "urn:tag:product_category:syn:cafe_culture",
+    "urn:tag:keyword:syn:espresso_ritual",
+    "urn:tag:keyword:syn:craft",
+    "urn:tag:keyword:syn:sustainability"
+   ]
+  },
+  {
+   "id": "SYN-BR-1403",
+   "name": "Morrow Coffee House",
+   "type": "brand",
+   "popularity": 0.76,
+   "tags": [
+    "urn:tag:product_category:syn:cafe_culture",
+    "urn:tag:keyword:syn:espresso_ritual",
+    "urn:tag:keyword:syn:slow_living",
+    "urn:tag:keyword:syn:minimalism"
+   ]
+  },
+  {
+   "id": "SYN-BR-1404",
+   "name": "Voltrush Energy",
+   "type": "brand",
+   "popularity": 0.95,
+   "tags": [
+    "urn:tag:product_category:syn:cafe_culture",
+    "urn:tag:keyword:syn:extreme_energy",
+    "urn:tag:keyword:syn:gaming_culture",
+    "urn:tag:keyword:syn:streetwear"
+   ]
+  },
+  {
+   "id": "SYN-BR-1501",
+   "name": "Chalkline",
+   "type": "brand",
+   "popularity": 0.81,
+   "tags": [
+    "urn:tag:interests:syn:bouldering",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:streetwear"
+   ]
+  },
+  {
+   "id": "SYN-BR-1502",
+   "name": "Crimp Theory",
+   "type": "brand",
+   "popularity": 0.78,
+   "tags": [
+    "urn:tag:interests:syn:bouldering",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:tech"
+   ]
+  },
+  {
+   "id": "SYN-BR-1503",
+   "name": "Overhang Social",
+   "type": "brand",
+   "popularity": 0.74,
+   "tags": [
+    "urn:tag:lifestyle:syn:boulderers",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:streetwear"
+   ]
+  },
+  {
+   "id": "SYN-BR-1504",
+   "name": "Ledgemark",
+   "type": "brand",
+   "popularity": 0.7,
+   "tags": [
+    "urn:tag:lifestyle:syn:boulderers",
+    "urn:tag:keyword:syn:outdoors",
+    "urn:tag:keyword:syn:heritage"
+   ]
+  },
+  {
+   "id": "SYN-PL-0101",
+   "name": "Cinder Valley Baths",
+   "type": "place",
+   "popularity": 0.86,
+   "tags": [
+    "urn:tag:interests:syn:hot_springs",
+    "urn:tag:keyword:syn:wellness_ritual",
+    "urn:tag:keyword:syn:slow_living"
+   ]
+  },
+  {
+   "id": "SYN-PL-0102",
+   "name": "Steamhollow Onsen",
+   "type": "place",
+   "popularity": 0.8,
+   "tags": [
+    "urn:tag:interests:syn:hot_springs",
+    "urn:tag:keyword:syn:wellness_ritual",
+    "urn:tag:keyword:syn:outdoors"
+   ]
+  },
+  {
+   "id": "SYN-PL-0103",
+   "name": "Mineral Row Spa",
+   "type": "place",
+   "popularity": 0.74,
+   "tags": [
+    "urn:tag:interests:syn:hot_springs",
+    "urn:tag:keyword:syn:wellness_ritual",
+    "urn:tag:keyword:syn:mediterranean"
+   ]
+  },
+  {
+   "id": "SYN-PL-0201",
+   "name": "Crema Corner",
+   "type": "place",
+   "popularity": 0.7,
+   "tags": [
+    "urn:tag:product_category:syn:cafe_culture",
+    "urn:tag:keyword:syn:espresso_ritual",
+    "urn:tag:keyword:syn:slow_living"
+   ]
+  },
+  {
+   "id": "SYN-PL-0202",
+   "name": "Copperpot Cafe",
+   "type": "place",
+   "popularity": 0.66,
+   "tags": [
+    "urn:tag:product_category:syn:cafe_culture",
+    "urn:tag:keyword:syn:espresso_ritual",
+    "urn:tag:keyword:syn:craft"
    ]
   }
  ],

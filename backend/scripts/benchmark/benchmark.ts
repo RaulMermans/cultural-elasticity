@@ -18,6 +18,8 @@ export const benchmarkSchema = z
     benchmarkVersion: text,
     notice: z.string().startsWith("HUMAN-CURATED EVALUATION LABELS"),
     labelProvenance: z.strictObject({ curator: text, recordedAt: z.iso.datetime({ offset: true }), method: text }),
+    /** Owner review of the labels (Sprint 4). Label-dependent results are provisional until owner_reviewed is true. */
+    ownerReview: z.strictObject({ owner_reviewed: z.boolean(), reviewedBy: text.nullable(), reviewedAt: z.iso.datetime({ offset: true }).nullable(), note: text }),
     labelScale: z.record(z.enum(EXPECTATIONS), text),
     split: z.strictObject({ unit: z.literal("brand"), rule: text, calibration: z.array(text).min(1), heldOut: z.array(text).min(1) }),
     territorySet: z.array(text).min(2),

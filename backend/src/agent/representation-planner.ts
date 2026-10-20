@@ -15,92 +15,85 @@
  *   every observed pool for the concept empty? ── yes ───────────────────→ DESCRIPTIVE_ONLY
  *        └ no ───────────────────────────────────────────────────────────→ CONDITIONED_ENTITY_EVIDENCE
  */
-import type { RepresentationFailureCode, RepresentationStrategy } from "@cultural-elasticity/shared";
-import { exemplarCandidates, labelFamily, NEAR_IDENTICAL_PROFILE_JACCARD, profileJaccard } from "./candidate-discovery.js";
+import type { RepresentationFailureCode, RepresentationQualityDecision, RepresentationStrategy } from "@cultural-elasticity/shared";
+import { exemplarCandidates, NEAR_IDENTICAL_PROFILE_JACCARD, profileJaccard } from "./candidate-discovery.js";
+import { evaluateExemplarQuality, QUALITY_RULES_VERSION, type SemanticAssessment } from "./representation-quality.js";
 import type { RankableType } from "./contracts.js";
 import type { AcceptedRepresentation, AgentRunState, ExemplarChoice, RejectedExemplar, TerritoryState } from "./state.js";
 
 export type RepresentationProposal = {
   territoryKey: string;
   entityType: RankableType;
-  exemplars: { id: string; reason: string }[];
+  exemplars: { id: string; reason: string; semantic?: SemanticAssessment | undefined }[];
 };
 
 export type RepresentationValidation =
-  | { accepted: true; representation: AcceptedRepresentation; rejected: RejectedExemplar[] }
-  | { accepted: false; failure: { code: RepresentationFailureCode; detail: string }; rejected: RejectedExemplar[] };
+  | { accepted: true; representation: AcceptedRepresentation; rejected: RejectedExemplar[]; decisions: RepresentationQualityDecision[] }
+  | { accepted: false; failure: { code: RepresentationFailureCode; detail: string }; rejected: RejectedExemplar[]; decisions: RepresentationQualityDecision[] };
 
 /**
- * Objective checks per proposed exemplar:
- *   ENTITY_UNRESOLVED             never observed in a Qloo response in this run (no provenance)
- *   BRAND_AS_EXEMPLAR             the brand itself
- *   DUPLICATE_EXEMPLAR            proposed twice, or already an exemplar of another territory
- *   MIXED_ENTITY_TYPES            observed type differs from the representation's entity type
- *   BRAND_CONDITIONED_SELECTION   only seen in brand-conditioned lists (the brand would pick its own comparators)
- *   EXEMPLAR_SEMANTIC_MISMATCH    Qloo does not link it to the concept (no tag-pool membership, no profile tag)
- *   NEAR_DUPLICATE_EXEMPLAR       same name family as an earlier exemplar in this proposal
- *   EXEMPLAR_EVIDENCE_EMPTY       its tag profile was fetched and is empty
- * Surviving exemplars are accepted (≥ 1). Robustness needs ≥ 2; that is the methodology's call.
+ * Validates a proposed representation exemplar by exemplar with the RepresentationQualityEvaluator
+ * (representation-quality.ts): hard Qloo constraints, relative weak signals, and the model's advisory
+ * semantic judgment, combined by explicit rules. Outcome:
+ *   - VALID exemplars are accepted in proposal order; WEAK exemplars are accepted only as alternates,
+ *     after every VALID one, and carry a warning;
+ *   - if no VALID exemplar survives, the representation is refused (REPRESENTATION_QUALITY_WEAK when weak
+ *     ones remained): a weak panel is never forced through to reach full analysis.
+ * Robustness needs ≥ 2 exemplars; that is the methodology's call, not this validator's.
  */
-export function validateTerritoryRepresentation(state: AgentRunState, proposal: RepresentationProposal): RepresentationValidation {
+export function validateTerritoryRepresentation(state: AgentRunState, proposal: RepresentationProposal, attempt = 0): RepresentationValidation {
   const territory = state.territories.find((t) => t.key === proposal.territoryKey);
   const rejected: RejectedExemplar[] = [];
-  if (!territory) return { accepted: false, failure: { code: "TERRITORY_UNRESOLVED", detail: `unknown territory "${proposal.territoryKey}"` }, rejected };
-  if (!territory.concept) return { accepted: false, failure: { code: "TERRITORY_AMBIGUOUS", detail: "anchor the territory to a Qloo concept before proposing exemplars" }, rejected };
-  if (proposal.exemplars.length === 0) return { accepted: false, failure: { code: "INSUFFICIENT_EXEMPLARS", detail: "no exemplars proposed" }, rejected };
+  const decisions: RepresentationQualityDecision[] = [];
+  if (!territory) return { accepted: false, failure: { code: "TERRITORY_UNRESOLVED", detail: `unknown territory "${proposal.territoryKey}"` }, rejected, decisions };
+  if (!territory.concept) return { accepted: false, failure: { code: "TERRITORY_AMBIGUOUS", detail: "anchor the territory to a Qloo concept before proposing exemplars" }, rejected, decisions };
+  if (proposal.exemplars.length === 0) return { accepted: false, failure: { code: "INSUFFICIENT_EXEMPLARS", detail: "no exemplars proposed" }, rejected, decisions };
   if (proposal.exemplars.length > state.limits.maxExemplarsPerTerritory) {
-    return { accepted: false, failure: { code: "INSUFFICIENT_EXEMPLARS", detail: `at most ${state.limits.maxExemplarsPerTerritory} exemplars per territory` }, rejected };
+    return { accepted: false, failure: { code: "INSUFFICIENT_EXEMPLARS", detail: `at most ${state.limits.maxExemplarsPerTerritory} exemplars per territory` }, rejected, decisions };
   }
 
-  const conceptId = territory.concept.id;
-  const brandId = state.brand.entity?.id;
-  const elsewhere = new Map(state.territories.filter((t) => t.key !== territory.key && t.status !== "dropped").flatMap((t) => (t.representation?.exemplars ?? []).map((e) => [e.id, t.label] as const)));
-  const { eligible } = exemplarCandidates(state, conceptId, proposal.entityType);
+  const concept = territory.concept;
+  const usedElsewhere = new Map(state.territories.filter((t) => t.key !== territory.key && t.status !== "dropped").flatMap((t) => (t.representation?.exemplars ?? []).map((e) => [e.id, t.label] as const)));
+  const { eligible } = exemplarCandidates(state, concept.id, proposal.entityType);
   const eligibleById = new Map(eligible.map((c) => [c.id, c]));
-  const accepted: ExemplarChoice[] = [];
+  const valid: ExemplarChoice[] = [];
+  const weak: { choice: ExemplarChoice; reasons: string[] }[] = [];
 
-  for (const { id, reason } of proposal.exemplars) {
-    const entity = state.entities.get(id);
-    const label = entity?.label ?? id;
-    const reject = (code: RepresentationFailureCode, why: string) => rejected.push({ id, label, code, reason: why });
-    if (!entity) {
-      reject("ENTITY_UNRESOLVED", "not observed in any Qloo response in this run");
+  for (const { id, reason, semantic } of proposal.exemplars) {
+    const label = state.entities.get(id)?.label ?? id;
+    const verdict = evaluateExemplarQuality(state, {
+      conceptId: concept.id,
+      conceptLabel: concept.label,
+      entityType: proposal.entityType,
+      candidateId: id,
+      eligible,
+      acceptedSoFar: [...valid, ...weak.map((w) => w.choice)],
+      usedElsewhere,
+      semantic: semantic ?? null,
+    });
+    decisions.push({
+      territoryKey: territory.key,
+      attempt,
+      candidateId: id,
+      label,
+      deterministic: { level: verdict.deterministic.level, signals: verdict.deterministic.signals, reasons: verdict.deterministic.reasons },
+      modelAssessment: semantic ? { relevance: semantic.relevance, reason: semantic.reason, advisory: true } : null,
+      final: verdict.final,
+      rule: verdict.rule,
+      rulesVersion: QUALITY_RULES_VERSION,
+    });
+    if (verdict.final === "REJECT") {
+      const code: RepresentationFailureCode = verdict.deterministic.hardCode ?? (verdict.rule.startsWith("R2") ? "EXEMPLAR_SEMANTIC_MISMATCH" : "REPRESENTATION_QUALITY_WEAK");
+      const why = verdict.deterministic.hardCode
+        ? (verdict.deterministic.reasons[0] ?? code).replace(/^[A-Z_]+: /u, "")
+        : verdict.rule.startsWith("R2")
+          ? `model judged it a semantic mismatch (advisory): ${semantic?.reason ?? ""}`.trim()
+          : `weak Qloo evidence and weak model judgment: ${[...verdict.deterministic.reasons.filter((r) => /^(PEER_OUTLIER|CONCEPT_ABSENT)/u.test(r)), semantic?.reason ?? ""].filter(Boolean).join("; ")}`;
+      rejected.push({ id, label, code, reason: why });
       continue;
     }
-    if (id === brandId) {
-      reject("BRAND_AS_EXEMPLAR", "the brand cannot represent a territory it is compared with");
-      continue;
-    }
-    if (accepted.some((e) => e.id === id)) {
-      reject("DUPLICATE_EXEMPLAR", "proposed twice");
-      continue;
-    }
-    if (elsewhere.has(id)) {
-      reject("DUPLICATE_EXEMPLAR", `already represents ${elsewhere.get(id)}`);
-      continue;
-    }
-    if (entity.type !== undefined && entity.type !== proposal.entityType) {
-      reject("MIXED_ENTITY_TYPES", `observed as ${entity.type}, representation type is ${proposal.entityType}`);
-      continue;
-    }
-    const candidate = eligibleById.get(id);
-    if (!candidate) {
-      const onlyConditioned = entity.sources.length > 0 && entity.sources.every((s) => s.kind === "conditioned");
-      if (onlyConditioned) reject("BRAND_CONDITIONED_SELECTION", "seen only in a brand-conditioned list; choose exemplars from brand-independent evidence");
-      else reject("EXEMPLAR_SEMANTIC_MISMATCH", `Qloo has not linked it to ${territory.concept.label} in this run (no tag-pool membership, no profile tag)`);
-      continue;
-    }
-    const family = accepted.find((e) => labelFamily(e.label, label));
-    if (family) {
-      reject("NEAR_DUPLICATE_EXEMPLAR", `same name family as ${family.label}`);
-      continue;
-    }
-    const profile = state.profiles.get(id);
-    if (profile && profile.tagIds.length === 0) {
-      reject("EXEMPLAR_EVIDENCE_EMPTY", "Qloo returned an empty tag profile");
-      continue;
-    }
-    accepted.push({
+    const candidate = eligibleById.get(id)!;
+    const choice: ExemplarChoice = {
       id,
       label,
       type: proposal.entityType,
@@ -108,14 +101,22 @@ export function validateTerritoryRepresentation(state: AgentRunState, proposal: 
       selectionReason: reason.trim().slice(0, 300) || "no reason given",
       conceptSupport: candidate.conceptSupport,
       supportCorrelationId: candidate.supportCorrelationId,
-    });
+      quality: verdict.final,
+      semantic: semantic ? { relevance: semantic.relevance, reason: semantic.reason } : null,
+    };
+    if (verdict.final === "VALID") valid.push(choice);
+    else weak.push({ choice, reasons: verdict.deterministic.reasons.filter((r) => /^(PEER_OUTLIER|CONCEPT_ABSENT)/u.test(r)).concat(semantic?.relevance === "WEAK" ? [`model: ${semantic.reason}`] : []) });
   }
 
-  if (accepted.length === 0) {
+  if (valid.length === 0) {
+    for (const w of weak) rejected.push({ id: w.choice.id, label: w.choice.label, code: "REPRESENTATION_QUALITY_WEAK", reason: `weak exemplar with no valid primary: ${w.reasons.join("; ") || "weak"}` });
     const codes = [...new Set(rejected.map((r) => r.code))];
-    return { accepted: false, failure: { code: codes.length === 1 ? codes[0]! : "NO_VALID_REPRESENTATION", detail: "no proposed exemplar passed validation" }, rejected };
+    const code: RepresentationFailureCode = weak.length > 0 ? "REPRESENTATION_QUALITY_WEAK" : codes.length === 1 ? codes[0]! : "NO_VALID_REPRESENTATION";
+    return { accepted: false, failure: { code, detail: weak.length > 0 ? "only weak exemplars survived; a weak panel is not forced through" : "no proposed exemplar passed validation" }, rejected, decisions };
   }
-  return { accepted: true, representation: { entityType: proposal.entityType, exemplars: accepted, ...assessDiversity(state, accepted), warnings: [] }, rejected };
+  const accepted = [...valid, ...weak.map((w) => w.choice)];
+  const warnings = weak.map((w) => `weak alternate exemplar ${w.choice.label}: ${w.reasons.join("; ") || "weak"}`);
+  return { accepted: true, representation: { entityType: proposal.entityType, exemplars: accepted, ...assessDiversity(state, accepted), warnings }, rejected, decisions };
 }
 
 /** Diversity from Qloo evidence only: "unknown" unless every exemplar's tag profile is known. */
@@ -160,6 +161,10 @@ export function planRepresentation(state: AgentRunState, territory: TerritorySta
       minimumEvidence: ["brand tag profile", "≥ 1 exemplar tag profile", "one rank call per panel over a comparison set of ≥ 3 territories of the same entity type"],
       limitations,
     };
+  }
+  if (territory.conceptOnly) {
+    const pool = state.pools.find((p) => p.conditionedOn === null && p.tagIds.includes(territory.concept!.id) && p.memberIds.length > 0);
+    return { strategy: "CONDITIONED_ENTITY_EVIDENCE", entityType: pool?.targetType ?? "brand", rankable: false, minimumEvidence: ["brand-conditioned recommend filtered to the concept"], limitations: [`concept-level evidence chosen instead of an exemplar panel: ${territory.conceptOnly}`] };
   }
   const conceptPools = state.pools.filter((p) => p.conditionedOn === null && p.tagIds.includes(territory.concept!.id));
   const nonEmpty = conceptPools.find((p) => p.memberIds.length > 0);

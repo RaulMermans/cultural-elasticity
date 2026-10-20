@@ -6,6 +6,7 @@
     "recordedAt": "2026-10-16T11:38:44Z",
     "method": "Written from general brand knowledge before the Sprint 2 live capture. For five brands no Qloo evidence about the brand had been seen when the labels were written (labelsWrittenBlind = true). Jacquemus labels were written after the Sprint 0B live results had been seen, so Jacquemus is assigned to the calibration subset and never to held-out evaluation."
   },
+  "ownerReview": { "owner_reviewed": false, "reviewedBy": null, "reviewedAt": null, "note": "Labels were drafted by the implementing agent in Sprint 2 and have NOT been reviewed by the project owner. Agents and the runtime never read this file; evaluators report every label-dependent result as provisional until owner_reviewed is true. Labels are never changed automatically." },
   "labelScale": {
     "expected_strong": "expected near the top of this candidate set for this brand",
     "expected_mid": "expected in the middle of this candidate set",

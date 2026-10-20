@@ -4,7 +4,8 @@
  */
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { exemplarCandidates, frontierConcepts, labelFamily, territoryDuplicates } from "../src/agent/candidate-discovery.js";
+import { exemplarCandidates, frontierConcepts, labelFamily } from "../src/agent/candidate-discovery.js";
+import { conceptDuplicates } from "../src/agent/concept-dedup.js";
 import { assessEvidenceSufficiency } from "../src/agent/evidence-sufficiency.js";
 import { planRepresentation } from "../src/agent/representation-planner.js";
 import { activeTerritories, findTerritory, type AgentRunState } from "../src/agent/state.js";
@@ -208,8 +209,9 @@ describe("candidate discovery and deduplication", () => {
     await exec(state, provider, "qloo_find_tags", { query: "Design Stays" });
     expect(await exec(state, provider, "anchor_territory", { territoryKey: "design_hotels", tagId: "urn:tag:industry:syn:boutique_stays" })).toMatchObject({ code: "PRECONDITION" });
     await anchorWithPool(state, provider, "design_hotels", "urn:tag:industry:syn:design_stays");
-    const findings = territoryDuplicates(state, activeTerritories(state));
-    expect(findings).toEqual([expect.objectContaining({ key: "design_hotels", duplicateOf: "boutique_hospitality", kind: "near_duplicate" })]);
+    const findings = conceptDuplicates(state, activeTerritories(state));
+    // Both are user targets: the near-duplicate is reported (structural layer), never silently dropped.
+    expect(findings).toEqual([expect.objectContaining({ a: expect.objectContaining({ key: "boutique_hospitality" }), b: expect.objectContaining({ key: "design_hotels" }), verdict: "NEAR_DUPLICATE", layer: "structural", action: "warned" })]);
   });
 
   it("derives frontier concepts only from observed related-entity profiles", async () => {

@@ -23,7 +23,8 @@
     "feasibility:qloo": "pnpm --filter backend feasibility:qloo",
     "capture:elasticity": "pnpm --filter backend capture:elasticity",
     "agent:run": "pnpm --filter backend agent:run",
-    "eval:agent": "pnpm --filter backend eval:agent"
+    "eval:agent": "pnpm --filter backend eval:agent",
+    "eval:agent:live": "pnpm --filter backend eval:agent:live"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
