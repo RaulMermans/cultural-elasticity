@@ -7,6 +7,8 @@
  * Before analysis every frontier candidate must pass, in order:
  *   resolution   anchored to a Qloo concept                                  else TERRITORY_UNRESOLVED
  *   qloo_support Qloo returned ≥ 1 brand-independent member for the concept  else HYPOTHESIS_UNSUPPORTED
+ *   semantic     (Sprint 5A) not a venue-listing attribute / operational tag  else INCIDENTAL_CONCEPT;
+ *                not judged weak/mismatched by the agent (advisory veto)       else SEMANTIC_REFERENCE_REJECTED
  *   (representation feasibility and evidence availability are then decided by the analysis route)
  * Then duplicates are removed (concept-dedup.ts) and, when more candidates exist than the set needs,
  * candidates that overlap an earlier one culturally are pruned for diversity.
@@ -19,6 +21,7 @@ import { setOverlap } from "../analysis/overlap.js";
 import { matchOperationalRule } from "../methodology/operational-tags.js";
 import { labelTokens } from "./candidate-discovery.js";
 import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
+import { incidentalConcept } from "./semantic-comparison.js";
 import type { AgentRunState, TerritoryState } from "./state.js";
 
 /** Union-of-exemplar-profile Jaccard at or above this marks two candidates as culturally overlapping. */
@@ -45,6 +48,8 @@ export function gateFrontierCandidates(state: AgentRunState, keys: readonly stri
     if (!t || t.role !== "frontier_candidate" || t.status === "dropped" || t.status === "analyzed") continue;
     if (!t.concept) drop(state, t, "resolution", "TERRITORY_UNRESOLVED", `${t.source === "agent_hypothesis" ? "agent hypothesis" : "candidate"} was never anchored to a Qloo concept`);
     else if (!qlooSupport(state, t)) drop(state, t, "qloo_support", "HYPOTHESIS_UNSUPPORTED", `Qloo returned no brand-independent member for ${t.concept.label}; the hypothesis is not supported by Qloo evidence`);
+    else if (incidentalConcept(t.concept.id)) drop(state, t, "semantic", "INCIDENTAL_CONCEPT", `${t.concept.label}: ${incidentalConcept(t.concept.id)!.explanation}`);
+    else if (t.semanticJudgment && (t.semanticJudgment.relevance === "WEAK" || t.semanticJudgment.relevance === "MISMATCH")) drop(state, t, "semantic", "SEMANTIC_REFERENCE_REJECTED", `the agent judged ${t.concept.label} ${t.semanticJudgment.relevance.toLowerCase()} as a frontier territory (advisory veto): ${t.semanticJudgment.reason}`);
   }
   return keys.filter((k) => state.territories.some((t) => t.key === k && t.status !== "dropped"));
 }
@@ -109,6 +114,8 @@ const STAGE_BY_CODE: Record<string, ComparisonSetConstruction["rejected"][number
   DUPLICATE_TERRITORY: "dedup",
   LOW_DIVERSITY: "diversity",
   BUDGET_EXHAUSTED: "budget",
+  INCIDENTAL_CONCEPT: "semantic",
+  SEMANTIC_REFERENCE_REJECTED: "semantic",
 };
 
 const NOTE =
@@ -138,6 +145,7 @@ export function comparisonSetConstruction(state: AgentRunState, results: readonl
     rejected,
     final: finalTerritories.map((t) => ({ key: t.key, label: t.label, role: t.role, source: sourceOf(t), route: byKey.get(t.key)!.analysisRoute })),
     dedupDecisions: state.trace.conceptDedup,
+    semanticAssessments: state.semanticAssessments,
     diversity: {
       assessment: frontier.length < 2 ? "unknown" : diversity.pairs.length > 0 ? "overlapping" : diversity.unknown ? "unknown" : "diverse",
       similarPairs: diversity.pairs.map(({ a, b, basis }) => ({ a, b, basis })),

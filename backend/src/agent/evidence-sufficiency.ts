@@ -22,13 +22,19 @@
  *
  * The runtime enforces it: once SUFFICIENT, further Qloo calls are refused; INSUFFICIENT and
  * BUDGET_EXHAUSTED end the loop. The model cannot keep looping because it "feels uncertain".
+ *
+ * v3 (Sprint 5A, from live traces): reference construction is valued from the deterministic referencePlan —
+ * HIGH while a semantically meaningful comparison set is still feasible within the remaining budget (analyzing
+ * the targets first would lock a PARTIAL route), NONE with the reason once it is not (an honest partial result
+ * is a valid outcome). Barren probes (an entity type that returned nothing for ≥ 2 of a territory's concepts) are
+ * NONE until another supported type has been tried for that territory (it forces diversification, it never bans a type). `investigationStage` names the stage the run is in.
  */
 import type { EvidenceSufficiencyVerdict, NextActionValue } from "@cultural-elasticity/shared";
 import { exemplarCandidates, frontierConcepts } from "./candidate-discovery.js";
 import { analysisReserve } from "./analysis-runner.js";
 import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
-import { isReady, recoverable, recoveryOptions, territoryReadiness } from "./readiness.js";
-import { comparisonSetSize, referenceCandidates, referenceEntityType } from "./reference-strategy.js";
+import { barrenTypes, isReady, recoverable, recoveryOptions, territoryReadiness, typePreference } from "./readiness.js";
+import { comparisonSetSize, referenceEntityType, referencePlan } from "./reference-strategy.js";
 import { MIN_COMPARISON_SET } from "./router.js";
 import { activeTerritories, remainingQlooCalls, type AgentRunState } from "./state.js";
 
@@ -82,15 +88,14 @@ export function nextActionValues(state: AgentRunState): NextActionValue[] {
 
   const intent = state.interpretation.intent;
   const room = state.territories.length < state.limits.maxCandidateTerritories && remainingQlooCalls(state) >= 2;
+  let referencesPending = false;
   if ((intent === "analyze_move" || intent === "compare_territories") && referenceEntityType(state) !== null && comparisonSetSize(state) < MIN_COMPARISON_SET) {
-    if (!room) add("add_references", null, "NONE", "no room left in the candidate or call budget; analysis stays partial");
-    else if (state.skillUsage.get("build_comparison_set")?.exhausted || state.skillUsage.get("build_comparison_set")?.qlooSpent) add("add_references", null, "NONE", "the comparison-set skill budget is spent; analysis stays partial");
-    else {
-      const candidates = referenceCandidates(state).filter((c) => c.usable !== false && c.namespaceYield !== "unproductive");
-      if (candidates.some((c) => c.usable === true)) add("add_references", null, "HIGH", `Qloo has members for a reference concept; ${MIN_COMPARISON_SET - comparisonSetSize(state)} more represented territory(ies) enable a relative position`);
-      else if (candidates.length > 0) add("add_references", null, "MEDIUM", "untested reference concepts remain");
-      else add("add_references", null, "NONE", "no reference concept with Qloo members of the target's type; analysis stays partial");
-    }
+    const plan = referencePlan(state);
+    if (plan.feasible) {
+      referencesPending = true;
+      add("add_references", null, "HIGH", plan.outstanding ?? plan.reason);
+    } else if (plan.applicable) add("add_references", null, "NONE", plan.reason || "no meaningful reference can be added; analysis stays partial");
+    else if (!room) add("add_references", null, "NONE", "no room left in the candidate or call budget; analysis stays partial");
   }
   if (intent === "explore_frontier") {
     const viable = activeTerritories(state).filter((t) => t.role === "frontier_candidate" && state.results.get(t.key)?.analysisRoute !== "INSUFFICIENT_EVIDENCE").length;
@@ -107,9 +112,42 @@ export function nextActionValues(state: AgentRunState): NextActionValue[] {
     for (const a of out) if (INVESTIGATION(a) && a.value !== "NONE") Object.assign(a, { value: "NONE", reason: `${remainingQlooCalls(state)} Qloo call(s) left are reserved for the analysis of ready territories (${reserve} needed)` });
   }
   const gap = out.some((a) => INVESTIGATION(a) && (a.value === "HIGH" || a.value === "MEDIUM"));
-  if (ready.length > 0) add("analyze", ready.map((t) => t.key).join(","), gap ? "MEDIUM" : "HIGH", gap ? "these territories are ready; other gaps remain" : "no material evidence gap remains: analyze");
+  if (ready.length > 0 && referencesPending && state.referenceDeferrals === 0 && ready.some((t) => t.role === "target")) add("analyze", ready.map((t) => t.key).join(","), "LOW", "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)");
+  else if (ready.length > 0) add("analyze", ready.map((t) => t.key).join(","), gap ? "MEDIUM" : "HIGH", gap ? "these territories are ready; other gaps remain" : "no material evidence gap remains: analyze");
   if (open.length === 0 && activeTerritories(state).length > 0) add("finish", null, gap ? "LOW" : "HIGH", "every in-scope territory is analyzed");
   return out;
+}
+
+/** Sprint 5A: entity types a brand-independent probe should not repeat for this territory (barren), and what is untried. */
+export function barrenProbe(state: AgentRunState, tagId: string, type: string): { barren: string; untried: string[] } | null {
+  for (const t of activeTerritories(state).filter((x) => x.status !== "analyzed")) {
+    const tags = new Set([...(t.concept ? [t.concept.id] : []), ...(state.searchedQueries.get(t.label.trim().toLowerCase()) ?? [])]);
+    if (!tags.has(tagId)) continue;
+    const barren = barrenTypes(state, t);
+    if (!barren.includes(type as never)) continue;
+    const tried = new Set(state.pools.filter((p) => p.conditionedOn === null && p.tagIds.length === 1 && tags.has(p.tagIds[0]!)).map((p) => p.targetType as string));
+    // The rule forces diversification, never a ban: yield varies by tag namespace (live: brand and place were empty
+    // for genre/subgenre heavy-metal tags while place returned 20 members for the interests tag). Once another
+    // entity type has been probed for this territory, further probes of this type are allowed again.
+    if ([...tried].some((x) => x !== type)) continue;
+    return { barren: `${type} probes of ${t.label}'s Qloo concepts returned no members ≥ 2 times`, untried: typePreference(state).filter((x) => !tried.has(x)).slice(0, 3) };
+  }
+  return null;
+}
+
+export type InvestigationStage = "INTERPRETATION" | "RESOLUTION" | "REPRESENTATION" | "REFERENCE_CONSTRUCTION" | "FRONTIER_DISCOVERY" | "ANALYSIS" | "FINISH";
+
+/** Sprint 5A: the stage the run is in, from state (shown to the model; it orders the critical next action). */
+export function investigationStage(state: AgentRunState): InvestigationStage {
+  if (!state.interpretation) return "INTERPRETATION";
+  if (!state.brand.entity) return "RESOLUTION";
+  const open = activeTerritories(state).filter((t) => t.status !== "analyzed");
+  if (open.some((t) => territoryReadiness(state, t).state === "needs_concept")) return "RESOLUTION";
+  if (open.some((t) => territoryReadiness(state, t).state === "needs_representation" || recoverable(state, t))) return "REPRESENTATION";
+  if (referencePlan(state).feasible) return "REFERENCE_CONSTRUCTION";
+  if (state.interpretation.intent === "explore_frontier" && nextActionValues(state).some((a) => a.action === "propose_frontier" && a.value !== "NONE")) return "FRONTIER_DISCOVERY";
+  if (open.length > 0) return "ANALYSIS";
+  return "FINISH";
 }
 
 export function assessEvidenceSufficiency(state: AgentRunState): SufficiencyAssessment {

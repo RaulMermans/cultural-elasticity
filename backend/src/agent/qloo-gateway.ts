@@ -51,8 +51,11 @@ export async function callQloo<O extends QlooOperation>(
   if (remaining < 1) return { outcome: "failed", code: "BUDGET_EXHAUSTED", retryable: false, detail: `Qloo call budget (${state.limits.maxQlooCalls}) is spent`, attempts: 0 };
 
   const started = Date.now();
+  const waits = (provider as { waits?: { spacingMs: number; rateLimitMs: number } }).waits;
+  const waitedBefore = waits ? waits.spacingMs + waits.rateLimitMs : 0;
   const result = await provider.call(operation, input, { maxRetries: Math.min(state.limits.maxRetryPerToolCall, remaining - 1) });
   state.usage.qlooLatencyMs += Date.now() - started;
+  if (waits) state.usage.qlooSpacingMs += waits.spacingMs + waits.rateLimitMs - waitedBefore;
   state.usage.qlooCalls += result.attempts;
   state.usage.retries += Math.max(0, result.attempts - 1);
   trace.attempts += result.attempts;

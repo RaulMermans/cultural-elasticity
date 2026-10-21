@@ -123,9 +123,23 @@ export type ModelUsage = { inputTokens: number; outputTokens: number; cacheReadT
 
 // ---- Synthesis ----
 
+/**
+ * Sprint 5A: the model may answer with grounded findings (preferred) instead of free territory notes. Each finding
+ * names one territory, a claim type, the result fields that support it and its limitation codes; the runtime
+ * validates the fields and renders the notes. Free-text territoryNotes remain accepted (scripted fixtures, 0.2).
+ */
+export const groundedFindingSchema = z.strictObject({
+  territoryKey: text,
+  claimType: text.max(40),
+  supportingFields: z.array(text.max(80)).max(6).default([]),
+  interpretation: z.string().trim().min(1).max(600),
+  limitationCodes: z.array(text.max(60)).max(6).default([]),
+});
+
 export const synthesisSchema = z.strictObject({
   summary: z.string().trim().min(1).max(4_000),
-  territoryNotes: z.array(z.strictObject({ territoryKey: text, text: z.string().trim().min(1).max(1_200) })).max(12),
+  territoryNotes: z.array(z.strictObject({ territoryKey: text, text: z.string().trim().min(1).max(1_200) })).max(12).default([]),
+  findings: z.array(groundedFindingSchema).max(16).default([]),
   followUpOptions: z.array(z.string().trim().min(1).max(300)).max(6),
 });
 export type Synthesis = z.output<typeof synthesisSchema>;

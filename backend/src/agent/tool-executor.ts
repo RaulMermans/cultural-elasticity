@@ -24,7 +24,7 @@
 import type { AgentToolCallTrace } from "@cultural-elasticity/shared";
 import { z } from "zod";
 import type { ExpectedValue } from "@cultural-elasticity/shared";
-import { assessEvidenceSufficiency, type SufficiencyAssessment } from "./evidence-sufficiency.js";
+import { assessEvidenceSufficiency, barrenProbe, type SufficiencyAssessment } from "./evidence-sufficiency.js";
 import { cacheKey } from "./qloo-gateway.js";
 import type { SkillDefinition } from "./skills/contracts.js";
 import { skillRef } from "./skills/contracts.js";
@@ -95,6 +95,11 @@ const VALUE_RANK: Record<ExpectedValue, number> = { HIGH: 3, MEDIUM: 2, LOW: 1, 
 export function valueOfToolCall(state: AgentRunState, tool: string, input: Record<string, unknown>, assessment: SufficiencyAssessment): { value: ExpectedValue; reason: string } {
   if (tool === "qloo_get_entity_tags" && typeof input.entityId === "string" && state.profiles.has(input.entityId)) return { value: "NONE", reason: "this tag profile is already collected (fixed Qloo take)" };
   if (tool === "qloo_find_tags" && typeof input.query === "string" && state.searchedQueries.has(input.query.trim().toLowerCase())) return { value: "NONE", reason: "this tag query already ran in this run" };
+  // Sprint 5A: an entity type that already came back empty for ≥ 2 of a territory's concepts has no expected gain.
+  if (tool === "qloo_recommend" && input.conditionOnBrand === false && Array.isArray(input.tagIds) && input.tagIds.length === 1 && typeof input.targetType === "string") {
+    const barren = barrenProbe(state, String(input.tagIds[0]), input.targetType);
+    if (barren) return { value: "NONE", reason: `${barren.barren}; probe an untried supported entity type instead (${barren.untried.join(", ") || "none left"}), anchor a concept with members, or declare_concept_only` };
+  }
   if (!assessment.materialGap) {
     const reserved = assessment.nextActions.find((a) => a.value === "NONE" && /reserved for the analysis/u.test(a.reason));
     return { value: "NONE", reason: reserved?.reason ?? "no material evidence gap remains; analyze the ready territories" };

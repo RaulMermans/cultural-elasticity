@@ -13,6 +13,7 @@
 import { setOverlap } from "../analysis/overlap.js";
 import { matchOperationalRule } from "../methodology/operational-tags.js";
 import type { RankableType } from "./contracts.js";
+import { incidentalConcept } from "./semantic-comparison.js";
 import type { AgentRunState } from "./state.js";
 
 const STOPWORDS = new Set(["the", "and", "for", "with", "of", "a", "an", "&", "co", "inc", "ltd", "group"]);
@@ -144,7 +145,8 @@ export function frontierConcepts(state: AgentRunState, minSupport = 2): Frontier
     const profile = state.profiles.get(id);
     if (!profile) continue;
     for (const tagId of new Set(profile.tagIds)) {
-      if (brandTags.has(tagId) || matchOperationalRule({ id: tagId }) !== undefined) continue;
+      // Sprint 5A: venue-listing attributes (amenities, decor, …) are not frontier territories.
+      if (brandTags.has(tagId) || matchOperationalRule({ id: tagId }) !== undefined || incidentalConcept(tagId) !== undefined) continue;
       support.set(tagId, (support.get(tagId) ?? new Set()).add(id));
     }
   }

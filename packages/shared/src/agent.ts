@@ -10,7 +10,11 @@
 import type { Limitation } from "./analysis.js";
 import type { CulturalElasticityResult, ElasticityClass, RobustnessLevel } from "./methodology.js";
 
-export const AGENT_RESULT_SCHEMA_VERSION = "ce-agent-result/0.2" as const;
+/**
+ * 0.3 (Sprint 5A, additive): semantic comparison assessments, grounded findings, synthesis attempt details,
+ * model effort, reference-plan and latency telemetry. Every 0.2 field is unchanged.
+ */
+export const AGENT_RESULT_SCHEMA_VERSION = "ce-agent-result/0.3" as const;
 
 export type AgentIntent = "analyze_move" | "compare_territories" | "explore_frontier";
 
@@ -77,7 +81,11 @@ export type RepresentationFailureCode =
   /** An agent hypothesis that Qloo does not support (no concept, or no brand-independent members). */
   | "HYPOTHESIS_UNSUPPORTED"
   /** Dropped to keep the frontier set conceptually diverse. */
-  | "LOW_DIVERSITY";
+  | "LOW_DIVERSITY"
+  /** Sprint 5A: a venue-listing attribute or operational tag, not a cultural territory. */
+  | "INCIDENTAL_CONCEPT"
+  /** Sprint 5A: a reference the semantic comparison validator did not accept. */
+  | "SEMANTIC_REFERENCE_REJECTED";
 
 export type TerritoryRole = "target" | "reference" | "frontier_candidate";
 export type TerritoryOrigin = "user" | "agent_hypothesis" | "qloo_evidence";
@@ -121,7 +129,7 @@ export type AgentTerritoryResult = {
   analysisRoute: AnalysisRoute;
   capabilities: CapabilityAvailability;
   /** Present only for FULL_RELATIVE_ANALYSIS: every relative statement holds only for this set. */
-  comparisonSet: { territoryKeys: string[]; labels: string[]; methodologyVersion: string } | null;
+  comparisonSet: { territoryKeys: string[]; labels: string[]; methodologyVersion: string; semanticStatus?: SemanticComparisonStatus } | null;
   relativePosition: { position: number | null; of: number; medianPercentile: number | null; medianRank: number | null } | null;
   robustness: { level: RobustnessLevel; percentileSpread: number | null; panelledExemplars: number; declaredExemplars: number; reasons: string[] } | null;
   coherence: {
@@ -160,6 +168,15 @@ export const AGENT_FAILURE_CATEGORIES = [
   "CLAIM_VALIDATION_ERROR",
   "BENCHMARK_LABEL_ERROR",
   "METHODOLOGY_ERROR",
+  // Sprint 5A
+  "SEMANTIC_REFERENCE_ERROR",
+  "REPRESENTATION_RECOVERY_FAILURE",
+  "REFERENCE_CONSTRUCTION_FAILURE",
+  "SYNTHESIS_VALIDATION_FAILURE",
+  "SYNTHESIS_FALSE_POSITIVE",
+  "INCOMPLETE_LIVE_EVALUATION",
+  "FRONTIER_INSTABILITY",
+  "AGENT_BUDGET_EXHAUSTED",
 ] as const;
 export type AgentFailureCategory = (typeof AGENT_FAILURE_CATEGORIES)[number];
 
@@ -203,14 +220,44 @@ export type ConceptDedupDecision = {
 
 export type CandidateSource = "user" | "qloo_grounded" | "agent_hypothesis" | "reference_strategy";
 
+export type SemanticComparisonStatus = "MEANINGFUL" | "WEAK" | "INCOMPARABLE" | "UNKNOWN";
+
+/**
+ * Sprint 5A: may a comparison set carry a FULL relative analysis? Structure and meaning are judged separately;
+ * only a structurally VALID set whose accepted members still number ≥ 3 is used for FULL.
+ */
+export type SemanticComparisonAssessment = {
+  targetTerritoryKey: string;
+  referenceTerritoryKeys: string[];
+  memberTerritoryKeys: string[];
+  entityType: string;
+  structuralStatus: "VALID" | "INVALID";
+  structuralIssues: string[];
+  /** Status of the set after rejected references are removed. */
+  semanticStatus: SemanticComparisonStatus;
+  acceptedReferences: string[];
+  rejectedReferences: { territoryKey: string; reasonCode: string; explanation: string }[];
+  /** True when an advisory model judgment was part of the decision (it can only remove a reference). */
+  modelAssessed: boolean;
+  /** Correlation ids of the Qloo calls that tie accepted references to the question. */
+  evidenceReferences: string[];
+  usedForFull: boolean;
+  rulesVersion: string;
+};
+
+/** Sprint 5A: one model-selected, runtime-validated claim about one territory. */
+export type GroundedFinding = { territoryKey: string; claimType: string; supportingFields: string[]; interpretation: string; limitationCodes: string[] };
+
 /** How the set of territories that relative results depend on was assembled. Always reported. */
 export type ComparisonSetConstruction = {
   intent: AgentIntent | null;
   proposed: { key: string; label: string; role: TerritoryRole; source: CandidateSource; evidence: string }[];
-  rejected: { key: string; label: string; stage: "resolution" | "qloo_support" | "representation" | "evidence" | "dedup" | "diversity" | "budget" | "agent"; code: string; reason: string }[];
+  rejected: { key: string; label: string; stage: "resolution" | "qloo_support" | "representation" | "evidence" | "dedup" | "diversity" | "budget" | "agent" | "semantic"; code: string; reason: string }[];
   final: { key: string; label: string; role: TerritoryRole; source: CandidateSource; route: AnalysisRoute }[];
   dedupDecisions: ConceptDedupDecision[];
   diversity: { assessment: "diverse" | "overlapping" | "unknown"; similarPairs: { a: string; b: string; basis: string }[]; detail: string };
+  /** Sprint 5A: every comparison set considered for FULL, with its structural and semantic verdict. */
+  semanticAssessments?: SemanticComparisonAssessment[];
   note: string;
 };
 
@@ -224,6 +271,8 @@ export type AgentResultLayers = {
   };
   systemAnalysis: {
     routes: { territoryKey: string; route: AnalysisRoute; classification: ElasticityClass | null; position: number | null; robustness: RobustnessLevel | null }[];
+    /** Sprint 5A: semantic validity of each comparison set considered for FULL. */
+    semanticComparison?: { semanticStatus: SemanticComparisonStatus; structuralStatus: "VALID" | "INVALID"; usedForFull: boolean; memberTerritoryKeys: string[] }[];
     methodologyRunIds: string[];
     finalSufficiency: EvidenceSufficiencyVerdict;
     representationDecisions: { valid: number; weak: number; rejected: number };
@@ -235,6 +284,8 @@ export type AgentResultLayers = {
     /** Advisory model judgments, kept apart from Qloo evidence. */
     semanticJudgments: { territoryKey: string; label: string; relevance: SemanticRelevance; reason: string }[];
     followUpOptions: string[];
+    /** Sprint 5A: grounded findings the model selected and the runtime validated (empty for the template). */
+    findings?: GroundedFinding[];
   };
 };
 
@@ -243,6 +294,8 @@ export type AgentModelInfo = {
   /** "llm" = a live model provider; "scripted" and "baseline" are deterministic test/reference policies. */
   kind: "llm" | "scripted" | "baseline";
   live: boolean;
+  /** Reasoning effort sent to a live model (Sprint 5A: recorded in every trace). */
+  effort?: string;
 };
 
 export type AgentDecisionTrace = {
@@ -314,7 +367,17 @@ export type AgentTrace = {
   /** Calls spent per skill (attribution: the first active skill whose allowlist contains the tool). */
   skillUsage: { skill: SkillRef; turns: number; qlooCalls: number; toolCalls: number }[];
   methodologyInvocations: { id: string; territoryKeys: string[]; entityType: string; panelIds: string[]; correlationIds: string[]; methodologyVersion: string }[];
-  synthesis: { source: "model" | "deterministic_template"; attempts: number; violations: string[] } | null;
+  synthesis: {
+    source: "model" | "deterministic_template";
+    attempts: number;
+    violations: string[];
+    /** Sprint 5A: per-attempt rejection categories and the rejected model output (an answer, never reasoning). */
+    attemptDetails?: { attempt: number; accepted: boolean; categories: Record<string, number>; violations: string[]; rejectedOutput?: string }[];
+  } | null;
+  /** Sprint 5A: comparison sets considered for FULL. */
+  semanticAssessments?: SemanticComparisonAssessment[];
+  /** Sprint 5A: why the agent stopped, in one reason code + detail. */
+  stopReason?: { code: string; detail: string } | null;
   errors: { iteration: number; code: string; detail: string }[];
   userClarifications: string[];
 };
@@ -357,6 +420,16 @@ export type AgentMetrics = {
   qloo_latency_ms: number;
   /** USD from provider-reported usage and a known price table; null when unavailable. */
   model_cost_usd: number | null;
+  // Sprint 5A
+  model_id?: string;
+  model_effort?: string | null;
+  synthesis_latency_ms?: number;
+  analysis_latency_ms?: number;
+  qloo_spacing_ms?: number;
+  synthesis_first_attempt_valid?: boolean | null;
+  synthesis_valid_after_repair?: boolean | null;
+  synthesis_fallback?: boolean;
+  reference_deferrals?: number;
 };
 
 export type AgentAnalysisResult = {

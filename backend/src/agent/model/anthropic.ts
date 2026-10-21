@@ -16,7 +16,16 @@ import type { ModelTurn } from "../contracts.js";
 import { AGENT_SYSTEM_PROMPT, SYNTHESIS_SYSTEM_PROMPT } from "../prompts.js";
 import type { AgentDecisionContext, AgentModel, FinalizationContext, SynthesisTurn } from "./provider.js";
 
-export const DEFAULT_AGENT_MODEL = "claude-opus-5-5";
+/**
+ * Sprint 5A: Claude Haiku 5.5 is the sole intended production model (cost). No fallback model and no
+ * escalation: AGENT_MODEL may override it for development only, and readiness is judged on Haiku alone.
+ */
+export const DEFAULT_AGENT_MODEL = "claude-haiku-5-5";
+/**
+ * Effort is sent explicitly. Haiku 5.5's API default is `medium`; Sprint 4's Haiku runs used `high`, and no
+ * controlled comparison of the two exists yet, so `high` is kept (AGENT_EFFORT overrides it).
+ */
+export const DEFAULT_AGENT_EFFORT = "high" as const;
 
 const REASON = { type: "string", description: "One short factual sentence: why this action now." };
 
@@ -42,10 +51,24 @@ const SYNTHESIS_SCHEMA = {
   type: "object",
   properties: {
     summary: { type: "string" },
-    territoryNotes: { type: "array", items: { type: "object", properties: { territoryKey: { type: "string" }, text: { type: "string" } }, required: ["territoryKey", "text"], additionalProperties: false } },
+    findings: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          territoryKey: { type: "string" },
+          claimType: { type: "string", enum: ["relative_position", "classification", "robustness", "shared_signals", "conditioned_evidence", "evidence_quality", "representation", "route_limitation"] },
+          supportingFields: { type: "array", items: { type: "string" } },
+          interpretation: { type: "string" },
+          limitationCodes: { type: "array", items: { type: "string" } },
+        },
+        required: ["territoryKey", "claimType", "supportingFields", "interpretation", "limitationCodes"],
+        additionalProperties: false,
+      },
+    },
     followUpOptions: { type: "array", items: { type: "string" } },
   },
-  required: ["summary", "territoryNotes", "followUpOptions"],
+  required: ["summary", "findings", "followUpOptions"],
   additionalProperties: false,
 };
 
@@ -76,12 +99,12 @@ export class AnthropicAgentModel implements AgentModel {
 
   constructor(options: AnthropicAgentModelOptions = {}) {
     this.model = options.model ?? DEFAULT_AGENT_MODEL;
-    this.effort = options.effort ?? "high";
+    this.effort = options.effort ?? DEFAULT_AGENT_EFFORT;
     this.fallback = FALLBACK_MODELS.has(this.model) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const } : {};
     // An org-level key that is not scoped to a workspace needs the workspace id on every request.
     const workspace = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
     this.client = options.client ?? new Anthropic(workspace ? { defaultHeaders: { "anthropic-workspace-id": workspace } } : {});
-    this.info = { id: this.model, kind: "llm", live: true };
+    this.info = { id: this.model, kind: "llm", live: true, effort: this.effort };
   }
 
   async decide(context: AgentDecisionContext): Promise<ModelTurn> {

@@ -92,6 +92,70 @@ export function recoveryOptions(state: AgentRunState, t: TerritoryState): Recove
   return { conceptId, strategies, unprobedTypes, alternateConcepts, conceptOnlyAvailable: true };
 }
 
+/**
+ * Sprint 5A: entity types in recovery order — types that already returned eligible members for some concept in this
+ * run first (most productive first), then place and brand (the two types live evidence most often supports), then
+ * the remaining rankable Insights types. Every type listed is accepted by qloo_recommend; none is invented.
+ */
+export function typePreference(state: AgentRunState): RankableType[] {
+  const yieldByType = new Map<RankableType, number>();
+  for (const pool of state.pools) if (pool.conditionedOn === null && pool.memberIds.length > 0) yieldByType.set(pool.targetType, (yieldByType.get(pool.targetType) ?? 0) + 1);
+  const fixed: RankableType[] = ["place", "brand"];
+  return [...RANKABLE_TYPES].sort((a, b) => (yieldByType.get(b) ?? 0) - (yieldByType.get(a) ?? 0) || (fixed.includes(a) ? fixed.indexOf(a) : 9) - (fixed.includes(b) ? fixed.indexOf(b) : 9));
+}
+
+/** Brand-independent probes already made for a territory's candidate concepts (its query tags and its anchor). */
+export function probeLedger(state: AgentRunState, t: TerritoryState): { tagId: string; label: string; probes: { type: RankableType; members: number }[] }[] {
+  const tags = [...new Set([...(t.concept ? [t.concept.id] : []), ...queryTags(state, t)])];
+  return tags.flatMap((tagId) => {
+    const probes = [...probedTypes(state, tagId).entries()].map(([type, members]) => ({ type, members }));
+    return probes.length > 0 || tagId === t.concept?.id ? [{ tagId, label: state.tags.get(tagId)?.label ?? tagId, probes }] : [];
+  });
+}
+
+/** Entity types that returned no members for ≥ `min` of the territory's candidate concepts, and none that returned members. */
+export function barrenTypes(state: AgentRunState, t: TerritoryState, min = 2): RankableType[] {
+  const ledger = probeLedger(state, t);
+  return RANKABLE_TYPES.filter((type) => {
+    const probes = ledger.flatMap((l) => l.probes.filter((p) => p.type === type));
+    return probes.length >= min && probes.every((p) => p.members === 0);
+  });
+}
+
+/**
+ * Sprint 5A recovery contract: state-grounded next steps for a territory still being resolved or represented —
+ * what was tried, why it failed, which strategies remain, which supported entity types are untried, which
+ * alternate Qloo concepts exist, attempts left and the tools that perform each step. No vague "try another type".
+ */
+export function recoveryGuidance(state: AgentRunState, t: TerritoryState): string[] {
+  const out: string[] = [];
+  const ledger = probeLedger(state, t);
+  const tried = new Set(ledger.flatMap((l) => l.probes.map((p) => p.type)));
+  const barren = barrenTypes(state, t);
+  const untried = typePreference(state).filter((type) => !tried.has(type)).slice(0, 3);
+  if (!t.concept) {
+    const tags = queryTags(state, t);
+    if (tags.length === 0) return ["search Qloo's tag vocabulary for this territory (qloo_find_tags)"];
+    const withMembers = ledger.filter((l) => l.probes.some((p) => p.members > 0));
+    if (withMembers.length > 0) out.push(`anchor a concept Qloo returned members for (anchor_territory): ${withMembers.map((l) => `${l.label} [${l.tagId}] ${l.probes.filter((p) => p.members > 0).map((p) => `${p.type}:${p.members}`).join(",")}`).join("; ")}`);
+    if (barren.length > 0) out.push(`${barren.join(", ")} probes of ${ledger.filter((l) => l.probes.some((p) => barren.includes(p.type))).length} of this territory's Qloo concepts returned no members: ${tried.size > barren.length ? `yield differs by tag namespace, so ${barren.join("/")} may still be probed on concepts not yet tried with it` : `probe another supported entity type before ${barren.join("/")} again`}`);
+    if (untried.length > 0) out.push(`untried supported entity types for its concepts: ${untried.join(", ")} (qloo_recommend, conditionOnBrand=false, on the concept named most like the territory)`);
+    if (withMembers.length === 0 && untried.length === 0) out.push("no probe found members: anchor the concept named most like the territory and declare_concept_only, or drop it");
+    return out;
+  }
+  const options = recoveryOptions(state, t);
+  const attemptsLeft = Math.max(0, state.limits.maxRepresentationAttemptsPerTerritory - t.attempts);
+  for (const s of options.strategies) {
+    if (s.status === "available") out.push(`available: ${s.entityType} exemplars for ${t.concept.label} (${s.eligible} eligible candidate(s)${s.failures ? `, ${s.failures} failed attempt(s)` : ""}) → validate_territory_representation with entityType ${s.entityType}`);
+    else out.push(`${s.status}: ${s.entityType} for ${t.concept.label}${s.status === "empty" ? " (Qloo returned no eligible member)" : ` (failed ${s.failures} times; refused)`}`);
+  }
+  if (t.rejectedExemplars.length > 0) out.push(`rejected exemplars (do not propose again): ${t.rejectedExemplars.slice(-6).map((r) => `${r.label} (${r.code})`).join(", ")}`);
+  if (untried.length > 0 && !options.strategies.some((s) => s.status === "available")) out.push(`not yet probed with the supported entity type(s) ${untried.join(", ")} → qloo_recommend on ${t.concept.id}, conditionOnBrand=false`);
+  if (options.alternateConcepts.length > 0 && !options.strategies.some((s) => s.status === "available")) out.push(`alternate Qloo concepts for the same territory → anchor_territory: ${options.alternateConcepts.slice(0, 4).map((c) => `${c.label} [${c.id}]`).join("; ")}`);
+  out.push(`${attemptsLeft} representation attempt(s) left; when no strategy remains, declare_concept_only (an honest partial result, never a forced weak panel)`);
+  return out;
+}
+
 const skillSpent = (state: AgentRunState, id: string) => state.skillUsage.get(id)?.exhausted === true;
 
 export function territoryReadiness(state: AgentRunState, t: TerritoryState): TerritoryReadiness {

@@ -30,6 +30,7 @@ import type { TerminalAction } from "./skills/contracts.js";
 import { refs, SkillRegistry } from "./skills/registry.js";
 import type { AgentDecisionContext, AgentModel } from "./model/provider.js";
 import { recordPlanRevision } from "./planner.js";
+import { MAX_REFERENCE_DEFERRALS, referencePlan } from "./reference-strategy.js";
 import { RunStore } from "./run-store.js";
 import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState } from "./state.js";
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
@@ -45,7 +46,7 @@ export type AgentRuntimeDeps = {
 };
 
 /** Rejection codes a repair attempt can act on (the validator's reason tells the model what to change). */
-const REPAIRABLE = new Set(["INVALID_MODEL_OUTPUT", "INVALID_DECISION", "UNKNOWN_TOOL", "INVALID_ARGUMENTS", "NOT_EXPOSED", "WRONG_PHASE", "PRECONDITION", "NOT_READY", "FINISH_BEFORE_SUFFICIENCY", "NOTHING_ANALYZED", "UNKNOWN_RESULT_IDS", "NO_OPEN_AMBIGUITY"]);
+const REPAIRABLE = new Set(["INVALID_MODEL_OUTPUT", "INVALID_DECISION", "UNKNOWN_TOOL", "INVALID_ARGUMENTS", "NOT_EXPOSED", "WRONG_PHASE", "PRECONDITION", "NOT_READY", "FINISH_BEFORE_SUFFICIENCY", "NOTHING_ANALYZED", "UNKNOWN_RESULT_IDS", "NO_OPEN_AMBIGUITY", "REFERENCES_PENDING"]);
 
 type TurnOutcome = { stop: "needs_input" | "finish" | "failed" | null; lastTurn: AgentDecisionContext["lastTurn"] };
 
@@ -171,10 +172,13 @@ export class AgentRuntime {
     turnTrace.skills = refs([...turnSkills.values()]);
 
     recordPlanRevision(state, decisionsTrace.find((d) => d.accepted)?.reasonSummary ?? null);
+    // A turn whose only refusals are bounded reference deferrals is a steering step, not an invalid model turn.
+    const deferralOnly = rejections.length > 0 && rejections.every((r) => r.code === "REFERENCES_PENDING");
     if (accepted === 0) {
-      state.usage.invalidTurnsInRow += 1;
+      if (!deferralOnly) state.usage.invalidTurnsInRow += 1;
       if (verdict === "SUFFICIENT") {
         state.trace.errors.push({ iteration: state.usage.iterations, code: "RUNTIME_FINALIZED_ON_SUFFICIENCY", detail: "the model did not finish after sufficiency; the runtime finalized" });
+        state.trace.stopReason = { code: "RUNTIME_FINALIZED_ON_SUFFICIENCY", detail: "evidence was sufficient and the model proposed no acceptable action" };
         return { stop: "finish", lastTurn: { results, rejections } };
       }
       const assessment = assessEvidenceSufficiency(state);
@@ -295,7 +299,9 @@ export class AgentRuntime {
     if (state.interpretation?.intent === "explore_frontier") kept = pruneForDiversity(state, kept);
     if (kept.length === 0) return { ok: false, code: "NOTHING_TO_ANALYZE", reason: "every requested territory was unsupported, a duplicate, or out of scope" };
     transition(state, "ANALYZING", `analyze ${kept.join(", ")}`);
+    const started = Date.now();
     const outcome = await runAnalysis(state, this.deps.provider, kept, (tool, permission, args) => openToolTrace(state, tool, permission, args));
+    state.timing.analysisMs += Date.now() - started;
     transition(state, "INVESTIGATING", "analysis step done");
     return outcome;
   }
@@ -333,6 +339,14 @@ export class AgentRuntime {
         });
         if (notReady.length > 0) {
           reject("analyze", "NOT_READY", `not ready for analysis: ${notReady.join("; ")}. Resolve or represent them first, declare_concept_only, or drop them`, { reasonSummary: decision.reasonSummary });
+          return { accepted: false, stop: null };
+        }
+        // Sprint 5A: analyzing a target locks its route. While a meaningful comparison set is still feasible within
+        // the budget, the decision is deferred (bounded: after MAX_REFERENCE_DEFERRALS the runtime stops deferring).
+        const plan = referencePlan(state);
+        if (plan.feasible && state.referenceDeferrals < MAX_REFERENCE_DEFERRALS && requested.some((k) => state.territories.find((t) => t.key === k)?.role === "target")) {
+          state.referenceDeferrals += 1;
+          reject("analyze", "REFERENCES_PENDING", `${plan.outstanding ?? plan.reason} (deferred once; if you analyze again now, the analysis proceeds and the result is PARTIAL)`, { reasonSummary: decision.reasonSummary });
           return { accepted: false, stop: null };
         }
         const outcome = await this.analyzeKeys(state, requested);
@@ -385,6 +399,7 @@ export class AgentRuntime {
   }
 
   private async complete(state: AgentRunState, reason: string): Promise<AgentRunResponse> {
+    state.trace.stopReason ??= { code: reason === "evidence insufficient" ? "EVIDENCE_INSUFFICIENT" : reason === "agent finished" ? "AGENT_FINISHED" : "SUFFICIENT_AT_BUDGET", detail: reason };
     transition(state, "COMPLETE", reason);
     return this.finish(state);
   }
@@ -398,8 +413,11 @@ export class AgentRuntime {
       gateFrontierCandidates(state, pending);
       applyConceptDedup(state, activeTerritories(state));
       const kept = pending.filter((k) => state.territories.some((t) => t.key === k && t.status !== "dropped"));
+      const started = Date.now();
       if (kept.length > 0) await runAnalysis(state, this.deps.provider, kept, (tool, permission, args) => openToolTrace(state, tool, permission, args));
+      state.timing.analysisMs += Date.now() - started;
     }
+    state.trace.stopReason ??= { code: "AGENT_BUDGET_EXHAUSTED", detail: reason };
     transition(state, "BUDGET_EXHAUSTED", reason);
     return this.finish(state);
   }
@@ -409,6 +427,7 @@ export class AgentRuntime {
       transition(state, "FAILED", reason);
     }
     state.trace.errors.push({ iteration: state.usage.iterations, code: "RUN_FAILED", detail: reason });
+    state.trace.stopReason ??= { code: "RUN_FAILED", detail: reason };
     return this.finish(state);
   }
 

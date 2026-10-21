@@ -18,7 +18,7 @@ import type { AnalysisRoute } from "@cultural-elasticity/shared";
 import { z } from "zod";
 import { MIN_FRONTIER_SUPPORTED } from "../contracts.js";
 import { isReady, recoverable, territoryReadiness } from "../readiness.js";
-import { comparisonSetSize, referenceCandidates, referenceEntityType } from "../reference-strategy.js";
+import { comparisonSetSize, referenceEntityType, referencePlan } from "../reference-strategy.js";
 import { MIN_COMPARISON_SET } from "../router.js";
 import { activeTerritories, remainingQlooCalls, type AgentRunState } from "../state.js";
 import type { SkillDefinition } from "./contracts.js";
@@ -84,7 +84,9 @@ export const resolveBrandSkill: SkillDefinition<{ query: string | null }, { bran
 export const resolveTerritorySkill: SkillDefinition<{ territories: string[] }, { anchored: string[]; unresolved: string[] }> = {
   id: "resolve_territory",
   // v2 (Sprint 4 live fix): per-territory Qloo budget; a spent Qloo budget no longer deactivates anchoring.
-  version: 2,
+  // v3 (Sprint 5A): probes across entity types (an empty type is not re-probed: barren-probe rule); state-grounded
+  // recoveryGuidance and the probe ledger are shown per territory.
+  version: 3,
   purpose: "Anchor each territory to one Qloo concept tag, choosing among tags by the Qloo members they carry; drop territories Qloo cannot express.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "an in-scope territory has no concept and resolution is possible"],
@@ -101,14 +103,17 @@ export const resolveTerritorySkill: SkillDefinition<{ territories: string[] }, {
   budget: { maxTurns: 5, maxQlooCalls: 8, perTerritory: true },
   stoppingConditions: ["every territory anchored or dropped", "Qloo budget spent → anchor with the evidence already gathered", "turn budget spent → remaining territories reported unsupported"],
   failureModes: ["TERRITORY_RESOLUTION_ERROR", "QLOO_DATA_LIMIT", "TOOL_SELECTION_ERROR"],
-  evalIds: ["er-exact", "ie-unmeasurable", "gen-unseen-brand-territory"],
-  procedure: "Search Qloo tags for the territory (qloo_find_tags). Prefer a tag named like the territory; when several fit, probe brand-independent pools (qloo_recommend, conditionOnBrand=false) and anchor the tag whose members best express it. Drop a territory only with a taxonomy code when Qloo has no concept for it.",
+  evalIds: ["er-exact", "ie-unmeasurable", "gen-unseen-brand-territory", "s5-barren-probe-switches-type"],
+  procedure:
+    "Search Qloo tags for the territory (qloo_find_tags). Prefer a tag named like the territory; when several fit, probe brand-independent pools (qloo_recommend, conditionOnBrand=false) and anchor the tag whose members best express it. If one entity type comes back empty for two tags, switch to an untried supported type listed in recoveryGuidance (e.g. place for activity and venue territories) instead of probing more tags with the same type. If no probe finds members, anchor the best-named tag anyway (analysis can still use concept-level evidence). Drop a territory only with a taxonomy code when Qloo has no concept for it.",
 };
 
 export const buildRepresentationSkill: SkillDefinition<{ territories: string[] }, { represented: string[]; conceptOnly: string[] }> = {
   id: "build_territory_representation",
   // v2 (Sprint 4 live fix): per-territory Qloo budget; a spent Qloo budget no longer deactivates validation.
-  version: 2,
+  // v3 (Sprint 5A): recovery contract v2 — recoveryGuidance names the failed strategy, remaining strategies,
+  // untried supported entity types, alternate concepts, attempts left and the tool for each step.
+  version: 3,
   purpose: "Represent each anchored territory with distinct, well-evidenced Qloo exemplars; recover with another strategy when the candidate pool is weak; never force a weak panel.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "an in-scope territory is anchored without a representation and strategies remain"],
@@ -128,17 +133,20 @@ export const buildRepresentationSkill: SkillDefinition<{ territories: string[] }
     "no strategy left → concept-only evidence (declare_concept_only)",
   ],
   failureModes: ["REPRESENTATION_ERROR", "EXEMPLAR_SEMANTIC_ERROR", "QLOO_DATA_LIMIT"],
-  evalIds: ["ex-quality-selection", "ex-single-member", "rv-brand-conditioned", "rv-fabricated-id", "rv-place-representation", "sk-quality-outlier", "sk-quality-weak-recovery", "sk-semantic-veto", "sk-strategy-exhausted"],
+  evalIds: ["ex-quality-selection", "ex-single-member", "rv-brand-conditioned", "rv-fabricated-id", "rv-place-representation", "sk-quality-outlier", "sk-quality-weak-recovery", "sk-semantic-veto", "sk-strategy-exhausted", "s5-recovery-untried-type"],
   procedure:
-    "Fetch Qloo members of the concept (qloo_recommend, conditionOnBrand=false) for a fitting entity type. Fetch tag profiles of the leading candidates (qloo_get_entity_tags) so quality can be checked against peers. Propose up to 3 distinct exemplars with validate_territory_representation; you may attach a semantic judgment per exemplar (relevance strong/adequate/weak/mismatch + reason): it is advisory and can only remove a candidate. If the pool is weak, recover: another entity type, an alternate Qloo concept for the same territory, or declare_concept_only.",
+    "Fetch Qloo members of the concept (qloo_recommend, conditionOnBrand=false) for a fitting entity type. Fetch tag profiles of the leading candidates (qloo_get_entity_tags) so quality can be checked against peers. Propose up to 3 distinct exemplars with validate_territory_representation; you may attach a semantic judgment per exemplar (relevance strong/adequate/weak/mismatch + reason): it is advisory and can only remove a candidate. If a strategy fails or the pool is weak, follow the territory's recoveryGuidance in order: an available strategy, an untried supported entity type, an alternate Qloo concept, then declare_concept_only. Never re-propose rejected exemplars or a refused strategy.",
 };
 
 export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | null; size: number }, { size: number; references: string[] }> = {
   id: "build_comparison_set",
-  version: 1,
-  purpose: "Give a single move or a two-territory comparison a comparison set of ≥ 3 represented territories of one entity type, with justified references.",
+  // v2 (Sprint 5A): semantic comparison validation (only MEANINGFUL references count; venue attributes and weak ties
+  // are refused), the deterministic referencePlan (exact outstanding requirement, feasibility within the budget),
+  // and deferral of target analysis while a meaningful set is still feasible.
+  version: 2,
+  purpose: "Give a single move or a two-territory comparison a semantically meaningful comparison set of ≥ 3 represented territories of one entity type, or establish that none is feasible (then the result is an honest PARTIAL).",
   intents: ["analyze_move", "compare_territories"],
-  preconditions: ["a target is represented", `fewer than ${MIN_COMPARISON_SET} represented territories of its entity type`, "reference candidates remain"],
+  preconditions: ["a target is represented", `fewer than ${MIN_COMPARISON_SET} meaningful represented territories of its entity type`, "a meaningful reference set is still feasible within the budget, or the profiles needed to find one are missing"],
   relevant: (state) => {
     const intent = state.interpretation?.intent;
     if ((intent !== "analyze_move" && intent !== "compare_territories") || !state.brand.entity || discoverySpent(state, "build_comparison_set")) return false;
@@ -146,7 +154,7 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
     if (state.territories.length >= state.limits.maxCandidateTerritories || remainingQlooCalls(state) < 2) return false;
     const brandProfiled = state.profiles.has(state.brand.entity.id);
     const exemplarsProfiled = activeTerritories(state).every((t) => t.role !== "target" || (t.representation?.exemplars ?? []).every((e) => state.profiles.has(e.id)));
-    return !brandProfiled || !exemplarsProfiled || referenceCandidates(state).some((c) => c.usable !== false && c.namespaceYield !== "unproductive");
+    return !brandProfiled || !exemplarsProfiled || referencePlan(state).feasible;
   },
   inputSchema: z.object({ entityType: z.string().nullable(), size: z.number() }),
   focus: (state) => ({ entityType: referenceEntityType(state), size: comparisonSetSize(state) }),
@@ -157,16 +165,18 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
   allowedRoutes: ["FULL_RELATIVE_ANALYSIS"],
   contextRequirements: ["referenceCandidates", "brandProfile", "exemplarCandidates", "conceptDedup"],
   budget: { maxTurns: 4, maxQlooCalls: 10 },
-  stoppingConditions: [`≥ ${MIN_COMPARISON_SET} represented territories of one entity type`, "no usable reference candidate left → analysis stays partial", "budget spent"],
-  failureModes: ["REPRESENTATION_ERROR", "QLOO_DATA_LIMIT", "CONCEPT_DUPLICATION_ERROR"],
-  evalIds: ["ex-quality-selection", "sk-quality-outlier", "sk-reference-place-type", "ir-move"],
+  stoppingConditions: [`≥ ${MIN_COMPARISON_SET} meaningful represented territories of one entity type`, "referencePlan not feasible (no meaningful candidate, budget, turns or slots) → analysis stays partial", "budget spent"],
+  failureModes: ["REFERENCE_CONSTRUCTION_FAILURE", "SEMANTIC_REFERENCE_ERROR", "QLOO_DATA_LIMIT", "CONCEPT_DUPLICATION_ERROR"],
+  evalIds: ["ex-quality-selection", "sk-quality-outlier", "sk-reference-place-type", "ir-move", "s5-meaningless-reference-refused", "s5-references-before-analysis"],
   procedure:
-    "Pick reference concepts from referenceCandidates (each has a justification). Probe a candidate's brand-independent pool with the TARGET's entity type (qloo_recommend), then propose_territory (role reference, origin qloo_evidence, with the tag as evidence), anchor it and validate exemplars of that same type. Skip candidates that duplicate a target and namespaces that returned nothing.",
+    "focus.outstanding states how many meaningful references are still needed. Pick from referenceCandidates (only semantic MEANINGFUL ones are listed; evidence.referencePlan lists rejected ones and why). If a candidate is untested (probe null), probe its brand-independent pool with the TARGET's entity type (qloo_recommend). For a candidate with ≥ 2 eligible members: propose_territory (role reference, origin qloo_evidence, evidenceTagIds [its tag], semantic = is it a meaningful cultural alternative to the target at the same level?), anchor_territory, and validate_territory_representation with that same entity type — all in one turn. Then analyze all territories together. If no meaningful reference is feasible, analyze and accept a PARTIAL result.",
 };
 
 export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: number }, { candidates: string[]; dropped: string[] }> = {
   id: "explore_candidate_territories",
-  version: 1,
+  // v2 (Sprint 5A): venue-listing attributes are excluded from frontierConcepts and refused as candidates; an
+  // advisory semantic judgment (weak/mismatch) drops a candidate before analysis.
+  version: 2,
   purpose: "Generate distinct frontier candidates from two channels (Qloo-grounded concepts and agent hypotheses), each of which must still pass Qloo validation.",
   intents: ["explore_frontier"],
   preconditions: ["explore_frontier", "brand resolved", `fewer than ${FRONTIER_TARGET} viable candidates`, "room in the candidate and call budgets"],
@@ -188,14 +198,16 @@ export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: n
   budget: { maxTurns: 6, maxQlooCalls: 20 },
   stoppingConditions: [`${FRONTIER_TARGET} viable, distinct candidates`, "candidate or call budget reached", "no Qloo-supported concept left"],
   failureModes: ["CONCEPT_DUPLICATION_ERROR", "TERRITORY_RESOLUTION_ERROR", "QLOO_DATA_LIMIT"],
-  evalIds: ["ir-frontier", "dtd-unsupported-hypothesis", "dtd-near-duplicate", "sk-frontier-two-channels", "sk-frontier-morph-duplicate", "sk-dedup-model-distinct"],
+  evalIds: ["ir-frontier", "dtd-unsupported-hypothesis", "dtd-near-duplicate", "sk-frontier-two-channels", "sk-frontier-morph-duplicate", "sk-dedup-model-distinct", "s5-frontier-incidental-excluded"],
   procedure:
-    "Channel A (Qloo-grounded): fetch the brand profile and Qloo-related brands' profiles; frontierConcepts lists concepts they carry that the brand does not. Channel B (agent hypothesis): you may propose a non-obvious lateral territory (origin agent_hypothesis); it must then be found in Qloo tags, anchored, and shown to have Qloo members, or it is dropped. Aim for candidates that are culturally different from each other; label likely duplicates with assess_concept_duplicates.",
+    "Channel A (Qloo-grounded): fetch the brand profile and Qloo-related brands' profiles; frontierConcepts lists concepts they carry that the brand does not. Channel B (agent hypothesis): you may propose a non-obvious lateral territory (origin agent_hypothesis); it must then be found in Qloo tags, anchored, and shown to have Qloo members, or it is dropped. Aim for candidates that are coherent cultural territories, distinct from each other (not venue amenities, decor or service options); give your semantic judgment when proposing; label likely duplicates with assess_concept_duplicates.",
 };
 
 export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { analyzed: string[] }> = {
   id: "analyze_territories",
-  version: 1,
+  // v2 (Sprint 5A): analysis of targets is deferred (bounded, REFERENCES_PENDING) while a meaningful comparison set
+  // is still feasible; FULL additionally requires the semantic comparison validator's acceptance.
+  version: 2,
   purpose: "Run the deterministic analysis for ready territories and finish when sufficiency allows.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "a territory is ready (validated panel, or concept-only/unsupported with nothing left to try), a result exists, or every territory is analyzed"],
@@ -212,8 +224,8 @@ export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { ana
   budget: { maxTurns: 30, maxQlooCalls: 0 },
   stoppingConditions: ["deterministic sufficiency is SUFFICIENT or INSUFFICIENT", "no material evidence gap remains"],
   failureModes: ["ANALYSIS_ROUTE_ERROR", "EVIDENCE_SUFFICIENCY_ERROR", "METHODOLOGY_ERROR"],
-  evalIds: ["ie-descriptive", "ie-unmeasurable", "bc-qloo-budget", "fs-faithful", "sk-early-stop"],
-  procedure: "Analyze ready territories together (one call per comparison set is best: analysis of ≥ 3 represented territories of one type yields a relative position). Finish when sufficiency allows. The route, every number and every class come from deterministic code.",
+  evalIds: ["ie-descriptive", "ie-unmeasurable", "bc-qloo-budget", "fs-faithful", "sk-early-stop", "s5-references-before-analysis"],
+  procedure: "Analyze ready territories together (one call per comparison set: ≥ 3 meaningful represented territories of one type yield a relative position). While focus.outstanding still asks for references, build them first (analysis of a target is deferred). Finish when sufficiency allows; a PARTIAL result is a valid outcome. The route, every number and every class come from deterministic code.",
 };
 
 /** Registry order is the attribution order for shared tools (earlier skill wins). */

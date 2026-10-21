@@ -19,11 +19,14 @@ function mockClient(response: unknown) {
 const context = { runId: "r", iteration: 1, userQuery: "q", actions: ["analyze", "ask_user", "finish"], repair: null, tools: [{ name: "qloo_find_tags", description: "d", inputSchema: { type: "object", properties: { query: { type: "string" } }, required: ["query"] } }] } as unknown as AgentDecisionContext;
 
 describe("AnthropicAgentModel (mocked client)", () => {
-  it("defaults to the current Opus model with auto tool choice, adaptive effort and refusal fallbacks", async () => {
+  it("defaults to Claude Haiku 5.5 (Sprint 5A production model) with auto tool choice and explicit effort, and no fallback model", async () => {
     const { client, requests } = mockClient({ stop_reason: "tool_use", usage: { input_tokens: 10, output_tokens: 5 }, content: [] });
-    await new AnthropicAgentModel({ client }).decide(context);
-    expect(DEFAULT_AGENT_MODEL).toBe("claude-opus-5-5");
-    expect(requests[0]).toMatchObject({ model: "claude-opus-5-5", tool_choice: { type: "auto" }, fallbacks: "default", output_config: { effort: "high" } });
+    const model = new AnthropicAgentModel({ client });
+    await model.decide(context);
+    expect(DEFAULT_AGENT_MODEL).toBe("claude-haiku-5-5");
+    expect(model.info).toEqual({ id: "claude-haiku-5-5", kind: "llm", live: true, effort: "high" });
+    expect(requests[0]).toMatchObject({ model: "claude-haiku-5-5", tool_choice: { type: "auto" }, output_config: { effort: "high" } });
+    expect(requests[0]).not.toHaveProperty("fallbacks");
     const toolNames = (requests[0]!.tools as { name: string }[]).map((t) => t.name);
     expect(toolNames).toEqual(["qloo_find_tags", "analyze", "ask_user", "finish"]);
     expect(JSON.stringify(requests[0])).not.toMatch(/API_KEY|x-api-key/iu);
@@ -31,7 +34,7 @@ describe("AnthropicAgentModel (mocked client)", () => {
 
   it("sends the server-side refusal fallback only to models that support it (not Haiku 5.5)", async () => {
     const opus = mockClient({ stop_reason: "tool_use", usage: { input_tokens: 1, output_tokens: 1 }, content: [] });
-    await new AnthropicAgentModel({ client: opus.client }).decide(context);
+    await new AnthropicAgentModel({ client: opus.client, model: "claude-opus-5-5" }).decide(context);
     expect(opus.requests[0]).toMatchObject({ fallbacks: "default", betas: ["server-side-fallback-2026-07-01"] });
     const haiku = mockClient({ stop_reason: "tool_use", usage: { input_tokens: 1, output_tokens: 1 }, content: [] });
     await new AnthropicAgentModel({ client: haiku.client, model: "claude-haiku-5-5" }).decide(context);

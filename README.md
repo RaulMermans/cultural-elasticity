@@ -4,7 +4,23 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 3 — Agentic Investigation Runtime
+## Current status: Sprint 5A — Haiku Agent Reliability and Semantic Evidence Quality
+
+- **Sprint 5A** made Claude Haiku 5.5 (`claude-haiku-5-5`) the sole production agent model: no fallback, no escalation. It added a **SemanticComparisonValidator**: a FULL relative analysis now also needs a culturally meaningful comparison set, so venue-listing attributes and single-exemplar ties are never references, and an honest PARTIAL replaces a misleading FULL. It also added:
+  - a deterministic reference plan, with bounded deferral of premature analysis;
+  - state-grounded representation recovery;
+  - a `focus` block at the top of every decision context;
+  - grounded synthesis findings with per-territory numeric grounding;
+  - a readiness gate that requires complete, case-matched, single-model evidence and measured frontier stability.
+
+  Live (7/7 cases, case-matched baseline, 3-run frontier stability):
+  - 0 semantically invalid FULL results;
+  - 0 accepted unsupported claims;
+  - model synthesis accepted in 7/7 cases (5 first attempt, 2 after one repair; Sprint 4: 0/7);
+  - about $0.011 per case.
+
+  The gate's hard checks all pass, but the sprint decision is **`AGENT_MODEL_NOT_READY`**: the final run demonstrated no meaningful reference set (0 FULL; a recovery side effect) and frontier stability is weak. See [docs/sprint-5a/HAIKU_AGENT_RELIABILITY.md](docs/sprint-5a/HAIKU_AGENT_RELIABILITY.md).
+- **Sprint 4** added versioned runtime skills, just-in-time context, representation quality, concept deduplication and the live agent evaluation. See [docs/sprint-4/AGENT_COMPETENCE_AND_SKILLS.md](docs/sprint-4/AGENT_COMPETENCE_AND_SKILLS.md).
 
 - **Sprint 3** added a single-agent investigation runtime (`backend/src/agent`). The agent interprets the goal (`analyze_move`, `compare_territories`, `explore_frontier`), resolves the brand, discovers and anchors territories, picks exemplars from Qloo evidence, and calls typed, read-only Qloo tools through the official **`qloo mcp`** server. Deterministic code validates every action, chooses each territory's representation strategy and analysis route (full relative / partial / descriptive / insufficient), runs the Sprint 2 methodology only where a valid comparison set exists, bounds the loop, and validates the model's synthesis against the results. The Qloo tool boundary is **live-validated**. The agent model is **not** (`LIVE_AGENT_MODEL_VALIDATION_NOT_RUN`, no model credential); live runs used a deterministic baseline reference policy. See [docs/sprint-3/AGENTIC_INVESTIGATION_RUNTIME.md](docs/sprint-3/AGENTIC_INVESTIGATION_RUNTIME.md).
 
@@ -73,7 +89,9 @@ pnpm eval:live         # offline structural checks over captured live + recorded
 pnpm eval:elasticity   # offline methodology benchmark over captured live evidence (no network)
 pnpm eval:agent        # offline agent-runtime evals (SYNTHETIC world; not Qloo or live-model validation)
 pnpm agent:run -- "Could Glossier move into pottery?" --brand Glossier --territories Pottery --model baseline
-                       # one investigation; live Qloo (or --synthetic); --model auto needs ANTHROPIC_API_KEY
+                       # one investigation; live Qloo (or --synthetic); --model auto runs Haiku 5.5 and needs ANTHROPIC_API_KEY
+pnpm eval:agent:live -- --arms baseline,model --stability 3 --out backend/feasibility-output/sprint5a-live/<name>
+                       # live readiness run (live Qloo + Haiku; arms reported separately)
 pnpm methodology:jacquemus            # Jacquemus × 6 territories through the methodology (offline replay)
 pnpm methodology:jacquemus -- --live  # refresh the Jacquemus evidence from Qloo first
 pnpm feasibility:qloo  # live Qloo investigation (needs a credential; hackathon host only)
