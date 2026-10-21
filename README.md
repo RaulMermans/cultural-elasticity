@@ -4,7 +4,26 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 5A — Haiku Agent Reliability and Semantic Evidence Quality
+## Current status: Sprint 5A.1 — Haiku Investigation Reliability
+
+- **Sprint 5A.1** made Haiku's investigations more reliable, without new agents, models or budgets. It added:
+  - bounded entity-type probing;
+  - shared-type planning for comparisons;
+  - corrected completion arithmetic, with references anchored at proposal;
+  - a fixed frontier evidence base with a canonical candidate pool;
+  - canonical candidate records;
+  - six deterministic runtime evaluators;
+  - **readiness gate v3**, which requires SAFETY *and* COMPETENCE (including a controlled, Qloo-verified FULL scenario and prospectively defined frontier criteria).
+
+  Live (7/7 cases, case-matched baseline, 3-run stability, controlled scenario):
+  - L-C1 and L-C2 now reach **semantically valid FULL**;
+  - the controlled scenario reaches FULL;
+  - 7 valid / 0 invalid FULL results;
+  - 0 accepted unsupported claims.
+
+  Gate decision: **`AGENT_MODEL_NOT_READY`**. Safety passes. Competence fails on a frontier probing regression and on the frontier criteria. See [docs/sprint-5a1/INVESTIGATION_RELIABILITY.md](docs/sprint-5a1/INVESTIGATION_RELIABILITY.md).
+
+### Sprint 5A — Haiku Agent Reliability and Semantic Evidence Quality
 
 - **Sprint 5A** made Claude Haiku 5.5 (`claude-haiku-5-5`) the sole production agent model: no fallback, no escalation. It added a **SemanticComparisonValidator**: a FULL relative analysis now also needs a culturally meaningful comparison set, so venue-listing attributes and single-exemplar ties are never references, and an honest PARTIAL replaces a misleading FULL. It also added:
   - a deterministic reference plan, with bounded deferral of premature analysis;

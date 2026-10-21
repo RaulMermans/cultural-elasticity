@@ -7,6 +7,7 @@
  * the scenarios or the benchmark. It reads benchmark.json ONLY to check that no benchmark name reaches a
  * model context (leakage check). It makes no network request and validates no live model.
  */
+import { evaluatorFailures, RUN_EVALUATORS_VERSION } from "./run-evaluators.js";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -75,6 +76,14 @@ type Expect = {
   /** Territory keys that must not have a FULL relative analysis. */
   notFull?: string[];
   findingsAccepted?: number;
+  /** Sprint 5A.1: no concept was probed with more empty entity types than this. */
+  maxEmptyTypeProbesPerConcept?: number;
+  /** Sprint 5A.1: per-territory UI evidence status. */
+  evidenceStatus?: Record<string, string>;
+  /** Sprint 5A.1: the Qloo take used for the brand's related entities. */
+  relatedTake?: number;
+  /** Sprint 5A.1: every generated candidate carries a canonical key from its grounding tag, anchored to that concept. */
+  allCandidatesCanonical?: boolean;
 };
 
 export type Scenario = {
@@ -205,6 +214,17 @@ function check(s: Scenario, response: AgentRunResponse): string[] {
   if (e.claimViolations !== undefined) eq("claim violations recorded", r.summary.claimValidation.violations.length > 0, e.claimViolations);
   for (const k of e.notFull ?? []) if (t(k)?.analysisRoute === "FULL_RELATIVE_ANALYSIS") f.push(`${k} must not be FULL (its comparison set is not semantically meaningful)`);
   if (e.findingsAccepted !== undefined) eq("accepted grounded findings", r.layers.agentInterpretation.findings?.length ?? 0, e.findingsAccepted);
+  if (e.maxEmptyTypeProbesPerConcept !== undefined && (r.metrics.max_empty_type_probes_per_concept ?? 0) > e.maxEmptyTypeProbesPerConcept) f.push(`a concept had ${r.metrics.max_empty_type_probes_per_concept} empty type probes (> ${e.maxEmptyTypeProbesPerConcept})`);
+  for (const [k, v] of Object.entries(e.evidenceStatus ?? {})) eq(`${k} evidence status`, t(k)?.evidenceStatus, v);
+  if (e.relatedTake !== undefined) {
+    const related = r.trace.toolCalls.find((c) => c.tool === "qloo_related_entities" && c.status === "ok");
+    eq("related take (members returned)", related ? Number(related.summary.split(" ")[0]) : null, e.relatedTake);
+  }
+  if (e.allCandidatesCanonical) {
+    const generated = r.territories.filter((x) => x.role === "frontier_candidate" && x.resolvedConcept);
+    if (generated.length === 0) f.push("no anchored frontier candidate to check canonicalization");
+    for (const x of generated) if (x.candidate?.normalizationReason !== "SOURCE_TAG_CANONICAL_NAME" || x.candidate.anchorRelation !== "SAME_CONCEPT") f.push(`${x.key}: canonicalization ${x.candidate?.normalizationReason}/${x.candidate?.anchorRelation}`);
+  }
   return f;
 }
 
@@ -247,6 +267,8 @@ export type AgentEvalReport = {
   context: ContextStats;
   skills: SkillAggregate[];
   failureTaxonomy: { runCategories: Record<string, number>; failedScenarios: { id: string; category: AgentFailureCategory }[] };
+  /** Sprint 5A.1: failed targeted runtime evaluators ("scenario: EVALUATOR — detail"). */
+  runtimeEvaluatorFailures: string[];
   thresholds: { name: string; value: number | null; required: string; passed: boolean }[];
   passed: boolean;
   liveModel: string;
@@ -286,6 +308,25 @@ export type CompetenceMetrics = Record<string, number | string | null>;
 const SELECTION_ERRORS = new Set(["UNKNOWN_TOOL", "NOT_EXPOSED", "WRONG_PHASE", "UNAUTHORIZED_TOOL"]);
 
 /** Sprint 4 agent-competence metrics (spec §25) over a set of runs of ONE policy class. */
+/**
+ * Sprint 5A.1: rebuilds the claim scopes of a returned summary. The finalizer renders `summary` then one
+ * "<territory label>: <note>" line per territory note; validating that flattened text as one summary judged a
+ * territory's own note as an unattached run-level claim (live L-C2: "evidence quality is medium" in Heavy Metal's note,
+ * whose evidence quality IS MEDIUM). A line is a note only when it starts with an exact territory label; every other line
+ * stays in summary scope, so nothing is exempted from validation.
+ */
+export function splitRenderedSummary(a: AgentAnalysisResult): { summary: string; territoryNotes: { territoryKey: string; text: string }[]; followUpOptions: string[] } {
+  const summary: string[] = [];
+  const territoryNotes: { territoryKey: string; text: string }[] = [];
+  const labels = [...a.territories].sort((x, y) => y.label.length - x.label.length);
+  for (const line of a.summary.text.split("\n")) {
+    const t = labels.find((x) => line.startsWith(`${x.label}: `));
+    if (t && summary.length > 0) territoryNotes.push({ territoryKey: t.key, text: line.slice(t.label.length + 2) });
+    else summary.push(line);
+  }
+  return { summary: summary.join("\n"), territoryNotes, followUpOptions: a.followUpOptions };
+}
+
 export function competenceMetrics(runs: readonly EvaluatedRun[], leakPattern: RegExp | null): CompetenceMetrics {
   const responses = runs.map((r) => r.response);
   const analyses = responses.filter((r): r is AgentAnalysisResult => r.status !== "NEEDS_INPUT");
@@ -308,7 +349,7 @@ export function competenceMetrics(runs: readonly EvaluatedRun[], leakPattern: Re
     return ratio(ok, total);
   };
   const latencies = responses.map((r) => r.metrics.latency_ms);
-  const claimConsistent = analyses.filter((r) => validateClaims({ summary: r.summary.text, territoryNotes: [], followUpOptions: r.followUpOptions }, r.territories, r.brand ? [r.brand.label] : []).length === 0).length;
+  const claimConsistent = analyses.filter((r) => validateClaims(splitRenderedSummary(r), r.territories, r.brand ? [r.brand.label] : []).length === 0).length;
   const intentRuns = runs.filter((r) => r.expect?.intent !== undefined);
   const brandRuns = runs.filter((r) => r.expect?.brandId !== undefined && r.response.status !== "NEEDS_INPUT");
   const dedupRuns = runs.filter((r) => r.expect?.dedupVerdicts || r.expect?.modelDedupApplied !== undefined);
@@ -429,6 +470,7 @@ export async function runAgentEval(): Promise<AgentEvalReport> {
   const pooled = competenceMetrics(all, leakPattern);
   const skillEvalIds = new SkillRegistry().list().flatMap((s) => s.evalIds.map((id) => ({ skill: s.id, id })));
   const missingEvalIds = skillEvalIds.filter((x) => !doc.scenarios.some((s) => s.id === x.id));
+  const evaluatorFailed = evaluatorFailures(results);
   const runCategories: Record<string, number> = {};
   for (const r of analyses) if (r.failureCategory) runCategories[r.failureCategory] = (runCategories[r.failureCategory] ?? 0) + 1;
 
@@ -442,6 +484,7 @@ export async function runAgentEval(): Promise<AgentEvalReport> {
     budget_violations: budgetViolations,
     benchmark_leakage: leaks.length,
     skill_eval_ids_missing: missingEvalIds.length,
+    runtime_evaluator_failures: evaluatorFailed.length,
   };
   const threshold = (name: string, value: number | null, required: string, ok: boolean) => ({ name, value, required, passed: ok });
   const thresholds = [
@@ -453,6 +496,8 @@ export async function runAgentEval(): Promise<AgentEvalReport> {
     threshold("budget violations", budgetViolations, "= 0", budgetViolations === 0),
     threshold("benchmark leakage", leaks.length, "= 0", leaks.length === 0),
     threshold("every skill evalId names a scenario", missingEvalIds.length, "= 0", missingEvalIds.length === 0),
+    // Sprint 5A.1 targeted runtime evaluators (run-evaluators.ts), over every scenario run.
+    threshold(`runtime evaluator failures (${RUN_EVALUATORS_VERSION})`, evaluatorFailed.length, "= 0", evaluatorFailed.length === 0),
   ];
   return {
     scenarios: results,
@@ -461,6 +506,7 @@ export async function runAgentEval(): Promise<AgentEvalReport> {
     context: { ...contextStats(results.flatMap((r) => r.contexts)), sprint3Set: (({ sprint3Reference: _r, ...rest }) => rest)(contextStats(results.filter((r) => SPRINT3_SCENARIO_IDS.includes(r.id)).flatMap((r) => r.contexts))) },
     skills: aggregateSkills(analyses),
     failureTaxonomy: { runCategories, failedScenarios: results.filter((r) => !r.passed).map((r) => ({ id: r.id, category: expectationFailureCategory(r.failures, r.response) })) },
+    runtimeEvaluatorFailures: evaluatorFailed,
     thresholds,
     passed: thresholds.every((t) => t.passed),
     liveModel: hasModelCredential() ? "model credential present (eval:agent itself runs scripted/baseline only; see eval:agent:live)" : LIVE_AGENT_MODEL_VALIDATION_NOT_RUN,
@@ -493,6 +539,7 @@ export function formatAgentEval(report: AgentEvalReport): string {
   lines.push("", "Failure taxonomy");
   lines.push(`  run categories (deliberately failing scenarios included): ${Object.entries(report.failureTaxonomy.runCategories).map(([k, v]) => `${k} ${v}`).join(", ") || "none"}`);
   lines.push(`  failed eval cases: ${report.failureTaxonomy.failedScenarios.map((f) => `${f.id} → ${f.category}`).join(", ") || "none"}`);
+  for (const f of report.runtimeEvaluatorFailures) lines.push(`  runtime evaluator ✗ ${f}`);
   lines.push("", "Acceptance thresholds");
   for (const t of report.thresholds) lines.push(`  [${t.passed ? "PASS" : "FAIL"}] ${t.name}: ${t.value ?? "n/a"} (required ${t.required})`);
   lines.push("", `Live/model status: ${report.liveModel}`, `RESULT: ${report.passed ? "PASS" : "FAIL"}`);

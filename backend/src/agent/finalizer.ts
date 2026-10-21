@@ -11,7 +11,8 @@
 import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type Limitation } from "@cultural-elasticity/shared";
 import { unanalyzedResult } from "./analysis-runner.js";
 import { classifyRunFailure } from "./failure-taxonomy.js";
-import { comparisonSetConstruction } from "./frontier.js";
+import { candidateCanonicalization, comparisonSetConstruction, evidenceStatus } from "./frontier.js";
+import { conceptProbeState, probeViews } from "./probe-policy.js";
 import { categorize, validateClaims, validateFindings } from "./claim-validator.js";
 import { synthesisSchema, type Synthesis } from "./contracts.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
@@ -164,6 +165,7 @@ export function computeMetrics(state: AgentRunState, results: AgentTerritoryResu
     synthesis_valid_after_repair: state.trace.synthesis?.attemptDetails?.length ? state.trace.synthesis.attemptDetails.some((a) => a.accepted) : null,
     synthesis_fallback: state.trace.synthesis?.source === "deterministic_template",
     reference_deferrals: state.referenceDeferrals,
+    ...probeMetrics(state),
   };
 }
 
@@ -220,7 +222,14 @@ function runLimitations(state: AgentRunState, results: AgentTerritoryResult[]): 
 
 export function allResults(state: AgentRunState): AgentTerritoryResult[] {
   const code = state.status === "BUDGET_EXHAUSTED" ? "BUDGET_EXHAUSTED" : "NOT_INVESTIGATED";
-  return territoryOrder(state.territories.map((t) => state.results.get(t.key) ?? unanalyzedResult(state, t, code)));
+  return territoryOrder(
+    state.territories.map((t) => {
+      const r = state.results.get(t.key) ?? unanalyzedResult(state, t, code);
+      // Sprint 5A.1 (additive): canonical identity, UI evidence status and the probes behind the route.
+      const probes = probeViews(state, t);
+      return { ...r, candidate: candidateCanonicalization(state, t), evidenceStatus: evidenceStatus(r), ...(probes.length > 0 && { probes }) };
+    }),
+  );
 }
 
 export async function finalize(state: AgentRunState, model: AgentModel): Promise<AgentAnalysisResult> {
@@ -328,5 +337,18 @@ export function needsInputResponse(state: AgentRunState): AgentNeedsInputRespons
     model: state.model,
     trace: state.trace,
     metrics: computeMetrics(state, []),
+  };
+}
+
+/** Sprint 5A.1 probe telemetry: empty probes (from pools), and refusals by the new rules (from early stops). */
+function probeMetrics(state: AgentRunState): Pick<AgentMetrics, "empty_type_probes" | "max_empty_type_probes_per_concept" | "probe_limit_refusals" | "type_alignment_deferrals" | "reference_namespace_refusals"> {
+  const concepts = [...new Set(state.pools.filter((p) => p.conditionedOn === null && p.tagIds.length === 1).map((p) => p.tagIds[0]!))].map((id) => conceptProbeState(state, id).totalEmptyTypeProbes);
+  const stops = (code: string) => state.trace.earlyStops.filter((e) => e.code === code).length;
+  return {
+    empty_type_probes: concepts.reduce((a, b) => a + b, 0),
+    max_empty_type_probes_per_concept: Math.max(0, ...concepts),
+    probe_limit_refusals: stops("PROBE_LIMIT_REACHED"),
+    type_alignment_deferrals: state.alignmentDeferrals.size,
+    reference_namespace_refusals: stops("REFERENCE_NAMESPACE_BARREN"),
   };
 }

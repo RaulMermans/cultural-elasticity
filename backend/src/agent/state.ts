@@ -76,6 +76,8 @@ export type TerritoryState = {
   conceptOnly: string | null;
   /** Sprint 5A: the agent's advisory semantic judgment of a reference or frontier concept (can only remove). */
   semanticJudgment: { relevance: SemanticRelevance; reason: string } | null;
+  /** Sprint 5A.1: the Qloo tag that grounded a generated candidate (its first evidence tag), if any. */
+  sourceTagId: string | null;
 };
 
 export type BrandState = {
@@ -133,6 +135,13 @@ export type AgentRunState = {
   referenceDeferrals: number;
   /** Sprint 5A: wall-clock spent in deterministic analysis and in synthesis. */
   timing: { analysisMs: number; synthesisMs: number };
+  /**
+   * Sprint 5A.1: true while a model turn is open. `usage.iterations` already counts the open turn, so the turns the
+   * run can still act in are `max - iterations + 1` inside a turn and `max - iterations` between turns.
+   */
+  turnOpen: boolean;
+  /** Sprint 5A.1: targets whose off-type anchoring was deferred once for entity-type alignment. */
+  alignmentDeferrals: Set<string>;
   startedAt: number;
   trace: AgentTrace;
   toolCallCounter: number;
@@ -175,6 +184,8 @@ export function createRunState(request: AgentRequest, model: AgentModelInfo, too
     semanticAssessments: [],
     referenceDeferrals: 0,
     timing: { analysisMs: 0, synthesisMs: 0 },
+    turnOpen: false,
+    alignmentDeferrals: new Set(),
     startedAt: Date.now(),
     toolCallCounter: 0,
     trace: {
@@ -253,6 +264,11 @@ export function remainingQlooCalls(state: AgentRunState): number {
   return Math.max(0, state.limits.maxQlooCalls - state.usage.qlooCalls);
 }
 
+/** Sprint 5A.1: turns the run can still act in, including the open one (the same value inside and between turns). */
+export function turnsAvailable(state: AgentRunState): number {
+  return Math.max(0, state.limits.maxAgentIterations - state.usage.iterations + (state.turnOpen ? 1 : 0));
+}
+
 export function recordEntity(state: AgentRunState, entity: { id: string; label: string; type: RankableType | undefined }, source: EntitySource): EntityRecord {
   const existing = state.entities.get(entity.id);
   if (existing) {
@@ -303,7 +319,7 @@ export function territoryKey(state: AgentRunState, label: string): string {
   return key;
 }
 
-export function addTerritory(state: AgentRunState, input: { label: string; role: TerritoryRole; origin: TerritoryOrigin; rationale: string; source?: CandidateSource; sourceEvidence?: string }): TerritoryState {
+export function addTerritory(state: AgentRunState, input: { label: string; role: TerritoryRole; origin: TerritoryOrigin; rationale: string; source?: CandidateSource; sourceEvidence?: string; sourceTagId?: string | null }): TerritoryState {
   const territory: TerritoryState = {
     key: territoryKey(state, input.label),
     label: input.label.trim(),
@@ -321,6 +337,7 @@ export function addTerritory(state: AgentRunState, input: { label: string; role:
     strategyLog: [],
     conceptOnly: null,
     semanticJudgment: null,
+    sourceTagId: input.sourceTagId ?? null,
   };
   state.territories.push(territory);
   return territory;

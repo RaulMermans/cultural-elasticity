@@ -35,12 +35,17 @@ describe("AGENT_MODEL_READY gate (Sprint 5A: coverage-complete, single-model, ca
     expect(gate.missingCaseIds).toEqual(["S-0", "S-1"]);
   });
 
-  it("passes every hard requirement on a complete, single-model, case-matched evaluation with measured stability", async () => {
+  it("passes every hard (safety) requirement on a complete, single-model, case-matched evaluation with measured stability", async () => {
     const runs = await syntheticArm();
     const gate = readinessGate({ manifest, modelRuns: relabel(runs, "LIVE_MODEL"), baselineRuns: relabel(runs, "BASELINE", "baseline-policy-v2"), stability: measured });
     expect(gate.hard.filter((h) => !h.passed)).toEqual([]);
-    expect(gate.decision).toBe("AGENT_MODEL_READY");
+    expect(gate.safetyReadiness.passed).toBe(true);
     expect(gate).toMatchObject({ modelId: "claude-haiku-5-5", caseManifestVersion: "test-v1", executedCaseIds: ["S-0", "S-1"], missingCaseIds: [], frontierStabilityStatus: "MEASURED" });
+    // Sprint 5A.1 (gate v3): safety alone is not readiness. Sprint 5A's gate said READY here; competence evidence
+    // (controlled FULL scenario, frontier criteria) is absent, so the automated decision is NOT_READY.
+    expect(gate.competenceReadiness.passed).toBe(false);
+    expect(gate.decision).toBe("AGENT_MODEL_NOT_READY");
+    expect(gate.overallDecision).toBe("AGENT_MODEL_NOT_READY");
   });
 
   it("an omitted case keeps the denominator: NOT_READY with INCOMPLETE_LIVE_EVALUATION", async () => {

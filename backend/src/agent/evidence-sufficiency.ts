@@ -36,7 +36,8 @@ import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
 import { barrenTypes, isReady, recoverable, recoveryOptions, territoryReadiness, typePreference } from "./readiness.js";
 import { comparisonSetSize, referenceEntityType, referencePlan } from "./reference-strategy.js";
 import { MIN_COMPARISON_SET } from "./router.js";
-import { activeTerritories, remainingQlooCalls, type AgentRunState } from "./state.js";
+import { conceptPools } from "./probe-policy.js";
+import { activeTerritories, remainingQlooCalls, turnsAvailable, type AgentRunState } from "./state.js";
 
 export { MIN_FRONTIER_SUPPORTED };
 
@@ -64,7 +65,11 @@ export function nextActionValues(state: AgentRunState): NextActionValue[] {
   const open = activeTerritories(state).filter((t) => t.status !== "analyzed");
   for (const t of open) {
     const r = territoryReadiness(state, t);
-    if (r.state === "needs_concept") add(state.searchedQueries.has(t.label.trim().toLowerCase()) ? "anchor_territory" : "qloo_find_tags", t.key, "HIGH", r.reason);
+    if (r.state === "needs_concept" && t.sourceTagId && conceptPools(state, t.sourceTagId).length === 0 && !state.searchedQueries.has(t.label.trim().toLowerCase())) {
+      // Sprint 5A.1: a grounded candidate is first tested on the Qloo tag that grounded it (its canonical concept).
+      add("qloo_recommend", t.key, "HIGH", `probe the candidate's own Qloo concept ${t.sourceTagId} before searching other tags`);
+      add("qloo_find_tags", t.key, "MEDIUM", "search for an alternate concept only if the grounding tag has no members");
+    } else if (r.state === "needs_concept") add(state.searchedQueries.has(t.label.trim().toLowerCase()) ? "anchor_territory" : "qloo_find_tags", t.key, "HIGH", r.reason);
     else if (r.state === "unsupported") add("investigate", t.key, "NONE", `${r.reason}; report it as unsupported`);
     else if (r.state === "needs_representation") {
       const options = recoveryOptions(state, t);
@@ -110,6 +115,10 @@ export function nextActionValues(state: AgentRunState): NextActionValue[] {
   const reserve = analysisReserve(state, ready);
   if (ready.length > 0 && remainingQlooCalls(state) <= reserve) {
     for (const a of out) if (INVESTIGATION(a) && a.value !== "NONE") Object.assign(a, { value: "NONE", reason: `${remainingQlooCalls(state)} Qloo call(s) left are reserved for the analysis of ready territories (${reserve} needed)` });
+  }
+  // Sprint 5A.1 completion reserve: the last turn the run can act in belongs to the analysis of what is ready.
+  if (ready.length > 0 && turnsAvailable(state) <= 1) {
+    for (const a of out) if (INVESTIGATION(a) && a.value !== "NONE") Object.assign(a, { value: "NONE", reason: "COMPLETION_RESERVE: this is the last turn; analyze the ready territories instead of investigating further" });
   }
   const gap = out.some((a) => INVESTIGATION(a) && (a.value === "HIGH" || a.value === "MEDIUM"));
   if (ready.length > 0 && referencesPending && state.referenceDeferrals === 0 && ready.some((t) => t.role === "target")) add("analyze", ready.map((t) => t.key).join(","), "LOW", "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)");

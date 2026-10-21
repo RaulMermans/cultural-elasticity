@@ -1,0 +1,30 @@
+{
+ "fixtureType": "controlled-live-case-set",
+ "notice": "CONTROLLED positive scenario for the Sprint 5A.1 readiness gate, labelled separately from the seven prescribed live cases (agent-live-v1). It tests whether the runtime can reach the methodology when its prerequisites are genuinely available in Qloo. The preconditions are real Qloo observations from stored Sprint 5A live traces (correlation ids below); the evaluator re-verifies them against live Qloo before each run and reports PRECONDITION_CHANGED instead of an expected result if they no longer hold. Read only by the evaluator: nothing here reaches the runtime or a model, and no production code names these entities.",
+ "version": "agent-controlled-v1",
+ "cases": [
+  {
+   "id": "C-FULL-1",
+   "intent": "compare_territories",
+   "tags": ["controlled_positive", "full_expected_when_preconditions_hold"],
+   "request": { "userQuery": "For Yeti, compare fly fishing, mountaineering and cycling.", "brand": "Yeti", "territories": ["Fly Fishing", "Mountaineering", "Cycling"] },
+   "expect": { "status": "COMPLETE", "full": ["fly_fishing", "mountaineering", "cycling"] },
+   "preconditions": {
+    "brand": { "name": "Yeti", "type": "brand", "match": "exact" },
+    "territories": [
+     { "label": "Fly Fishing", "tagId": "urn:tag:activity_type:qloo:fly_fishing", "entityType": "place", "minMembers": 3 },
+     { "label": "Mountaineering", "tagId": "urn:tag:activity_type:qloo:mountaineering", "entityType": "place", "minMembers": 3 },
+     { "label": "Cycling", "tagId": "urn:tag:activity_type:qloo:cycling", "entityType": "place", "minMembers": 3 }
+    ]
+   },
+   "evidenceBasis": [
+    "brand: describe 'Yeti' → exact match, urn:entity:brand (Sprint 5A live L-M2, baseline and Haiku arms)",
+    "fly fishing: brand-independent place pool of urn:tag:activity_type:qloo:fly_fishing, 20 members (mcp-2c305e83-53ea-4234-8523-e019430bf5a1, mcp-ad1ace25-7257-48c4-abf5-ec0f303fdcf8)",
+    "mountaineering: brand-independent place pool of urn:tag:activity_type:qloo:mountaineering, 10–20 members (mcp-71846a48-9080-43db-8605-c48115f7a541, mcp-3c524821-4735-418c-ab17-3c5173c31a08)",
+    "cycling: brand-independent place pool of urn:tag:activity_type:qloo:cycling, 10 members (mcp-6bc7dab5-0b12-4272-886b-465ebb5db236, mcp-a39d1384-bf45-4aea-8de7-be5ddf3db28a)"
+   ],
+   "rationale": "Three outdoor activities, one analytical level, all with Qloo place members: a meaningful comparison for an outdoor-gear brand that needs no reference construction. FULL is reachable only if the agent keeps all three on one entity type, which is the Sprint 5A.1 alignment change.",
+   "review": { "evaluatorReviewed": true, "ownerReviewed": false, "note": "Constructed by the evaluator from stored live traces on 2026-10-21; owner review pending. The gate reports this status." }
+  }
+ ]
+}

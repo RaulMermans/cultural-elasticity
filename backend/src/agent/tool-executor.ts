@@ -18,6 +18,11 @@
  *   EARLY_STOP           no material evidence gap remains: further Qloo investigation is refused
  *   STRATEGY_EXHAUSTED   (precondition) the same representation strategy already failed twice
  *   ANALYSIS_RESERVE     the call would spend Qloo calls the analysis of ready territories needs
+ * Sprint 5A.1:
+ *   PROBE_LIMIT_REACHED          a new entity-type probe of a concept (or territory) whose probing is exhausted
+ *   REFERENCE_NAMESPACE_BARREN   a reference probe in a tag namespace already barren twice for that type
+ *   FRONTIER_EVIDENCE_BASE       a related-entity profile outside the fixed frontier evidence base
+ *   TYPE_ALIGNMENT_PENDING       (precondition, once per target) an off-type anchor while the shared type is untested
  * Refusals that save Qloo calls are recorded in trace.earlyStops with callsAvoided.
  * Then: run with a timeout; a thrown error becomes a failed tool result, never a crashed run.
  */
@@ -30,7 +35,11 @@ import type { SkillDefinition } from "./skills/contracts.js";
 import { skillRef } from "./skills/contracts.js";
 import type { SkillRegistry } from "./skills/registry.js";
 import { analysisReserve } from "./analysis-runner.js";
+import type { RankableType } from "./contracts.js";
+import { outsideFrontierEvidenceBase } from "./frontier.js";
+import { probeRefusal } from "./probe-policy.js";
 import { isReady, territoryReadiness } from "./readiness.js";
+import { barrenReferenceNamespace } from "./reference-strategy.js";
 import { activeTerritories, derivePhase, remainingQlooCalls, type AgentRunState } from "./state.js";
 import type { AgentToolProvider } from "./tool-provider.js";
 import type { ToolPermission, ToolRegistry, ToolResult } from "./tool-registry.js";
@@ -91,14 +100,28 @@ const REPEATABLE = new Set(["assess_evidence_sufficiency"]);
 
 const VALUE_RANK: Record<ExpectedValue, number> = { HIGH: 3, MEDIUM: 2, LOW: 1, NONE: 0 };
 
-/** Expected value of a Qloo-facing call under the sufficiency rules (see evidence-sufficiency.ts). */
-export function valueOfToolCall(state: AgentRunState, tool: string, input: Record<string, unknown>, assessment: SufficiencyAssessment): { value: ExpectedValue; reason: string } {
+/**
+ * Expected value of a Qloo-facing call under the sufficiency rules (see evidence-sufficiency.ts). `code` names the rule
+ * when a dedicated refusal code applies (Sprint 5A.1: PROBE_LIMIT_REACHED, REFERENCE_NAMESPACE_BARREN,
+ * FRONTIER_EVIDENCE_BASE); otherwise the executor uses NO_VALUE_ACTION / EARLY_STOP.
+ */
+export function valueOfToolCall(state: AgentRunState, tool: string, input: Record<string, unknown>, assessment: SufficiencyAssessment): { value: ExpectedValue; reason: string; code?: string } {
   if (tool === "qloo_get_entity_tags" && typeof input.entityId === "string" && state.profiles.has(input.entityId)) return { value: "NONE", reason: "this tag profile is already collected (fixed Qloo take)" };
   if (tool === "qloo_find_tags" && typeof input.query === "string" && state.searchedQueries.has(input.query.trim().toLowerCase())) return { value: "NONE", reason: "this tag query already ran in this run" };
+  if (tool === "qloo_get_entity_tags" && typeof input.entityId === "string") {
+    const outside = outsideFrontierEvidenceBase(state, input.entityId);
+    if (outside) return { value: "NONE", reason: outside, code: "FRONTIER_EVIDENCE_BASE" };
+  }
   // Sprint 5A: an entity type that already came back empty for ≥ 2 of a territory's concepts has no expected gain.
   if (tool === "qloo_recommend" && input.conditionOnBrand === false && Array.isArray(input.tagIds) && input.tagIds.length === 1 && typeof input.targetType === "string") {
-    const barren = barrenProbe(state, String(input.tagIds[0]), input.targetType);
+    const tagId = String(input.tagIds[0]);
+    // Sprint 5A.1: bounded entity-type probing per concept and per territory (probe-policy.ts).
+    const limit = probeRefusal(state, tagId, input.targetType as RankableType);
+    if (limit) return { value: "NONE", reason: limit, code: "PROBE_LIMIT_REACHED" };
+    const barren = barrenProbe(state, tagId, input.targetType);
     if (barren) return { value: "NONE", reason: `${barren.barren}; probe an untried supported entity type instead (${barren.untried.join(", ") || "none left"}), anchor a concept with members, or declare_concept_only` };
+    const namespace = barrenReferenceNamespace(state, tagId, input.targetType as RankableType);
+    if (namespace) return { value: "NONE", reason: namespace, code: "REFERENCE_NAMESPACE_BARREN" };
   }
   if (!assessment.materialGap) {
     const reserved = assessment.nextActions.find((a) => a.value === "NONE" && /reserved for the analysis/u.test(a.reason));
@@ -143,12 +166,19 @@ export async function executeToolCall(
   const callKey = `${name}:${cacheKey("describe", parsed.data)}`;
   if (!REPEATABLE.has(name) && state.executedCalls.has(callKey)) return earlyStop(state, name, rawArguments, "DUPLICATE_ACTION", "this identical call already ran in this run; its result is in the state", external ? tool.maxQlooCalls : 0);
   const refusal = tool.precondition?.(state, input);
-  if (refusal) return refusal.startsWith("STRATEGY_EXHAUSTED") ? earlyStop(state, name, rawArguments, "STRATEGY_EXHAUSTED", refusal.replace(/^STRATEGY_EXHAUSTED: /u, ""), 0) : rejected(state, name, rawArguments, "PRECONDITION", refusal);
+  if (refusal?.startsWith("STRATEGY_EXHAUSTED")) return earlyStop(state, name, rawArguments, "STRATEGY_EXHAUSTED", refusal.replace(/^STRATEGY_EXHAUSTED: /u, ""), 0);
+  if (refusal?.startsWith("TYPE_ALIGNMENT_PENDING")) {
+    // Sprint 5A.1: bounded (once per target) — the deferral is recorded so the next identical anchor proceeds.
+    const key = (parsed.data as { territoryKey?: string }).territoryKey;
+    if (key) state.alignmentDeferrals.add(key);
+    return rejected(state, name, rawArguments, "TYPE_ALIGNMENT_PENDING", refusal.replace(/^TYPE_ALIGNMENT_PENDING: /u, ""));
+  }
+  if (refusal) return rejected(state, name, rawArguments, "PRECONDITION", refusal);
   let expectedValue: ExpectedValue | undefined;
   if (external && gate) {
     const valued = valueOfToolCall(state, name, parsed.data as Record<string, unknown>, sufficiency);
     expectedValue = valued.value;
-    if (valued.value === "NONE") return earlyStop(state, name, rawArguments, sufficiency.materialGap ? "NO_VALUE_ACTION" : "EARLY_STOP", valued.reason, tool.maxQlooCalls);
+    if (valued.value === "NONE") return earlyStop(state, name, rawArguments, valued.code ?? (sufficiency.materialGap ? "NO_VALUE_ACTION" : "EARLY_STOP"), valued.reason, tool.maxQlooCalls);
   }
   if (tool.maxQlooCalls > remainingQlooCalls(state)) return rejected(state, name, rawArguments, "BUDGET_EXHAUSTED", `needs up to ${tool.maxQlooCalls} Qloo call(s); ${remainingQlooCalls(state)} left`);
   if (external && gate) {

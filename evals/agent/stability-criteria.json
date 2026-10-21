@@ -1,0 +1,28 @@
+{
+ "fixtureType": "evaluation-criteria",
+ "notice": "Frontier reproducibility acceptance criteria, defined and versioned BEFORE the Sprint 5A.1 live evaluation (2026-10-21) from the Sprint 5A final run. Metrics: backend/src/agent/frontier.ts (frontier-stability-metrics-v2) via stabilityReport; baselines were computed with that same code on the stored Sprint 5A results. Thresholds are not to be changed after seeing Sprint 5A.1 results.",
+ "version": "frontier-stability-criteria-v1",
+ "definedAt": "2026-10-21",
+ "requiredRuns": 3,
+ "baseline": {
+  "source": "Sprint 5A final live run, Haiku arm (backend/feasibility-output/sprint5a-live/final, 3 runs per case)",
+  "cases": {
+   "L-E1": { "resolvedConceptOverlap": 0.067, "supportedConceptOverlap": 0.111, "canonicalConceptOverlap": 0.111, "supportedCanonicalOverlap": 0.111, "recurringSupportedCanonical": ["folk"], "anchorConsistency": 0.5, "themeOverlapProxy": 0.059 },
+   "L-E2": { "resolvedConceptOverlap": 0.2, "supportedConceptOverlap": 0.111, "canonicalConceptOverlap": 1, "supportedCanonicalOverlap": 0.667, "recurringSupportedCanonical": ["folk", "self_help"], "anchorConsistency": 0, "themeOverlapProxy": 0.652 }
+  }
+ },
+ "criteria": {
+  "S1_supportedCanonicalOverlap": { "rule": ">= max(floor, baseline - tolerance)", "floor": 0.25, "tolerance": 0.1 },
+  "S2_recurringSupportedCanonical": { "rule": ">= minimum concepts recurring in >= 2 of the runs", "minimum": 1 },
+  "S3_anchorConsistency": { "rule": ">= minimum (null, i.e. no recurring concept, fails)", "minimum": 0.5 }
+ },
+ "reportedNotGated": ["resolvedConceptOverlap (exact Qloo id)", "canonicalConceptOverlap", "themeOverlapProxy (rubric proxy, reviewed separately)", "routeStability", "comparisonSetCompatibility", "classAgreementOnComparableSets"],
+ "rationale": [
+  "Exact-concept identity is not required (never 100%): genuine discovery may differ between runs.",
+  "S1 measures the supported territories themselves at the canonical-concept level (grounding tag name, namespace removed), so the same concept anchored under another tag is not counted as different, while distinct concepts are never merged. The floor 0.25 means repeated runs share at least one supported concept in every four; the tolerance is the regression criterion against the Sprint 5A baseline (L-E2 must stay ≥ 0.567).",
+  "S2 is the minimum stability of independently supported canonical concepts: at least one Qloo-supported concept must recur.",
+  "S3 targets the diagnosed cause of exact-id instability (anchoring drift: Sprint 5A L-E2 anchored every recurring concept to a different tag in each run, 0.0). Half of the recurring concepts must resolve to the same Qloo concept every time.",
+  "Applied to the Sprint 5A results these criteria fail (L-E1 S1 0.111 < 0.25; L-E2 S3 0.0 < 0.5), consistent with the Sprint 5A manual AGENT_MODEL_NOT_READY decision that the 5A gate did not encode.",
+  "Fewer than 3 independent runs per frontier case is INCOMPLETE and blocks readiness."
+ ]
+}

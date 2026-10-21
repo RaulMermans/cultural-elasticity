@@ -86,7 +86,10 @@ export const resolveTerritorySkill: SkillDefinition<{ territories: string[] }, {
   // v2 (Sprint 4 live fix): per-territory Qloo budget; a spent Qloo budget no longer deactivates anchoring.
   // v3 (Sprint 5A): probes across entity types (an empty type is not re-probed: barren-probe rule); state-grounded
   // recoveryGuidance and the probe ledger are shown per territory.
-  version: 3,
+  // v4 (Sprint 5A.1): bounded probing (3 empty types per concept, 6 per territory; then unsupported), entity-type
+  // alignment across a comparison (the shared type is probed on other concepts first; one bounded anchor deferral),
+  // grounded candidates are tested on their own Qloo tag first.
+  version: 4,
   purpose: "Anchor each territory to one Qloo concept tag, choosing among tags by the Qloo members they carry; drop territories Qloo cannot express.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "an in-scope territory has no concept and resolution is possible"],
@@ -103,9 +106,9 @@ export const resolveTerritorySkill: SkillDefinition<{ territories: string[] }, {
   budget: { maxTurns: 5, maxQlooCalls: 8, perTerritory: true },
   stoppingConditions: ["every territory anchored or dropped", "Qloo budget spent → anchor with the evidence already gathered", "turn budget spent → remaining territories reported unsupported"],
   failureModes: ["TERRITORY_RESOLUTION_ERROR", "QLOO_DATA_LIMIT", "TOOL_SELECTION_ERROR"],
-  evalIds: ["er-exact", "ie-unmeasurable", "gen-unseen-brand-territory", "s5-barren-probe-switches-type"],
+  evalIds: ["er-exact", "ie-unmeasurable", "gen-unseen-brand-territory", "s5-barren-probe-switches-type", "s51-probe-limit-unsupported", "s51-type-alignment-compare"],
   procedure:
-    "Search Qloo tags for the territory (qloo_find_tags). Prefer a tag named like the territory; when several fit, probe brand-independent pools (qloo_recommend, conditionOnBrand=false) and anchor the tag whose members best express it. If one entity type comes back empty for two tags, switch to an untried supported type listed in recoveryGuidance (e.g. place for activity and venue territories) instead of probing more tags with the same type. If no probe finds members, anchor the best-named tag anyway (analysis can still use concept-level evidence). Drop a territory only with a taxonomy code when Qloo has no concept for it.",
+    "Search Qloo tags for the territory (qloo_find_tags). Prefer a tag named like the territory; when several fit, probe brand-independent pools (qloo_recommend, conditionOnBrand=false) and anchor the tag whose members best express it. If one entity type comes back empty for two tags, switch to an untried supported type listed in recoveryGuidance (e.g. place for activity and venue territories) instead of probing more tags with the same type. In a comparison, follow focus 'type alignment': when other territories already have members of one type, probe that type on this territory's other concepts before switching type. A concept is probed with at most 3 entity types that return nothing (further probes are refused); after 6 empty probes with no member the territory is unsupported. If no probe finds members, anchor the best-named tag anyway (analysis can still use concept-level evidence). Drop a territory only with a taxonomy code when Qloo has no concept for it.",
 };
 
 export const buildRepresentationSkill: SkillDefinition<{ territories: string[] }, { represented: string[]; conceptOnly: string[] }> = {
@@ -113,7 +116,9 @@ export const buildRepresentationSkill: SkillDefinition<{ territories: string[] }
   // v2 (Sprint 4 live fix): per-territory Qloo budget; a spent Qloo budget no longer deactivates validation.
   // v3 (Sprint 5A): recovery contract v2 — recoveryGuidance names the failed strategy, remaining strategies,
   // untried supported entity types, alternate concepts, attempts left and the tool for each step.
-  version: 3,
+  // v4 (Sprint 5A.1): recovery priority (reuse a type with members → the comparison's shared type → remaining probe
+  // slots → alternate concept → concept-only); exhausted concepts are not probed again.
+  version: 4,
   purpose: "Represent each anchored territory with distinct, well-evidenced Qloo exemplars; recover with another strategy when the candidate pool is weak; never force a weak panel.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "an in-scope territory is anchored without a representation and strategies remain"],
@@ -133,9 +138,9 @@ export const buildRepresentationSkill: SkillDefinition<{ territories: string[] }
     "no strategy left → concept-only evidence (declare_concept_only)",
   ],
   failureModes: ["REPRESENTATION_ERROR", "EXEMPLAR_SEMANTIC_ERROR", "QLOO_DATA_LIMIT"],
-  evalIds: ["ex-quality-selection", "ex-single-member", "rv-brand-conditioned", "rv-fabricated-id", "rv-place-representation", "sk-quality-outlier", "sk-quality-weak-recovery", "sk-semantic-veto", "sk-strategy-exhausted", "s5-recovery-untried-type"],
+  evalIds: ["ex-quality-selection", "ex-single-member", "rv-brand-conditioned", "rv-fabricated-id", "rv-place-representation", "sk-quality-outlier", "sk-quality-weak-recovery", "sk-semantic-veto", "sk-strategy-exhausted", "s5-recovery-untried-type", "s51-probe-limit-unsupported"],
   procedure:
-    "Fetch Qloo members of the concept (qloo_recommend, conditionOnBrand=false) for a fitting entity type. Fetch tag profiles of the leading candidates (qloo_get_entity_tags) so quality can be checked against peers. Propose up to 3 distinct exemplars with validate_territory_representation; you may attach a semantic judgment per exemplar (relevance strong/adequate/weak/mismatch + reason): it is advisory and can only remove a candidate. If a strategy fails or the pool is weak, follow the territory's recoveryGuidance in order: an available strategy, an untried supported entity type, an alternate Qloo concept, then declare_concept_only. Never re-propose rejected exemplars or a refused strategy.",
+    "Fetch Qloo members of the concept (qloo_recommend, conditionOnBrand=false) for a fitting entity type. Fetch tag profiles of the leading candidates (qloo_get_entity_tags) so quality can be checked against peers. Propose up to 3 distinct exemplars with validate_territory_representation; you may attach a semantic judgment per exemplar (relevance strong/adequate/weak/mismatch + reason): it is advisory and can only remove a candidate. If a strategy fails or the pool is weak, follow the territory's recoveryGuidance in order: an available strategy, the comparison's shared entity type on another concept, an untried supported entity type (within the remaining probe slots), an alternate Qloo concept, then declare_concept_only. Never re-propose rejected exemplars, a refused strategy or an exhausted concept.",
 };
 
 export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | null; size: number }, { size: number; references: string[] }> = {
@@ -143,7 +148,10 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
   // v2 (Sprint 5A): semantic comparison validation (only MEANINGFUL references count; venue attributes and weak ties
   // are refused), the deterministic referencePlan (exact outstanding requirement, feasibility within the budget),
   // and deferral of target analysis while a meaningful set is still feasible.
-  version: 2,
+  // v3 (Sprint 5A.1): completion arithmetic (turns counted with the open turn; probed usable references need no probe),
+  // the completion contract, refusal of reference probes in a namespace already barren for the type, and a reference
+  // proposed with one accepted evidence tag is anchored at proposal (one step fewer per reference).
+  version: 3,
   purpose: "Give a single move or a two-territory comparison a semantically meaningful comparison set of ≥ 3 represented territories of one entity type, or establish that none is feasible (then the result is an honest PARTIAL).",
   intents: ["analyze_move", "compare_territories"],
   preconditions: ["a target is represented", `fewer than ${MIN_COMPARISON_SET} meaningful represented territories of its entity type`, "a meaningful reference set is still feasible within the budget, or the profiles needed to find one are missing"],
@@ -167,16 +175,19 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
   budget: { maxTurns: 4, maxQlooCalls: 10 },
   stoppingConditions: [`≥ ${MIN_COMPARISON_SET} meaningful represented territories of one entity type`, "referencePlan not feasible (no meaningful candidate, budget, turns or slots) → analysis stays partial", "budget spent"],
   failureModes: ["REFERENCE_CONSTRUCTION_FAILURE", "SEMANTIC_REFERENCE_ERROR", "QLOO_DATA_LIMIT", "CONCEPT_DUPLICATION_ERROR"],
-  evalIds: ["ex-quality-selection", "sk-quality-outlier", "sk-reference-place-type", "ir-move", "s5-meaningless-reference-refused", "s5-references-before-analysis"],
+  evalIds: ["ex-quality-selection", "sk-quality-outlier", "sk-reference-place-type", "ir-move", "s5-meaningless-reference-refused", "s5-references-before-analysis", "s51-references-late-still-feasible", "s51-reference-namespace-barren"],
   procedure:
-    "focus.outstanding states how many meaningful references are still needed. Pick from referenceCandidates (only semantic MEANINGFUL ones are listed; evidence.referencePlan lists rejected ones and why). If a candidate is untested (probe null), probe its brand-independent pool with the TARGET's entity type (qloo_recommend). For a candidate with ≥ 2 eligible members: propose_territory (role reference, origin qloo_evidence, evidenceTagIds [its tag], semantic = is it a meaningful cultural alternative to the target at the same level?), anchor_territory, and validate_territory_representation with that same entity type — all in one turn. Then analyze all territories together. If no meaningful reference is feasible, analyze and accept a PARTIAL result.",
+    "focus.outstanding states how many meaningful references are still needed. Pick from referenceCandidates (only semantic MEANINGFUL ones are listed; evidence.referencePlan lists rejected ones and why). If a candidate is untested (probe null), probe its brand-independent pool with the TARGET's entity type (qloo_recommend). For a candidate with ≥ 2 eligible members: propose_territory (role reference, origin qloo_evidence, evidenceTagIds [its tag], semantic = is it a meaningful cultural alternative to the target at the same level?) — it is anchored to that tag at once — and validate_territory_representation with that same entity type, in the SAME turn (references left unvalidated at the last turn are lost). Then analyze all territories together. If no meaningful reference is feasible, analyze and accept a PARTIAL result.",
 };
 
 export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: number }, { candidates: string[]; dropped: string[] }> = {
   id: "explore_candidate_territories",
   // v2 (Sprint 5A): venue-listing attributes are excluded from frontierConcepts and refused as candidates; an
   // advisory semantic judgment (weak/mismatch) drops a candidate before analysis.
-  version: 2,
+  // v3 (Sprint 5A.1): two-stage discovery — a fixed evidence base (related take 8, first 6 related profiles in Qloo
+  // order) feeds a canonical, deduplicated, stably ordered candidate pool; candidates keep their grounding tag as
+  // canonical identity and are tested on it first.
+  version: 3,
   purpose: "Generate distinct frontier candidates from two channels (Qloo-grounded concepts and agent hypotheses), each of which must still pass Qloo validation.",
   intents: ["explore_frontier"],
   preconditions: ["explore_frontier", "brand resolved", `fewer than ${FRONTIER_TARGET} viable candidates`, "room in the candidate and call budgets"],
@@ -198,9 +209,9 @@ export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: n
   budget: { maxTurns: 6, maxQlooCalls: 20 },
   stoppingConditions: [`${FRONTIER_TARGET} viable, distinct candidates`, "candidate or call budget reached", "no Qloo-supported concept left"],
   failureModes: ["CONCEPT_DUPLICATION_ERROR", "TERRITORY_RESOLUTION_ERROR", "QLOO_DATA_LIMIT"],
-  evalIds: ["ir-frontier", "dtd-unsupported-hypothesis", "dtd-near-duplicate", "sk-frontier-two-channels", "sk-frontier-morph-duplicate", "sk-dedup-model-distinct", "s5-frontier-incidental-excluded"],
+  evalIds: ["ir-frontier", "dtd-unsupported-hypothesis", "dtd-near-duplicate", "sk-frontier-two-channels", "sk-frontier-morph-duplicate", "sk-dedup-model-distinct", "s5-frontier-incidental-excluded", "s51-frontier-evidence-base", "s51-frontier-canonical-anchor"],
   procedure:
-    "Channel A (Qloo-grounded): fetch the brand profile and Qloo-related brands' profiles; frontierConcepts lists concepts they carry that the brand does not. Channel B (agent hypothesis): you may propose a non-obvious lateral territory (origin agent_hypothesis); it must then be found in Qloo tags, anchored, and shown to have Qloo members, or it is dropped. Aim for candidates that are coherent cultural territories, distinct from each other (not venue amenities, decor or service options); give your semantic judgment when proposing; label likely duplicates with assess_concept_duplicates.",
+    "Channel A (Qloo-grounded): fetch the brand profile, the Qloo-related brands, and the tag profiles of the first 6 related brands in Qloo's order (the fixed evidence base); frontierConcepts is the resulting candidate pool (canonical, deduplicated, ordered by support). Propose candidates from it with origin qloo_evidence and their tag in evidenceTagIds; test each on that tag first and anchor it when Qloo returns members, else the find_tags result with the same canonical name. Prefer candidates that can share one entity type (focus type alignment). Channel B (agent hypothesis): you may propose a non-obvious lateral territory (origin agent_hypothesis); it must then be found in Qloo tags, anchored, and shown to have Qloo members, or it is dropped. Aim for candidates that are coherent cultural territories, distinct from each other (not venue amenities, decor or service options); give your semantic judgment when proposing; label likely duplicates with assess_concept_duplicates.",
 };
 
 export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { analyzed: string[] }> = {
