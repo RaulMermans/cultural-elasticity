@@ -950,7 +950,7 @@
   {
    "id": "ts-move-script",
    "category": "TOOL_SELECTION",
-   "description": "A scripted single move uses resolve → find tags → pool → represent → analyze.",
+   "description": "A scripted single move uses resolve → find tags → pool → represent → analyze. (Sprint 5A: the script repeats analyze once, because a first early analyze is deferred with REFERENCES_PENDING while references are constructible.)",
    "policy": "scripted",
    "request": {
     "userQuery": "Could Saffron & Salt enter tableware?"
@@ -1034,6 +1034,15 @@
        ]
       },
       "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "tableware"
+      ],
+      "reasonSummary": "analyze"
      }
     ],
     [
@@ -1504,7 +1513,7 @@
   {
    "id": "fs-invented-claims",
    "category": "FORBIDDEN_BEHAVIOURS",
-   "description": "A synthesis that invents a class, a percentage and a success claim is rejected; the deterministic template is returned.",
+   "description": "A synthesis that invents a class, a percentage and a success claim is rejected; the deterministic template is returned. (Sprint 5A: the script repeats analyze once, because a first early analyze is deferred with REFERENCES_PENDING while references are constructible.)",
    "policy": "scripted",
    "request": {
     "userQuery": "Could Saffron & Salt enter tableware?"
@@ -1601,6 +1610,15 @@
     ],
     [
      {
+      "action": "analyze",
+      "targetIds": [
+       "tableware"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
       "action": "finish",
       "resultIds": [
        "tableware"
@@ -1629,7 +1647,7 @@
   {
    "id": "fs-faithful",
    "category": "FINAL_SYNTHESIS_CONSISTENCY",
-   "description": "A synthesis that only restates deterministic results is accepted.",
+   "description": "A synthesis that only restates deterministic results is accepted. (Sprint 5A: the script repeats analyze once, because a first early analyze is deferred with REFERENCES_PENDING while references are constructible.)",
    "policy": "scripted",
    "request": {
     "userQuery": "Could Saffron & Salt enter tableware?"
@@ -1713,6 +1731,15 @@
        ]
       },
       "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "tableware"
+      ],
+      "reasonSummary": "analyze"
      }
     ],
     [
@@ -3327,6 +3354,884 @@
     "exemplarCounts": {
      "cafe_culture": 2
     }
+   }
+  },
+  {
+   "id": "s5-meaningless-reference-refused",
+   "category": "S5_SEMANTIC_COMPARISON",
+   "description": "Sprint 4 live failure class: the only Qloo-reachable references for a place-represented activity are venue-listing attributes (amenity, dining option, decor) and a single-exemplar tie. They are refused before any Qloo call is spent on them; the move degrades to an honest PARTIAL instead of a FULL among meaningless comparisons.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Granite Hollow move into stream angling?",
+    "brand": "Granite Hollow",
+    "territories": [
+     "Stream Angling"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "strategies": {
+     "stream_angling": "PLACE_PANEL"
+    },
+    "routes": {
+     "stream_angling": "PARTIAL_CULTURAL_ANALYSIS"
+    },
+    "notFull": [
+     "stream_angling"
+    ],
+    "absentTerritories": [
+     "breakfast_buffet",
+     "breakfast_available",
+     "rustic_charm",
+     "river_lodge"
+    ],
+    "generalization": "G5"
+   }
+  },
+  {
+   "id": "s5-barren-probe-switches-type",
+   "category": "S5_REPRESENTATION_RECOVERY",
+   "description": "Live failure class: brand probes of a territory's exact-name tags all return nothing. After two empty brand probes the runtime refuses a third (NO_VALUE_ACTION naming the untried types); the territory is represented with places, and two brand-profile concepts with place members complete a meaningful comparison set (FULL).",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Pine Hollow Supply move into stream angling?",
+    "brand": "Pine Hollow Supply",
+    "territories": [
+     "Stream Angling"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "rejections": [
+     "NO_VALUE_ACTION"
+    ],
+    "strategies": {
+     "stream_angling": "PLACE_PANEL"
+    },
+    "routes": {
+     "stream_angling": "FULL_RELATIVE_ANALYSIS"
+    },
+    "absentTerritories": [
+     "breakfast_buffet",
+     "breakfast_available",
+     "rustic_charm"
+    ],
+    "contextIncludes": [
+     "probes of Stream Angling's Qloo concepts returned no members"
+    ],
+    "generalization": "G5"
+   }
+  },
+  {
+   "id": "s5-references-before-analysis",
+   "category": "S5_TURN_BUDGET",
+   "description": "Live failure class: the model analyzed the target as soon as it was represented, locking a PARTIAL route. While a meaningful comparison set is feasible the runtime defers that analysis (REFERENCES_PENDING, bounded, not an invalid turn); references are built and the move reaches FULL.",
+   "policy": "baseline",
+   "wrap": "eager_analyze",
+   "request": {
+    "userQuery": "Could Pine Hollow Supply move into stream angling?",
+    "brand": "Pine Hollow Supply",
+    "territories": [
+     "Stream Angling"
+    ]
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "rejections": [
+     "REFERENCES_PENDING"
+    ],
+    "routes": {
+     "stream_angling": "FULL_RELATIVE_ANALYSIS"
+    },
+    "contextIncludes": [
+     "more meaningful place reference territor"
+    ]
+   }
+  },
+  {
+   "id": "s5-recovery-untried-type",
+   "category": "S5_REPRESENTATION_RECOVERY",
+   "description": "After an empty brand pool for the anchored concept, the context names the untried supported entity type (place) with the tool to use; the script follows it and the territory is represented by places. (Sprint 5A: the script repeats analyze once, because a first early analyze is deferred with REFERENCES_PENDING while references are constructible.)",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Granite Hollow move into stream angling?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Granite Hollow",
+       "territories": [
+        "Stream Angling"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Granite Hollow",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Stream Angling",
+       "limit": 8
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "tagId": "urn:tag:activity_type:syn:stream_angling"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:activity_type:syn:stream_angling"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:activity_type:syn:stream_angling"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "SYN-PL-2001",
+         "reason": "angling lodge"
+        },
+        {
+         "id": "SYN-PL-2002",
+         "reason": "river cabins"
+        },
+        {
+         "id": "SYN-PL-2003",
+         "reason": "fishing camp"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "status": "COMPLETE",
+    "strategies": {
+     "stream_angling": "PLACE_PANEL"
+    },
+    "contextIncludes": [
+     "not yet probed with the supported entity type(s) place"
+    ]
+   }
+  },
+  {
+   "id": "s5-incidental-reference-proposal-refused",
+   "category": "S5_SEMANTIC_COMPARISON",
+   "description": "A model proposes a venue amenity (observed on an exemplar's tag profile) as a reference territory: refused by precondition before it enters the comparison set. (Sprint 5A: the script repeats analyze once, because a first early analyze is deferred with REFERENCES_PENDING while references are constructible.)",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Granite Hollow move into stream angling?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Granite Hollow",
+       "territories": [
+        "Stream Angling"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Granite Hollow",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Stream Angling",
+       "limit": 8
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "tagId": "urn:tag:activity_type:syn:stream_angling"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:activity_type:syn:stream_angling"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "SYN-PL-2001",
+         "reason": "angling lodge"
+        },
+        {
+         "id": "SYN-PL-2002",
+         "reason": "river cabins"
+        },
+        {
+         "id": "SYN-PL-2003",
+         "reason": "fishing camp"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-PL-2001"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Breakfast Buffet",
+       "role": "reference",
+       "origin": "qloo_evidence",
+       "rationale": "carried by an exemplar profile",
+       "evidenceTagIds": [
+        "urn:tag:amenity:syn:breakfast_buffet"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "expect": {
+    "status": "COMPLETE",
+    "rejections": [
+     "PRECONDITION"
+    ],
+    "absentTerritories": [
+     "breakfast_buffet"
+    ],
+    "notFull": [
+     "stream_angling"
+    ]
+   }
+  },
+  {
+   "id": "s5-frontier-incidental-excluded",
+   "category": "S5_FRONTIER_QUALITY",
+   "description": "Related brands carry a venue amenity tag that has brand members. It is excluded from frontier concepts, so it never becomes a frontier candidate; Qloo-grounded cultural concepts remain.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Where could Granite Hollow expand culturally?",
+    "brand": "Granite Hollow",
+    "territories": []
+   },
+   "expect": {
+    "status": "COMPLETE",
+    "intent": "explore_frontier",
+    "absentTerritories": [
+     "breakfast_buffet"
+    ],
+    "minTerritories": 1
+   }
+  },
+  {
+   "id": "s5-synthesis-false-positive-accepted",
+   "category": "S5_SYNTHESIS",
+   "description": "Sprint 4 false positives: 'consistently shared signals' (a coherence field) and a negated disclaimer ('not a prediction') are valid language for a PARTIAL territory and are accepted on the first attempt. (Sprint 5A: the script repeats analyze once, because a first early analyze is deferred with REFERENCES_PENDING while references are constructible.)",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Granite Hollow move into stream angling?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Granite Hollow",
+       "territories": [
+        "Stream Angling"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Granite Hollow",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Stream Angling",
+       "limit": 8
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "tagId": "urn:tag:activity_type:syn:stream_angling"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:activity_type:syn:stream_angling"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "SYN-PL-2001",
+         "reason": "angling lodge"
+        },
+        {
+         "id": "SYN-PL-2002",
+         "reason": "river cabins"
+        },
+        {
+         "id": "SYN-PL-2003",
+         "reason": "fishing camp"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "synthesis": [
+    {
+     "summary": "Stream Angling has partial cultural evidence: Qloo returns consistently shared signals across its exemplars and a brand-conditioned list, but no comparison set, so this is not a prediction and no relative position is reported.",
+     "territoryNotes": [],
+     "followUpOptions": [
+      "Look for reference territories Qloo ties to the brand."
+     ]
+    }
+   ],
+   "expect": {
+    "status": "COMPLETE",
+    "summarySource": "model",
+    "claimViolations": false
+   }
+  },
+  {
+   "id": "s5-grounded-findings-accepted",
+   "category": "S5_SYNTHESIS",
+   "description": "A structured synthesis whose findings cite supporting result fields for a PARTIAL territory is accepted and its findings are exposed in the agent-interpretation layer. (Sprint 5A: the script repeats analyze once, because a first early analyze is deferred with REFERENCES_PENDING while references are constructible.)",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Granite Hollow move into stream angling?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Granite Hollow",
+       "territories": [
+        "Stream Angling"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Granite Hollow",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Stream Angling",
+       "limit": 8
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "tagId": "urn:tag:activity_type:syn:stream_angling"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:activity_type:syn:stream_angling"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "SYN-PL-2001",
+         "reason": "angling lodge"
+        },
+        {
+         "id": "SYN-PL-2002",
+         "reason": "river cabins"
+        },
+        {
+         "id": "SYN-PL-2003",
+         "reason": "fishing camp"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "synthesis": [
+    {
+     "summary": "Qloo evidence supports a partial reading of the move: the territory is represented by places and the brand-conditioned evidence is available, but there is no comparison set.",
+     "findings": [
+      {
+       "territoryKey": "stream_angling",
+       "claimType": "representation",
+       "supportingFields": [
+        "representation"
+       ],
+       "interpretation": "Stream Angling is represented by angling lodges and camps that Qloo links to the concept.",
+       "limitationCodes": []
+      },
+      {
+       "territoryKey": "stream_angling",
+       "claimType": "route_limitation",
+       "supportingFields": [
+        "route"
+       ],
+       "interpretation": "No relative position is available for Stream Angling.",
+       "limitationCodes": [
+        "NO_RELATIVE_POSITION"
+       ]
+      }
+     ],
+     "followUpOptions": [
+      "Probe further reference concepts on the brand's own Qloo profile."
+     ]
+    }
+   ],
+   "expect": {
+    "status": "COMPLETE",
+    "summarySource": "model",
+    "findingsAccepted": 2,
+    "claimViolations": false
+   }
+  },
+  {
+   "id": "s5-grounded-finding-unsupported-claim",
+   "category": "S5_SYNTHESIS",
+   "description": "A finding claims a relative position for a PARTIAL territory and cites a field that has no value: rejected twice, so the deterministic template is returned (no unsupported claim is accepted). (Sprint 5A: the script repeats analyze once, because a first early analyze is deferred with REFERENCES_PENDING while references are constructible.)",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Granite Hollow move into stream angling?"
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Granite Hollow",
+       "territories": [
+        "Stream Angling"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Granite Hollow",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Stream Angling",
+       "limit": 8
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "tagId": "urn:tag:activity_type:syn:stream_angling"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:activity_type:syn:stream_angling"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "stream_angling",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "SYN-PL-2001",
+         "reason": "angling lodge"
+        },
+        {
+         "id": "SYN-PL-2002",
+         "reason": "river cabins"
+        },
+        {
+         "id": "SYN-PL-2003",
+         "reason": "fishing camp"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "analyze"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [
+       "stream_angling"
+      ],
+      "reasonSummary": "done"
+     }
+    ]
+   ],
+   "synthesis": [
+    {
+     "summary": "Stream Angling ranks first.",
+     "findings": [
+      {
+       "territoryKey": "stream_angling",
+       "claimType": "relative_position",
+       "supportingFields": [
+        "relativePosition.position"
+       ],
+       "interpretation": "Stream Angling is at position 1.",
+       "limitationCodes": []
+      }
+     ],
+     "followUpOptions": []
+    },
+    {
+     "summary": "Stream Angling ranks first.",
+     "findings": [
+      {
+       "territoryKey": "stream_angling",
+       "claimType": "relative_position",
+       "supportingFields": [
+        "relativePosition.position"
+       ],
+       "interpretation": "Stream Angling is at position 1.",
+       "limitationCodes": []
+      }
+     ],
+     "followUpOptions": []
+    }
+   ],
+   "expect": {
+    "status": "COMPLETE",
+    "summarySource": "deterministic_template",
+    "claimViolations": true
    }
   }
  ]

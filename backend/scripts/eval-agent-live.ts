@@ -4,10 +4,13 @@
  *   --arms baseline,model   arms to run (default both; the model arm reports LIVE_AGENT_MODEL_VALIDATION_NOT_RUN
  *                           without ANTHROPIC_API_KEY and is never replaced by another policy)
  *   --cases L-M1,L-C2       subset of evals/agent/live-cases.json
- *   --stability N           repeat each frontier case N times in the model arm
+ *   --stability N           run each frontier case N times in total in the model arm (Sprint 5A readiness needs 3)
  *   --benchmark [keys]      also run benchmark brands through the agent (comma-separated keys; default all)
- *   --baseline-from <file>  reuse the BASELINE metrics of an earlier report.json (compare without re-running it)
- *   --out <dir>             output directory (default backend/feasibility-output/sprint4-live/<timestamp>)
+ *   --baseline-from <file>  reuse the BASELINE runs' metrics of an earlier report.json (only with the case ids it covered)
+ *   --out <dir>             output directory (default backend/feasibility-output/sprint5a-live/<timestamp>)
+ *
+ * Sprint 5A: the model arm is Claude Haiku 5.5 (AGENT_MODEL may override it for development; readiness is judged on
+ * claude-haiku-5-5 only). A case that throws counts as errored and stays in the denominator; nothing is dropped.
  *
  * Live runs make real Qloo calls (spaced; minutes per case). Results are written per run with traces.
  * Exit codes: 0 completed (whatever the readiness decision) · 3 not configured · 1 failure.
@@ -22,7 +25,7 @@ import type { AgentModel } from "../src/agent/model/provider.js";
 import { AgentRuntime } from "../src/agent/runtime.js";
 import { loadLocalEnvFile } from "../src/config/env.js";
 import { scrubSecrets } from "../src/qloo/transport.js";
-import { armMetrics, benchmarkTerritoryLabels, evaluateBenchmarkRun, loadBenchmark, loadLiveCases, readinessGate, runLiveCase, stabilityOf, type Arm, type LiveRun } from "./agent-live-harness.js";
+import { armMetrics, benchmarkTerritoryLabels, evaluateBenchmarkRun, loadBenchmark, loadLiveManifest, readinessGate, runLiveCase, stabilityReport, type Arm, type CaseError, type LiveRun, type StabilityReport } from "./agent-live-harness.js";
 
 const args = process.argv.slice(2).filter((a) => a !== "--");
 const flag = (name: string) => {
@@ -46,9 +49,10 @@ async function main(): Promise<number> {
   loadLocalEnvFile();
   const arms = (flag("--arms") ?? "baseline,model").split(",").map((a) => (a.trim() === "model" ? "LIVE_MODEL" : "BASELINE")) as Arm[];
   const wanted = flag("--cases")?.split(",").map((c) => c.trim());
-  const cases = loadLiveCases().filter((c) => !wanted || wanted.includes(c.id));
+  const manifest = loadLiveManifest();
+  const cases = manifest.cases.filter((c) => !wanted || wanted.includes(c.id));
   const stamp = new Date().toISOString().replace(/[:.]/gu, "-");
-  const out = resolve(process.env.INIT_CWD ?? process.cwd(), flag("--out") ?? join(backendRoot, "feasibility-output", "sprint4-live", stamp));
+  const out = resolve(process.env.INIT_CWD ?? process.cwd(), flag("--out") ?? join(backendRoot, "feasibility-output", "sprint5a-live", stamp));
   mkdirSync(out, { recursive: true });
 
   let provider;
@@ -63,6 +67,7 @@ async function main(): Promise<number> {
   }
   console.log(`Live agent evaluation · Qloo: ${provider.name} · model: ${hasModelCredential() ? "configured" : LIVE_AGENT_MODEL_VALIDATION_NOT_RUN} · output ${out}`);
   const runs: Record<Arm, LiveRun[] | null> = { BASELINE: null, LIVE_MODEL: null };
+  const errors: CaseError[] = [];
   try {
     for (const arm of arms) {
       let model: AgentModel;
@@ -79,30 +84,58 @@ async function main(): Promise<number> {
           const run = await runLiveCase(c, arm, model, provider);
           runs[arm]!.push(run);
           write(out, `${arm.toLowerCase()}-${c.id}.json`, run.response);
-          console.log(`  ${c.id} ${short(run)} · ${run.response.metrics.qloo_calls} Qloo · ${run.response.metrics.agent_iterations} it · ${Math.round((Date.now() - started) / 1000)} s${run.failures?.length ? `\n     ✗ ${run.failures.join(" | ")}` : ""}`);
+          const m = run.response.metrics;
+          console.log(`  ${c.id} ${short(run)} · ${m.qloo_calls} Qloo · ${m.agent_iterations} it · ${Math.round((Date.now() - started) / 1000)} s (model ${Math.round(m.model_latency_ms / 1000)} s, Qloo ${Math.round(m.qloo_latency_ms / 1000)} s of which spacing ${Math.round((m.qloo_spacing_ms ?? 0) / 1000)} s) · $${m.model_cost_usd ?? "n/a"}${run.failures?.length ? `\n     ✗ ${run.failures.join(" | ")}` : ""}`);
         } catch (error) {
-          console.log(`  ${c.id} ERROR ${scrubSecrets(error instanceof Error ? error.message : String(error)).slice(0, 300)}`);
+          const message = scrubSecrets(error instanceof Error ? error.message : String(error)).slice(0, 300);
+          errors.push({ caseId: c.id, arm, error: message });
+          console.log(`  ${c.id} ERROR ${message} (counted as errored; stays in the denominator)`);
         }
       }
     }
 
     const baselineFrom = flag("--baseline-from");
-    const reused = baselineFrom ? (JSON.parse(readFileSync(resolve(process.env.INIT_CWD ?? process.cwd(), baselineFrom), "utf8")) as { metrics?: { BASELINE?: Record<string, number | string | null> | null } }).metrics?.BASELINE ?? null : null;
-    if (baselineFrom) console.log(`\nBASELINE metrics reused from ${baselineFrom}${reused ? "" : " (none found)"}`);
-    const baselineMetrics = runs.BASELINE ? armMetrics(runs.BASELINE) : reused;
-    const modelMetrics = runs.LIVE_MODEL ? armMetrics(runs.LIVE_MODEL) : null;
-    const gate = readinessGate(runs.LIVE_MODEL, baselineMetrics, modelMetrics);
+    const reusedReport = baselineFrom ? (JSON.parse(readFileSync(resolve(process.env.INIT_CWD ?? process.cwd(), baselineFrom), "utf8")) as { metrics?: { BASELINE?: Record<string, number | string | null> | null }; baselineCaseIds?: string[] }) : null;
+    const reused = reusedReport?.metrics?.BASELINE && reusedReport.baselineCaseIds ? { metrics: reusedReport.metrics.BASELINE, caseIds: reusedReport.baselineCaseIds } : null;
+    if (baselineFrom) console.log(`\nBASELINE metrics reused from ${baselineFrom}${reused ? ` (${reused.caseIds.length} cases)` : " (none usable: the report records no baseline case ids)"}`);
 
-    let stability = null;
+    let stability: Record<string, StabilityReport> | null = null;
     const repeats = Number(flag("--stability") ?? 0);
     if (repeats > 1 && runs.LIVE_MODEL) {
-      stability = {} as Record<string, unknown>;
+      stability = {};
       for (const c of cases.filter((x) => x.intent === "explore_frontier")) {
-        const responses = [runs.LIVE_MODEL.find((r) => r.caseId === c.id)!.response];
-        for (let i = 1; i < repeats; i += 1) responses.push((await runLiveCase(c, "LIVE_MODEL", createAgentModel("anthropic"), provider)).response);
-        stability[c.id] = stabilityOf(responses);
+        const first = runs.LIVE_MODEL.find((r) => r.caseId === c.id);
+        const responses = first ? [first.response] : [];
+        for (let i = responses.length; i < repeats; i += 1) {
+          try {
+            const run = await runLiveCase(c, "LIVE_MODEL", createAgentModel("anthropic"), provider);
+            write(out, `live_model-${c.id}-stability-${i + 1}.json`, run.response);
+            responses.push(run.response);
+            console.log(`  [stability] ${c.id} run ${i + 1}: ${short(run)}`);
+          } catch (error) {
+            errors.push({ caseId: `${c.id}#stability-${i + 1}`, arm: "LIVE_MODEL", error: scrubSecrets(error instanceof Error ? error.message : String(error)).slice(0, 300) });
+          }
+        }
+        stability[c.id] = stabilityReport(responses);
       }
     }
+
+    const frontierCaseIds = manifest.cases.filter((c) => c.intent === "explore_frontier").map((c) => c.id);
+    const gate = readinessGate({
+      manifest: { version: manifest.version, caseIds: manifest.cases.map((c) => c.id), frontierCaseIds },
+      modelRuns: runs.LIVE_MODEL,
+      baselineRuns: runs.BASELINE,
+      baselineReused: runs.BASELINE ? null : reused,
+      errors,
+      stability,
+    });
+    const baselineMetrics = runs.BASELINE ? armMetrics(runs.BASELINE) : (reused?.metrics ?? null);
+    const modelMetrics = runs.LIVE_MODEL ? armMetrics(runs.LIVE_MODEL) : null;
+    const perCase = (arm: Arm) =>
+      (runs[arm] ?? []).map((r) => {
+        const m = r.response.metrics;
+        return { caseId: r.caseId, status: r.response.status, model: r.response.model.id, routes: r.response.status === "NEEDS_INPUT" ? [] : (r.response as import("@cultural-elasticity/shared").AgentAnalysisResult).territories.map((t) => `${t.key}:${t.role}:${t.analysisRoute}`), qlooCalls: m.qloo_calls, iterations: m.agent_iterations, latencyMs: m.latency_ms, modelLatencyMs: m.model_latency_ms, qlooLatencyMs: m.qloo_latency_ms, qlooSpacingMs: m.qloo_spacing_ms ?? null, analysisLatencyMs: m.analysis_latency_ms ?? null, synthesisLatencyMs: m.synthesis_latency_ms ?? null, inputTokens: m.model_input_tokens, outputTokens: m.model_output_tokens, costUsd: m.model_cost_usd, synthesisSource: r.response.status === "NEEDS_INPUT" ? null : (r.response as import("@cultural-elasticity/shared").AgentAnalysisResult).summary.source, failures: r.failures ?? [] };
+      });
 
     let benchmark = null;
     if (args.includes("--benchmark")) {
@@ -129,7 +162,21 @@ async function main(): Promise<number> {
       }
     }
 
-    const report = { generatedAt: new Date().toISOString(), qlooProvider: provider.name, modelStatus: hasModelCredential() ? "configured" : LIVE_AGENT_MODEL_VALIDATION_NOT_RUN, cases: cases.map((c) => ({ id: c.id, tags: c.tags })), baselineSource: runs.BASELINE ? "this run" : baselineFrom ?? null, metrics: { BASELINE: baselineMetrics, LIVE_MODEL: modelMetrics ?? LIVE_AGENT_MODEL_VALIDATION_NOT_RUN }, readiness: gate, stability: stability ?? (runs.LIVE_MODEL ? "not requested" : LIVE_AGENT_MODEL_VALIDATION_NOT_RUN), benchmark };
+    const report = {
+      generatedAt: new Date().toISOString(),
+      qlooProvider: provider.name,
+      modelStatus: hasModelCredential() ? "configured" : LIVE_AGENT_MODEL_VALIDATION_NOT_RUN,
+      caseManifestVersion: manifest.version,
+      cases: cases.map((c) => ({ id: c.id, tags: c.tags })),
+      baselineSource: runs.BASELINE ? "this run" : (baselineFrom ?? null),
+      baselineCaseIds: runs.BASELINE ? runs.BASELINE.map((r) => r.caseId) : (reused?.caseIds ?? []),
+      metrics: { BASELINE: baselineMetrics, LIVE_MODEL: modelMetrics ?? LIVE_AGENT_MODEL_VALIDATION_NOT_RUN },
+      perCase: { BASELINE: perCase("BASELINE"), LIVE_MODEL: perCase("LIVE_MODEL") },
+      errors,
+      readiness: gate,
+      stability: stability ?? (runs.LIVE_MODEL ? "not requested" : LIVE_AGENT_MODEL_VALIDATION_NOT_RUN),
+      benchmark,
+    };
     write(out, "report.json", report);
     console.log("\nMetrics (arms are reported separately; never merged)");
     for (const [arm, m] of Object.entries(report.metrics)) {
@@ -137,9 +184,11 @@ async function main(): Promise<number> {
       if (typeof m === "string" || m === null) console.log(`    ${m ?? "not run"}`);
       else for (const [k, v] of Object.entries(m)) console.log(`    ${k.padEnd(32)} ${v ?? "n/a"}`);
     }
-    console.log(`\nReadiness: ${gate.decision}`);
+    if (stability) for (const [id, st] of Object.entries(stability)) console.log(`\nStability ${id} (${st.runs} runs): concept overlap ${st.resolvedConceptOverlap ?? "n/a"} · supported overlap ${st.supportedConceptOverlap ?? "n/a"} · route stability ${st.routeStability ?? "n/a"} · comparable class pairs ${st.comparableClassPairs}\n  ${st.candidateSets.map((c) => c.join(", ")).join("\n  ")}`);
+    console.log(`\nReadiness: ${gate.decision} (model ${gate.modelIds.join(", ") || "none"} · manifest ${gate.caseManifestVersion} · executed ${gate.executedCaseIds.length}/${gate.expectedCaseIds.length} · stability ${gate.frontierStabilityStatus})`);
     for (const h of gate.hard) console.log(`  [${h.passed ? "PASS" : "FAIL"}] ${h.name}: ${h.value} (required ${h.required})`);
     for (const reason of gate.reasons) console.log(`  - ${reason}`);
+    for (const w of gate.warnings) console.log(`  ! ${w}`);
     console.log(`\nWritten: ${out}`);
     return 0;
   } finally {

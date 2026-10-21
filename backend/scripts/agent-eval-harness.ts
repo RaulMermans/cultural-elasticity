@@ -69,6 +69,12 @@ type Expect = {
   modelDedupApplied?: number;
   sources?: Record<string, string>;
   minCallsAvoided?: number;
+  // Sprint 5A
+  /** Strings that must appear in at least one decision context the model saw (state-grounded guidance). */
+  contextIncludes?: string[];
+  /** Territory keys that must not have a FULL relative analysis. */
+  notFull?: string[];
+  findingsAccepted?: number;
 };
 
 export type Scenario = {
@@ -81,8 +87,29 @@ export type Scenario = {
   synthesis?: unknown[];
   faults?: SyntheticFault[];
   answer?: string;
+  /**
+   * Sprint 5A test instrument: wraps the baseline policy to reproduce a failure behaviour observed in live model
+   * traces (eager_analyze: analyze the targets as soon as they are ready, as Sprint 4's live model did).
+   */
+  wrap?: "eager_analyze";
   expect: Expect;
 };
+
+/** Sprint 5A: reproduces the live "analyze too early" behaviour; defers to the inner policy once refused. */
+class EagerAnalyze implements AgentModel {
+  private refusedOnce = false;
+  constructor(private readonly inner: AgentModel) {}
+  get info() {
+    return this.inner.info;
+  }
+  decide(context: AgentDecisionContext) {
+    this.refusedOnce ||= [...(context.repair?.rejections ?? []), ...(context.lastTurn?.rejections ?? [])].some((r) => r.code === "REFERENCES_PENDING");
+    const refused = this.refusedOnce;
+    const ready = context.territories.filter((t) => t.role === "target" && t.status !== "analyzed" && t.readiness === "ready").map((t) => t.key);
+    if (!refused && ready.length > 0 && context.actions.includes("analyze")) return Promise.resolve({ decisions: [{ action: "analyze", targetIds: ready, reasonSummary: "the target is represented; analyze it now" }] });
+    return this.inner.decide(context);
+  }
+}
 
 /** Records every decision context a model sees (for leakage checks). */
 class Recording implements AgentModel {
@@ -176,7 +203,14 @@ function check(s: Scenario, response: AgentRunResponse): string[] {
   if (e.modelDedupApplied !== undefined) eq("model dedup judgments applied", trace.conceptDedup.filter((d) => d.modelJudgment?.applied).length, e.modelDedupApplied);
   for (const [k, v] of Object.entries(e.sources ?? {})) eq(`${k} source`, r.comparisonSetConstruction.proposed.find((x) => x.key === k)?.source, v);
   if (e.claimViolations !== undefined) eq("claim violations recorded", r.summary.claimValidation.violations.length > 0, e.claimViolations);
+  for (const k of e.notFull ?? []) if (t(k)?.analysisRoute === "FULL_RELATIVE_ANALYSIS") f.push(`${k} must not be FULL (its comparison set is not semantically meaningful)`);
+  if (e.findingsAccepted !== undefined) eq("accepted grounded findings", r.layers.agentInterpretation.findings?.length ?? 0, e.findingsAccepted);
   return f;
+}
+
+function checkContexts(s: Scenario, contexts: readonly AgentDecisionContext[]): string[] {
+  const text = JSON.stringify(contexts);
+  return (s.expect.contextIncludes ?? []).filter((needle) => !text.includes(needle)).map((needle) => `no decision context contained "${needle}"`);
 }
 
 /** Recomputes, independently of the runtime, that every FULL territory restates its methodology run exactly. */
@@ -193,12 +227,13 @@ export function methodologyConsistent(r: AgentAnalysisResult): boolean {
 
 export async function runScenario(s: Scenario): Promise<ScenarioResult> {
   const world = syntheticWorldSchema.parse(JSON.parse(readFileSync(WORLD_PATH, "utf8")));
-  const inner = s.policy === "scripted" ? new ScriptedAgentModel(s.steps ?? [], s.synthesis ?? [], s.id) : new BaselinePolicyModel();
+  const policy = s.policy === "scripted" ? new ScriptedAgentModel(s.steps ?? [], s.synthesis ?? [], s.id) : new BaselinePolicyModel();
+  const inner = s.wrap === "eager_analyze" ? new EagerAnalyze(policy) : policy;
   const model = new Recording(inner);
   const runtime = new AgentRuntime({ model, provider: createScriptedToolProvider(world, s.faults ?? []) });
   let response = await runtime.run(s.request);
   if (response.status === "NEEDS_INPUT" && s.answer) response = await runtime.continue(response.runId, s.answer);
-  const failures = check(s, response);
+  const failures = [...check(s, response), ...checkContexts(s, model.contexts)];
   return { id: s.id, category: s.category, passed: failures.length === 0, failures, response, contexts: model.contexts };
 }
 

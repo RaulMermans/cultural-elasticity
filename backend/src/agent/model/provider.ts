@@ -11,7 +11,22 @@ import type { ModelTurn, ModelUsage } from "../contracts.js";
 
 export type ToolSpec = { name: string; description: string; inputSchema: Record<string, unknown> };
 
+/** Sprint 5A: the critical next step, first in the context (objective → stage → blocker → allowed actions). */
+export type DecisionFocus = {
+  objective: string;
+  stage: string;
+  activeSkills: string[];
+  blocker: string | null;
+  /** The exact outstanding requirements, phrased as instructions from deterministic state. */
+  outstanding: string[];
+  nextAllowed: string[];
+  budget: { turnsLeft: number; qlooCallsLeft: number };
+  /** Approaches already refused or failed in this run (do not repeat them). */
+  rejectedApproaches: string[];
+};
+
 export type AgentDecisionContext = {
+  focus?: DecisionFocus;
   runId: string;
   iteration: number;
   userQuery: string;
@@ -42,6 +57,10 @@ export type AgentDecisionContext = {
     /** Brand-independent exemplar candidates Qloo returned for the concept (eligible only). */
     exemplarCandidates?: { type: string; id: string; label: string; popularity: number | null; support: string; profiled: boolean }[];
     recovery?: unknown;
+    /** Sprint 5A: state-grounded recovery steps (what failed, what remains, which tools). */
+    recoveryGuidance?: string[];
+    /** Sprint 5A: brand-independent probes already made for this territory's candidate concepts. */
+    probes?: { tagId: string; label: string; probes: { type: string; members: number }[] }[];
   }[];
   /** Only the sections the active skills require. */
   evidence: {
@@ -50,13 +69,15 @@ export type AgentDecisionContext = {
     relatedEntities?: { id: string; label: string; profiled: boolean }[];
     /** Concepts carried by Qloo-related entities but not by the brand (deterministically derived). */
     frontierConcepts?: { tagId: string; label: string; support: number }[];
-    referenceCandidates?: { tagId: string; label: string; namespace: string; namespaceYield: string; probe: { entityType: string; eligible: number } | null; usable: boolean | null; justification: string }[];
+    referenceCandidates?: { tagId: string; label: string; namespace: string; namespaceYield: string; probe: { entityType: string; eligible: number } | null; usable: boolean | null; semantic: string; justification: string }[];
+    /** Sprint 5A: the deterministic reference plan (needed, feasible, rejected candidates and why). */
+    referencePlan?: { entityType: string | null; required: number; valid: number; needed: number; pending: string[]; feasible: boolean; reason: string; rejectedCandidates: { label: string; status: string; reasonCode: string }[] };
     conceptDedup?: string[];
     analysisResults?: { key: string; route: string; classification: string | null; robustness: string | null }[];
   };
-  sufficiency: { verdict: EvidenceSufficiencyVerdict; reasons: string[]; nextSteps: string[]; nextActions: NextActionValue[]; materialGap: boolean };
+  /** Sprint 5A: nextSteps and the open plan moved into `focus` (one authoritative statement of what remains). */
+  sufficiency: { verdict: EvidenceSufficiencyVerdict; reasons: string[]; nextActions: NextActionValue[]; materialGap: boolean };
   budget: { iterationsLeft: number; qlooCallsLeft: number; maxActionsPerTurn: number; maxExemplarsPerTerritory: number; maxCandidateTerritories: number; skillQlooCallsLeft: Record<string, number> };
-  plan: string[];
   lastTurn: { results: { tool: string; status: string; summary: string; data?: unknown }[]; rejections: { action: string; code: string; reason: string }[] } | null;
   clarifications: string[];
   tools: ToolSpec[];

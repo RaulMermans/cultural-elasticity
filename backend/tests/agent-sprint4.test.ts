@@ -68,11 +68,12 @@ describe("runtime skills", () => {
     expect(Object.fromEntries(SKILLS.map((s) => [s.id, s.version]))).toEqual({
       interpret_request: 1,
       resolve_brand: 1,
-      resolve_territory: 2,
-      build_territory_representation: 2,
-      build_comparison_set: 1,
-      explore_candidate_territories: 1,
-      analyze_territories: 1,
+      // Sprint 5A bumps (see docs/sprint-5a/HAIKU_AGENT_RELIABILITY.md, Runtime Skills)
+      resolve_territory: 3,
+      build_territory_representation: 3,
+      build_comparison_set: 2,
+      explore_candidate_territories: 2,
+      analyze_territories: 2,
     });
   });
 

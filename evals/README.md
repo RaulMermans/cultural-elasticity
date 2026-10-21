@@ -71,3 +71,37 @@ pnpm eval:agent -- --json out.json
 `evals/agent/scenarios.json` holds 28 scenarios (`"fixtureType": "synthetic"`) in 12 categories: intent routing, entity resolution, ambiguity, dynamic territory discovery, exemplar discovery, representation validation, tool selection, insufficient evidence, budget control, final synthesis consistency, generalization and forbidden behaviours. They run against `evals/fixtures/synthetic/agent/world.json`, a SYNTHETIC Qloo world (fictional names, `SYN-` placeholder ids, hand-written tag sets) that a deterministic simulator serves in the live envelope shape. Each scenario is driven either by the ScriptedAgentModel (a fixed turn list, used for control flow and forbidden behaviours) or by the baseline reference policy (end to end). Each one has deterministic expectations.
 
 The report gives routing accuracy, tool-call validity, resolution and representation success, the route mix, methodology consistency (recomputed independently), final-claim consistency, budget violations, benchmark leakage (no benchmark brand, exemplar or `expected_*` label may appear in any model context), the generalization gates and averages. It exits 1 if any acceptance threshold fails. It is **neither** a Qloo validation **nor** a live model validation, and it always prints the model status (`LIVE_AGENT_MODEL_VALIDATION_NOT_RUN` without a key).
+
+## Agent evals (Sprint 4 → Sprint 5A update)
+
+`evals/agent/scenarios.json` now holds **46** synthetic scenarios. Sprint 4 added the skill scenarios (`sk-*`). Sprint 5A adds nine `s5-*` scenarios that reproduce live failure classes:
+- meaningless references refused;
+- barren probe switches type;
+- references built before analysis;
+- recovery to an untried type;
+- incidental reference proposal refused;
+- frontier venue attributes excluded;
+- two synthesis false positives accepted;
+- grounded findings accepted;
+- an unsupported grounded finding rejected.
+
+Scenarios may wrap the baseline with a failure behaviour observed live (`"wrap": "eager_analyze"`). Two more expectation kinds exist: `contextIncludes` (state-grounded guidance actually reached the model) and `notFull`. `backend/tests/agent-sprint5a.test.ts` adds 30 targeted adversarial tests (semantic validator, reference plan, recovery, deferral, frontier, synthesis validity and false positives, gate honesty). All of this is SYNTHETIC: neither a Qloo validation nor a live model validation.
+
+### Live agent evaluation (`pnpm eval:agent:live`)
+
+`evals/agent/live-cases.json` (`agent-live-v1`) is unchanged: L-M1–M3, L-C1–C2, L-E1–E2.
+
+The readiness run is:
+
+```sh
+pnpm eval:agent:live -- --arms baseline,model --stability 3 --out backend/feasibility-output/sprint5a-live/<name>
+```
+
+It runs both arms on the identical cases and repeats each frontier case three times in the model arm. `AGENT_MODEL_READY` requires:
+- every prescribed case executed by `claude-haiku-5-5` (an error or omission stays in the denominator: `INCOMPLETE_LIVE_EVALUATION`);
+- a single model id;
+- a full case-matched baseline;
+- measured frontier stability;
+- zero permission, secret or benchmark leakage, methodology overrides, budget violations, accepted unsupported claims, and **semantically invalid FULL results**.
+
+Reported separately from the historical route mix: `semanticallyValidFullRate`, `invalidFullComparisonRate`, `meaningfulPartialRate` (a rule-based proxy, not human judgment), synthesis first-attempt / after-repair / fallback / usefulness rates, and the latency split (model, Qloo, spacing, analysis, synthesis).

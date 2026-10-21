@@ -4,7 +4,7 @@
  */
 import type { AgentAnalysisResult } from "@cultural-elasticity/shared";
 import { describe, expect, it } from "vitest";
-import { acceptedUnsupportedClaims, armMetrics, checkLive, loadLiveCases, permissionViolations, readinessGate, type LiveRun } from "../scripts/agent-live-harness.js";
+import { acceptedUnsupportedClaims, checkLive, loadLiveCases, permissionViolations, readinessGate, type LiveRun } from "../scripts/agent-live-harness.js";
 import { runtime } from "./fixtures/synthetic/agent.js";
 
 async function syntheticArm(): Promise<LiveRun[]> {
@@ -19,23 +19,73 @@ async function syntheticArm(): Promise<LiveRun[]> {
   return out;
 }
 
-describe("AGENT_MODEL_READY gate", () => {
+/** Synthetic runs relabelled as an arm and attributed to a model id (offline; not a live validation). */
+function relabel(runs: LiveRun[], arm: LiveRun["arm"], modelId = "claude-haiku-5-5"): LiveRun[] {
+  return runs.map((r) => ({ ...r, arm, response: { ...r.response, model: { id: modelId, kind: "llm" as const, live: true } } }));
+}
+
+const manifest = { version: "test-v1", caseIds: ["S-0", "S-1"], frontierCaseIds: ["S-1"] };
+const measured = { "S-1": { runs: 3 } };
+
+describe("AGENT_MODEL_READY gate (Sprint 5A: coverage-complete, single-model, case-matched)", () => {
   it("is NOT_READY when the live model never ran (no substitution by baseline or scripts)", () => {
-    const gate = readinessGate(null, null, null);
+    const gate = readinessGate({ manifest, modelRuns: null, baselineRuns: null });
     expect(gate.decision).toBe("AGENT_MODEL_NOT_READY");
     expect(gate.reasons[0]).toMatch(/^LIVE_AGENT_MODEL_VALIDATION_NOT_RUN/u);
+    expect(gate.missingCaseIds).toEqual(["S-0", "S-1"]);
   });
 
-  it("passes every hard requirement on clean runs and detects material regressions versus the baseline", async () => {
+  it("passes every hard requirement on a complete, single-model, case-matched evaluation with measured stability", async () => {
     const runs = await syntheticArm();
-    const metrics = armMetrics(runs);
-    const clean = readinessGate(runs, metrics, metrics);
-    expect(clean.hard.every((h) => h.passed)).toBe(true);
-    expect(clean.decision).toBe("AGENT_MODEL_READY");
-    const better = { ...metrics, representationSuccess: 1, fullAnalysisRate: 1, runs_passed: (metrics.runs_passed as number) + 3 };
-    const worse = readinessGate(runs, better, metrics);
-    expect(worse.decision).toBe("AGENT_MODEL_NOT_READY");
-    expect(worse.reasons.join(" ")).toMatch(/material regression vs baseline: runs_passed/u);
+    const gate = readinessGate({ manifest, modelRuns: relabel(runs, "LIVE_MODEL"), baselineRuns: relabel(runs, "BASELINE", "baseline-policy-v2"), stability: measured });
+    expect(gate.hard.filter((h) => !h.passed)).toEqual([]);
+    expect(gate.decision).toBe("AGENT_MODEL_READY");
+    expect(gate).toMatchObject({ modelId: "claude-haiku-5-5", caseManifestVersion: "test-v1", executedCaseIds: ["S-0", "S-1"], missingCaseIds: [], frontierStabilityStatus: "MEASURED" });
+  });
+
+  it("an omitted case keeps the denominator: NOT_READY with INCOMPLETE_LIVE_EVALUATION", async () => {
+    const runs = await syntheticArm();
+    const gate = readinessGate({ manifest, modelRuns: relabel(runs.slice(0, 1), "LIVE_MODEL"), baselineRuns: relabel(runs, "BASELINE"), stability: measured });
+    expect(gate.decision).toBe("AGENT_MODEL_NOT_READY");
+    expect(gate.missingCaseIds).toEqual(["S-1"]);
+    expect(gate.reasons.join(" ")).toMatch(/INCOMPLETE_LIVE_EVALUATION/u);
+  });
+
+  it("a case that threw counts as errored, never as passed or dropped", async () => {
+    const runs = await syntheticArm();
+    const gate = readinessGate({ manifest, modelRuns: relabel(runs.slice(0, 1), "LIVE_MODEL"), baselineRuns: relabel(runs, "BASELINE"), errors: [{ caseId: "S-1", arm: "LIVE_MODEL", error: "timeout" }], stability: measured });
+    expect(gate.decision).toBe("AGENT_MODEL_NOT_READY");
+    expect(gate.erroredCaseIds).toEqual(["S-1"]);
+    expect(gate.modelCoverage!.executed).toBe(1);
+    expect(gate.modelCoverage!.expected).toBe(2);
+  });
+
+  it("refuses a mixed-model or non-Haiku aggregate", async () => {
+    const runs = await syntheticArm();
+    const mixed = [...relabel(runs.slice(0, 1), "LIVE_MODEL"), ...relabel(runs.slice(1), "LIVE_MODEL", "claude-opus-5-5")];
+    expect(readinessGate({ manifest, modelRuns: mixed, baselineRuns: relabel(runs, "BASELINE"), stability: measured }).hard.find((h) => h.name.startsWith("every model run"))!.passed).toBe(false);
+    const opus = readinessGate({ manifest, modelRuns: relabel(runs, "LIVE_MODEL", "claude-opus-5-5"), baselineRuns: relabel(runs, "BASELINE"), stability: measured });
+    expect(opus.decision).toBe("AGENT_MODEL_NOT_READY");
+  });
+
+  it("requires a full matching baseline and measured frontier stability", async () => {
+    const runs = await syntheticArm();
+    const partialBaseline = readinessGate({ manifest, modelRuns: relabel(runs, "LIVE_MODEL"), baselineRuns: relabel(runs.slice(0, 1), "BASELINE"), stability: measured });
+    expect(partialBaseline.hard.find((h) => h.name === "case-matched baseline coverage")!.passed).toBe(false);
+    const noStability = readinessGate({ manifest, modelRuns: relabel(runs, "LIVE_MODEL"), baselineRuns: relabel(runs, "BASELINE") });
+    expect(noStability.frontierStabilityStatus).toBe("NOT_MEASURED");
+    expect(noStability.decision).toBe("AGENT_MODEL_NOT_READY");
+    const twoRuns = readinessGate({ manifest, modelRuns: relabel(runs, "LIVE_MODEL"), baselineRuns: relabel(runs, "BASELINE"), stability: { "S-1": { runs: 2 } } });
+    expect(twoRuns.frontierStabilityStatus).toBe("INCOMPLETE");
+  });
+
+  it("detects material regressions versus the baseline", async () => {
+    const runs = await syntheticArm();
+    const baseline = relabel(runs, "BASELINE");
+    const failing = relabel(runs, "LIVE_MODEL").map((r) => ({ ...r, failures: ["status FAILED, expected COMPLETE"] }));
+    const gate = readinessGate({ manifest, modelRuns: failing, baselineRuns: baseline, stability: measured });
+    expect(gate.decision).toBe("AGENT_MODEL_NOT_READY");
+    expect(gate.reasons.join(" ")).toMatch(/material regression vs baseline: runs_passed/u);
   });
 
   it("counts accepted unsupported claims and permission violations from the result itself", async () => {

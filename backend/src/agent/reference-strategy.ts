@@ -16,12 +16,20 @@
  *   evidence availability     a probe with ≥ MIN_REFERENCE_POOL eligible members
  * Excluded: operational tags, concepts already anchoring a territory, and concepts that duplicate a
  * territory (ConceptDeduplicator layer 1). Every candidate carries a recorded justification.
+ *
+ * v2 (Sprint 5A): "Qloo returned two eligible entities" is not "a meaningful comparison territory". Each candidate
+ * also carries the SemanticComparisonValidator verdict (semantic-comparison.ts); only MEANINGFUL candidates are
+ * usable, and they rank first. `referencePlan` states the exact outstanding requirement (how many references are
+ * still needed, which candidates were rejected and why, and whether FULL is still feasible within the budget).
  */
 import { matchOperationalRule, tagNamespace } from "../methodology/operational-tags.js";
 import { exemplarCandidates } from "./candidate-discovery.js";
 import { deterministicDuplicate, structuralDuplicate } from "./concept-dedup.js";
 import type { RankableType } from "./contracts.js";
-import { activeTerritories, type AgentRunState } from "./state.js";
+import { analysisReserve } from "./analysis-runner.js";
+import { MIN_COMPARISON_SET } from "./router.js";
+import { assessReferenceConcept, assessReferenceTerritory, type ReferenceVerdict } from "./semantic-comparison.js";
+import { activeTerritories, remainingQlooCalls, type AgentRunState } from "./state.js";
 
 /** A reference concept is usable only if Qloo returns at least this many eligible members of the type. */
 export const MIN_REFERENCE_POOL = 2;
@@ -42,6 +50,8 @@ export type ReferenceCandidate = {
   /** Set when the probe shows the concept duplicates an existing territory in Qloo structure. */
   duplicateOf: string | null;
   justification: string;
+  /** Sprint 5A: semantic comparison verdict (only MEANINGFUL candidates are usable). */
+  semantic: Pick<ReferenceVerdict, "status" | "reasonCode" | "explanation">;
 };
 
 export function namespaceKey(tagId: string): string {
@@ -129,6 +139,7 @@ export function referenceCandidates(state: AgentRunState): ReferenceCandidate[] 
       eligible !== null ? `Qloo returned ${eligible} eligible ${entityType} member(s) in a brand-independent pool` : null,
       structural ? `its Qloo members largely coincide with ${structural.label} (near-duplicate, not usable)` : null,
     ].filter(Boolean);
+    const verdict = assessReferenceConcept(state, tagId);
     candidates.push({
       tagId,
       label,
@@ -138,12 +149,13 @@ export function referenceCandidates(state: AgentRunState): ReferenceCandidate[] 
       namespaceMatchesTarget: targetNamespaces.has(namespace),
       namespaceYield: nsYield,
       probe: eligible === null ? null : { entityType, eligible },
-      usable: eligible === null ? null : eligible >= MIN_REFERENCE_POOL && !structural,
+      usable: verdict.status !== "MEANINGFUL" ? false : eligible === null ? null : eligible >= MIN_REFERENCE_POOL && !structural,
       duplicateOf: structural?.key ?? null,
       justification: parts.join("; "),
+      semantic: { status: verdict.status, reasonCode: verdict.reasonCode, explanation: verdict.explanation },
     });
   }
-  const rank = (c: ReferenceCandidate) => [c.usable === true ? 0 : c.usable === null ? 1 : 2, c.namespaceYield === "productive" ? 0 : c.namespaceYield === "untested" ? 1 : 2, c.namespaceMatchesTarget ? 0 : 1, -c.support, c.sources.length > 1 ? 0 : 1];
+  const rank = (c: ReferenceCandidate) => [c.semantic.status === "MEANINGFUL" ? 0 : 1, c.usable === true ? 0 : c.usable === null ? 1 : 2, c.namespaceYield === "productive" ? 0 : c.namespaceYield === "untested" ? 1 : 2, c.namespaceMatchesTarget ? 0 : 1, -c.support, c.sources.length > 1 ? 0 : 1];
   return candidates.sort((a, b) => {
     const ra = rank(a);
     const rb = rank(b);
@@ -152,9 +164,94 @@ export function referenceCandidates(state: AgentRunState): ReferenceCandidate[] 
   });
 }
 
-/** Represented rankable territories of the reference entity type (targets + references). */
+/**
+ * Represented rankable territories of the reference entity type (targets + references). v2: a reference the
+ * semantic comparison validator would reject does not count (a set completed with junk is not complete).
+ */
 export function comparisonSetSize(state: AgentRunState): number {
   const type = referenceEntityType(state);
   if (!type) return 0;
-  return activeTerritories(state).filter((t) => t.representation?.entityType === type).length;
+  return activeTerritories(state).filter((t) => t.representation?.entityType === type && (t.role !== "reference" || assessReferenceTerritory(state, t)?.status === "MEANINGFUL")).length;
 }
+
+/** Qloo calls one more reference typically needs: a brand-independent probe and a primary-exemplar profile. */
+export const REFERENCE_CALL_COST = 2;
+/** Turns a reference needs after the probe (propose + anchor + validate fit in one) plus the analysis turn. */
+export const REFERENCE_TURN_COST = 2;
+
+export type ReferencePlan = {
+  applicable: boolean;
+  entityType: RankableType | null;
+  required: number;
+  valid: number;
+  pending: string[];
+  needed: number;
+  meaningfulCandidates: { tagId: string; label: string; usable: boolean | null }[];
+  rejectedCandidates: { tagId: string; label: string; status: string; reasonCode: string; explanation: string }[];
+  feasible: boolean;
+  reason: string;
+  /** The exact outstanding requirement, phrased as an instruction (shown to the model). */
+  outstanding: string | null;
+};
+
+/**
+ * Deterministic reference-construction plan for a single move or a two-territory comparison: how many
+ * meaningful references are still needed, and whether a FULL relative analysis is still feasible within the
+ * remaining iterations, Qloo calls, candidate slots and skill budget. When it is not, analysis proceeds and the
+ * result is an honest PARTIAL.
+ */
+export function referencePlan(state: AgentRunState): ReferencePlan {
+  const intent = state.interpretation?.intent;
+  const entityType = referenceEntityType(state);
+  const empty: ReferencePlan = { applicable: false, entityType, required: MIN_COMPARISON_SET, valid: 0, pending: [], needed: 0, meaningfulCandidates: [], rejectedCandidates: [], feasible: false, reason: "", outstanding: null };
+  if ((intent !== "analyze_move" && intent !== "compare_territories") || !state.brand.entity || !entityType) return { ...empty, reason: "no represented target yet, or not a move / comparison" };
+  const active = activeTerritories(state);
+  if (active.some((t) => t.role === "target" && t.status === "analyzed")) return { ...empty, applicable: true, entityType, reason: "the targets are already analyzed" };
+  const valid = comparisonSetSize(state);
+  const pending = active.filter((t) => t.role === "reference" && !t.representation && t.status !== "analyzed" && (!t.concept || assessReferenceTerritory(state, t)?.status === "MEANINGFUL")).map((t) => t.key);
+  const needed = Math.max(0, MIN_COMPARISON_SET - valid - pending.length);
+  const candidates = referenceCandidates(state);
+  const meaningful = candidates.filter((c) => c.semantic.status === "MEANINGFUL" && c.usable !== false && c.namespaceYield !== "unproductive");
+  const rejected = candidates.filter((c) => c.semantic.status !== "MEANINGFUL" || c.usable === false).slice(0, 6).map((c) => ({ tagId: c.tagId, label: c.label, status: c.semantic.status === "MEANINGFUL" ? "NO_MEMBERS" : c.semantic.status, reasonCode: c.semantic.status === "MEANINGFUL" ? (c.duplicateOf ? "NEAR_DUPLICATE" : "NO_ELIGIBLE_MEMBERS") : c.semantic.reasonCode, explanation: c.semantic.status === "MEANINGFUL" ? c.justification : c.semantic.explanation }));
+  const base = { applicable: true, entityType, required: MIN_COMPARISON_SET, valid, pending, needed, meaningfulCandidates: meaningful.slice(0, 8).map((c) => ({ tagId: c.tagId, label: c.label, usable: c.usable })), rejectedCandidates: rejected };
+  if (valid >= MIN_COMPARISON_SET) return { ...base, feasible: false, reason: `the comparison set already has ${valid} meaningful ${entityType} territories`, outstanding: null };
+  const iterationsLeft = state.limits.maxAgentIterations - state.usage.iterations;
+  const brand = state.brand.entity;
+  const discovery = [
+    ...(state.profiles.has(brand.id) ? [] : [{ id: brand.id, label: `the brand ${brand.label}` }]),
+    ...active.filter((t) => t.role === "target").flatMap((t) => (t.representation?.exemplars ?? []).filter((e) => e.quality === "VALID" && !state.profiles.has(e.id)).map((e) => ({ id: e.id, label: e.label }))),
+  ];
+  const ready = active.filter((t) => t.status !== "analyzed" && (t.representation || t.conceptOnly));
+  const callsNeeded = needed * REFERENCE_CALL_COST + pending.length + analysisReserve(state, ready) + needed + Math.min(discovery.length, 4);
+  const skill = state.skillUsage.get("build_comparison_set");
+  const blocked =
+    skill?.exhausted || skill?.qlooSpent
+      ? "the comparison-set skill budget is spent"
+      : state.territories.length + needed > state.limits.maxCandidateTerritories
+          ? "no candidate-territory slot left for more references"
+          : iterationsLeft < REFERENCE_TURN_COST + 1
+            ? `only ${iterationsLeft} turn(s) left; reference construction needs ${REFERENCE_TURN_COST + 1}`
+            : remainingQlooCalls(state) < callsNeeded
+              ? `${remainingQlooCalls(state)} Qloo call(s) left; references and analysis need about ${callsNeeded}`
+              : needed > 0 && meaningful.length < needed && discovery.length === 0
+                ? `only ${meaningful.length} semantically meaningful reference candidate(s) with possible ${entityType} members; ${needed} needed`
+                : null;
+  if (blocked) return { ...base, feasible: false, reason: `FULL is not feasible: ${blocked}; analysis will be partial`, outstanding: null };
+  // Candidates come from the brand profile and the target exemplars' profiles: until those are collected,
+  // "no candidate" means "not yet discovered", not "none exists".
+  if (needed > 0 && meaningful.length < needed && discovery.length > 0) {
+    return { ...base, feasible: true, reason: `reference discovery pending: ${discovery.length} tag profile(s) not yet collected`, outstanding: `Reference candidates are found on tag profiles that are not collected yet: fetch ${discovery.map((d) => d.label).join(", ")} with qloo_get_entity_tags, then choose ${needed} meaningful ${entityType} reference(s) from referenceCandidates. If none is meaningful, analyze and accept a PARTIAL result.` };
+  }
+  const pendingText = pending.length ? ` ${pending.length} proposed reference(s) (${pending.join(", ")}) still need a validated ${entityType} representation.` : "";
+  const outstanding =
+    needed > 0
+      ? `${needed} more meaningful ${entityType} reference territor${needed === 1 ? "y is" : "ies are"} required for a relative position (have ${valid} of ${MIN_COMPARISON_SET}).${pendingText} Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent ${entityType} pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result.`
+      : `${pendingText.trim()} Represent them, then analyze all ${MIN_COMPARISON_SET} together.`;
+  return { ...base, feasible: true, reason: `FULL is feasible: ${needed} reference(s) needed, ${meaningful.length} meaningful candidate(s), ${remainingQlooCalls(state)} Qloo call(s) and ${iterationsLeft} turn(s) left`, outstanding };
+}
+
+/**
+ * After this many deferred `analyze` decisions the runtime stops deferring: the agent saw the exact requirement and
+ * still chose to analyze, so the result is an honest PARTIAL. Reference construction itself stays available.
+ */
+export const MAX_REFERENCE_DEFERRALS = 1;

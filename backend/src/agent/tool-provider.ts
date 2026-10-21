@@ -52,6 +52,8 @@ export class QlooToolProvider implements AgentToolProvider {
   readonly mode: "live" | "scripted";
   readonly evidenceSource: string;
   private lastCall = 0;
+  /** Sprint 5A latency telemetry: time spent waiting on call spacing and on rate-limit back-off. */
+  readonly waits = { spacingMs: 0, rateLimitMs: 0 };
 
   constructor(
     private readonly transport: QlooTransport,
@@ -70,7 +72,10 @@ export class QlooToolProvider implements AgentToolProvider {
     const maxRetries = Math.min(this.options.maxRetries ?? 1, callOptions.maxRetries ?? 1);
     for (let attempt = 1; ; attempt += 1) {
       const wait = this.lastCall + this.options.spacingMs - Date.now();
-      if (wait > 0) await this.sleep(wait);
+      if (wait > 0) {
+        this.waits.spacingMs += wait;
+        await this.sleep(wait);
+      }
       this.lastCall = Date.now();
       const capturedAt = (this.options.now ?? (() => new Date()))().toISOString();
       let call: LiveCall | undefined;
@@ -92,7 +97,10 @@ export class QlooToolProvider implements AgentToolProvider {
 
       if (failure) {
         if (failure.code !== "QLOO_AUTH" && failure.retryable && attempt <= maxRetries) {
-          if (failure.code === "QLOO_RATE_LIMIT") await this.sleep(this.options.rateLimitWaitMs ?? 60_000);
+          if (failure.code === "QLOO_RATE_LIMIT") {
+            this.waits.rateLimitMs += this.options.rateLimitWaitMs ?? 60_000;
+            await this.sleep(this.options.rateLimitWaitMs ?? 60_000);
+          }
           continue;
         }
         return { outcome: "failed", ...failure, attempts: attempt };

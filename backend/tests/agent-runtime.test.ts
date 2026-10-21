@@ -25,6 +25,9 @@ function moveSteps(): ScriptStep[] {
       call("validate_territory_representation", { territoryKey: "tableware", entityType: "brand", exemplars: [{ id: "SYN-BR-0201", reason: "craft studio" }, { id: "SYN-BR-0204", reason: "heritage house" }] }),
     ],
     [{ action: "analyze", targetIds: ["tableware"], reasonSummary: "evidence gathered" }],
+    // Sprint 5A: a first early analyze of a target is deferred once (REFERENCES_PENDING) while references are
+    // constructible; repeating it proceeds, and the result is an honest PARTIAL.
+    [{ action: "analyze", targetIds: ["tableware"], reasonSummary: "accept a partial result" }],
     [{ action: "finish", resultIds: ["tableware"], reasonSummary: "done" }],
   ];
 }
@@ -151,7 +154,7 @@ describe("runtime control flow", () => {
   });
 
   it("finalizes on deterministic sufficiency when the model keeps calling tools", async () => {
-    const steps: ScriptStep[] = [...moveSteps().slice(0, 5), [call("qloo_find_tags", { query: "more please" })], [call("qloo_find_tags", { query: "even more" })]];
+    const steps: ScriptStep[] = [...moveSteps().slice(0, 6), [call("qloo_find_tags", { query: "more please" })], [call("qloo_find_tags", { query: "even more" })]];
     const result = asResult(await runtime(new ScriptedAgentModel(steps)).runtime.run({ userQuery: "q" }));
     expect(result.status).toBe("COMPLETE");
     expect(result.trace.toolCalls.filter((c) => c.status === "rejected").map((c) => c.error)).toContain("EVIDENCE_SUFFICIENT");

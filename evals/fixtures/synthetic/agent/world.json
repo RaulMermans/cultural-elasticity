@@ -206,6 +206,61 @@
    "id": "urn:tag:interests:syn:hot_springs",
    "name": "Hot Springs",
    "type": "urn:tag:interests:syn"
+  },
+  {
+   "id": "urn:tag:activity_type:syn:stream_angling",
+   "name": "Stream Angling",
+   "type": "urn:tag:activity_type:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:stream_angling",
+   "name": "Stream Angling",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:lifestyle:syn:stream_angling",
+   "name": "Stream Angling",
+   "type": "urn:tag:lifestyle:syn"
+  },
+  {
+   "id": "urn:tag:amenity:syn:breakfast_buffet",
+   "name": "Breakfast Buffet",
+   "type": "urn:tag:amenity:syn"
+  },
+  {
+   "id": "urn:tag:dining_option:syn:breakfast_available",
+   "name": "Breakfast Available",
+   "type": "urn:tag:dining_option:syn"
+  },
+  {
+   "id": "urn:tag:decor:syn:rustic_charm",
+   "name": "Rustic Charm",
+   "type": "urn:tag:decor:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:river_lodge",
+   "name": "River Lodge",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:insulated_coolers",
+   "name": "Insulated Coolers",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:overbuilt_hardware",
+   "name": "Overbuilt Hardware",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:backwoods",
+   "name": "Backwoods",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:ridge_walking",
+   "name": "Ridge Walking",
+   "type": "urn:tag:keyword:syn"
   }
  ],
  "entities": [
@@ -920,6 +975,173 @@
     "urn:tag:product_category:syn:cafe_culture",
     "urn:tag:keyword:syn:espresso_ritual",
     "urn:tag:keyword:syn:craft"
+   ]
+  },
+  {
+   "id": "SYN-BR-2001",
+   "name": "Granite Hollow",
+   "type": "brand",
+   "popularity": 0.93,
+   "tags": [
+    "urn:tag:industry:syn:insulated_coolers",
+    "urn:tag:keyword:syn:overbuilt_hardware"
+   ]
+  },
+  {
+   "id": "SYN-BR-2002",
+   "name": "Pine Hollow Supply",
+   "type": "brand",
+   "popularity": 0.92,
+   "tags": [
+    "urn:tag:industry:syn:insulated_coolers",
+    "urn:tag:keyword:syn:backwoods",
+    "urn:tag:keyword:syn:ridge_walking"
+   ]
+  },
+  {
+   "id": "SYN-BR-2003",
+   "name": "Basalt Coolerworks",
+   "type": "brand",
+   "popularity": 0.71,
+   "tags": [
+    "urn:tag:industry:syn:insulated_coolers",
+    "urn:tag:keyword:syn:overbuilt_hardware",
+    "urn:tag:amenity:syn:breakfast_buffet",
+    "urn:tag:keyword:syn:ridge_walking"
+   ]
+  },
+  {
+   "id": "SYN-BR-2004",
+   "name": "Ironbark Provisions",
+   "type": "brand",
+   "popularity": 0.69,
+   "tags": [
+    "urn:tag:industry:syn:insulated_coolers",
+    "urn:tag:keyword:syn:overbuilt_hardware",
+    "urn:tag:amenity:syn:breakfast_buffet",
+    "urn:tag:keyword:syn:ridge_walking"
+   ]
+  },
+  {
+   "id": "SYN-PL-2001",
+   "name": "Alder Bend Lodge",
+   "type": "place",
+   "popularity": 0.81,
+   "tags": [
+    "urn:tag:activity_type:syn:stream_angling",
+    "urn:tag:amenity:syn:breakfast_buffet",
+    "urn:tag:keyword:syn:river_lodge"
+   ]
+  },
+  {
+   "id": "SYN-PL-2002",
+   "name": "Cutbank Cabins",
+   "type": "place",
+   "popularity": 0.79,
+   "tags": [
+    "urn:tag:activity_type:syn:stream_angling",
+    "urn:tag:dining_option:syn:breakfast_available",
+    "urn:tag:decor:syn:rustic_charm"
+   ]
+  },
+  {
+   "id": "SYN-PL-2003",
+   "name": "Tailwater Camp",
+   "type": "place",
+   "popularity": 0.77,
+   "tags": [
+    "urn:tag:activity_type:syn:stream_angling"
+   ]
+  },
+  {
+   "id": "SYN-PL-2004",
+   "name": "Junction Inn",
+   "type": "place",
+   "popularity": 0.74,
+   "tags": [
+    "urn:tag:amenity:syn:breakfast_buffet",
+    "urn:tag:dining_option:syn:breakfast_available",
+    "urn:tag:decor:syn:rustic_charm"
+   ]
+  },
+  {
+   "id": "SYN-PL-2005",
+   "name": "Depot Suites",
+   "type": "place",
+   "popularity": 0.73,
+   "tags": [
+    "urn:tag:amenity:syn:breakfast_buffet",
+    "urn:tag:dining_option:syn:breakfast_available",
+    "urn:tag:decor:syn:rustic_charm"
+   ]
+  },
+  {
+   "id": "SYN-PL-2006",
+   "name": "Mill Street Hotel",
+   "type": "place",
+   "popularity": 0.72,
+   "tags": [
+    "urn:tag:amenity:syn:breakfast_buffet",
+    "urn:tag:dining_option:syn:breakfast_available",
+    "urn:tag:decor:syn:rustic_charm",
+    "urn:tag:keyword:syn:river_lodge"
+   ]
+  },
+  {
+   "id": "SYN-PL-2007",
+   "name": "Ferry Road Motel",
+   "type": "place",
+   "popularity": 0.7,
+   "tags": [
+    "urn:tag:amenity:syn:breakfast_buffet",
+    "urn:tag:dining_option:syn:breakfast_available",
+    "urn:tag:decor:syn:rustic_charm",
+    "urn:tag:keyword:syn:river_lodge"
+   ]
+  },
+  {
+   "id": "SYN-PL-2008",
+   "name": "Hemlock Hollow Camp",
+   "type": "place",
+   "popularity": 0.68,
+   "tags": [
+    "urn:tag:keyword:syn:backwoods"
+   ]
+  },
+  {
+   "id": "SYN-PL-2009",
+   "name": "Sawtooth Hut",
+   "type": "place",
+   "popularity": 0.67,
+   "tags": [
+    "urn:tag:keyword:syn:backwoods"
+   ]
+  },
+  {
+   "id": "SYN-PL-2010",
+   "name": "Crestline Refuge",
+   "type": "place",
+   "popularity": 0.66,
+   "tags": [
+    "urn:tag:keyword:syn:ridge_walking"
+   ]
+  },
+  {
+   "id": "SYN-PL-2011",
+   "name": "Saddle Pass Hut",
+   "type": "place",
+   "popularity": 0.65,
+   "tags": [
+    "urn:tag:keyword:syn:ridge_walking"
+   ]
+  },
+  {
+   "id": "SYN-PL-2012",
+   "name": "Highline Bothy",
+   "type": "place",
+   "popularity": 0.64,
+   "tags": [
+    "urn:tag:keyword:syn:ridge_walking"
    ]
   }
  ],

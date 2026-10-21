@@ -19,7 +19,7 @@ describe("agent API", () => {
     const res = await app().inject({ method: "POST", url: "/api/agent/analyze", payload: { query: "Could Northwind Atelier enter boutique hospitality?", brand: "Northwind Atelier", territories: ["Boutique Hospitality"], model: "baseline" } });
     expect(res.statusCode).toBe(200);
     const body = res.json();
-    expect(body).toMatchObject({ schemaVersion: "ce-agent-result/0.2", status: "COMPLETE", intent: "analyze_move", evidenceOrigin: "synthetic" });
+    expect(body).toMatchObject({ schemaVersion: "ce-agent-result/0.3", status: "COMPLETE", intent: "analyze_move", evidenceOrigin: "synthetic" });
     expect(body.territories.length).toBeGreaterThan(0);
     expect(body.trace.toolCalls.length).toBeGreaterThan(0);
   });

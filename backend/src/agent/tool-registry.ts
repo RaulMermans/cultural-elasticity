@@ -20,6 +20,7 @@ import { strategyExhausted } from "./readiness.js";
 import { referenceCandidates } from "./reference-strategy.js";
 import { validateTerritoryRepresentation } from "./representation-planner.js";
 import { resolveInterpretation } from "./router.js";
+import { assessReferenceConcept, incidentalConcept } from "./semantic-comparison.js";
 import { activeTerritories, addTerritory, derivePhase, findTerritory, recordEntity, type AgentRunState } from "./state.js";
 import type { AgentToolProvider } from "./tool-provider.js";
 
@@ -87,12 +88,14 @@ const interpretRequest: AgentTool<{ intent: (typeof AGENT_INTENTS)[number]; bran
   },
 };
 
-const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier_candidate"; origin: "agent_hypothesis" | "qloo_evidence"; rationale: string; evidenceTagIds?: string[] | undefined }> = {
+const semanticSchema = z.strictObject({ relevance: z.enum(["strong", "adequate", "weak", "mismatch"]), reason: text.max(300) });
+
+const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier_candidate"; origin: "agent_hypothesis" | "qloo_evidence"; rationale: string; evidenceTagIds?: string[] | undefined; semantic?: { relevance: "strong" | "adequate" | "weak" | "mismatch"; reason: string } | undefined }> = {
   name: "propose_territory",
   description:
-    "Add a territory hypothesis. role=frontier_candidate (explore_frontier only) or role=reference (a comparison territory that lets the methodology place targets relative to a set of ≥3 territories). origin=qloo_evidence requires evidenceTagIds already returned by Qloo in this run; origin=agent_hypothesis is a lateral idea that must still be found in Qloo, anchored and shown to have Qloo members, or it is dropped. Exact duplicates of an existing territory (same or plural label) are refused.",
+    "Add a territory hypothesis (no Qloo call). role=reference: a comparison territory so a single move can be placed in a set of ≥3 territories of one entity type — pick it from referenceCandidates with semantic MEANINGFUL, pass its tag in evidenceTagIds, and give your semantic judgment (is it a meaningful cultural alternative to the target, at the same analytical level? strong|adequate|weak|mismatch + reason; weak/mismatch removes it). Venue amenities, decor and operational tags are refused. role=frontier_candidate: explore_frontier only. origin=qloo_evidence requires evidenceTagIds returned by Qloo in this run; origin=agent_hypothesis must later be found in Qloo, anchored and shown to have members, or it is dropped. Exact duplicates are refused. Next step: anchor_territory.",
   permission: "local_computation",
-  inputSchema: z.strictObject({ label: text.max(120), role: z.enum(["reference", "frontier_candidate"]), origin: z.enum(["agent_hypothesis", "qloo_evidence"]), rationale: text.max(400), evidenceTagIds: z.array(text).max(5).optional() }),
+  inputSchema: z.strictObject({ label: text.max(120), role: z.enum(["reference", "frontier_candidate"]), origin: z.enum(["agent_hypothesis", "qloo_evidence"]), rationale: text.max(400), evidenceTagIds: z.array(text).max(5).optional(), semantic: semanticSchema.optional() }),
   maxQlooCalls: 0,
   phases: AFTER_BRAND,
   precondition(state, input) {
@@ -105,6 +108,8 @@ const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier
       if (!input.evidenceTagIds?.length) return "origin qloo_evidence requires evidenceTagIds";
       const missing = input.evidenceTagIds.find((id) => !state.tags.has(id));
       if (missing) return `evidence tag ${missing} was not returned by Qloo in this run`;
+      const incidental = input.evidenceTagIds.map((id) => [id, incidentalConcept(id)] as const).find(([, x]) => x);
+      if (incidental) return `${incidental[0]} is a ${incidental[1]!.explanation}; choose a cultural concept`;
     }
     return undefined;
   },
@@ -112,6 +117,7 @@ const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier
     const reference = input.role === "reference" ? referenceCandidates(state).find((c) => input.evidenceTagIds?.includes(c.tagId)) : undefined;
     const evidence = input.origin === "qloo_evidence" ? `Qloo tag(s) ${(input.evidenceTagIds ?? []).join(", ")}${reference ? `; ${reference.justification}` : ""}` : `agent hypothesis: ${input.rationale}`;
     const t = addTerritory(state, { label: input.label, role: input.role, origin: input.origin, rationale: input.rationale, source: input.role === "reference" ? "reference_strategy" : input.origin === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded", sourceEvidence: evidence.slice(0, 400) });
+    if (input.semantic) t.semanticJudgment = { relevance: input.semantic.relevance.toUpperCase() as "STRONG" | "ADEQUATE" | "WEAK" | "MISMATCH", reason: input.semantic.reason.trim() };
     const near = state.territories.filter((o) => o.key !== t.key && o.status !== "dropped" && deterministicDuplicate({ label: o.label, conceptId: o.concept?.id ?? null }, { label: t.label, conceptId: null })?.verdict === "NEAR_DUPLICATE").map((o) => o.label);
     return { status: "ok", summary: `added ${t.key}${near.length ? ` (word-family match with ${near.join(", ")}: it will be dropped as a near-duplicate unless assess_concept_duplicates judges it distinct)` : ""}`, data: { key: t.key } };
   },
@@ -119,7 +125,7 @@ const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier
 
 const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
   name: "anchor_territory",
-  description: "Anchor a territory to a Qloo concept tag returned in this run (by qloo_find_tags or a tag profile). Two territories cannot share a concept (exact duplicates are refused).",
+  description: "No Qloo call. Anchor a territory to one Qloo concept tag returned in this run (by qloo_find_tags or a tag profile). Use it once a tag clearly names the territory, preferably one Qloo returned members for. Two territories cannot share a concept. A reference anchored to a non-meaningful concept (venue attribute, weak tie) is dropped with the reason. Next: qloo_recommend on the concept, then validate_territory_representation.",
   permission: "local_computation",
   inputSchema: z.strictObject({ territoryKey: text, tagId: text }),
   maxQlooCalls: 0,
@@ -139,6 +145,17 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
   async execute({ state }, input) {
     const t = findTerritory(state, input.territoryKey)!;
     const tag = state.tags.get(input.tagId)!;
+    if (t.role === "reference") {
+      // Sprint 5A: a reference must be a meaningful comparison territory before any Qloo call is spent on it.
+      const verdict = assessReferenceConcept(state, tag.id, t.semanticJudgment);
+      if (verdict.status !== "MEANINGFUL") {
+        t.status = "dropped";
+        const detail = `${tag.label}: ${verdict.status} — ${verdict.explanation}`;
+        t.dropReason = { code: "SEMANTIC_REFERENCE_REJECTED", detail };
+        state.candidateRejections.push({ key: t.key, stage: "semantic", code: verdict.reasonCode, reason: detail });
+        return { status: "failed", summary: `SEMANTIC_REFERENCE_REJECTED: ${t.key} dropped — ${tag.label} is ${verdict.status} as a comparison territory (${verdict.explanation}). Choose another referenceCandidate with semantic MEANINGFUL, or analyze and accept a PARTIAL result.`, errorCode: "SEMANTIC_REFERENCE_REJECTED" };
+      }
+    }
     const changed = t.concept !== null && t.concept.id !== tag.id;
     t.concept = { id: tag.id, label: tag.label, type: tag.type };
     if (changed) t.representation = null;
@@ -147,12 +164,10 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
   },
 };
 
-const semanticSchema = z.strictObject({ relevance: z.enum(["strong", "adequate", "weak", "mismatch"]), reason: text.max(300) });
-
 const validateRepresentation: AgentTool<{ territoryKey: string; entityType: RankableType; exemplars: { id: string; reason: string; semantic?: { relevance: "strong" | "adequate" | "weak" | "mismatch"; reason: string } | undefined }[] }> = {
   name: "validate_territory_representation",
   description:
-    "Propose exemplar entities (1–3, preferably 3, ids returned by Qloo in this run) that represent an anchored territory, each with a short selection reason and optionally your semantic judgment (relevance strong|adequate|weak|mismatch + reason). The deterministic quality evaluator checks Qloo links each one to the concept through brand-independent evidence, one entity type, no duplicates or name families, not the brand, and — when peer profiles are known — that it is not a cultural outlier among Qloo's members. Your judgment is advisory: it can remove a candidate, never add Qloo support. If only weak exemplars survive, the representation is refused. A (concept, type) strategy that fails twice is exhausted.",
+    "No Qloo call. Propose exemplar entities (1–3, preferably 3, ids returned by Qloo in this run) that represent an anchored territory, each with a short selection reason and optionally your semantic judgment (relevance strong|adequate|weak|mismatch + reason). The deterministic quality evaluator checks Qloo links each one to the concept through brand-independent evidence, one entity type, no duplicates or name families, not the brand, and — when peer profiles are known — that it is not a cultural outlier among Qloo's members. Your judgment is advisory: it can remove a candidate, never add Qloo support. If only weak exemplars survive, the representation is refused. A (concept, type) strategy that fails twice is exhausted.",
   permission: "local_computation",
   inputSchema: z.strictObject({ territoryKey: text, entityType: rankableType, exemplars: z.array(z.strictObject({ id: text, reason: text.max(300), semantic: semanticSchema.optional() })).min(1).max(6) }),
   maxQlooCalls: 0,
@@ -190,7 +205,7 @@ const validateRepresentation: AgentTool<{ territoryKey: string; entityType: Rank
 const declareConceptOnly: AgentTool<{ territoryKey: string; reason: string }> = {
   name: "declare_concept_only",
   description:
-    "Recovery step: represent an anchored territory by concept-level evidence only (brand-conditioned Qloo results for the concept) instead of an exemplar panel, when Qloo's candidates are weak or absent. The territory then gets a partial or descriptive route, never a relative position. Use it instead of forcing a weak panel.",
+    "No Qloo call. Recovery step of last resort: represent an anchored territory by concept-level evidence only (brand-conditioned results for the concept) when recoveryGuidance shows no remaining strategy. The territory then gets a partial or descriptive route, never a relative position. Use it instead of forcing a weak panel; not while an available strategy remains.",
   permission: "local_computation",
   inputSchema: z.strictObject({ territoryKey: text, reason: text.max(300) }),
   maxQlooCalls: 0,
@@ -234,7 +249,7 @@ const assessConceptDuplicates: AgentTool<{ judgments: { a: string; b: string; ve
 
 const dropTerritory: AgentTool<{ territoryKey: string; code: "TERRITORY_UNRESOLVED" | "TERRITORY_AMBIGUOUS" | "NO_VALID_REPRESENTATION" | "DUPLICATE_TERRITORY" | "QLOO_EMPTY"; reason: string }> = {
   name: "drop_territory",
-  description: "Remove a territory from scope with a taxonomy code and reason (e.g. Qloo has no concept for it, or it duplicates another). It stays in the result as unsupported; it is never silently deleted.",
+  description: "No Qloo call. Remove a territory from scope with a taxonomy code and reason (Qloo has no concept for it, or it duplicates another). It stays in the result as unsupported; never silently deleted. Do not drop a user-named territory that still has a recovery option.",
   permission: "local_computation",
   inputSchema: z.strictObject({ territoryKey: text, code: z.enum(["TERRITORY_UNRESOLVED", "TERRITORY_AMBIGUOUS", "NO_VALID_REPRESENTATION", "DUPLICATE_TERRITORY", "QLOO_EMPTY"]), reason: text.max(300) }),
   maxQlooCalls: 0,
@@ -271,7 +286,7 @@ const sufficiencyTool: AgentTool<Record<string, never>> = {
 const resolveEntity: AgentTool<{ name: string; type: RankableType; role: "brand" | "other" }> = {
   name: "qloo_resolve_entity",
   description:
-    "Resolve a named entity (or a Qloo id) to a Qloo entity with qloo describe. role=brand resolves the analysis subject. Ambiguous names return candidates: the runtime resolves only when exactly one candidate has the requested type; otherwise the user must choose (ask_user).",
+    "1 Qloo call. Resolve a named entity (or a Qloo id) with qloo describe. role=brand resolves the analysis subject (once). Ambiguous names return candidates: the runtime resolves only when exactly one candidate has the requested type; otherwise ask_user. After the user answers, resolve the chosen candidate id.",
   permission: "read_only_external",
   inputSchema: z.strictObject({ name: text.max(200), type: rankableType, role: z.enum(["brand", "other"]) }),
   maxQlooCalls: 1,
@@ -324,7 +339,7 @@ const resolveEntity: AgentTool<{ name: string; type: RankableType; role: "brand"
 
 const findTags: AgentTool<{ query: string; limit: number }> = {
   name: "qloo_find_tags",
-  description: "Search Qloo's tag vocabulary for a cultural concept (semantic). Returns tag ids, names and namespaces. A territory needs one of these as its anchor.",
+  description: "1 Qloo call. Search Qloo's tag vocabulary for a territory's concept (semantic). Returns tag ids, names and namespaces; a territory needs one as its anchor. Use once per territory label; a repeated query is refused. Not for exemplars.",
   permission: "read_only_external",
   inputSchema: z.strictObject({ query: text.max(120), limit: z.number().int().min(1).max(10).default(8) }),
   maxQlooCalls: 1,
@@ -345,7 +360,7 @@ const findTags: AgentTool<{ query: string; limit: number }> = {
 
 const getEntityTags: AgentTool<{ entityId: string }> = {
   name: "qloo_get_entity_tags",
-  description: `Fetch an entity's Qloo tag profile (top ${PROFILE_TAKE}, fixed take). Use it to understand the brand, to check an exemplar's link to a concept, or to find concepts carried by related entities.`,
+  description: `1 Qloo call. Fetch an entity's Qloo tag profile (top ${PROFILE_TAKE}, fixed take). Use it for the brand profile, for candidate exemplars before validating them (the quality check compares peers), or for related entities (frontier concepts). A profile already collected is refused (it cannot grow). The entity id must have been returned by Qloo in this run.`,
   permission: "read_only_external",
   inputSchema: z.strictObject({ entityId: text }),
   maxQlooCalls: 1,
@@ -368,7 +383,7 @@ function profileView(state: AgentRunState, id: string) {
 const recommend: AgentTool<{ targetType: RankableType; tagIds: string[]; conditionOnBrand: boolean; limit: number }> = {
   name: "qloo_recommend",
   description:
-    "Entities of one type that Qloo associates with concept tag(s). conditionOnBrand=false gives a brand-independent tag-member pool (use it to discover exemplar candidates; Qloo's order here is not meaningful, popularity is shown). conditionOnBrand=true gives the brand-conditioned list for the concept (evidence about the brand; NOT a source of exemplars). Tags must have been returned by Qloo in this run.",
+    "1 Qloo call. Entities of one type that Qloo associates with concept tag(s). conditionOnBrand=false: a brand-independent member pool — use it to test whether a concept has members of an entity type and to discover exemplar candidates (order not meaningful; popularity shown). conditionOnBrand=true: the brand-conditioned list (evidence about the brand, never exemplars; analysis collects it itself). Common failures: empty pool for that type (follow recoveryGuidance: try an untried type, not the same type again), tag not observed. Tags must have been returned by Qloo in this run.",
   permission: "read_only_external",
   inputSchema: z.strictObject({ targetType: rankableType, tagIds: z.array(text).min(1).max(3), conditionOnBrand: z.boolean(), limit: z.number().int().min(1).max(20).default(20) }),
   maxQlooCalls: 1,
@@ -396,7 +411,7 @@ const recommend: AgentTool<{ targetType: RankableType; tagIds: string[]; conditi
 
 const relatedEntities: AgentTool<{ entityId: string; targetType: RankableType; limit: number }> = {
   name: "qloo_related_entities",
-  description: "Entities of a type that Qloo associates with one entity (recommend with that entity as the only signal). Use for frontier discovery: concepts carried by entities related to the brand but not by the brand itself.",
+  description: "1 Qloo call. Entities of a type that Qloo associates with one entity (that entity as the only signal). Use for frontier discovery (then fetch their tag profiles: frontierConcepts lists concepts they carry that the brand does not). Not for exemplars.",
   permission: "read_only_external",
   inputSchema: z.strictObject({ entityId: text, targetType: rankableType, limit: z.number().int().min(1).max(10).default(5) }),
   maxQlooCalls: 1,

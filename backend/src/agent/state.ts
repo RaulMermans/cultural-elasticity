@@ -74,6 +74,8 @@ export type TerritoryState = {
   strategyLog: StrategyAttempt[];
   /** Set when the agent deliberately chose concept-level evidence instead of an exemplar panel. */
   conceptOnly: string | null;
+  /** Sprint 5A: the agent's advisory semantic judgment of a reference or frontier concept (can only remove). */
+  semanticJudgment: { relevance: SemanticRelevance; reason: string } | null;
 };
 
 export type BrandState = {
@@ -107,7 +109,7 @@ export type AgentRunState = {
   methodologyRuns: MethodologyRun[];
   /** partial / degraded flags and other run-level limitations. */
   flags: Limitation[];
-  usage: { iterations: number; qlooCalls: number; invalidTurnsInRow: number; inputTokens: number; outputTokens: number; retries: number; cacheReadTokens: number; cacheCreationTokens: number; uncachedInputTokens: number; synthesisAttempts: number; qlooLatencyMs: number };
+  usage: { iterations: number; qlooCalls: number; invalidTurnsInRow: number; inputTokens: number; outputTokens: number; retries: number; cacheReadTokens: number; cacheCreationTokens: number; uncachedInputTokens: number; synthesisAttempts: number; qlooLatencyMs: number; qlooSpacingMs: number };
   pendingQuestion: { question: string; ambiguity: string; options: { id: string; label: string; type?: string }[] } | null;
   clarifications: string[];
   finishRequested: boolean;
@@ -124,7 +126,13 @@ export type AgentRunState = {
   activeSkills: SkillRef[];
   skillUsage: Map<string, { skill: SkillRef; turns: number; qlooCalls: number; toolCalls: number; exhausted: boolean; qlooSpent?: boolean }>;
   /** Comparison-set candidates removed by deterministic checks (stage + code), for the construction trace. */
-  candidateRejections: { key: string; stage: "resolution" | "qloo_support" | "representation" | "evidence" | "dedup" | "diversity" | "budget" | "agent"; code: string; reason: string }[];
+  candidateRejections: { key: string; stage: "resolution" | "qloo_support" | "representation" | "evidence" | "dedup" | "diversity" | "budget" | "agent" | "semantic"; code: string; reason: string }[];
+  /** Sprint 5A: comparison sets considered for FULL (semantic comparison validator). */
+  semanticAssessments: import("@cultural-elasticity/shared").SemanticComparisonAssessment[];
+  /** Sprint 5A: analyze decisions deferred because a meaningful comparison set was still constructible. */
+  referenceDeferrals: number;
+  /** Sprint 5A: wall-clock spent in deterministic analysis and in synthesis. */
+  timing: { analysisMs: number; synthesisMs: number };
   startedAt: number;
   trace: AgentTrace;
   toolCallCounter: number;
@@ -152,7 +160,7 @@ export function createRunState(request: AgentRequest, model: AgentModelInfo, too
     results: new Map(),
     methodologyRuns: [],
     flags: [],
-    usage: { iterations: 0, qlooCalls: 0, invalidTurnsInRow: 0, inputTokens: 0, outputTokens: 0, retries: 0, cacheReadTokens: 0, cacheCreationTokens: 0, uncachedInputTokens: 0, synthesisAttempts: 0, qlooLatencyMs: 0 },
+    usage: { iterations: 0, qlooCalls: 0, invalidTurnsInRow: 0, inputTokens: 0, outputTokens: 0, retries: 0, cacheReadTokens: 0, cacheCreationTokens: 0, uncachedInputTokens: 0, synthesisAttempts: 0, qlooLatencyMs: 0, qlooSpacingMs: 0 },
     pendingQuestion: null,
     clarifications: [],
     finishRequested: false,
@@ -164,6 +172,9 @@ export function createRunState(request: AgentRequest, model: AgentModelInfo, too
     activeSkills: [],
     skillUsage: new Map(),
     candidateRejections: [],
+    semanticAssessments: [],
+    referenceDeferrals: 0,
+    timing: { analysisMs: 0, synthesisMs: 0 },
     startedAt: Date.now(),
     toolCallCounter: 0,
     trace: {
@@ -309,6 +320,7 @@ export function addTerritory(state: AgentRunState, input: { label: string; role:
     sourceEvidence: input.sourceEvidence ?? input.rationale,
     strategyLog: [],
     conceptOnly: null,
+    semanticJudgment: null,
   };
   state.territories.push(territory);
   return territory;

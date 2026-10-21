@@ -44,6 +44,14 @@ Rules for any human or AI agent working in this repository.
 
 Agent runs report the model honestly: a run driven by the scripted model or the baseline reference policy is not a live agent-model validation (`LIVE_AGENT_MODEL_VALIDATION_NOT_RUN`).
 
+## Model and semantic validity (permanent, from Sprint 5A)
+
+1. **Claude Haiku 5.5 (`claude-haiku-5-5`) is the sole production model.** No fallback model, no escalation, no router. `AGENT_MODEL` may override it for development only; readiness is judged on Haiku runs alone, and model id and effort are recorded in every trace.
+2. **Structural validity is not semantic validity.** A FULL relative analysis also requires the SemanticComparisonValidator (`semantic-comparison.ts`) to accept its comparison set. Venue-listing attributes and operational tags are never references, and a reference needs a Qloo tie to the question. A model judgment can veto a reference; it can never make one meaningful.
+3. **An honest PARTIAL beats a misleading FULL.** Do not optimize the FULL rate. Evaluations report semantically valid and invalid FULL results and meaningful PARTIAL results separately from the historical route mix.
+4. **Readiness needs complete, case-matched evidence.** Every prescribed case must run on the readiness model, errors and omissions stay in the denominator, the baseline covers the same cases, and frontier stability is measured. Anything less is `AGENT_MODEL_NOT_READY`.
+5. **Numbers are grounded per scope.** A claim may only use values of the territory (and the result fields) it is about. Validator changes need evidence from traces: fix a proven false positive, never relax a rule to raise acceptance.
+
 ## Engineering
 
 - Keep **frontend/backend boundaries clean.** The frontend talks only to the backend. Only the backend talks to Qloo, through `QlooClient` (`backend/src/qloo`).
@@ -62,6 +70,7 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:secrets
 pnpm eval:methodology   # offline, synthetic; never report as Qloo validation
 pnpm eval:agent         # offline, synthetic world; never report as Qloo or live-model validation
-pnpm eval:agent:live    # live Qloo; BASELINE and LIVE_MODEL arms reported separately (model arm needs ANTHROPIC_API_KEY)
+pnpm eval:agent:live -- --arms baseline,model --stability 3
+                        # live Qloo + Haiku: all 7 cases, case-matched baseline, frontier stability (model arm needs ANTHROPIC_API_KEY)
 pnpm feasibility:qloo   # live; report its result separately
 ```

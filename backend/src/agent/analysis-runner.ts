@@ -37,6 +37,7 @@ import { brandProfileFromEntityTags, callProvenance, conditionedEntitiesFromReco
 import { callQloo, PROFILE_TAKE, provenanceOf, recordPool, recordProfile } from "./qloo-gateway.js";
 import { assessDiversity, planRepresentation } from "./representation-planner.js";
 import { planComparisonGroups, selectAnalysisRoute, MIN_COMPARISON_SET, type ComparisonGroup } from "./router.js";
+import { assessComparisonGroup } from "./semantic-comparison.js";
 import { remainingQlooCalls, type AgentRunState, type TerritoryState } from "./state.js";
 import type { AgentToolProvider } from "./tool-provider.js";
 import type { RankableType } from "./contracts.js";
@@ -94,8 +95,8 @@ export async function runAnalysis(state: AgentRunState, provider: AgentToolProvi
 
   // ---- Evidence plan ----
   const planned = planComparisonGroups(state, territories);
-  let groups = planned.groups;
   const excluded = planned.excluded;
+  let groups = semanticGate(state, planned.groups, excluded, (key, limitation) => limitations.get(key)?.push(limitation));
   const conditioned = new Map<string, { evidence: ConditionedEntityEvidence; empty: boolean }>();
   const rankCalls = new Map<string, LiveCall>(); // `${groupIndex}:${panelId}` → call
 
@@ -257,12 +258,49 @@ export async function runAnalysis(state: AgentRunState, provider: AgentToolProvi
     const reason = excluded.find((e) => e.key === t.key)?.reason;
     const result = full
       ? fullResult(state, t, full.view, full.group, conditioned.get(t.key), limitations.get(t.key)!)
-      : partialResult(state, t, brandProfile, conditioned.get(t.key), [...limitations.get(t.key)!, ...(reason && t.representation ? [{ code: reason.includes("budget") ? "NOT_COLLECTED_BUDGET" : "COMPARISON_SET_TOO_SMALL", detail: reason }] : [])]);
+      : partialResult(state, t, brandProfile, conditioned.get(t.key), [...limitations.get(t.key)!, ...(reason && t.representation && !/^(semantic comparison validator|structurally invalid|no semantically meaningful)/u.test(reason) ? [{ code: reason.includes("budget") ? "NOT_COLLECTED_BUDGET" : "COMPARISON_SET_TOO_SMALL", detail: reason }] : [])]);
     state.results.set(t.key, result);
     t.status = "analyzed";
   }
   const routes = territories.map((t) => `${t.label}: ${state.results.get(t.key)!.analysisRoute}`);
   return { ok: true, analyzed: territories.map((t) => t.key), summary: routes.join("; ") };
+}
+
+/**
+ * Sprint 5A FULL gate: a structurally planned group is kept only if the semantic comparison validator accepts
+ * it. Rejected references are removed; the rest is re-assessed, and if fewer than MIN_COMPARISON_SET remain the
+ * group is not ranked: its territories degrade to PARTIAL / DESCRIPTIVE with the reason as a limitation.
+ */
+function semanticGate(state: AgentRunState, planned: ComparisonGroup[], excluded: { key: string; reason: string }[], note: (key: string, limitation: Limitation) => void): ComparisonGroup[] {
+  const kept: ComparisonGroup[] = [];
+  for (const group of planned) {
+    const members = () => group.territoryKeys.map((k) => state.territories.find((t) => t.key === k)!);
+    const first = assessComparisonGroup(state, group.entityType, members());
+    let assessment = first;
+    let current = group;
+    if (first.rejectedReferences.length > 0) {
+      const rejected = new Set(first.rejectedReferences.map((r) => r.territoryKey));
+      current = { entityType: group.entityType, territoryKeys: group.territoryKeys.filter((k) => !rejected.has(k)) };
+      for (const r of first.rejectedReferences) {
+        excluded.push({ key: r.territoryKey, reason: `semantic comparison validator: ${r.explanation}` });
+        note(r.territoryKey, { code: "SEMANTIC_REFERENCE_REJECTED", detail: r.explanation });
+        state.candidateRejections.push({ key: r.territoryKey, stage: "semantic", code: r.reasonCode, reason: r.explanation });
+      }
+      if (current.territoryKeys.length >= MIN_COMPARISON_SET) assessment = { ...assessComparisonGroup(state, current.entityType, current.territoryKeys.map((k) => state.territories.find((t) => t.key === k)!)), rejectedReferences: first.rejectedReferences };
+    }
+    const usable = assessment.structuralStatus === "VALID" && assessment.semanticStatus === "MEANINGFUL" && current.territoryKeys.length >= MIN_COMPARISON_SET;
+    state.semanticAssessments.push({ ...assessment, usedForFull: usable });
+    if (usable) {
+      kept.push(current);
+      continue;
+    }
+    const why = assessment.structuralStatus === "INVALID" ? `structurally invalid comparison set (${assessment.structuralIssues.join("; ")})` : `no semantically meaningful comparison set (${assessment.semanticStatus}): ${first.rejectedReferences.map((r) => r.explanation).join("; ")}`;
+    for (const k of current.territoryKeys) {
+      excluded.push({ key: k, reason: why });
+      note(k, { code: "SEMANTIC_COMPARISON_INVALID", detail: `${why}; a relative position is not reported` });
+    }
+  }
+  return kept;
 }
 
 function exemplarAt(state: AgentRunState, key: string, index: number) {
@@ -415,7 +453,7 @@ function fullResult(state: AgentRunState, t: TerritoryState, view: TerritoryElas
     ...baseResult(state, t),
     analysisRoute: selectAnalysisRoute(capabilities),
     capabilities,
-    comparisonSet: { territoryKeys: group.territoryKeys, labels, methodologyVersion: METHODOLOGY_VERSION },
+    comparisonSet: { territoryKeys: group.territoryKeys, labels, methodologyVersion: METHODOLOGY_VERSION, semanticStatus: "MEANINGFUL" },
     relativePosition: { position: position.position, of: position.of, medianPercentile: position.medianPercentile, medianRank: position.medianRank },
     robustness: { level: view.robustness.level, percentileSpread: view.robustness.percentileSpread, panelledExemplars: view.robustness.panelledExemplars, declaredExemplars: view.robustness.declaredExemplars, reasons: view.robustness.reasons },
     coherence: coherenceSummary(view.coherenceRaw, view.coherenceFiltered),
