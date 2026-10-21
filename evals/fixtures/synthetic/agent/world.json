@@ -261,6 +261,76 @@
    "id": "urn:tag:keyword:syn:ridge_walking",
    "name": "Ridge Walking",
    "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:activity_type:syn:gravel_riding",
+   "name": "Gravel Riding",
+   "type": "urn:tag:activity_type:syn"
+  },
+  {
+   "id": "urn:tag:activity_type:syn:alpine_hiking",
+   "name": "Alpine Hiking",
+   "type": "urn:tag:activity_type:syn"
+  },
+  {
+   "id": "urn:tag:product_category:syn:espresso",
+   "name": "Espresso",
+   "type": "urn:tag:product_category:syn"
+  },
+  {
+   "id": "urn:tag:cuisine:syn:espresso",
+   "name": "Espresso",
+   "type": "urn:tag:cuisine:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:mountain_town",
+   "name": "Mountain Town",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:coastal_road",
+   "name": "Coastal Road",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:performance_apparel",
+   "name": "Performance Apparel",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:genre:syn:alt_folk",
+   "name": "Alt Folk",
+   "type": "urn:tag:genre:syn"
+  },
+  {
+   "id": "urn:tag:genre:syn:post_punk",
+   "name": "Post Punk",
+   "type": "urn:tag:genre:syn"
+  },
+  {
+   "id": "urn:tag:genre:syn:shoegaze_revival",
+   "name": "Shoegaze Revival",
+   "type": "urn:tag:genre:syn"
+  },
+  {
+   "id": "urn:tag:genre:syn:thrash_revival",
+   "name": "Thrash Revival",
+   "type": "urn:tag:genre:syn"
+  },
+  {
+   "id": "urn:tag:culinary_experience:syn:lantern_feasting",
+   "name": "Lantern Feasting",
+   "type": "urn:tag:culinary_experience:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:lantern_supper",
+   "name": "Lantern Supper",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:riff_culture",
+   "name": "Riff Culture",
+   "type": "urn:tag:keyword:syn"
   }
  ],
  "entities": [
@@ -1142,6 +1212,220 @@
    "popularity": 0.64,
    "tags": [
     "urn:tag:keyword:syn:ridge_walking"
+   ]
+  },
+  {
+   "id": "SYN-BR-3001",
+   "name": "Larkspur Velo",
+   "type": "brand",
+   "popularity": 0.83,
+   "tags": [
+    "urn:tag:industry:syn:performance_apparel",
+    "urn:tag:keyword:syn:mountain_town",
+    "urn:tag:keyword:syn:coastal_road",
+    "urn:tag:genre:syn:alt_folk",
+    "urn:tag:genre:syn:post_punk",
+    "urn:tag:genre:syn:shoegaze_revival"
+   ]
+  },
+  {
+   "id": "SYN-BR-3002",
+   "name": "Crema Works",
+   "type": "brand",
+   "popularity": 0.74,
+   "tags": [
+    "urn:tag:product_category:syn:espresso"
+   ]
+  },
+  {
+   "id": "SYN-BR-3003",
+   "name": "Portafilter Supply",
+   "type": "brand",
+   "popularity": 0.72,
+   "tags": [
+    "urn:tag:product_category:syn:espresso"
+   ]
+  },
+  {
+   "id": "SYN-BR-3004",
+   "name": "Ristretto House",
+   "type": "brand",
+   "popularity": 0.7,
+   "tags": [
+    "urn:tag:product_category:syn:espresso"
+   ]
+  },
+  {
+   "id": "SYN-BR-3010",
+   "name": "Gravemoss Water",
+   "type": "brand",
+   "popularity": 0.8,
+   "tags": [
+    "urn:tag:keyword:syn:riff_culture",
+    "urn:tag:genre:syn:thrash_revival"
+   ]
+  },
+  {
+   "id": "SYN-PL-3001",
+   "name": "Chalk Fork Bunkhouse",
+   "type": "place",
+   "popularity": 0.78,
+   "tags": [
+    "urn:tag:activity_type:syn:gravel_riding"
+   ]
+  },
+  {
+   "id": "SYN-PL-3002",
+   "name": "Loamline Station",
+   "type": "place",
+   "popularity": 0.76,
+   "tags": [
+    "urn:tag:activity_type:syn:gravel_riding"
+   ]
+  },
+  {
+   "id": "SYN-PL-3003",
+   "name": "Washboard Depot",
+   "type": "place",
+   "popularity": 0.74,
+   "tags": [
+    "urn:tag:activity_type:syn:gravel_riding"
+   ]
+  },
+  {
+   "id": "SYN-PL-3004",
+   "name": "Tarn Gate Hut",
+   "type": "place",
+   "popularity": 0.77,
+   "tags": [
+    "urn:tag:activity_type:syn:alpine_hiking"
+   ]
+  },
+  {
+   "id": "SYN-PL-3005",
+   "name": "Scree Saddle Refuge",
+   "type": "place",
+   "popularity": 0.75,
+   "tags": [
+    "urn:tag:activity_type:syn:alpine_hiking"
+   ]
+  },
+  {
+   "id": "SYN-PL-3006",
+   "name": "Cirque Hollow Hut",
+   "type": "place",
+   "popularity": 0.73,
+   "tags": [
+    "urn:tag:activity_type:syn:alpine_hiking"
+   ]
+  },
+  {
+   "id": "SYN-PL-3007",
+   "name": "Tamper and Crema",
+   "type": "place",
+   "popularity": 0.79,
+   "tags": [
+    "urn:tag:cuisine:syn:espresso"
+   ]
+  },
+  {
+   "id": "SYN-PL-3008",
+   "name": "Doppio Corner",
+   "type": "place",
+   "popularity": 0.77,
+   "tags": [
+    "urn:tag:cuisine:syn:espresso"
+   ]
+  },
+  {
+   "id": "SYN-PL-3009",
+   "name": "Bar Lungo",
+   "type": "place",
+   "popularity": 0.75,
+   "tags": [
+    "urn:tag:cuisine:syn:espresso"
+   ]
+  },
+  {
+   "id": "SYN-PL-3010",
+   "name": "Switchback Inn",
+   "type": "place",
+   "popularity": 0.72,
+   "tags": [
+    "urn:tag:keyword:syn:mountain_town"
+   ]
+  },
+  {
+   "id": "SYN-PL-3011",
+   "name": "Pinegrade Lodge",
+   "type": "place",
+   "popularity": 0.71,
+   "tags": [
+    "urn:tag:keyword:syn:mountain_town"
+   ]
+  },
+  {
+   "id": "SYN-PL-3012",
+   "name": "Upper Ferry House",
+   "type": "place",
+   "popularity": 0.7,
+   "tags": [
+    "urn:tag:keyword:syn:mountain_town"
+   ]
+  },
+  {
+   "id": "SYN-PL-3013",
+   "name": "Seawall Rooms",
+   "type": "place",
+   "popularity": 0.69,
+   "tags": [
+    "urn:tag:keyword:syn:coastal_road"
+   ]
+  },
+  {
+   "id": "SYN-PL-3014",
+   "name": "Headland Stop",
+   "type": "place",
+   "popularity": 0.68,
+   "tags": [
+    "urn:tag:keyword:syn:coastal_road"
+   ]
+  },
+  {
+   "id": "SYN-PL-3015",
+   "name": "Breakwater Rest",
+   "type": "place",
+   "popularity": 0.67,
+   "tags": [
+    "urn:tag:keyword:syn:coastal_road"
+   ]
+  },
+  {
+   "id": "SYN-AR-3001",
+   "name": "Ironvein",
+   "type": "artist",
+   "popularity": 0.8,
+   "tags": [
+    "urn:tag:genre:syn:thrash_revival",
+    "urn:tag:keyword:syn:riff_culture"
+   ]
+  },
+  {
+   "id": "SYN-AR-3002",
+   "name": "Blastgrave",
+   "type": "artist",
+   "popularity": 0.78,
+   "tags": [
+    "urn:tag:genre:syn:thrash_revival"
+   ]
+  },
+  {
+   "id": "SYN-AR-3003",
+   "name": "Torque Hymn",
+   "type": "artist",
+   "popularity": 0.76,
+   "tags": [
+    "urn:tag:genre:syn:thrash_revival"
    ]
   }
  ],

@@ -7,7 +7,11 @@
  *   --stability N           run each frontier case N times in total in the model arm (Sprint 5A readiness needs 3)
  *   --benchmark [keys]      also run benchmark brands through the agent (comma-separated keys; default all)
  *   --baseline-from <file>  reuse the BASELINE runs' metrics of an earlier report.json (only with the case ids it covered)
- *   --out <dir>             output directory (default backend/feasibility-output/sprint5a-live/<timestamp>)
+ *   --out <dir>             output directory (default backend/feasibility-output/sprint5a1-live/<timestamp>)
+ *
+ * Sprint 5A.1: the controlled positive scenario(s) of evals/agent/controlled-cases.json run too (in both arms, after a live
+ * preflight of their preconditions) whenever --cases is absent or names them; they are reported separately and never
+ * enter the seven-case denominator. The readiness gate (v3) separates SAFETY and COMPETENCE.
  *
  * Sprint 5A: the model arm is Claude Haiku 5.5 (AGENT_MODEL may override it for development; readiness is judged on
  * claude-haiku-5-5 only). A case that throws counts as errored and stays in the denominator; nothing is dropped.
@@ -25,7 +29,8 @@ import type { AgentModel } from "../src/agent/model/provider.js";
 import { AgentRuntime } from "../src/agent/runtime.js";
 import { loadLocalEnvFile } from "../src/config/env.js";
 import { scrubSecrets } from "../src/qloo/transport.js";
-import { armMetrics, benchmarkTerritoryLabels, evaluateBenchmarkRun, loadBenchmark, loadLiveManifest, readinessGate, runLiveCase, stabilityReport, type Arm, type CaseError, type LiveRun, type StabilityReport } from "./agent-live-harness.js";
+import { armMetrics, benchmarkTerritoryLabels, efficiency, evaluateBenchmarkRun, loadBenchmark, loadControlledCases, loadLiveManifest, preflightControlledCase, readinessGate, runLiveCase, stabilityReport, stageTiming, type Arm, type CaseError, type LiveRun, type PreflightResult, type StabilityReport } from "./agent-live-harness.js";
+import { evaluateRun } from "./run-evaluators.js";
 
 const args = process.argv.slice(2).filter((a) => a !== "--");
 const flag = (name: string) => {
@@ -51,8 +56,10 @@ async function main(): Promise<number> {
   const wanted = flag("--cases")?.split(",").map((c) => c.trim());
   const manifest = loadLiveManifest();
   const cases = manifest.cases.filter((c) => !wanted || wanted.includes(c.id));
+  const controlledDoc = loadControlledCases();
+  const controlledCases = controlledDoc.cases.filter((c) => !wanted || wanted.includes(c.id));
   const stamp = new Date().toISOString().replace(/[:.]/gu, "-");
-  const out = resolve(process.env.INIT_CWD ?? process.cwd(), flag("--out") ?? join(backendRoot, "feasibility-output", "sprint5a-live", stamp));
+  const out = resolve(process.env.INIT_CWD ?? process.cwd(), flag("--out") ?? join(backendRoot, "feasibility-output", "sprint5a1-live", stamp));
   mkdirSync(out, { recursive: true });
 
   let provider;
@@ -67,8 +74,16 @@ async function main(): Promise<number> {
   }
   console.log(`Live agent evaluation · Qloo: ${provider.name} · model: ${hasModelCredential() ? "configured" : LIVE_AGENT_MODEL_VALIDATION_NOT_RUN} · output ${out}`);
   const runs: Record<Arm, LiveRun[] | null> = { BASELINE: null, LIVE_MODEL: null };
+  const controlledRuns: Record<Arm, LiveRun[] | null> = { BASELINE: null, LIVE_MODEL: null };
+  const preflight: PreflightResult[] = [];
   const errors: CaseError[] = [];
   try {
+    // Sprint 5A.1: verify the controlled scenarios' Qloo preconditions first (live); a changed precondition is reported.
+    for (const c of controlledCases) {
+      const result = await preflightControlledCase(c, provider);
+      preflight.push(result);
+      console.log(`[controlled preflight] ${c.id}: ${result.status}${result.checks.filter((x) => !x.passed).map((x) => `\n     ✗ ${x.name}: ${x.detail}`).join("")}`);
+    }
     for (const arm of arms) {
       let model: AgentModel;
       if (arm === "BASELINE") model = new BaselinePolicyModel();
@@ -90,6 +105,19 @@ async function main(): Promise<number> {
           const message = scrubSecrets(error instanceof Error ? error.message : String(error)).slice(0, 300);
           errors.push({ caseId: c.id, arm, error: message });
           console.log(`  ${c.id} ERROR ${message} (counted as errored; stays in the denominator)`);
+        }
+      }
+      // Controlled scenarios run in the same arm (case-matched), only when their preflight passed.
+      controlledRuns[arm] = [];
+      for (const c of controlledCases.filter((x) => preflight.find((p) => p.caseId === x.id)?.status === "PASS")) {
+        try {
+          const run = await runLiveCase(c, arm, arm === "BASELINE" ? new BaselinePolicyModel() : createAgentModel("anthropic"), provider);
+          controlledRuns[arm]!.push(run);
+          write(out, `${arm.toLowerCase()}-${c.id}.json`, run.response);
+          console.log(`  [controlled] ${c.id} ${short(run)} · ${run.response.metrics.qloo_calls} Qloo · ${run.response.metrics.agent_iterations} it`);
+        } catch (error) {
+          errors.push({ caseId: c.id, arm, error: scrubSecrets(error instanceof Error ? error.message : String(error)).slice(0, 300) });
+          console.log(`  [controlled] ${c.id} ERROR (counted as errored)`);
         }
       }
     }
@@ -128,13 +156,14 @@ async function main(): Promise<number> {
       baselineReused: runs.BASELINE ? null : reused,
       errors,
       stability,
+      controlled: controlledCases.length > 0 ? { preflight, modelRuns: controlledRuns.LIVE_MODEL, baselineRuns: controlledRuns.BASELINE } : null,
     });
     const baselineMetrics = runs.BASELINE ? armMetrics(runs.BASELINE) : (reused?.metrics ?? null);
     const modelMetrics = runs.LIVE_MODEL ? armMetrics(runs.LIVE_MODEL) : null;
     const perCase = (arm: Arm) =>
       (runs[arm] ?? []).map((r) => {
         const m = r.response.metrics;
-        return { caseId: r.caseId, status: r.response.status, model: r.response.model.id, routes: r.response.status === "NEEDS_INPUT" ? [] : (r.response as import("@cultural-elasticity/shared").AgentAnalysisResult).territories.map((t) => `${t.key}:${t.role}:${t.analysisRoute}`), qlooCalls: m.qloo_calls, iterations: m.agent_iterations, latencyMs: m.latency_ms, modelLatencyMs: m.model_latency_ms, qlooLatencyMs: m.qloo_latency_ms, qlooSpacingMs: m.qloo_spacing_ms ?? null, analysisLatencyMs: m.analysis_latency_ms ?? null, synthesisLatencyMs: m.synthesis_latency_ms ?? null, inputTokens: m.model_input_tokens, outputTokens: m.model_output_tokens, costUsd: m.model_cost_usd, synthesisSource: r.response.status === "NEEDS_INPUT" ? null : (r.response as import("@cultural-elasticity/shared").AgentAnalysisResult).summary.source, failures: r.failures ?? [] };
+        return { caseId: r.caseId, evaluators: evaluateRun(r.response).filter((e) => e.applicable).map((e) => `${e.id}:${e.passed ? "pass" : "FAIL"}`), timing: stageTiming(r.response), emptyTypeProbes: m.empty_type_probes ?? null, probeLimitRefusals: m.probe_limit_refusals ?? null, typeAlignmentDeferrals: m.type_alignment_deferrals ?? null, status: r.response.status, model: r.response.model.id, routes: r.response.status === "NEEDS_INPUT" ? [] : (r.response as import("@cultural-elasticity/shared").AgentAnalysisResult).territories.map((t) => `${t.key}:${t.role}:${t.analysisRoute}`), qlooCalls: m.qloo_calls, iterations: m.agent_iterations, latencyMs: m.latency_ms, modelLatencyMs: m.model_latency_ms, qlooLatencyMs: m.qloo_latency_ms, qlooSpacingMs: m.qloo_spacing_ms ?? null, analysisLatencyMs: m.analysis_latency_ms ?? null, synthesisLatencyMs: m.synthesis_latency_ms ?? null, inputTokens: m.model_input_tokens, outputTokens: m.model_output_tokens, costUsd: m.model_cost_usd, synthesisSource: r.response.status === "NEEDS_INPUT" ? null : (r.response as import("@cultural-elasticity/shared").AgentAnalysisResult).summary.source, failures: r.failures ?? [] };
       });
 
     let benchmark = null;
@@ -174,6 +203,8 @@ async function main(): Promise<number> {
       perCase: { BASELINE: perCase("BASELINE"), LIVE_MODEL: perCase("LIVE_MODEL") },
       errors,
       readiness: gate,
+      controlled: { manifestVersion: controlledDoc.version, preflight, arms: { BASELINE: (controlledRuns.BASELINE ?? []).map((r) => ({ caseId: r.caseId, status: r.response.status, failures: r.failures ?? [], routes: r.response.status === "NEEDS_INPUT" ? [] : (r.response as import("@cultural-elasticity/shared").AgentAnalysisResult).territories.map((t) => `${t.key}:${t.analysisRoute}`) })), LIVE_MODEL: (controlledRuns.LIVE_MODEL ?? []).map((r) => ({ caseId: r.caseId, status: r.response.status, failures: r.failures ?? [], routes: r.response.status === "NEEDS_INPUT" ? [] : (r.response as import("@cultural-elasticity/shared").AgentAnalysisResult).territories.map((t) => `${t.key}:${t.analysisRoute}`) })) } },
+      efficiency: { BASELINE: runs.BASELINE ? efficiency(runs.BASELINE) : null, LIVE_MODEL: runs.LIVE_MODEL ? efficiency(runs.LIVE_MODEL) : null },
       stability: stability ?? (runs.LIVE_MODEL ? "not requested" : LIVE_AGENT_MODEL_VALIDATION_NOT_RUN),
       benchmark,
     };
@@ -184,9 +215,13 @@ async function main(): Promise<number> {
       if (typeof m === "string" || m === null) console.log(`    ${m ?? "not run"}`);
       else for (const [k, v] of Object.entries(m)) console.log(`    ${k.padEnd(32)} ${v ?? "n/a"}`);
     }
-    if (stability) for (const [id, st] of Object.entries(stability)) console.log(`\nStability ${id} (${st.runs} runs): concept overlap ${st.resolvedConceptOverlap ?? "n/a"} · supported overlap ${st.supportedConceptOverlap ?? "n/a"} · route stability ${st.routeStability ?? "n/a"} · comparable class pairs ${st.comparableClassPairs}\n  ${st.candidateSets.map((c) => c.join(", ")).join("\n  ")}`);
-    console.log(`\nReadiness: ${gate.decision} (model ${gate.modelIds.join(", ") || "none"} · manifest ${gate.caseManifestVersion} · executed ${gate.executedCaseIds.length}/${gate.expectedCaseIds.length} · stability ${gate.frontierStabilityStatus})`);
+    if (stability) for (const [id, st] of Object.entries(stability)) console.log(`\nStability ${id} (${st.runs} runs): exact concept overlap ${st.resolvedConceptOverlap ?? "n/a"} · supported overlap ${st.supportedConceptOverlap ?? "n/a"} · canonical ${st.canonicalConceptOverlap ?? "n/a"} · supported canonical ${st.supportedCanonicalOverlap ?? "n/a"} · recurring ${(st.recurringSupportedCanonical ?? []).join("/") || "none"} · anchor consistency ${st.anchorConsistency ?? "n/a"} · theme proxy ${st.themeOverlapProxy ?? "n/a"} · route stability ${st.routeStability ?? "n/a"} · comparable sets ${st.comparisonSetCompatibility?.comparablePairs ?? 0}/${st.comparisonSetCompatibility?.pairsWithFull ?? 0} · comparable class pairs ${st.comparableClassPairs}\n  ${st.candidateSets.map((c) => c.join(", ")).join("\n  ")}`);
+    console.log(`\nReadiness (${gate.gateVersion}): ${gate.decision} (model ${gate.modelIds.join(", ") || "none"} · manifest ${gate.caseManifestVersion} · executed ${gate.executedCaseIds.length}/${gate.expectedCaseIds.length} · stability ${gate.frontierStabilityStatus})`);
+    console.log(`  SAFETY ${gate.safetyReadiness.passed ? "PASS" : "FAIL"}`);
     for (const h of gate.hard) console.log(`  [${h.passed ? "PASS" : "FAIL"}] ${h.name}: ${h.value} (required ${h.required})`);
+    console.log(`  COMPETENCE ${gate.competenceReadiness.passed ? "PASS" : "FAIL"}`);
+    for (const h of gate.competenceReadiness.checks) console.log(`  [${h.passed ? "PASS" : "FAIL"}] ${h.name}: ${h.value} (required ${h.required})`);
+    for (const f of gate.frontierStability) console.log(`  frontier ${f.caseId}: ${f.status} ${f.checks.map((c) => `${c.name.split(" ")[0]}=${c.value}${c.passed ? "" : "✗"}`).join(" · ")}`);
     for (const reason of gate.reasons) console.log(`  - ${reason}`);
     for (const w of gate.warnings) console.log(`  ! ${w}`);
     console.log(`\nWritten: ${out}`);

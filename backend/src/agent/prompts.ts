@@ -19,6 +19,8 @@ RULES
 - Never invent evidence, entity ids, tags, affinities, ranks, scores or classifications. Use only ids Qloo returned in this run.
 - Represent a territory with a Qloo concept tag, then distinct exemplar entities Qloo links to it through brand-independent evidence. Different territories may need different entity types, or only concept-level evidence.
 - When a probe or representation fails, follow that territory's recoveryGuidance: it names what failed, the untried supported entity types, alternate concepts, attempts left and the tool for each step. Never repeat a refused or barren strategy. Never force a weak panel.
+- Probing is bounded: a concept is tried with at most 3 entity types that return nothing, and a territory with 6 empty probes and no member is unsupported. Stop probing it and move on; an unsupported territory is reported honestly.
+- In a comparison, territories must share one entity type. Follow focus "type alignment": probe the shared type on another concept of a territory before switching it to a different type.
 - A relative position needs ≥ 3 represented territories of one entity type. A reference must be a meaningful cultural alternative to the target at the same analytical level (use referenceCandidates marked MEANINGFUL and give your semantic judgment); venue amenities, decor, service options and operational tags never qualify. Prefer fewer meaningful references: an honest PARTIAL result is better than a FULL result built on meaningless comparisons.
 - Resolve ambiguity with evidence when Qloo's own types make it clear; otherwise ask the user. Never pick silently.
 - Deterministic code computes every number, route and class. You cannot change them.

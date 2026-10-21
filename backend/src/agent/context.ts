@@ -10,7 +10,9 @@
  * Never present: raw Qloo payloads, full traces, benchmark data (the runtime has none), secrets or
  * environment values, inactive skills, unexposed tools.
  */
-import { exemplarCandidates, frontierConcepts } from "./candidate-discovery.js";
+import { exemplarCandidates } from "./candidate-discovery.js";
+import { frontierCandidatePool } from "./frontier.js";
+import { comparisonRepresentationPlan } from "./representation-alignment.js";
 import { conceptDuplicates } from "./concept-dedup.js";
 import { RANKABLE_TYPES } from "./contracts.js";
 import { assessEvidenceSufficiency, investigationStage } from "./evidence-sufficiency.js";
@@ -82,7 +84,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
     };
     if (t.status === "dropped") return { ...base, dropReason: t.dropReason?.code ?? null };
     // Sprint 5A: a territory still being resolved sees which probes were made and what is untried.
-    if (readiness.state === "needs_concept" && state.searchedQueries.has(t.label.trim().toLowerCase())) return { ...base, probes: probeLedger(state, t), recoveryGuidance: recoveryGuidance(state, t) };
+    if (readiness.state === "needs_concept" && (state.searchedQueries.has(t.label.trim().toLowerCase()) || t.sourceTagId)) return { ...base, probes: probeLedger(state, t), recoveryGuidance: recoveryGuidance(state, t) };
     // Representation detail only for territories the active skills are working on.
     if (!detail || !t.concept || (readiness.state !== "needs_representation" && !recoverable(state, t))) return base;
     const rejectedIds = new Set(t.rejectedExemplars.flatMap((r) => (r.id ? [r.id] : [])));
@@ -115,7 +117,8 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
     const relatedIds = [...new Set(state.related.flatMap((r) => r.memberIds))];
     evidence.relatedEntities = relatedIds.slice(0, 10).map((id) => ({ id, label: state.entities.get(id)?.label ?? id, profiled: state.profiles.has(id) }));
   }
-  if (needs.has("frontierConcepts")) evidence.frontierConcepts = frontierConcepts(state, 1).slice(0, MAX_FRONTIER_CONCEPTS).map(({ tagId, label, support }) => ({ tagId, label, support }));
+  // Sprint 5A.1: the stage-A candidate pool (fixed evidence base, canonical dedup, stable order) replaces the raw list.
+  if (needs.has("frontierConcepts")) evidence.frontierConcepts = frontierCandidatePool(state).slice(0, MAX_FRONTIER_CONCEPTS).map(({ tagId, label, canonicalConceptKey, support, probes }) => ({ tagId, label, canonicalKey: canonicalConceptKey, support, ...(probes.length > 0 && { probes }) }));
   if (needs.has("referenceCandidates")) {
     evidence.referenceCandidates = referenceCandidates(state)
       .slice(0, MAX_REFERENCE_CANDIDATES)
@@ -123,7 +126,12 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
       .filter((c) => c.semantic.status === "MEANINGFUL" && c.namespaceYield !== "unproductive" && c.usable !== false)
       .map(({ tagId, label, namespace, namespaceYield, probe, usable, justification, semantic }) => ({ tagId, label, namespace, namespaceYield, probe, usable, semantic: semantic.status, justification }));
     const plan = referencePlan(state);
-    evidence.referencePlan = { entityType: plan.entityType, required: plan.required, valid: plan.valid, needed: plan.needed, pending: plan.pending, feasible: plan.feasible, reason: plan.reason, rejectedCandidates: plan.rejectedCandidates.map(({ label, status, reasonCode }) => ({ label, status, reasonCode })) };
+    evidence.referencePlan = { entityType: plan.entityType, required: plan.required, valid: plan.valid, needed: plan.needed, pending: plan.pending, feasible: plan.feasible, reason: plan.reason, rejectedCandidates: plan.rejectedCandidates.map(({ label, status, reasonCode }) => ({ label, status, reasonCode })), ...(plan.completion && { turnsNeeded: plan.completion.turnsNeeded, turnsLeft: plan.completion.remainingTurns }) };
+  }
+  // Sprint 5A.1: which entity type the comparison can share (planned before the remaining territories are anchored).
+  const alignment = comparisonRepresentationPlan(state);
+  if (alignment && activeTerritories(state).some((t) => t.status !== "analyzed")) {
+    evidence.representationPlan = { preferredCommonType: alignment.preferredCommonType, feasibility: alignment.feasibility, supportedTerritoriesByType: alignment.supportedTerritoriesByType, missingRequirements: alignment.missingRequirements };
   }
   if (needs.has("conceptDedup")) {
     evidence.conceptDedup = conceptDuplicates(state, activeTerritories(state)).map((d) => `${d.b.key} vs ${d.a.key}: ${d.verdict} (${d.layer}: ${d.basis})${d.action === "dropped" ? ` → ${d.dropped} will be dropped before analysis` : ""}`);
@@ -187,6 +195,9 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
     const r = territoryReadiness(state, t);
     if (r.state === "needs_concept" || r.state === "needs_representation" || recoverable(state, t)) outstanding.push(`${t.key}: ${r.state === "ready" ? "recoverable" : r.state} — ${recoveryGuidance(state, t)[0] ?? ("reason" in r ? r.reason : "")}`);
   }
+  // Sprint 5A.1: type alignment comes before further probing (a shared type is what makes a comparison possible).
+  const alignment = comparisonRepresentationPlan(state);
+  if (alignment && alignment.feasibility !== "SUPPORTED" && alignment.preferredCommonType) for (const m of alignment.missingRequirements.slice(0, 3)) outstanding.push(`type alignment (${alignment.preferredCommonType}): ${m}`);
   const plan = referencePlan(state);
   if (plan.feasible && plan.outstanding) outstanding.push(plan.outstanding);
   else if (plan.applicable && plan.reason && plan.valid < plan.required) outstanding.push(`references: ${plan.reason}`);

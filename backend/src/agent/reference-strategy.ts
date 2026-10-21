@@ -29,7 +29,8 @@ import type { RankableType } from "./contracts.js";
 import { analysisReserve } from "./analysis-runner.js";
 import { MIN_COMPARISON_SET } from "./router.js";
 import { assessReferenceConcept, assessReferenceTerritory, type ReferenceVerdict } from "./semantic-comparison.js";
-import { activeTerritories, remainingQlooCalls, type AgentRunState } from "./state.js";
+import { activeTerritories, remainingQlooCalls, turnsAvailable, type AgentRunState } from "./state.js";
+import type { CompletionFeasibility } from "@cultural-elasticity/shared";
 
 /** A reference concept is usable only if Qloo returns at least this many eligible members of the type. */
 export const MIN_REFERENCE_POOL = 2;
@@ -93,6 +94,22 @@ export function namespaceYield(state: AgentRunState, entityType: RankableType): 
     out.set(key, entry);
   }
   return out;
+}
+
+/**
+ * Sprint 5A.1: a reference probe in a tag namespace that already returned no eligible member of the comparison type
+ * twice (and never any) has no expected value. 5A only hid such candidates from the context; live L-M1 still probed
+ * six brand-profile media/music genres with the brand type, three per turn. Probes of a territory's own concepts and
+ * of a proposed reference's anchor are never refused by this rule.
+ */
+export function barrenReferenceNamespace(state: AgentRunState, tagId: string, type: RankableType): string | null {
+  const intent = state.interpretation?.intent;
+  if ((intent !== "analyze_move" && intent !== "compare_territories") || referenceEntityType(state) !== type) return null;
+  if (activeTerritories(state).some((t) => t.concept?.id === tagId || t.sourceTagId === tagId || (state.searchedQueries.get(t.label.trim().toLowerCase()) ?? []).includes(tagId))) return null;
+  const ns = namespaceKey(tagId);
+  const y = namespaceYield(state, type).get(ns);
+  if (!y || y.productive > 0 || y.barren < 2) return null;
+  return `tag namespace ${ns} returned no eligible ${type} member in ${y.barren} reference probes this run; choose a referenceCandidate from a productive or untested namespace, or analyze and accept a PARTIAL result`;
 }
 
 export function referenceCandidates(state: AgentRunState): ReferenceCandidate[] {
@@ -179,6 +196,26 @@ export const REFERENCE_CALL_COST = 2;
 /** Turns a reference needs after the probe (propose + anchor + validate fit in one) plus the analysis turn. */
 export const REFERENCE_TURN_COST = 2;
 
+/**
+ * Sprint 5A.1 completion arithmetic (live L-C2: three usable references were in hand with three turns left, yet the
+ * plan said "only 2 turn(s) left; reference construction needs 3" and the comparison skill switched off). Turns are
+ * counted with `turnsAvailable` (the open turn included, the same value inside and between turns), and a reference
+ * whose brand-independent pool was already probed with ≥ MIN_REFERENCE_POOL eligible members costs no probe:
+ *   turns  = 1 (analyze; finish is automatic at the iteration budget)
+ *          + 1 if references still have to be proposed / anchored / validated (one turn for all of them)
+ *          + 1 if some needed reference has not been probed yet (the probe must return before it can be proposed)
+ *          + 1 if the tag profiles that reveal candidates are not collected yet
+ *   calls  = 2 per unprobed reference + 1 (primary profile) per probed one + pending + analysis reserve + panel growth
+ *          + profiles still to collect (≤ 4)
+ */
+export function completionCost(input: { needed: number; usableProbed: number; pending: number; discovery: number; reserve: number }): { turns: number; calls: number } {
+  const probed = Math.min(input.needed, input.usableProbed);
+  const unprobed = input.needed - probed;
+  const turns = 1 + (input.needed > 0 || input.pending > 0 ? 1 : 0) + (unprobed > 0 ? 1 : 0) + (input.discovery > 0 && unprobed > 0 ? 1 : 0);
+  const calls = unprobed * REFERENCE_CALL_COST + probed + input.pending + input.reserve + input.needed + Math.min(input.discovery, 4);
+  return { turns, calls };
+}
+
 export type ReferencePlan = {
   applicable: boolean;
   entityType: RankableType | null;
@@ -192,6 +229,8 @@ export type ReferencePlan = {
   reason: string;
   /** The exact outstanding requirement, phrased as an instruction (shown to the model). */
   outstanding: string | null;
+  /** Sprint 5A.1: the completion-feasibility contract (same values, named for the UI and the evaluators). */
+  completion: CompletionFeasibility | null;
 };
 
 /**
@@ -203,7 +242,7 @@ export type ReferencePlan = {
 export function referencePlan(state: AgentRunState): ReferencePlan {
   const intent = state.interpretation?.intent;
   const entityType = referenceEntityType(state);
-  const empty: ReferencePlan = { applicable: false, entityType, required: MIN_COMPARISON_SET, valid: 0, pending: [], needed: 0, meaningfulCandidates: [], rejectedCandidates: [], feasible: false, reason: "", outstanding: null };
+  const empty: ReferencePlan = { applicable: false, entityType, required: MIN_COMPARISON_SET, valid: 0, pending: [], needed: 0, meaningfulCandidates: [], rejectedCandidates: [], feasible: false, reason: "", outstanding: null, completion: null };
   if ((intent !== "analyze_move" && intent !== "compare_territories") || !state.brand.entity || !entityType) return { ...empty, reason: "no represented target yet, or not a move / comparison" };
   const active = activeTerritories(state);
   if (active.some((t) => t.role === "target" && t.status === "analyzed")) return { ...empty, applicable: true, entityType, reason: "the targets are already analyzed" };
@@ -214,40 +253,49 @@ export function referencePlan(state: AgentRunState): ReferencePlan {
   const meaningful = candidates.filter((c) => c.semantic.status === "MEANINGFUL" && c.usable !== false && c.namespaceYield !== "unproductive");
   const rejected = candidates.filter((c) => c.semantic.status !== "MEANINGFUL" || c.usable === false).slice(0, 6).map((c) => ({ tagId: c.tagId, label: c.label, status: c.semantic.status === "MEANINGFUL" ? "NO_MEMBERS" : c.semantic.status, reasonCode: c.semantic.status === "MEANINGFUL" ? (c.duplicateOf ? "NEAR_DUPLICATE" : "NO_ELIGIBLE_MEMBERS") : c.semantic.reasonCode, explanation: c.semantic.status === "MEANINGFUL" ? c.justification : c.semantic.explanation }));
   const base = { applicable: true, entityType, required: MIN_COMPARISON_SET, valid, pending, needed, meaningfulCandidates: meaningful.slice(0, 8).map((c) => ({ tagId: c.tagId, label: c.label, usable: c.usable })), rejectedCandidates: rejected };
-  if (valid >= MIN_COMPARISON_SET) return { ...base, feasible: false, reason: `the comparison set already has ${valid} meaningful ${entityType} territories`, outstanding: null };
-  const iterationsLeft = state.limits.maxAgentIterations - state.usage.iterations;
+  const completion = (feasible: boolean, reason: string, turnsNeeded = 0, callsNeeded = 0): CompletionFeasibility => ({ requiredReferenceCount: MIN_COMPARISON_SET, validReferenceCount: valid, missingReferenceCount: needed, compatibleEntityType: entityType, remainingRelevantCandidates: meaningful.length, remainingTurns: turnsAvailable(state), remainingQlooCalls: remainingQlooCalls(state), turnsNeeded, callsNeeded, fullAnalysisFeasible: feasible, reason });
+  if (valid >= MIN_COMPARISON_SET) {
+    const reason = `the comparison set already has ${valid} meaningful ${entityType} territories`;
+    return { ...base, feasible: false, reason, outstanding: null, completion: completion(true, reason, 1) };
+  }
+  const turnsLeft = turnsAvailable(state);
   const brand = state.brand.entity;
   const discovery = [
     ...(state.profiles.has(brand.id) ? [] : [{ id: brand.id, label: `the brand ${brand.label}` }]),
     ...active.filter((t) => t.role === "target").flatMap((t) => (t.representation?.exemplars ?? []).filter((e) => e.quality === "VALID" && !state.profiles.has(e.id)).map((e) => ({ id: e.id, label: e.label }))),
   ];
   const ready = active.filter((t) => t.status !== "analyzed" && (t.representation || t.conceptOnly));
-  const callsNeeded = needed * REFERENCE_CALL_COST + pending.length + analysisReserve(state, ready) + needed + Math.min(discovery.length, 4);
+  const usableProbed = meaningful.filter((c) => c.usable === true).length;
+  const cost = completionCost({ needed, usableProbed, pending: pending.length, discovery: meaningful.length >= needed ? 0 : discovery.length, reserve: analysisReserve(state, ready) });
   const skill = state.skillUsage.get("build_comparison_set");
   const blocked =
     skill?.exhausted || skill?.qlooSpent
       ? "the comparison-set skill budget is spent"
       : state.territories.length + needed > state.limits.maxCandidateTerritories
           ? "no candidate-territory slot left for more references"
-          : iterationsLeft < REFERENCE_TURN_COST + 1
-            ? `only ${iterationsLeft} turn(s) left; reference construction needs ${REFERENCE_TURN_COST + 1}`
-            : remainingQlooCalls(state) < callsNeeded
-              ? `${remainingQlooCalls(state)} Qloo call(s) left; references and analysis need about ${callsNeeded}`
+          : turnsLeft < cost.turns
+            ? `only ${turnsLeft} turn(s) left; references and analysis need ${cost.turns}`
+            : remainingQlooCalls(state) < cost.calls
+              ? `${remainingQlooCalls(state)} Qloo call(s) left; references and analysis need about ${cost.calls}`
               : needed > 0 && meaningful.length < needed && discovery.length === 0
                 ? `only ${meaningful.length} semantically meaningful reference candidate(s) with possible ${entityType} members; ${needed} needed`
                 : null;
-  if (blocked) return { ...base, feasible: false, reason: `FULL is not feasible: ${blocked}; analysis will be partial`, outstanding: null };
+  if (blocked) {
+    const reason = `FULL is not feasible: ${blocked}; analysis will be partial`;
+    return { ...base, feasible: false, reason, outstanding: null, completion: completion(false, reason, cost.turns, cost.calls) };
+  }
   // Candidates come from the brand profile and the target exemplars' profiles: until those are collected,
   // "no candidate" means "not yet discovered", not "none exists".
   if (needed > 0 && meaningful.length < needed && discovery.length > 0) {
-    return { ...base, feasible: true, reason: `reference discovery pending: ${discovery.length} tag profile(s) not yet collected`, outstanding: `Reference candidates are found on tag profiles that are not collected yet: fetch ${discovery.map((d) => d.label).join(", ")} with qloo_get_entity_tags, then choose ${needed} meaningful ${entityType} reference(s) from referenceCandidates. If none is meaningful, analyze and accept a PARTIAL result.` };
+    return { ...base, feasible: true, completion: completion(true, `reference discovery pending: ${discovery.length} tag profile(s) not yet collected`, cost.turns, cost.calls), reason: `reference discovery pending: ${discovery.length} tag profile(s) not yet collected`, outstanding: `Reference candidates are found on tag profiles that are not collected yet: fetch ${discovery.map((d) => d.label).join(", ")} with qloo_get_entity_tags, then choose ${needed} meaningful ${entityType} reference(s) from referenceCandidates. If none is meaningful, analyze and accept a PARTIAL result.` };
   }
   const pendingText = pending.length ? ` ${pending.length} proposed reference(s) (${pending.join(", ")}) still need a validated ${entityType} representation.` : "";
   const outstanding =
     needed > 0
       ? `${needed} more meaningful ${entityType} reference territor${needed === 1 ? "y is" : "ies are"} required for a relative position (have ${valid} of ${MIN_COMPARISON_SET}).${pendingText} Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent ${entityType} pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result.`
       : `${pendingText.trim()} Represent them, then analyze all ${MIN_COMPARISON_SET} together.`;
-  return { ...base, feasible: true, reason: `FULL is feasible: ${needed} reference(s) needed, ${meaningful.length} meaningful candidate(s), ${remainingQlooCalls(state)} Qloo call(s) and ${iterationsLeft} turn(s) left`, outstanding };
+  const reason = `FULL is feasible: ${needed} reference(s) needed, ${meaningful.length} meaningful candidate(s) (${usableProbed} already probed with members), ${remainingQlooCalls(state)} Qloo call(s) and ${turnsLeft} turn(s) left (needs ${cost.turns} turn(s), about ${cost.calls} call(s))`;
+  return { ...base, feasible: true, reason, outstanding, completion: completion(true, reason, cost.turns, cost.calls) };
 }
 
 /**

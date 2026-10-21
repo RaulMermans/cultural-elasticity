@@ -31,6 +31,7 @@ import { refs, SkillRegistry } from "./skills/registry.js";
 import type { AgentDecisionContext, AgentModel } from "./model/provider.js";
 import { recordPlanRevision } from "./planner.js";
 import { MAX_REFERENCE_DEFERRALS, referencePlan } from "./reference-strategy.js";
+import { comparisonRepresentationPlan } from "./representation-alignment.js";
 import { RunStore } from "./run-store.js";
 import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState } from "./state.js";
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
@@ -46,7 +47,7 @@ export type AgentRuntimeDeps = {
 };
 
 /** Rejection codes a repair attempt can act on (the validator's reason tells the model what to change). */
-const REPAIRABLE = new Set(["INVALID_MODEL_OUTPUT", "INVALID_DECISION", "UNKNOWN_TOOL", "INVALID_ARGUMENTS", "NOT_EXPOSED", "WRONG_PHASE", "PRECONDITION", "NOT_READY", "FINISH_BEFORE_SUFFICIENCY", "NOTHING_ANALYZED", "UNKNOWN_RESULT_IDS", "NO_OPEN_AMBIGUITY", "REFERENCES_PENDING"]);
+const REPAIRABLE = new Set(["INVALID_MODEL_OUTPUT", "INVALID_DECISION", "UNKNOWN_TOOL", "INVALID_ARGUMENTS", "NOT_EXPOSED", "WRONG_PHASE", "PRECONDITION", "NOT_READY", "FINISH_BEFORE_SUFFICIENCY", "NOTHING_ANALYZED", "UNKNOWN_RESULT_IDS", "NO_OPEN_AMBIGUITY", "REFERENCES_PENDING", "TYPE_ALIGNMENT_PENDING"]);
 
 type TurnOutcome = { stop: "needs_input" | "finish" | "failed" | null; lastTurn: AgentDecisionContext["lastTurn"] };
 
@@ -95,6 +96,7 @@ export class AgentRuntime {
         if (!lastVerdict || lastVerdict.verdict !== sufficiency.verdict || lastVerdict.reasons.join() !== sufficiency.reasons.join()) {
           state.trace.sufficiency.push({ iteration: state.usage.iterations, verdict: sufficiency.verdict, reasons: [...sufficiency.reasons, ...sufficiency.nextSteps], nextActions: sufficiency.nextActions, materialGap: sufficiency.materialGap });
         }
+        recordPlans(state);
         // Sufficient with no iteration left: finalize without granting an extra turn.
         if (sufficiency.verdict === "SUFFICIENT" && state.usage.iterations >= state.limits.maxAgentIterations) return await this.complete(state, "sufficient at the iteration budget");
         if (state.finishRequested || sufficiency.verdict === "INSUFFICIENT") return await this.complete(state, sufficiency.verdict === "INSUFFICIENT" ? "evidence insufficient" : "agent finished");
@@ -102,7 +104,10 @@ export class AgentRuntime {
         if (sufficiency.verdict === "NEEDS_USER_INPUT" && state.pendingQuestion) return needsInputResponse(state);
 
         state.usage.iterations += 1;
-        const turn = await this.turn(state, lastTurn, sufficiency.verdict);
+        state.turnOpen = true;
+        const turn = await this.turn(state, lastTurn, sufficiency.verdict).finally(() => {
+          state.turnOpen = false;
+        });
         lastTurn = turn.lastTurn;
         if (turn.stop === "needs_input") return needsInputResponse(state);
         if (turn.stop === "failed") return await this.fail(state, `model produced no valid action for ${state.limits.maxInvalidTurns} consecutive turns`);
@@ -173,7 +178,7 @@ export class AgentRuntime {
 
     recordPlanRevision(state, decisionsTrace.find((d) => d.accepted)?.reasonSummary ?? null);
     // A turn whose only refusals are bounded reference deferrals is a steering step, not an invalid model turn.
-    const deferralOnly = rejections.length > 0 && rejections.every((r) => r.code === "REFERENCES_PENDING");
+    const deferralOnly = rejections.length > 0 && rejections.every((r) => r.code === "REFERENCES_PENDING" || r.code === "TYPE_ALIGNMENT_PENDING");
     if (accepted === 0) {
       if (!deferralOnly) state.usage.invalidTurnsInRow += 1;
       if (verdict === "SUFFICIENT") {
@@ -437,4 +442,15 @@ export class AgentRuntime {
     state.final = result;
     return result;
   }
+}
+
+/** Sprint 5A.1 observability: representation-alignment plans and completion checks, recorded when they change. */
+function recordPlans(state: AgentRunState): void {
+  const plan = comparisonRepresentationPlan(state);
+  const plans = (state.trace.representationPlans ??= []);
+  if (plan && JSON.stringify(plans.at(-1)?.plan) !== JSON.stringify(plan)) plans.push({ iteration: state.usage.iterations, plan });
+  const completion = referencePlan(state).completion;
+  const checks = (state.trace.completion ??= []);
+  const last = checks.at(-1);
+  if (completion && (!last || last.fullAnalysisFeasible !== completion.fullAnalysisFeasible || last.reason !== completion.reason)) checks.push({ iteration: state.usage.iterations, ...completion });
 }

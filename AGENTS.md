@@ -52,6 +52,15 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 4. **Readiness needs complete, case-matched evidence.** Every prescribed case must run on the readiness model, errors and omissions stay in the denominator, the baseline covers the same cases, and frontier stability is measured. Anything less is `AGENT_MODEL_NOT_READY`.
 5. **Numbers are grounded per scope.** A claim may only use values of the territory (and the result fields) it is about. Validator changes need evidence from traces: fix a proven false positive, never relax a rule to raise acceptance.
 
+## Investigation reliability (permanent, from Sprint 5A.1)
+
+1. **Probing is bounded and honest.** At most 3 empty entity types per concept and 6 empty probes per territory with no member (`probe-policy.ts`); then the concept or territory is unsupported. Only answers Qloo returned as empty count: a failed call is never a probe, and a partial or degraded empty answer is "unreliable". A type that returned members is never refused.
+2. **Comparisons plan a shared entity type before anchoring** (`representation-alignment.ts`). Alignment is steered (guidance plus one bounded anchor deferral per target), never forced: no type conversion, no tag-as-entity, no cross-call comparison. With no common type, the result stays PARTIAL.
+3. **Completion arithmetic is deterministic and counts the open turn** (`turnsAvailable`, `completionCost`). Already-probed usable references need no probe turn. The last turn is reserved for analysis.
+4. **Frontier discovery has two stages.** A fixed evidence base (a fixed related take, the first related profiles in Qloo order) feeds a canonical, deduplicated, stably ordered candidate pool, and the model chooses from it or adds hypotheses that Qloo must validate. A candidate's canonical identity is its grounding tag. Aliases are recorded as uncertain and never merged to raise overlap.
+5. **Readiness is SAFETY and COMPETENCE** (`agent-readiness-gate-v3`). Competence criteria are defined before a live run and versioned (`evals/agent/stability-criteria.json`). A green gate is never overridden to red by hand: a missing criterion is added to the gate.
+6. **Controlled scenarios use real, verified Qloo evidence** (`evals/agent/controlled-cases.json`). They are re-verified live before each run (`PRECONDITION_CHANGED` otherwise) and kept outside the prescribed-case denominator.
+
 ## Engineering
 
 - Keep **frontend/backend boundaries clean.** The frontend talks only to the backend. Only the backend talks to Qloo, through `QlooClient` (`backend/src/qloo`).

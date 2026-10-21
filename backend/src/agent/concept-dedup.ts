@@ -62,6 +62,28 @@ export function canonicalTagName(tagId: string): string {
   return tagId.split(":").at(-1)?.toLowerCase() ?? tagId;
 }
 
+/**
+ * Sprint 5A.1 canonical concept key: the canonical tag name with safe plural normalization per token
+ * ("urn:tag:genre:media:cookbooks" → "cookbook"; "urn:tag:genre:qloo:self_help" → "self_help"). A label without a tag
+ * is normalized the same way. Nothing else is merged here: no stemming of "-ing"/"-er", no synonyms.
+ */
+export function canonicalConceptKey(tagIdOrLabel: string): string {
+  const name = tagIdOrLabel.startsWith("urn:") ? canonicalTagName(tagIdOrLabel) : tagIdOrLabel;
+  return norm(name.replace(/_/gu, " ")).split(" ").filter(Boolean).map(singular).join("_");
+}
+
+/**
+ * How two canonical keys relate: SAME (identical), ALIAS (one's tokens are contained in the other's, e.g. "folk" and
+ * "folk_music" — a plausible alias, recorded as uncertain and never merged), or null (different names).
+ */
+export function canonicalRelation(a: string, b: string): "SAME" | "ALIAS" | null {
+  if (a === b) return "SAME";
+  const ta = new Set(a.split("_"));
+  const tb = new Set(b.split("_"));
+  const [small, large] = ta.size <= tb.size ? [ta, tb] : [tb, ta];
+  return small.size > 0 && [...small].every((t) => large.has(t)) ? "ALIAS" : null;
+}
+
 type Finding = { verdict: ConceptDedupVerdict; layer: "deterministic" | "structural"; basis: string; morphologyOnly: boolean };
 
 /** Layer 1 over labels and (when anchored) concept ids. */

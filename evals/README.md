@@ -87,6 +87,32 @@ The report gives routing accuracy, tool-call validity, resolution and representa
 
 Scenarios may wrap the baseline with a failure behaviour observed live (`"wrap": "eager_analyze"`). Two more expectation kinds exist: `contextIncludes` (state-grounded guidance actually reached the model) and `notFull`. `backend/tests/agent-sprint5a.test.ts` adds 30 targeted adversarial tests (semantic validator, reference plan, recovery, deferral, frontier, synthesis validity and false positives, gate honesty). All of this is SYNTHETIC: neither a Qloo validation nor a live model validation.
 
+## Agent evals (Sprint 5A.1 update)
+
+`evals/agent/scenarios.json` holds **52** scenarios. Six `s51-*` scenarios reproduce the Sprint 5A live failure classes with fictional `SYN-` entities (world additions `SYN-*-3xxx`):
+- `s51-type-alignment-compare`: an off-type anchor deferred once (`TYPE_ALIGNMENT_PENDING`); all three targets reach one place set (FULL);
+- `s51-probe-limit-unsupported`: `PROBE_LIMIT_REACHED` after 3 empty types; the territory becomes unsupported after 6 empty probes; INSUFFICIENT, never zero;
+- `s51-references-late-still-feasible`: references found with two turns left still complete (FULL). It fails under the Sprint 5A turn arithmetic (mutation-checked);
+- `s51-reference-namespace-barren`: a third probe in a namespace already barren for the type is refused (`REFERENCE_NAMESPACE_BARREN`);
+- `s51-frontier-evidence-base`: the related take is fixed and a profile outside the evidence base is refused (`FRONTIER_EVIDENCE_BASE`);
+- `s51-frontier-canonical-anchor`: candidates keep their grounding tag as canonical identity (`SAME_CONCEPT`).
+
+New expectation kinds: `maxEmptyTypeProbesPerConcept`, `evidenceStatus`, `relatedTake`, `allCandidatesCanonical`.
+
+`pnpm eval:agent` also runs the targeted runtime evaluators (`backend/scripts/run-evaluators.ts`, `run-evaluators-v1`) on every scenario:
+- `PROBE_BUDGET_VALID`
+- `COMMON_TYPE_FEASIBILITY`
+- `REFERENCE_SET_MEANINGFUL`
+- `COMPLETION_BUDGET_FEASIBLE`
+- `CANONICAL_CANDIDATE_VALID`
+- `FRONTIER_DISCOVERY_CONSISTENCY`
+
+The run requires 0 failures. `backend/tests/agent-sprint5a1.test.ts` adds 27 targeted tests. All of this is SYNTHETIC.
+
+Two eval-side files feed the live readiness gate v3:
+- `evals/agent/controlled-cases.json` (`agent-controlled-v1`) holds the controlled positive scenario `C-FULL-1`. Its preconditions are real Qloo observations with correlation ids from stored Sprint 5A traces, and they are re-verified live before every run. It is evaluator-constructed (owner review pending) and kept outside the seven-case denominator.
+- `evals/agent/stability-criteria.json` (`frontier-stability-criteria-v1`) holds the frontier criteria. They were defined before the Sprint 5A.1 live run, with Sprint 5A baselines computed by the same code. Thresholds must not be changed after seeing results.
+
 ### Live agent evaluation (`pnpm eval:agent:live`)
 
 `evals/agent/live-cases.json` (`agent-live-v1`) is unchanged: L-M1–M3, L-C1–C2, L-E1–E2.
@@ -97,7 +123,13 @@ The readiness run is:
 pnpm eval:agent:live -- --arms baseline,model --stability 3 --out backend/feasibility-output/sprint5a-live/<name>
 ```
 
-It runs both arms on the identical cases and repeats each frontier case three times in the model arm. `AGENT_MODEL_READY` requires:
+It runs both arms on the identical cases and repeats each frontier case three times in the model arm. Sprint 5A.1:
+- The controlled scenario(s) run in both arms after a live preflight, whenever `--cases` is absent or names them.
+- The default output directory is `backend/feasibility-output/sprint5a1-live/<timestamp>`.
+- The gate (`agent-readiness-gate-v3`) reports **SAFETY** (the list below) and **COMPETENCE** separately. Overall READY needs both.
+- The nine competence checks are: recovery, probe limits, meaningful FULL demonstrated, controlled FULL, frontier criteria, no regression, synthesis usable, honest degradation, runtime evaluators.
+
+The SAFETY half requires:
 - every prescribed case executed by `claude-haiku-5-5` (an error or omission stays in the denominator: `INCOMPLETE_LIVE_EVALUATION`);
 - a single model id;
 - a full case-matched baseline;

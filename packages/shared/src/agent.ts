@@ -13,6 +13,8 @@ import type { CulturalElasticityResult, ElasticityClass, RobustnessLevel } from 
 /**
  * 0.3 (Sprint 5A, additive): semantic comparison assessments, grounded findings, synthesis attempt details,
  * model effort, reference-plan and latency telemetry. Every 0.2 field is unchanged.
+ * Sprint 5A.1 adds only OPTIONAL fields under the same version (candidate canonicalization, evidence status, probe
+ * views, representation plans, completion checks, frontier candidate pool, probe metrics): a 0.3 reader keeps working.
  */
 export const AGENT_RESULT_SCHEMA_VERSION = "ce-agent-result/0.3" as const;
 
@@ -146,6 +148,84 @@ export type AgentTerritoryResult = {
   keyEvidence: string[];
   limitations: Limitation[];
   provenance: { correlationIds: string[]; sources: string[] };
+  /** Sprint 5A.1 (additive): how the candidate's concept was canonicalized (frontier reproducibility). */
+  candidate?: CandidateCanonicalization;
+  /** Sprint 5A.1 (additive): evidence status for the UI. A connected node never implies a measured distance. */
+  evidenceStatus?: TerritoryEvidenceStatus;
+  /** Sprint 5A.1 (additive): brand-independent entity-type probes of the territory's concepts, and why probing stopped. */
+  probes?: ConceptProbeView[];
+};
+
+/**
+ * Sprint 5A.1. EVIDENCE_SUPPORTED_TERRITORY: a FULL relative analysis (positions hold only within its comparison
+ * set). PARTIAL_EVIDENCE: partial or descriptive Qloo evidence. UNSUPPORTED: Qloo does not support it.
+ * HYPOTHESIS_PENDING_VALIDATION: proposed but not yet validated (never present in a finished result).
+ */
+export type TerritoryEvidenceStatus = "EVIDENCE_SUPPORTED_TERRITORY" | "PARTIAL_EVIDENCE" | "HYPOTHESIS_PENDING_VALIDATION" | "UNSUPPORTED";
+
+/** Sprint 5A.1: one concept's entity-type probes (counted from brand-independent pools; errors are not probes). */
+export type ConceptProbeView = {
+  conceptKey: string;
+  label: string;
+  attemptedTypes: string[];
+  emptyTypes: string[];
+  successfulTypes: string[];
+  /** Probes whose Qloo call was partial or degraded: not evidence that the type is unsupported. */
+  unreliableTypes: string[];
+  totalEmptyTypeProbes: number;
+  probingExhausted: boolean;
+  exhaustionReason: string | null;
+};
+
+/**
+ * Sprint 5A.1: canonical identity of a candidate concept. Deduplication order: exact Qloo id → canonical tag name →
+ * normalized label → token-containment alias (recorded as uncertain, never merged) → no semantic merge.
+ */
+export type CandidateCanonicalization = {
+  originalLabel: string;
+  /** The Qloo tag that grounded the candidate (its evidence tag), if any. */
+  sourceTagId: string | null;
+  /** The Qloo concept the territory was anchored to. */
+  resolvedId: string | null;
+  canonicalConceptKey: string;
+  normalizationReason: "SOURCE_TAG_CANONICAL_NAME" | "ANCHORED_TAG_CANONICAL_NAME" | "LABEL_NORMALIZED";
+  candidateSource: CandidateSource;
+  /** Relation between the source tag and the anchored concept. */
+  anchorRelation: "SAME_CONCEPT" | "SAME_CANONICAL_NAME" | "ALIAS_TOKEN_CONTAINMENT" | "DIFFERENT_NAME" | "NOT_ANCHORED" | "NO_SOURCE_TAG";
+  /** Set when equivalence between the source tag and the anchored concept is not established. */
+  uncertainty: string | null;
+};
+
+/** Sprint 5A.1: can the territories of one comparison share a Qloo entity type? Planned before expensive anchoring. */
+export type ComparisonRepresentationPlan = {
+  territoryKeys: string[];
+  candidateEntityTypes: string[];
+  preferredCommonType: string | null;
+  /** Territories with observed brand-independent members (or a representation) of each type. */
+  supportedTerritoriesByType: Record<string, string[]>;
+  /** Territories that could still reach a type through an untested, non-exhausted probe. */
+  possibleTerritoriesByType: Record<string, string[]>;
+  feasibility: "SUPPORTED" | "POSSIBLE" | "UNSUPPORTED";
+  /** Territories one type must cover for a relative position. */
+  required: number;
+  missingRequirements: string[];
+  reasonCodes: string[];
+  rulesVersion: string;
+};
+
+/** Sprint 5A.1: can the intended FULL route still be finished within the remaining turns and Qloo calls? */
+export type CompletionFeasibility = {
+  requiredReferenceCount: number;
+  validReferenceCount: number;
+  missingReferenceCount: number;
+  compatibleEntityType: string | null;
+  remainingRelevantCandidates: number;
+  remainingTurns: number;
+  remainingQlooCalls: number;
+  turnsNeeded: number;
+  callsNeeded: number;
+  fullAnalysisFeasible: boolean;
+  reason: string;
 };
 
 // ---- Sprint 4: skills, quality, deduplication, comparison sets, next-action value ----
@@ -258,6 +338,12 @@ export type ComparisonSetConstruction = {
   diversity: { assessment: "diverse" | "overlapping" | "unknown"; similarPairs: { a: string; b: string; basis: string }[]; detail: string };
   /** Sprint 5A: every comparison set considered for FULL, with its structural and semantic verdict. */
   semanticAssessments?: SemanticComparisonAssessment[];
+  /**
+   * Sprint 5A.1 (frontier): the deterministic, evidence-grounded candidate pool the agent chose from, and the related
+   * entities whose profiles formed it. Two runs with equal pools that chose differently differ by model choice.
+   */
+  candidatePool?: { canonicalConceptKey: string; tagId: string; label: string; support: number }[];
+  evidenceBase?: string[];
   note: string;
 };
 
@@ -378,6 +464,10 @@ export type AgentTrace = {
   semanticAssessments?: SemanticComparisonAssessment[];
   /** Sprint 5A: why the agent stopped, in one reason code + detail. */
   stopReason?: { code: string; detail: string } | null;
+  /** Sprint 5A.1: representation-alignment plans, recorded whenever the plan changes. */
+  representationPlans?: { iteration: number; plan: ComparisonRepresentationPlan }[];
+  /** Sprint 5A.1: completion-feasibility checks, recorded whenever the verdict or reason changes. */
+  completion?: ({ iteration: number } & CompletionFeasibility)[];
   errors: { iteration: number; code: string; detail: string }[];
   userClarifications: string[];
 };
@@ -430,6 +520,12 @@ export type AgentMetrics = {
   synthesis_valid_after_repair?: boolean | null;
   synthesis_fallback?: boolean;
   reference_deferrals?: number;
+  // Sprint 5A.1
+  empty_type_probes?: number;
+  max_empty_type_probes_per_concept?: number;
+  probe_limit_refusals?: number;
+  type_alignment_deferrals?: number;
+  reference_namespace_refusals?: number;
 };
 
 export type AgentAnalysisResult = {

@@ -47,7 +47,9 @@ const compactEntitySchema = z.looseObject({
   name: z.string(),
   type: z.string().optional(),
   subtype: z.string().optional(),
-  popularity: z.number().optional(),
+  // [live 2026-10-21] recommend returns `popularity: null` for some members (7 contract failures in Sprint 5A
+  // traces). Null is treated as absent: popularity is shown, never computed with, and is never invented.
+  popularity: z.number().nullable().optional(),
   affinity: z.number().optional(),
 });
 const compactTagSchema = z.looseObject({
@@ -136,7 +138,7 @@ export function toEntitySignals(operation: QlooOperation, envelope: QlooEnvelope
       label: entity.name,
       ...(entity.type !== undefined ? { type: entity.type } : {}),
       ...(entity.affinity !== undefined ? { affinity: entity.affinity } : {}),
-      ...(entity.popularity !== undefined ? { popularity: entity.popularity } : {}),
+      ...(entity.popularity !== undefined && entity.popularity !== null ? { popularity: entity.popularity } : {}),
       sourceCorrelationId: envelope.execution.correlation_id,
     };
   });

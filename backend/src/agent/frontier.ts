@@ -16,10 +16,12 @@
  * Relative positions and classes depend on the comparison set, so how the set was built is always
  * recorded (ComparisonSetConstruction) and returned with the result.
  */
-import type { AgentTerritoryResult, CandidateSource, ComparisonSetConstruction } from "@cultural-elasticity/shared";
+import type { AgentTerritoryResult, CandidateCanonicalization, CandidateSource, ComparisonSetConstruction, TerritoryEvidenceStatus } from "@cultural-elasticity/shared";
 import { setOverlap } from "../analysis/overlap.js";
 import { matchOperationalRule } from "../methodology/operational-tags.js";
-import { labelTokens } from "./candidate-discovery.js";
+import { frontierConcepts, labelTokens } from "./candidate-discovery.js";
+import { canonicalConceptKey, canonicalRelation } from "./concept-dedup.js";
+import { conceptPools, eligibleMembers } from "./probe-policy.js";
 import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
 import { incidentalConcept } from "./semantic-comparison.js";
 import type { AgentRunState, TerritoryState } from "./state.js";
@@ -104,6 +106,100 @@ export function pruneForDiversity(state: AgentRunState, keys: readonly string[])
   return keys.filter((k) => state.territories.some((t) => t.key === k && t.status !== "dropped"));
 }
 
+// ---- Sprint 5A.1: stable, evidence-grounded frontier discovery ----
+
+/**
+ * Related entities requested for the brand, at a FIXED take (Qloo's tie order depends on `take`, so a model-chosen
+ * limit changed the related set from run to run).
+ */
+export const FRONTIER_RELATED_TAKE = 8;
+/** Related entities, in Qloo's order, whose tag profiles form the frontier evidence base. */
+export const FRONTIER_EVIDENCE_BASE = 6;
+/** Candidate-pool size shown to the agent. */
+export const FRONTIER_POOL_SIZE = 12;
+
+/** The brand's related entities in Qloo order (first related call for the brand). */
+function relatedOrder(state: AgentRunState): string[] {
+  const brandId = state.brand.entity?.id;
+  return state.related.find((r) => r.subjectId === brandId)?.memberIds ?? [];
+}
+
+/**
+ * Stage A evidence base: the first FRONTIER_EVIDENCE_BASE related entities in Qloo order, extended by one for each of
+ * them whose profile came back empty. Fixed given Qloo's answer, so repeated runs see the same evidence.
+ */
+export function frontierEvidenceBase(state: AgentRunState): string[] {
+  const order = relatedOrder(state);
+  let size = FRONTIER_EVIDENCE_BASE;
+  for (let i = 0; i < Math.min(size, order.length); i += 1) if (state.profiles.get(order[i]!)?.tagIds.length === 0) size += 1;
+  return order.slice(0, size);
+}
+
+/** Refusal reason for profiling a related entity outside the evidence base (null when allowed). */
+export function outsideFrontierEvidenceBase(state: AgentRunState, entityId: string): string | null {
+  if (state.interpretation?.intent !== "explore_frontier") return null;
+  const order = relatedOrder(state);
+  if (!order.includes(entityId)) return null;
+  // An entity that is also an exemplar candidate (tag-pool member) may be profiled for the quality check.
+  if (state.entities.get(entityId)?.sources.some((s) => s.kind === "tag_member")) return null;
+  const base = frontierEvidenceBase(state);
+  if (base.includes(entityId)) return null;
+  return `the frontier evidence base is the first ${base.length} related entities in Qloo's order (fixed, so repeated runs see the same evidence); this entity is outside it. Choose candidates from frontierConcepts`;
+}
+
+export type FrontierPoolEntry = { tagId: string; label: string; canonicalConceptKey: string; support: number; probes: { type: string; members: number }[] };
+
+/**
+ * Stage A candidate pool: concepts carried by the evidence-base profiles but not by the brand (frontierConcepts),
+ * deduplicated by canonical concept key (the best-supported tag of each key is kept; ties by tag id), bounded and in a
+ * stable order (support, then canonical key). The agent (stage B) prioritizes, chooses and may add lateral hypotheses;
+ * every choice is still validated with Qloo.
+ */
+export function frontierCandidatePool(state: AgentRunState): FrontierPoolEntry[] {
+  const base = new Set(frontierEvidenceBase(state));
+  const concepts = frontierConcepts(state, 1).map((c) => ({ ...c, support: countSupport(state, c.tagId, base) })).filter((c) => c.support > 0);
+  const byKey = new Map<string, (typeof concepts)[number]>();
+  for (const c of concepts) {
+    const key = canonicalConceptKey(c.tagId);
+    const prev = byKey.get(key);
+    if (!prev || c.support > prev.support || (c.support === prev.support && c.tagId < prev.tagId)) byKey.set(key, c);
+  }
+  return [...byKey.entries()]
+    .map(([key, c]) => ({ tagId: c.tagId, label: c.label, canonicalConceptKey: key, support: c.support, probes: conceptPools(state, c.tagId).map((p) => ({ type: p.targetType, members: eligibleMembers(state, p) })) }))
+    .sort((a, b) => b.support - a.support || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey))
+    .slice(0, FRONTIER_POOL_SIZE);
+}
+
+/** Evidence-base profiles carrying the tag. */
+function countSupport(state: AgentRunState, tagId: string, base: ReadonlySet<string>): number {
+  return [...base].filter((id) => state.profiles.get(id)?.tagIds.includes(tagId)).length;
+}
+
+/** Sprint 5A.1 canonical identity of a territory's concept (see CandidateCanonicalization in the shared contract). */
+export function candidateCanonicalization(state: AgentRunState, t: TerritoryState): CandidateCanonicalization {
+  const source: CandidateSource = t.role === "reference" ? "reference_strategy" : t.source;
+  const resolvedId = t.concept?.id ?? null;
+  const key = t.sourceTagId ? canonicalConceptKey(t.sourceTagId) : resolvedId ? canonicalConceptKey(resolvedId) : canonicalConceptKey(t.label);
+  const reason: CandidateCanonicalization["normalizationReason"] = t.sourceTagId ? "SOURCE_TAG_CANONICAL_NAME" : resolvedId ? "ANCHORED_TAG_CANONICAL_NAME" : "LABEL_NORMALIZED";
+  let relation: CandidateCanonicalization["anchorRelation"] = "NO_SOURCE_TAG";
+  let uncertainty: string | null = null;
+  if (t.sourceTagId && !resolvedId) relation = "NOT_ANCHORED";
+  else if (t.sourceTagId && resolvedId) {
+    const rel = resolvedId === t.sourceTagId ? "SAME_CONCEPT" : canonicalRelation(canonicalConceptKey(t.sourceTagId), canonicalConceptKey(resolvedId));
+    relation = rel === "SAME_CONCEPT" ? "SAME_CONCEPT" : rel === "SAME" ? "SAME_CANONICAL_NAME" : rel === "ALIAS" ? "ALIAS_TOKEN_CONTAINMENT" : "DIFFERENT_NAME";
+    if (relation === "ALIAS_TOKEN_CONTAINMENT") uncertainty = `anchored ${resolvedId} only shares name tokens with the grounding tag ${t.sourceTagId}: a plausible alias, not established equivalence`;
+    if (relation === "DIFFERENT_NAME") uncertainty = `anchored ${resolvedId} has a different name from the grounding tag ${t.sourceTagId}: equivalence is not established`;
+  }
+  return { originalLabel: t.label, sourceTagId: t.sourceTagId, resolvedId, canonicalConceptKey: key, normalizationReason: reason, candidateSource: source, anchorRelation: relation, uncertainty };
+}
+
+/** Sprint 5A.1 evidence status for the UI (a connected node never implies a measured distance). */
+export function evidenceStatus(r: AgentTerritoryResult): TerritoryEvidenceStatus {
+  if (r.analysisRoute === "FULL_RELATIVE_ANALYSIS") return "EVIDENCE_SUPPORTED_TERRITORY";
+  if (r.analysisRoute === "PARTIAL_CULTURAL_ANALYSIS" || r.analysisRoute === "DESCRIPTIVE_ANALYSIS") return "PARTIAL_EVIDENCE";
+  return "UNSUPPORTED";
+}
+
 const STAGE_BY_CODE: Record<string, ComparisonSetConstruction["rejected"][number]["stage"]> = {
   TERRITORY_UNRESOLVED: "resolution",
   TERRITORY_AMBIGUOUS: "resolution",
@@ -146,6 +242,7 @@ export function comparisonSetConstruction(state: AgentRunState, results: readonl
     final: finalTerritories.map((t) => ({ key: t.key, label: t.label, role: t.role, source: sourceOf(t), route: byKey.get(t.key)!.analysisRoute })),
     dedupDecisions: state.trace.conceptDedup,
     semanticAssessments: state.semanticAssessments,
+    ...(state.interpretation?.intent === "explore_frontier" && { candidatePool: frontierCandidatePool(state).map(({ canonicalConceptKey, tagId, label, support }) => ({ canonicalConceptKey, tagId, label, support })), evidenceBase: frontierEvidenceBase(state) }),
     diversity: {
       assessment: frontier.length < 2 ? "unknown" : diversity.pairs.length > 0 ? "overlapping" : diversity.unknown ? "unknown" : "diverse",
       similarPairs: diversity.pairs.map(({ a, b, basis }) => ({ a, b, basis })),
@@ -164,7 +261,20 @@ export function comparisonSetConstruction(state: AgentRunState, results: readonl
 
 // ---- Frontier set stability (repeated runs of the same request) ----
 
-export type FrontierRun = { candidates: { key: string; label: string; conceptId: string | null; route: string; position: number | null; classification: string | null }[] };
+export type FrontierRun = {
+  candidates: {
+    key: string;
+    label: string;
+    conceptId: string | null;
+    route: string;
+    position: number | null;
+    classification: string | null;
+    /** Sprint 5A.1: canonical concept key (grounding tag, else anchored tag, else label). */
+    canonicalKey?: string | null;
+    /** Sprint 5A.1: canonical keys of the FULL comparison set the candidate was ranked in (empty if none). */
+    comparisonKeys?: string[];
+  }[];
+};
 
 export type FrontierStability = {
   runs: number;
@@ -176,7 +286,24 @@ export type FrontierStability = {
   topCandidateConsistency: number | null;
   /** For concepts analyzed with a class in ≥ 2 runs: share with an identical class every time. */
   methodologyStability: number | null;
+  /** Sprint 5A.1 (FRONTIER_STABILITY_METRICS_VERSION): mean pairwise Jaccard of canonical concept keys (all candidates). */
+  canonicalConceptOverlap?: number | null;
+  /** Mean pairwise Jaccard of canonical keys of supported candidates (route other than INSUFFICIENT_EVIDENCE). */
+  supportedCanonicalOverlap?: number | null;
+  /** Supported canonical keys that recur in ≥ 2 runs. */
+  recurringSupportedCanonical?: string[];
+  /** For canonical keys present in ≥ 2 runs: share anchored to the same Qloo concept id in every run. */
+  anchorConsistency?: number | null;
+  /** Rubric proxy (label content words, plural-normalized), reported separately from ids; never a gate on its own. */
+  themeOverlapProxy?: number | null;
+  /** Run pairs whose FULL comparison sets hold the same canonical concepts, of pairs where both have one. */
+  comparisonSetCompatibility?: { comparablePairs: number; pairsWithFull: number };
 };
+
+export const FRONTIER_STABILITY_METRICS_VERSION = "frontier-stability-metrics-v2";
+
+const THEME_STOPWORDS = new Set(["and", "the", "of", "for", "with", "culture", "lifestyle", "living"]);
+const themeTokens = (label: string) => new Set(labelTokens(label).filter((t) => !THEME_STOPWORDS.has(t)));
 
 const mean = (values: number[]) => (values.length === 0 ? null : Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 1000) / 1000);
 
@@ -210,5 +337,47 @@ export function frontierStability(runs: readonly FrontierRun[]): FrontierStabili
     resolvedConceptOverlap: runs.length < 2 ? null : pairwise((c) => c.conceptId),
     topCandidateConsistency: tops.length === 0 ? null : Math.round((modal / runs.length) * 1000) / 1000,
     methodologyStability: repeated.length === 0 ? null : Math.round((repeated.filter((id) => classes.get(id)!.size === 1).length / repeated.length) * 1000) / 1000,
+    ...canonicalStability(runs, pairwise),
+  };
+}
+
+/** Sprint 5A.1 canonical-level stability (see FrontierStability). */
+function canonicalStability(runs: readonly FrontierRun[], pairwise: (key: (c: FrontierRun["candidates"][number]) => string | null) => number | null) {
+  const supported = (c: FrontierRun["candidates"][number]) => c.route !== "INSUFFICIENT_EVIDENCE";
+  const counts = new Map<string, number>();
+  for (const r of runs) for (const k of new Set(r.candidates.filter(supported).flatMap((c) => (c.canonicalKey ? [c.canonicalKey] : [])))) counts.set(k, (counts.get(k) ?? 0) + 1);
+  const anchors = new Map<string, { runs: number; ids: Set<string> }>();
+  for (const r of runs) {
+    const seen = new Set<string>();
+    for (const c of r.candidates) {
+      if (!c.canonicalKey || seen.has(c.canonicalKey)) continue;
+      seen.add(c.canonicalKey);
+      const entry = anchors.get(c.canonicalKey) ?? { runs: 0, ids: new Set<string>() };
+      entry.runs += 1;
+      entry.ids.add(c.conceptId ?? "(unanchored)");
+      anchors.set(c.canonicalKey, entry);
+    }
+  }
+  const recurring = [...anchors.values()].filter((a) => a.runs >= 2);
+  const themes = runs.map((r) => new Set(r.candidates.flatMap((c) => [...themeTokens(c.label)])));
+  const themePairs: number[] = [];
+  for (let i = 0; i < themes.length; i += 1) for (let j = i + 1; j < themes.length; j += 1) themePairs.push(setOverlap(themes[i]!, themes[j]!).jaccard ?? (themes[i]!.size + themes[j]!.size === 0 ? 1 : 0));
+  const sets = runs.map((r) => [...new Set(r.candidates.flatMap((c) => (c.comparisonKeys && c.comparisonKeys.length > 0 ? [c.comparisonKeys.join("|")] : [])))]);
+  let pairsWithFull = 0;
+  let comparablePairs = 0;
+  for (let i = 0; i < sets.length; i += 1)
+    for (let j = i + 1; j < sets.length; j += 1) {
+      if (sets[i]!.length === 0 || sets[j]!.length === 0) continue;
+      pairsWithFull += 1;
+      if (sets[i]!.some((x) => sets[j]!.includes(x))) comparablePairs += 1;
+    }
+  const r3 = (v: number) => Math.round(v * 1000) / 1000;
+  return {
+    canonicalConceptOverlap: runs.length < 2 ? null : pairwise((c) => c.canonicalKey ?? null),
+    supportedCanonicalOverlap: runs.length < 2 ? null : pairwise((c) => (supported(c) ? (c.canonicalKey ?? null) : null)),
+    recurringSupportedCanonical: [...counts.entries()].filter(([, n]) => n >= 2).map(([k]) => k).sort(),
+    anchorConsistency: recurring.length === 0 ? null : r3(recurring.filter((a) => a.ids.size === 1 && !a.ids.has("(unanchored)")).length / recurring.length),
+    themeOverlapProxy: themePairs.length === 0 ? null : r3(themePairs.reduce((a, b) => a + b, 0) / themePairs.length),
+    comparisonSetCompatibility: { comparablePairs, pairsWithFull },
   };
 }

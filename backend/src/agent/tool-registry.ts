@@ -18,6 +18,8 @@ import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { callQloo, describedEntity, PROFILE_TAKE, recordFindTags, recordPool, recordProfile, recordRelated, recordResolved } from "./qloo-gateway.js";
 import { strategyExhausted } from "./readiness.js";
 import { referenceCandidates } from "./reference-strategy.js";
+import { FRONTIER_EVIDENCE_BASE, FRONTIER_RELATED_TAKE } from "./frontier.js";
+import { alignmentDeferral } from "./representation-alignment.js";
 import { validateTerritoryRepresentation } from "./representation-planner.js";
 import { resolveInterpretation } from "./router.js";
 import { assessReferenceConcept, incidentalConcept } from "./semantic-comparison.js";
@@ -93,7 +95,7 @@ const semanticSchema = z.strictObject({ relevance: z.enum(["strong", "adequate",
 const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier_candidate"; origin: "agent_hypothesis" | "qloo_evidence"; rationale: string; evidenceTagIds?: string[] | undefined; semantic?: { relevance: "strong" | "adequate" | "weak" | "mismatch"; reason: string } | undefined }> = {
   name: "propose_territory",
   description:
-    "Add a territory hypothesis (no Qloo call). role=reference: a comparison territory so a single move can be placed in a set of ≥3 territories of one entity type — pick it from referenceCandidates with semantic MEANINGFUL, pass its tag in evidenceTagIds, and give your semantic judgment (is it a meaningful cultural alternative to the target, at the same analytical level? strong|adequate|weak|mismatch + reason; weak/mismatch removes it). Venue amenities, decor and operational tags are refused. role=frontier_candidate: explore_frontier only. origin=qloo_evidence requires evidenceTagIds returned by Qloo in this run; origin=agent_hypothesis must later be found in Qloo, anchored and shown to have members, or it is dropped. Exact duplicates are refused. Next step: anchor_territory.",
+    "Add a territory hypothesis (no Qloo call). role=reference: a comparison territory so a single move can be placed in a set of ≥3 territories of one entity type — pick it from referenceCandidates with semantic MEANINGFUL, pass its tag in evidenceTagIds, and give your semantic judgment (is it a meaningful cultural alternative to the target, at the same analytical level? strong|adequate|weak|mismatch + reason; weak/mismatch removes it). Venue amenities, decor and operational tags are refused. A reference with one evidence tag that the semantic validator accepts is anchored to it at once (validate it in the same turn). role=frontier_candidate: explore_frontier only. origin=qloo_evidence requires evidenceTagIds returned by Qloo in this run; origin=agent_hypothesis must later be found in Qloo, anchored and shown to have members, or it is dropped. Exact duplicates are refused. Next step: anchor_territory.",
   permission: "local_computation",
   inputSchema: z.strictObject({ label: text.max(120), role: z.enum(["reference", "frontier_candidate"]), origin: z.enum(["agent_hypothesis", "qloo_evidence"]), rationale: text.max(400), evidenceTagIds: z.array(text).max(5).optional(), semantic: semanticSchema.optional() }),
   maxQlooCalls: 0,
@@ -116,10 +118,19 @@ const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier
   async execute({ state }, input) {
     const reference = input.role === "reference" ? referenceCandidates(state).find((c) => input.evidenceTagIds?.includes(c.tagId)) : undefined;
     const evidence = input.origin === "qloo_evidence" ? `Qloo tag(s) ${(input.evidenceTagIds ?? []).join(", ")}${reference ? `; ${reference.justification}` : ""}` : `agent hypothesis: ${input.rationale}`;
-    const t = addTerritory(state, { label: input.label, role: input.role, origin: input.origin, rationale: input.rationale, source: input.role === "reference" ? "reference_strategy" : input.origin === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded", sourceEvidence: evidence.slice(0, 400) });
+    const t = addTerritory(state, { label: input.label, role: input.role, origin: input.origin, rationale: input.rationale, source: input.role === "reference" ? "reference_strategy" : input.origin === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded", sourceEvidence: evidence.slice(0, 400), sourceTagId: input.origin === "qloo_evidence" ? (input.evidenceTagIds?.[0] ?? null) : null });
     if (input.semantic) t.semanticJudgment = { relevance: input.semantic.relevance.toUpperCase() as "STRONG" | "ADEQUATE" | "WEAK" | "MISMATCH", reason: input.semantic.reason.trim() };
+    // Sprint 5A.1 (live L-C2: propose, anchor and validate spread over three turns, so usable references were never
+    // validated): a reference proposed with exactly one Qloo evidence tag IS that concept. When the semantic validator
+    // accepts it and no territory uses it, it is anchored now; a rejected one still goes through anchor_territory's checks.
+    const tagId = input.role === "reference" && input.evidenceTagIds?.length === 1 ? input.evidenceTagIds[0]! : null;
+    const tag = tagId ? state.tags.get(tagId) : undefined;
+    if (tag && !activeTerritories(state).some((o) => o.key !== t.key && o.concept?.id === tag.id) && assessReferenceConcept(state, tag.id, t.semanticJudgment).status === "MEANINGFUL") {
+      t.concept = { id: tag.id, label: tag.label, type: tag.type };
+      t.status = "anchored";
+    }
     const near = state.territories.filter((o) => o.key !== t.key && o.status !== "dropped" && deterministicDuplicate({ label: o.label, conceptId: o.concept?.id ?? null }, { label: t.label, conceptId: null })?.verdict === "NEAR_DUPLICATE").map((o) => o.label);
-    return { status: "ok", summary: `added ${t.key}${near.length ? ` (word-family match with ${near.join(", ")}: it will be dropped as a near-duplicate unless assess_concept_duplicates judges it distinct)` : ""}`, data: { key: t.key } };
+    return { status: "ok", summary: `added ${t.key}${t.concept ? ` (anchored to ${t.concept.label}; next: validate_territory_representation)` : ""}${near.length ? ` (word-family match with ${near.join(", ")}: it will be dropped as a near-duplicate unless assess_concept_duplicates judges it distinct)` : ""}`, data: { key: t.key } };
   },
 };
 
@@ -140,7 +151,11 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
       const canonical = activeTerritories(state).find((o) => o.key !== t.key && o.concept && canonicalTagName(o.concept.id) === canonicalTagName(input.tagId));
       if (canonical) return `concept ${input.tagId} has the same canonical name as ${canonical.concept!.id}, which anchors ${canonical.key} (duplicate concept in another namespace)`;
     }
-    return observedTag(state, input.tagId);
+    const unobserved = observedTag(state, input.tagId);
+    if (unobserved) return unobserved;
+    // Sprint 5A.1: bounded entity-type alignment for comparisons (representation-alignment.ts).
+    const deferral = alignmentDeferral(state, t, input.tagId);
+    return deferral ? `TYPE_ALIGNMENT_PENDING: ${deferral}` : undefined;
   },
   async execute({ state }, input) {
     const t = findTerritory(state, input.territoryKey)!;
@@ -383,7 +398,7 @@ function profileView(state: AgentRunState, id: string) {
 const recommend: AgentTool<{ targetType: RankableType; tagIds: string[]; conditionOnBrand: boolean; limit: number }> = {
   name: "qloo_recommend",
   description:
-    "1 Qloo call. Entities of one type that Qloo associates with concept tag(s). conditionOnBrand=false: a brand-independent member pool — use it to test whether a concept has members of an entity type and to discover exemplar candidates (order not meaningful; popularity shown). conditionOnBrand=true: the brand-conditioned list (evidence about the brand, never exemplars; analysis collects it itself). Common failures: empty pool for that type (follow recoveryGuidance: try an untried type, not the same type again), tag not observed. Tags must have been returned by Qloo in this run.",
+    "1 Qloo call. Entities of one type that Qloo associates with concept tag(s). conditionOnBrand=false: a brand-independent member pool — use it to test whether a concept has members of an entity type and to discover exemplar candidates (order not meaningful; popularity shown). conditionOnBrand=true: the brand-conditioned list (evidence about the brand, never exemplars; analysis collects it itself). Common failures: empty pool for that type (follow recoveryGuidance: the comparison's shared type on another concept first, then an untried type; after 3 empty types a concept is not probed further), tag not observed. Tags must have been returned by Qloo in this run.",
   permission: "read_only_external",
   inputSchema: z.strictObject({ targetType: rankableType, tagIds: z.array(text).min(1).max(3), conditionOnBrand: z.boolean(), limit: z.number().int().min(1).max(20).default(20) }),
   maxQlooCalls: 1,
@@ -411,14 +426,16 @@ const recommend: AgentTool<{ targetType: RankableType; tagIds: string[]; conditi
 
 const relatedEntities: AgentTool<{ entityId: string; targetType: RankableType; limit: number }> = {
   name: "qloo_related_entities",
-  description: "1 Qloo call. Entities of a type that Qloo associates with one entity (that entity as the only signal). Use for frontier discovery (then fetch their tag profiles: frontierConcepts lists concepts they carry that the brand does not). Not for exemplars.",
+  description: `1 Qloo call. Entities of a type that Qloo associates with one entity (that entity as the only signal). Use for frontier discovery (then fetch the tag profiles of the first ${FRONTIER_EVIDENCE_BASE} in Qloo's order — the evidence base: frontierConcepts lists concepts they carry that the brand does not). For the brand, the take is fixed at ${FRONTIER_RELATED_TAKE} (Qloo's order depends on it). Not for exemplars.`,
   permission: "read_only_external",
   inputSchema: z.strictObject({ entityId: text, targetType: rankableType, limit: z.number().int().min(1).max(10).default(5) }),
   maxQlooCalls: 1,
   phases: AFTER_BRAND,
   precondition: (state, input) => (state.entities.has(input.entityId) ? undefined : `entity ${input.entityId} has not been returned by Qloo in this run`),
   async execute({ state, provider, trace }, input) {
-    const result = await callQloo(state, provider, trace, "recommend", { target_type: input.targetType, signals: [input.entityId], limit: input.limit, explain: false });
+    // Sprint 5A.1: a fixed take for the brand's related entities, so repeated runs share the frontier evidence base.
+    const limit = input.entityId === state.brand.entity?.id ? FRONTIER_RELATED_TAKE : input.limit;
+    const result = await callQloo(state, provider, trace, "recommend", { target_type: input.targetType, signals: [input.entityId], limit, explain: false });
     if (result.outcome === "failed") return failed(result.code, result.detail);
     if (result.outcome !== "ok") return { status: "empty", summary: "no related entities" };
     const ids = state.related.some((r) => r.call.envelope.execution.correlation_id === result.call.envelope.execution.correlation_id) ? [] : recordRelated(state, result.call, input.entityId, input.targetType);
