@@ -80,6 +80,15 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 5. **Context comes from the server.** A follow-up is a new bounded child run linked to its parent; only the brand identity is carried over, and it is re-resolved in Qloo. Classifications, positions and evidence are never inherited. A parent the process no longer holds is `CONTEXT_UNAVAILABLE`, never reconstructed. `/continue` is only for NEEDS_INPUT clarifications.
 6. **Query evals are labelled honestly.** The offline `pnpm eval:query` replays gold-derived proposals; it is never language-understanding evidence. `--live` is `LIVE_HAIKU_INTERPRETATION` (no Qloo call), never agent or Qloo validation. HELD_OUT and ADVERSARIAL cases stay frozen (`evals/query/manifest.json`), and changes are recorded as amendments with the original results kept. Failures are fixed generally, never as case rules.
 
+## Living Atlas (permanent, from Sprint 5B.2)
+
+1. **The product UI is the Living Atlas.** It presents validated query responses. It does not own scores, evidence, or lineage.
+2. **Geometry is investigation lineage.** An edge means investigated-from. Spacing is not cultural distance, affinity, confidence, elasticity, or a recommendation.
+3. **Visual decisions follow** `.agents/skills/living-atlas-design/SKILL.md` (version 1). That is a development skill, not a runtime investigation skill. Tokens live in `frontend/src/app/globals.css` and match the skill.
+4. **Jobs are in-process.** `POST /api/agent/jobs` detaches work from the HTTP request inside one Node process. Jobs are not durable across restarts and are not safe on a host that freezes after the response. The browser talks only to the Next.js routes.
+5. **A system directive cannot be confirmed.** A rejected directive does not become a confirmable alternative, and a second confirmation is refused.
+6. **Not investigated is not unsupported.** Incomplete or interrupted is not "no usable evidence." Evidence support is not an investment recommendation.
+
 ## Engineering
 
 - Keep **frontend/backend boundaries clean.** The frontend talks only to the backend. Only the backend talks to Qloo, through `QlooClient` (`backend/src/qloo`).
@@ -104,6 +113,7 @@ pnpm eval:agent:replay -- <dir>
                         # offline replay of current evaluators/stability metrics over stored live results
 pnpm eval:query         # offline gate/handoff replay over the query manifest (synthetic); never NLU evidence
 pnpm eval:query -- --live
+pnpm test:e2e           # browser tests against a SYNTHETIC job API; never live Qloo or Haiku
                         # real Haiku interpretation, dry run (no Qloo): LIVE_HAIKU_INTERPRETATION
 pnpm feasibility:qloo   # live; report its result separately
 ```

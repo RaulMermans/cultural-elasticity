@@ -26,7 +26,8 @@
     "eval:agent": "pnpm --filter backend eval:agent",
     "eval:agent:live": "pnpm --filter backend eval:agent:live",
     "eval:agent:replay": "pnpm --filter backend eval:agent:replay",
-    "eval:query": "pnpm --filter backend eval:query"
+    "eval:query": "pnpm --filter backend eval:query",
+    "test:e2e": "pnpm --filter frontend test:e2e"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

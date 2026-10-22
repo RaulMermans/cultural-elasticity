@@ -1,10 +1,10 @@
-import type { AgentRunResponse, QueryResponse } from "@cultural-elasticity/shared";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../agent/errors.js";
 import { createAgentModel, createLiveToolProvider, createQueryInterpreter, type ModelChoice } from "../agent/factory.js";
 import { confirmBody, queryBody, type QueryBody } from "../agent/query/contracts.js";
 import type { QueryInterpreter } from "../agent/query/interpreter.js";
+import { JobManager, JobRejectedError, type JobRequest } from "../agent/query/jobs.js";
 import { QueryAlreadyExecutedError, QueryService, QueryStore } from "../agent/query/service.js";
 import { RunStore } from "../agent/run-store.js";
 import { AgentRuntime } from "../agent/runtime.js";
@@ -40,6 +40,7 @@ const analyzeBody = z.strictObject({
   model: z.enum(["auto", "baseline"]).optional(),
 });
 const continueBody = z.strictObject({ runId: z.string().uuid(), clarification: z.string().trim().min(1).max(1_000), model: z.enum(["auto", "baseline"]).optional() });
+const continueJobBody = z.strictObject({ continueRunId: z.string().uuid(), clarification: z.string().trim().min(1).max(1_000), model: z.enum(["auto", "baseline"]).optional() });
 
 type ErrorBody = { error: string; message?: string; issues?: EvidenceIssue[] };
 
@@ -57,6 +58,10 @@ function issues(error: z.ZodError): EvidenceIssue[] {
  *   POST /api/agent/follow-up  { query, ..., context: { runId, selectedTerritoryKey? } } | { confirmQueryId }
  *                                                                              → QueryResponse (new child run, linked)
  * /continue answers a NEEDS_INPUT run (budgets already spent stay spent); /follow-up starts a new bounded run.
+ * Sprint 5B.2 asynchronous investigations (same service, detached from the HTTP request; in-memory only):
+ *   POST /api/agent/jobs        the query body, { confirmQueryId }, or { continueRunId, clarification }
+ *   GET  /api/agent/jobs/:id    header x-job-token. 404 when the token is missing, wrong, or the job is gone.
+ *   POST /api/agent/jobs/:id/cancel
  * A live run makes real Qloo calls (spaced to respect rate limits) and can take minutes.
  */
 export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(), interpreters: QueryInterpreterFactory = createQueryInterpreter) {
@@ -73,7 +78,11 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
   return async function routes(app: FastifyInstance): Promise<void> {
     // Query-layer telemetry carries no raw query text (length + hash only), no prompt and no credential.
     const log = (telemetry: unknown) => app.log.info({ queryTelemetry: telemetry }, "query");
-    const handle = async (reply: { code: (n: number) => { send: (b: ErrorBody) => unknown } }, work: () => Promise<AgentRunResponse | QueryResponse>) => {
+    const jobs = new JobManager({
+      runnerFor: (model) => service(model === "baseline" ? "baseline" : "auto", log),
+      log: (event) => log(event),
+    });
+    const handle = async (reply: { code: (n: number) => { send: (b: ErrorBody) => unknown } }, work: () => Promise<unknown>) => {
       try {
         return await work();
       } catch (error) {
@@ -82,6 +91,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         if (error instanceof RunNotFoundError) return reply.code(404).send({ error: "run_not_found", message: error.message });
         if (error instanceof RunNotWaitingError) return reply.code(409).send({ error: "run_not_waiting", message: error.message });
         if (error instanceof QueryAlreadyExecutedError) return reply.code(409).send({ error: "query_already_executed", message: error.message });
+        if (error instanceof JobRejectedError) return reply.code(error.statusCode).send({ error: error.code, message: error.message });
         throw error;
       }
     };
@@ -107,6 +117,33 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
     app.post<{ Body: unknown }>("/api/agent/interpret", queryRoute("interpret"));
     app.post<{ Body: unknown }>("/api/agent/query", queryRoute("query"));
     app.post<{ Body: unknown }>("/api/agent/follow-up", queryRoute("follow-up"));
+
+    const tokenOf = (header: unknown) => (typeof header === "string" ? header : "");
+    app.post<{ Body: unknown }>("/api/agent/jobs", async (request, reply) => {
+      const confirm = confirmBody.safeParse(request.body);
+      const continued = continueJobBody.safeParse(request.body);
+      const query = queryBody.safeParse(request.body);
+      let jobRequest: JobRequest;
+      if (confirm.success) jobRequest = { kind: "confirm", queryId: confirm.data.confirmQueryId, model: confirm.data.model ?? "auto" };
+      else if (continued.success) jobRequest = { kind: "continue", runId: continued.data.continueRunId, clarification: continued.data.clarification, model: continued.data.model ?? "auto" };
+      else if (query.success) jobRequest = { kind: "execute", body: query.data, model: query.data.model ?? "auto" };
+      else return reply.code(400).send({ error: "invalid_job_request", message: "The question could not be accepted." });
+      return handle(reply, async () => {
+        const created = jobs.create(jobRequest);
+        reply.code(202);
+        return created;
+      });
+    });
+    app.get<{ Params: { id: string } }>("/api/agent/jobs/:id", async (request, reply) => {
+      const view = jobs.get(request.params.id, tokenOf(request.headers["x-job-token"]));
+      if (!view) return reply.code(404).send({ error: "job_not_found", message: "This investigation is not available. It may have expired, or the server may have restarted." });
+      return view;
+    });
+    app.post<{ Params: { id: string } }>("/api/agent/jobs/:id/cancel", async (request, reply) => {
+      const view = jobs.cancel(request.params.id, tokenOf(request.headers["x-job-token"]));
+      if (!view) return reply.code(404).send({ error: "job_not_found", message: "This investigation is not available. It may have expired, or the server may have restarted." });
+      return view;
+    });
 
     app.post<{ Body: unknown }>("/api/agent/continue", async (request, reply) => {
       const body = continueBody.safeParse(request.body);
