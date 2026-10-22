@@ -69,6 +69,7 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 4. **Discovery artefacts are not evidence.** Co-occurrence in the profiles a candidate was discovered from never makes two concepts duplicates.
 5. **Optional evidence degrades; it never invalidates.** An incomplete optional rank panel is excluded with a limitation. The primary panel is never dropped.
 6. **No support twice is not stability.** Runs with no supported candidate score 0 supported overlap (`frontier-stability-metrics-v3`). Stored live results are rescored only by replay (`pnpm eval:agent:replay`), alongside the as-run reports, never in place of them.
+7. **A failed call is never evidence, even if Qloo answers late.** A tool call that timed out has its late answer discarded (counted against the budget, never cached or recorded).
 
 ## Engineering
 

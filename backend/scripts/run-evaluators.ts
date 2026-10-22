@@ -56,7 +56,8 @@ export type EvaluatorId =
 
 export type EvaluatorResult = { id: EvaluatorId; applicable: boolean; passed: boolean; detail: string };
 
-export const RUN_EVALUATORS_VERSION = "run-evaluators-v2";
+/** v2.1 (Sprint 5A.2, grader fix after the final live run): RECOVERY_WITHIN_BUDGET counts a re-proposal only when it is refused again. */
+export const RUN_EVALUATORS_VERSION = "run-evaluators-v2.1";
 
 const ok = (id: EvaluatorId, detail = "ok"): EvaluatorResult => ({ id, applicable: true, passed: true, detail });
 const fail = (id: EvaluatorId, detail: string): EvaluatorResult => ({ id, applicable: true, passed: false, detail });
@@ -259,7 +260,9 @@ function recoveryWithinBudget(r: AgentRunResponse): EvaluatorResult {
       const code = d.rejection?.split(":")[0] ?? "";
       const key = `${d.tool}:${JSON.stringify(d.arguments ?? {})}`;
       const first = refused.get(key);
-      if (first && first.iteration < turn.iteration) problems.push(`iteration ${turn.iteration}: ${d.tool} re-proposed after ${first.code} at iteration ${first.iteration}`);
+      // Only a re-proposal that is refused again repeats an exhausted strategy: an accepted one means the refusal's
+      // condition changed (e.g. the barren-probe deferral lifts once another type was tried).
+      if (first && first.iteration < turn.iteration && !d.accepted) problems.push(`iteration ${turn.iteration}: ${d.tool} re-proposed after ${first.code} at iteration ${first.iteration}`);
       if (!d.accepted && !first && EXHAUSTION_CODES.has(code)) refused.set(key, { iteration: turn.iteration, code });
     }
   }

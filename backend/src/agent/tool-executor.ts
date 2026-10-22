@@ -36,7 +36,7 @@ import type { AgentToolCallTrace } from "@cultural-elasticity/shared";
 import { z } from "zod";
 import type { ExpectedValue } from "@cultural-elasticity/shared";
 import { assessEvidenceSufficiency, barrenProbe, type SufficiencyAssessment } from "./evidence-sufficiency.js";
-import { cacheKey } from "./qloo-gateway.js";
+import { abandonedToolCalls, cacheKey } from "./qloo-gateway.js";
 import type { SkillDefinition } from "./skills/contracts.js";
 import { skillRef } from "./skills/contracts.js";
 import type { SkillRegistry } from "./skills/registry.js";
@@ -228,6 +228,8 @@ export async function executeToolCall(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const code = message.startsWith("TOOL_TIMEOUT") ? "TOOL_TIMEOUT" : "TOOL_ERROR";
+    // Sprint 5A.2: a timed-out call's late Qloo answer must not become evidence (qloo-gateway abandonedToolCalls).
+    if (code === "TOOL_TIMEOUT") abandonedToolCalls.add(trace);
     trace.status = "failed";
     trace.summary = `${code}: ${message.slice(0, 300)}`;
     trace.error = code;

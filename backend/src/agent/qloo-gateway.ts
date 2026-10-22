@@ -33,6 +33,13 @@ export function cacheKey(operation: QlooOperation, input: unknown): string {
   return `${operation}:${stable(input)}`;
 }
 
+/**
+ * Sprint 5A.2 (live, final run): tool calls the executor abandoned on TOOL_TIMEOUT. The Qloo request keeps running; an
+ * answer that arrives afterwards is discarded (counted against the budget, never cached or recorded), because the trace
+ * already reports the call as failed and a failed call is never evidence.
+ */
+export const abandonedToolCalls = new WeakSet<AgentToolCallTrace>();
+
 export async function callQloo<O extends QlooOperation>(
   state: AgentRunState,
   provider: AgentToolProvider,
@@ -59,6 +66,10 @@ export async function callQloo<O extends QlooOperation>(
   state.usage.qlooCalls += result.attempts;
   state.usage.retries += Math.max(0, result.attempts - 1);
   trace.attempts += result.attempts;
+  if (abandonedToolCalls.has(trace)) {
+    trace.qlooOperations.push(`${operation} (late answer discarded)`);
+    return { outcome: "failed", code: "TOOL_TIMEOUT", retryable: false, detail: "the Qloo answer arrived after the tool timeout and was discarded", attempts: result.attempts };
+  }
   trace.qlooOperations.push(operation);
   if ("call" in result) {
     trace.correlationIds.push(result.call.envelope.execution.correlation_id);

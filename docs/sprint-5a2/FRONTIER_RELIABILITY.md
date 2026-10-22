@@ -5,13 +5,17 @@ Sprint 5A.2 (2026-10-21/22) ran on branch `sprint/5a2-frontier-reliability`, fro
 - **Changed runtime:** `probe-policy.ts` (`probe-policy-v2`), `frontier.ts`, `concept-dedup.ts` (`concept-dedup-v2`), `analysis-runner.ts`, `readiness.ts`, `representation-alignment.ts`, `tool-executor.ts`, `tool-registry.ts`, `context.ts`.
 - **Contract:** `packages/shared/src/agent.ts` stays `ce-agent-result/0.3`; the changes are additive and optional.
 - **Evals:**
-  - `run-evaluators-v2`: 13 evaluators;
+  - `run-evaluators-v2.1`: 13 evaluators;
   - `frontier-stability-metrics-v3`;
   - `pnpm eval:agent:replay`;
   - scenario `s52-frontier-namespace-type-evidence`;
-  - `backend/tests/agent-sprint5a2.test.ts`: 22 tests.
+  - `backend/tests/agent-sprint5a2.test.ts`: 23 tests.
 
-> **Result:** ENGINEERING_COMPLETE. Readiness: `AGENT_MODEL_NOT_READY` (`LIVE_VALIDATION_INCOMPLETE`). The final full readiness run (attempt 4) was still executing when this report was written, so the gate has not decided. Readiness is never claimed without it.
+> **Result: ENGINEERING_COMPLETE. Readiness: `AGENT_MODEL_NOT_READY`**, decided by the automated gate v3 on the final run (attempt 4), with no manual override.
+> - SAFETY passes 13/13.
+> - COMPETENCE passes 8/9. **C5 frontier reproducibility now passes for L-E1 and L-E2**; it failed in 5A and 5A.1.
+> - The only blocker is C9: 3 runtime-evaluator failures as run.
+> - The replay with the corrected evaluator (v2.1, one false positive removed) leaves 2 real failures, so the decision is the same either way.
 
 ## 1. Executive Outcome
 
@@ -21,7 +25,10 @@ Sprint 5A.2 (2026-10-21/22) ran on branch `sprint/5a2-frontier-reliability`, fro
   - L-E2 keeps its supported candidates with consistent anchors;
   - L-C1 Rapha stays 3 × FULL with fewer calls (24–26, 5A.1: 30).
 - **Three further defects were found live and fixed:** an incomplete optional rank panel failing the methodology, contradictory probe guidance, and support lost to the resolution budget.
-- **Readiness: not decided.** The final full run (attempt 4, on the final code) had completed its baseline arm and 1 of 7 Haiku cases at reporting time. Its `report.json` will carry the automated gate decision. Until then the status is `AGENT_MODEL_NOT_READY` (`LIVE_VALIDATION_INCOMPLETE`).
+- **Readiness (gate v3, final run):** `AGENT_MODEL_NOT_READY`.
+  - SAFETY 13/13.
+  - COMPETENCE 8/9: C1–C8 pass, including no regression versus the baseline, the controlled scenario at 3 × FULL, 6 valid / 0 invalid FULL results, and frontier criteria PASS for both cases.
+  - C9 fails. Two of the three evaluator failures are a real defect: a Qloo answer that arrived **after** its tool call had timed out (the laptop slept mid-run) was still recorded as probe evidence. It is fixed after the run: late answers are discarded and counted against the budget. The third is an evaluator false positive, fixed in `run-evaluators-v2.1` and recorded as a replay.
 
 ## 2. Starting State
 
@@ -54,6 +61,7 @@ Found **live this sprint** (§14, §15):
 |---|---|---|
 | 7 | An optional rank panel whose Qloo answer missed an assigned exemplar invalidated the whole methodology input. L-E1 focused run: 3 movie candidates on a semantically accepted set fell to DESCRIPTIVE | The optional panel is excluded with a `PANEL_RANKING_INCOMPLETE` limitation. The primary panel is never dropped |
 | 8 | Contradictory guidance. `nextProbe` recommended the comparison's shared type (place) after the barren-probe rule had refused it, and Haiku re-proposed the refused probe for 3 turns (full run attempt 1, L-C2) | A recommendation never names a type the executor would refuse (exhausted, namespace-barren or territory-barren). Alignment no longer counts a territory-barren type as a probe path |
+| 10 | A tool call that timed out (the laptop slept during the final run) kept running, and its late Qloo answer was recorded as a pool. A failed call became probe evidence. Caught by `TAG_TYPE_EVIDENCE_VALID` | `abandonedToolCalls`: a late answer is discarded, never cached or recorded, and counted against the budget. Fixed after the final run, so not live-validated |
 | 9 | Support lost to the resolution budget. Heavy Metal found 20 place members on its own same-named tag (`interests:qloo:heavy_metal`) in the turn that spent its 8-call resolution budget. It was then "unsupported" and dropped (attempt 3, L-C2) | `LABEL_TAG_MEMBERS` anchoring (§9) |
 
 ## 4. Type-Priority Policy (`probe-policy-v2`)
@@ -210,12 +218,39 @@ The metric fix (v3, empty-pair = 0 for supported overlap) is stricter, and it le
 | S1 (v2 as run) | 0.111 | 0.667 | 0 | 0.417 |
 | S1 (v3 replay) | 0.111 | 0.667 | 0 | 0.417 |
 
-**Final gate decision:** pending attempt 4 (`backend/feasibility-output/sprint5a2-live/final/report.json`). No live gate has been evaluated on the final code, so the status is `AGENT_MODEL_NOT_READY` / `LIVE_VALIDATION_INCOMPLETE`.
+**Final gate decision** (`backend/feasibility-output/sprint5a2-live/final/report.json`, as run):
+
+| | Check | Result |
+|---|---|---|
+| SAFETY | 13 checks: coverage 7/7, single model `claude-haiku-5-5`, baseline 7/7, stability MEASURED, 0 violations of every kind, claim and methodology consistency 1 | **PASS** |
+| C1 | recovery, no regression in resolution or representation | PASS |
+| C2 | probe limits | PASS |
+| C3 | meaningful FULL | PASS (6 valid / 0 invalid) |
+| C4 | controlled FULL | PASS (C-FULL-1 3 × FULL, preflight PASS) |
+| C5 | frontier criteria v1 | **PASS** (L-E1 S1 0.611, S2 cooking + feminism, S3 0.5; L-E2 S1 0.667, S2 female_protagonist + self_help + social_responsibility, S3 0.75) |
+| C6 | no regression vs baseline | PASS |
+| C7 | synthesis | PASS (after repair 0.857, useful 0.857) |
+| C8 | honest degradation | PASS |
+| C9 | runtime evaluators | **FAIL**: 3 |
+| **Overall** | | **`AGENT_MODEL_NOT_READY`** |
+
+C9 as run:
+- L-C2 `TAG_TYPE_EVIDENCE_VALID`: `interests:qloo:heavy_metal` was reported successful, but its recommend call had TIMED OUT.
+- L-E1 `TAG_TYPE_EVIDENCE_VALID`: `genre:music:folk` brand was reported empty, but its call had TIMED OUT.
+- L-C2 `RECOVERY_WITHIN_BUDGET`: a re-proposed probe that was **accepted**.
+
+Both `TAG_TYPE` failures are real: the evaluator caught late answers recorded as evidence (mechanism 10). The recovery failure is a grader false positive: once a refusal's condition lifts, an accepted re-proposal repeats nothing.
+
+Replay with `run-evaluators-v2.1` (`backend/feasibility-output/sprint5a2-live/replay/replay-sprint5a2-live-final.json`, recorded next to the as-run report): 2 failures on the prescribed cases. The decision is unchanged.
+
+A further real recovery failure appears in a stability repeat (L-E1 stability-2: a refused probe re-proposed and refused again). Stability repeats are not in the C9 denominator.
+
+Warning: `CONTROLLED_SCENARIO_NOT_OWNER_REVIEWED`.
 
 ## 13. Offline Regression Tests
 
 All offline and SYNTHETIC; none of this is Qloo or live-model validation.
-- **`backend/tests/agent-sprint5a2.test.ts`: 22 tests.**
+- **`backend/tests/agent-sprint5a2.test.ts`: 23 tests.**
   - Probing (7): type reuse; namespace evidence; no cross-namespace generalization; empty and namespace-barren; degraded = unreliable; concept and territory limits; sibling diversification.
   - Guidance (1): never contradicts a refusal.
   - Budget-proof support (2): label-tag anchoring; alignment respected.
@@ -227,7 +262,7 @@ All offline and SYNTHETIC; none of this is Qloo or live-model validation.
 - Mutation-checked: the incomplete-panel test, the guidance test and `s52` fail without their fixes.
 - **Scenario** `s52-frontier-namespace-type-evidence`. New expectation kinds: `sourceEvidenceAnchors`, `noDuplicateDrops`.
 - **Updated tests:** version pins in `agent-sprint4.test.ts` (`resolve_territory` v5, `explore_candidate_territories` v4).
-- **Totals:** backend tests **543/543**; `pnpm eval:agent` **53/53**, runtime-evaluator failures 0; methodology 19/19; eval:live 3/3; elasticity 27/27 (the composite-index score gate is unchanged from Sprint 2: REJECTED_FOR_NOW); lint, typecheck, build and `check:secrets` pass.
+- **Totals** (after fix 10 and evaluators v2.1): backend tests **544/544** (23 in `agent-sprint5a2.test.ts`); `pnpm eval:agent` **53/53**, runtime-evaluator failures 0; methodology 19/19; eval:live 3/3; elasticity 27/27 (the composite-index score gate is unchanged from Sprint 2: REJECTED_FOR_NOW); lint, typecheck, build and `check:secrets` pass.
 
 ## 14. Focused Live Results (phase 3)
 
@@ -256,20 +291,20 @@ Run history. Every attempt's output is kept as run:
 | 1 | `attempt1-aborted` | Stopped after Haiku L-C2 exposed mechanism 8. The verdict would have measured code about to change |
 | 2 | `attempt2-qloo-stall` | Stopped: the laptop slept (lid). Two `find_tags` calls ran ~16 min of wall-clock against a 5-min tool timeout; baseline L-M1 FAILED on `TOOL_TIMEOUT`. An infrastructure fault, not agent evidence |
 | 3 | `attempt3-pre-label-fix` | 7/7 baseline, 7/7 Haiku cases. Stopped before the controlled scenario and stability repeats after L-C2 exposed mechanism 9 |
-| 4 | `final` | Final code. **In progress at reporting time:** baseline 7/7 plus the controlled scenario completed; Haiku 1/7 (L-M1 PARTIAL, 15 calls, $0.012) |
+| 4 | `final` | **Final code (before fix 10). Complete:** baseline 7/7, Haiku 7/7, 4 stability repeats, C-FULL-1 in both arms. The machine slept during the Haiku arm (case latencies up to 12,574 s), which produced the timeouts behind mechanism 10. No case errored |
 
-Haiku vs baseline, by attempt. Attempt 3 is pre-label-fix code (L-C2 differs); attempt 4 is the final code, still in progress.
+Haiku vs baseline, by attempt. Attempt 3 is pre-label-fix code; attempt 4 is the final gate run.
 
 | Case | Baseline (attempt 4) | Haiku 5A.1 | Haiku attempt 3 | Haiku attempt 4 |
 |---|---|---|---|---|
 | L-M1 Aesop → Coffee | PARTIAL (19 calls) | PARTIAL (16) | PARTIAL (16) | PARTIAL (15) |
-| L-M2 Yeti → Fly Fishing | PARTIAL (17) | PARTIAL (16) | PARTIAL (13) | pending |
-| L-M3 Le Creuset → Tea | PARTIAL (18) | PARTIAL (15) | PARTIAL (15) | pending |
-| L-C1 Rapha | Cycling PARTIAL, Coffee DESCRIPTIVE, Mountaineering INSUFFICIENT (32); 5A.1: 3 × DESCRIPTIVE | 3 × FULL (30) | **3 × FULL (24)** | pending |
-| L-C2 Liquid Death | Heavy Metal PARTIAL, Moonlit DESCRIPTIVE (30) | Heavy Metal FULL, Moonlit INSUFFICIENT (31) | Moonlit DESCRIPTIVE, Heavy Metal INSUFFICIENT (mechanism 9, fixed after) | pending |
-| L-E1 Oatly | no candidate (13) | 4 × INSUFFICIENT (27) | **Cooking, Feminism PARTIAL**; Folk, London INSUFFICIENT (32) | pending |
-| L-E2 Allbirds | 3 × FULL + 1 DESCRIPTIVE (32) | 2 DESCRIPTIVE, 2 INSUFFICIENT (28) | **Social responsibility, Soft textures PARTIAL**; Folk, Self-help INSUFFICIENT (29) | pending |
-| C-FULL-1 (controlled) | PARTIAL / DESCRIPTIVE / INSUFFICIENT, preflight PASS | 3 × FULL | not run (stopped) | pending |
+| L-M2 Yeti → Fly Fishing | PARTIAL (17) | PARTIAL (16) | PARTIAL (13) | PARTIAL (13) |
+| L-M3 Le Creuset → Tea | PARTIAL (18) | PARTIAL (15) | PARTIAL (15) | PARTIAL (16) |
+| L-C1 Rapha | Cycling PARTIAL, Coffee DESCRIPTIVE, Mountaineering INSUFFICIENT (32); 5A.1: 3 × DESCRIPTIVE | 3 × FULL (30) | **3 × FULL (24)** | **3 × FULL (26)** |
+| L-C2 Liquid Death | Heavy Metal PARTIAL, Moonlit DESCRIPTIVE (30) | Heavy Metal FULL, Moonlit INSUFFICIENT (31) | Moonlit DESCRIPTIVE, Heavy Metal INSUFFICIENT (mechanism 9, fixed after) | Heavy Metal PARTIAL, Moonlit DESCRIPTIVE (23) |
+| L-E1 Oatly | no candidate (13) | 4 × INSUFFICIENT (27) | **Cooking, Feminism PARTIAL**; Folk, London INSUFFICIENT (32) | **Cooking, Feminism PARTIAL**; British/London, Folk INSUFFICIENT (32) |
+| L-E2 Allbirds | 3 × FULL + 1 DESCRIPTIVE (32) | 2 DESCRIPTIVE, 2 INSUFFICIENT (28) | **Social responsibility, Soft textures PARTIAL**; Folk, Self-help INSUFFICIENT (29) | **Female-led stories, Self-help, Social responsibility PARTIAL**; Folk INSUFFICIENT (32) |
+| C-FULL-1 (controlled) | PARTIAL / DESCRIPTIVE / INSUFFICIENT, preflight PASS | 3 × FULL | not run (stopped) | **3 × FULL** |
 
 Safety (all observed live runs): 0 invalid FULL results; 0 accepted unsupported claims; probe limits held; no budget or secret violations.
 
@@ -286,19 +321,34 @@ Equivalent metrics (`frontier-stability-metrics-v3`, criteria v1 unchanged):
 | **S3** anchor consistency | 0.5 | 0 ✗ | 0 ✗ | 0.75 |
 | theme proxy | 0.059 | 0.546 | 0.652 | 0.374 |
 
-**Sprint 5A.2:** the three-run stability repeats run in attempt 4 and are **pending** at reporting time. Indicative only (two independent Haiku runs on different code revisions, not the criteria's n = 3, never gated):
-- L-E1, focused vs attempt 3: both had supported candidates, but they differed (friendship / england / teenage_girl vs cooking / feminism).
-- L-E2: social_responsibility and soft_textures were supported in both, each on the same grounding tag (anchor-consistent).
+**Sprint 5A.2 (final run, 3 Haiku runs per case, same metrics and criteria):**
+
+| | L-E1 5A | L-E1 5A.1 | **L-E1 5A.2** | L-E2 5A | L-E2 5A.1 | **L-E2 5A.2** |
+|---|---|---|---|---|---|---|
+| exact Qloo id overlap | 0.067 | 0 | **0.5** | 0.2 | 0.389 | **0.667** |
+| canonical concept overlap | 0.111 | 0.733 | **1** | 1 | 0.511 | **0.733** |
+| **S1** supported canonical overlap (L-E1 ≥ 0.25, L-E2 ≥ 0.567) | 0.111 ✗ | 0 ✗ | **0.611 ✓** | 0.667 | 0.417 ✗ | **0.667 ✓** |
+| **S2** recurring supported (≥ 1) | folk | none ✗ | **cooking, feminism ✓** | folk, self_help | self_help, social_responsibility | **female_protagonist, self_help, social_responsibility ✓** |
+| **S3** anchor consistency (≥ 0.5) | 0.5 | 0 ✗ | **0.5 ✓** | 0 ✗ | 0.75 | **0.75 ✓** |
+| theme proxy | 0.059 | 0.546 | 0.632 | 0.652 | 0.374 | 0.393 |
+| route stability | 1 | n/a | 0 | 1 | 0.5 | 1 |
+| comparable FULL sets | 0/0 | 0/0 | 0/0 | 0/0 | 0/0 | 0/0 |
+| criteria v1 | FAIL | FAIL | **PASS** | FAIL | FAIL | **PASS** |
+
+- **L-E1:** all three runs proposed the same four canonical concepts. Cooking and Feminism were supported in the runs that resolved them.
+- **L-E2:** three supported concepts recur, each anchored to its grounding tag.
+- No FULL comparison set recurred, so relative classes are not compared across runs.
 
 ## 17. Performance and Cost
 
-Haiku arm, per case (attempt 3, 7 prescribed cases, pre-label-fix code):
+Haiku arm, per case (attempt 3: 7 prescribed cases, pre-label-fix code; attempt 4: the final run, whose latencies are inflated by laptop sleep and not comparable):
 
 | | Sprint 5A | Sprint 5A.1 | Sprint 5A.2 attempt 3 |
 |---|---|---|---|
-| Qloo calls (mean) | 20.1 | 23.3 | **20.4** (16/13/15/24/18/32/29) |
+| Qloo calls (mean) | 20.1 | 23.3 | **20.4** (attempt 3); 22.4 (attempt 4: 15/13/16/26/23/32/32) |
 | p50 latency | 186 s | 222 s | **150 s** |
-| model cost (7 cases) | $0.080 | $0.091 | **$0.084** |
+| model cost (7 cases) | $0.080 | $0.091 | **$0.084** (attempt 3); $0.097 (attempt 4) |
+| useful investigations (valid FULL + meaningful PARTIAL), attempt 4 | — | 7 | **12** (baseline 8); 123 per $; 0.76 per 10 Qloo calls (baseline 0.50) |
 | empty type probes, frontier runs | — | 10–12 per run | 7–10 per run |
 
 The 7 s spacing is unchanged. No caching or budget change was made. The supported frontier findings per run went from 0–2 to 2–3.
@@ -320,7 +370,8 @@ The 7 s spacing is unchanged. No caching or budget change was made. The supporte
   - Mountaineering's representation was rejected, and its brand-conditioned list was not collected: 2 of 32 calls were left and 4 were needed. This is a pre-existing analysis-reserve gap, since the reserve only counts territories already ready.
   - A weaker baseline makes C1/C6 easier. This must not be read as a Haiku gain. Follow-up: count anchored-but-unready territories in the reserve.
 - **Genuine exploration variance:** L-E2 Self-help exhausted brand, place and artist before book (§20).
-- **Infrastructure:** attempt 2 stalled on laptop sleep (TOOL_TIMEOUT). It was excluded and kept as run.
+- **Infrastructure:** attempt 2 stalled on laptop sleep (TOOL_TIMEOUT) and was excluded, kept as run. Attempt 4 also ran through sleep; the timeouts it caused exposed mechanism 10.
+- **C9 (final gate blocker):** 2 real evaluator failures, the late answers recorded as evidence. They are fixed after the run, with a mutation-checked test, but the fix is **not live-validated**: a new full run is needed. 1 grader false positive (v2.1).
 
 ## 20. Remaining Limitations
 

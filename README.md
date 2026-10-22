@@ -14,7 +14,13 @@ Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Bouti
   - degraded instead of failed analysis on an incomplete optional rank panel;
   - 13 runtime evaluators and `pnpm eval:agent:replay`.
 
-  Live: L-E1 Oatly went from 0 to 2–3 supported candidates, and L-C1 stays 3 × FULL with fewer calls. Readiness: **`AGENT_MODEL_NOT_READY` (`LIVE_VALIDATION_INCOMPLETE`)**, because the final gate run was still executing when this was written. See [docs/sprint-5a2/FRONTIER_RELIABILITY.md](docs/sprint-5a2/FRONTIER_RELIABILITY.md).
+  Live final run (7/7 cases, case-matched baseline, 3-run stability, controlled scenario):
+  - SAFETY 13/13;
+  - competence 8/9, with the frontier criteria passing for the first time (L-E1 and L-E2);
+  - controlled scenario 3 × FULL; 6 valid / 0 invalid FULL;
+  - 12 useful investigations against the baseline's 8.
+
+  Gate decision: **`AGENT_MODEL_NOT_READY`**, on C9. A timed-out Qloo call's late answer was recorded as evidence; this is fixed afterwards and not yet live-validated. See [docs/sprint-5a2/FRONTIER_RELIABILITY.md](docs/sprint-5a2/FRONTIER_RELIABILITY.md).
 
 ### Sprint 5A.1 — Haiku Investigation Reliability
 

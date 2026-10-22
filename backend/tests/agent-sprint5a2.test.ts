@@ -337,6 +337,33 @@ describe("Sprint 5A.2 incomplete optional rank panel (live L-E1 focused run: met
   });
 });
 
+describe("Sprint 5A.2 a timed-out call never becomes evidence (live final run: late answers after laptop sleep)", () => {
+  it("a Qloo answer arriving after TOOL_TIMEOUT is discarded: no pool, no cache, counted against the budget", async () => {
+    const state = freshState({ brand: BRAND }, { toolTimeoutMs: 30 });
+    const provider = scripted();
+    const transport = provider.world;
+    const execute = transport.execute.bind(transport);
+    const exec = (tool: string, args: unknown) => executeToolCall(state, registry, provider, tool, args);
+    await exec("interpret_request", { intent: "explore_frontier", brand: BRAND, territories: [] });
+    transition(state, "RESOLVING", "test");
+    await exec("qloo_resolve_entity", { name: BRAND, type: "brand", role: "brand" });
+    transition(state, "INVESTIGATING", "test");
+    await exec("qloo_find_tags", { query: "Hearth Cooking", limit: 8 });
+    transport.execute = async (operation, input) => {
+      if (operation === "recommend") await new Promise((r) => setTimeout(r, 80));
+      return execute(operation, input);
+    };
+    const out = await exec(...probe("book", HC));
+    expect(out.accepted ? out.result.errorCode : JSON.stringify(out)).toBe("TOOL_TIMEOUT");
+    const before = state.usage.qlooCalls;
+    await new Promise((r) => setTimeout(r, 150));
+    expect(state.pools.filter((p) => p.tagIds.includes(HC))).toEqual([]);
+    expect([...state.callCache.keys()].some((k) => k.includes("recommend"))).toBe(false);
+    expect(state.usage.qlooCalls).toBe(before + 1);
+    expect(state.trace.toolCalls.at(-1)!.qlooOperations).toEqual(["recommend (late answer discarded)"]);
+  });
+});
+
 describe("Sprint 5A.2 evaluators and stability (grader fix: no support twice is not stability)", () => {
   it("two runs without a single supported candidate score 0 supported overlap (v3), so the criteria fail", () => {
     const unsupported = { candidates: [{ key: "a", label: "A", conceptId: null, route: "INSUFFICIENT_EVIDENCE", position: null, classification: null, canonicalKey: "a" }] };
