@@ -10,7 +10,7 @@
  * interpreting it again. The /api/agent/continue clarification path is separate and unchanged.
  */
 import { createHash, randomUUID } from "node:crypto";
-import { QUERY_SCHEMA_VERSION, type AgentRunResponse, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type QueryResponse, type QueryState, type QueryTelemetry, type QueryTerritoryNode } from "@cultural-elasticity/shared";
+import { QUERY_SCHEMA_VERSION, type AgentRunResponse, type InvestigationLink, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type QueryResponse, type QueryState, type QueryTelemetry, type QueryTerritoryNode } from "@cultural-elasticity/shared";
 import { priceUsd } from "../finalizer.js";
 import type { AgentRuntime } from "../runtime.js";
 import { resolveContext, interpreterContextView, type ResolvedContext } from "./context.js";
@@ -40,6 +40,16 @@ export class QueryAlreadyExecutedError extends Error {
   }
 }
 
+/** Real phases only. The atlas must not invent a stage the service did not emit. */
+export type QueryProgress = { phase: "interpreting" | "investigating" | "preparing"; intent?: QueryHandoff["intent"] | null };
+
+export type QueryHooks = {
+  signal?: AbortSignal;
+  onProgress?: (event: QueryProgress) => void;
+  /** A real gate outcome, published before a long investigation. Territories are not yet investigated. */
+  onPreview?: (response: QueryResponse) => void;
+};
+
 export type QueryServiceDeps = { runtime: AgentRuntime; interpreter: QueryInterpreter; queries?: QueryStore; log?: (telemetry: QueryTelemetry) => void };
 
 export class QueryService {
@@ -49,21 +59,42 @@ export class QueryService {
   }
 
   /** Dry run: interpretation and validation only. No Qloo call, no run. */
-  interpret(body: QueryBody): Promise<QueryResponse> {
-    return this.handle(body, false);
+  interpret(body: QueryBody, hooks?: QueryHooks): Promise<QueryResponse> {
+    return this.handle(body, false, hooks);
   }
 
   /** Interprets and, if the gate approves, runs one investigation (new, or a follow-up of body.context). */
-  execute(body: QueryBody): Promise<QueryResponse> {
-    return this.handle(body, true);
+  execute(body: QueryBody, hooks?: QueryHooks): Promise<QueryResponse> {
+    return this.handle(body, true, hooks);
+  }
+
+  /** Resumes a NEEDS_INPUT run. This is the existing continuation, wrapped so the atlas receives a QueryResponse. */
+  async continueRun(runId: string, clarification: string, hooks?: QueryHooks): Promise<QueryResponse> {
+    const telemetry = blankTelemetry(randomUUID(), clarification, []);
+    telemetry.parentRunId = runId;
+    if (hooks?.signal?.aborted) return this.cancelledResponse(telemetry, null, "Cancelled before the answer was applied.");
+    hooks?.onProgress?.({ phase: "investigating", intent: null });
+    const result = await this.deps.runtime.continue(runId, clarification, { signal: hooks?.signal });
+    return this.finishRun(telemetry, null, result, hooks);
   }
 
   /** Executes a stored, already validated plan (the dry run's handoff or the accepted alternative). */
-  async confirm(queryId: string): Promise<QueryResponse> {
+  async confirm(queryId: string, hooks?: QueryHooks): Promise<QueryResponse> {
     const record = this.queries.get(queryId);
     const telemetry = blankTelemetry(randomUUID(), "", []);
     if (!record) return this.respond({ telemetry, state: "CONTEXT_UNAVAILABLE", interpretation: null, errors: [{ code: "QUERY_NOT_FOUND", detail: `query ${queryId} is not held by this process (expired, evicted or restarted); send the question again` }] });
     if (record.executed) throw new QueryAlreadyExecutedError(queryId);
+    if (record.interpretation.systemDirectives.length > 0) {
+      record.plan = null;
+      record.alternative = null;
+      record.executed = true;
+      return this.respond({
+        telemetry: record.telemetry,
+        state: "UNSUPPORTED_OPERATION",
+        interpretation: record.interpretation,
+        errors: [{ code: "DIRECTIVE_BLOCKS_CONFIRMATION", detail: "a rejected system directive cannot become executable through confirmation" }],
+      });
+    }
     const plan = record.plan ?? record.alternative;
     if (!plan) return this.respond({ telemetry: record.telemetry, state: stateFor(record.interpretation.disposition), interpretation: record.interpretation, errors: [{ code: "NOTHING_TO_CONFIRM", detail: "this query has no executable plan or supported alternative" }] });
     if (plan.link.parentRunId && !this.deps.runtime.store.get(plan.link.parentRunId)) {
@@ -71,13 +102,15 @@ export class QueryService {
     }
     record.executed = true;
     const confirmed: QueryTelemetry = { ...record.telemetry, queryId: randomUUID() };
-    return this.run(queryId, plan, record.interpretation, confirmed, record.alternative === plan);
+    return this.run(queryId, plan, record.interpretation, confirmed, record.alternative === plan, null, undefined, hooks);
   }
 
-  private async handle(body: QueryBody, execute: boolean): Promise<QueryResponse> {
+  private async handle(body: QueryBody, execute: boolean, hooks?: QueryHooks): Promise<QueryResponse> {
     const queryId = randomUUID();
     const explicit: ExplicitFields = { ...(body.brand && { brand: body.brand }), ...(body.intent && { intent: body.intent }), ...(body.territories && { territories: body.territories }) };
     const telemetry = blankTelemetry(queryId, body.query, Object.keys(explicit));
+    if (hooks?.signal?.aborted) return this.cancelledResponse(telemetry, null, "Cancelled before interpretation started.");
+    hooks?.onProgress?.({ phase: "interpreting" });
 
     // Context first: an unavailable parent is reported before any model call.
     let context: ResolvedContext | null = null;
@@ -111,22 +144,65 @@ export class QueryService {
       telemetry.executionHandOffStatus = gate.plan ? "NOT_ATTEMPTED" : "REFUSED";
       return this.respond({ telemetry, state: stateFor(interpretation.disposition), interpretation, context, gate });
     }
+    if (hooks?.signal?.aborted) {
+      const stored = this.queries.get(queryId);
+      if (stored) {
+        stored.plan = null;
+        stored.alternative = null;
+        stored.executed = true;
+      }
+      return this.cancelledResponse(telemetry, interpretation, "Cancelled before an investigation started.");
+    }
     this.queries.get(queryId)!.executed = true;
-    return this.run(queryId, gate.plan, interpretation, telemetry, false, context, gate);
+    return this.run(queryId, gate.plan, interpretation, telemetry, false, context, gate, hooks);
   }
 
-  private async run(queryId: string, plan: ExecutionPlan, interpretation: QueryInterpretation, telemetry: QueryTelemetry, alternative: boolean, context: ResolvedContext | null = null, gate?: GateResult): Promise<QueryResponse> {
+  private async run(queryId: string, plan: ExecutionPlan, interpretation: QueryInterpretation, telemetry: QueryTelemetry, alternative: boolean, context: ResolvedContext | null = null, gate?: GateResult, hooks?: QueryHooks): Promise<QueryResponse> {
+    if (hooks?.signal?.aborted) return this.cancelledResponse(telemetry, interpretation, "Cancelled before an investigation started.");
     telemetry.executionHandOffStatus = "HANDED_OFF";
     telemetry.selectedCapability = plan.handoff.intent;
+    hooks?.onProgress?.({ phase: "investigating", intent: plan.handoff.intent });
+    const preview = this.respond({ telemetry, state: "INVESTIGATION_STARTED", interpretation, context, gate, handoff: plan.handoff, silent: true });
+    hooks?.onPreview?.(structuredClone(preview));
     const link = { ...plan.link, queryId };
-    const result = await this.deps.runtime.run(plan.request, undefined, { interpretation: plan.interpretation, link });
+    const result = await this.deps.runtime.run(plan.request, undefined, { interpretation: plan.interpretation, link, signal: hooks?.signal });
     telemetry.childRunId = result.runId;
     const warnings: string[] = [];
     // The inherited brand was handed over by id; the child re-resolved it in Qloo. A different entity is reported, not hidden.
     if (link.inheritedBrand && result.status !== "NEEDS_INPUT" && result.brand && result.brand.id !== link.inheritedBrand.id) warnings.push(`INHERITED_BRAND_MISMATCH: the child run resolved ${result.brand.id}, not the parent's ${link.inheritedBrand.id}`);
     if (alternative) warnings.push("SUPPORTED_ALTERNATIVE_EXECUTED: the user confirmed a smaller task; the original request was not performed in full");
     const shown: QueryInterpretation = warnings.length ? { ...interpretation, interpretationWarnings: [...interpretation.interpretationWarnings, ...warnings] } : interpretation;
-    return this.respond({ telemetry, state: investigationState(result), interpretation: shown, context, ...(gate && { gate }), handoff: plan.handoff, investigation: { runId: result.runId, reused: false, link, result } });
+    return this.finishRun(telemetry, shown, result, hooks, context, gate, plan.handoff, link);
+  }
+
+  private finishRun(
+    telemetry: QueryTelemetry,
+    interpretation: QueryInterpretation | null,
+    result: AgentRunResponse,
+    hooks?: QueryHooks,
+    context: ResolvedContext | null = null,
+    gate?: GateResult,
+    handoff?: QueryHandoff,
+    link: InvestigationLink | null = null,
+  ): QueryResponse {
+    const stop = result.status === "NEEDS_INPUT" ? null : result.trace.stopReason;
+    const cancelled = stop?.code === "INVESTIGATION_CANCELLED";
+    if (!cancelled) hooks?.onProgress?.({ phase: "preparing", intent: handoff?.intent ?? null });
+    const runLink = link ?? (result.status !== "NEEDS_INPUT" ? result.trace.investigationLink ?? null : null);
+    return this.respond({
+      telemetry,
+      state: investigationState(result),
+      interpretation,
+      context,
+      ...(gate && { gate }),
+      ...(handoff && { handoff }),
+      investigation: { runId: result.runId, reused: link === null, link: runLink, result },
+      ...(cancelled && { errors: [{ code: "INVESTIGATION_CANCELLED", detail: stop?.detail ?? "the investigation was cancelled" }] }),
+    });
+  }
+
+  private cancelledResponse(telemetry: QueryTelemetry, interpretation: QueryInterpretation | null, detail: string): QueryResponse {
+    return this.respond({ telemetry, state: "INVESTIGATION_FAILED", interpretation, errors: [{ code: "INVESTIGATION_CANCELLED", detail }] });
   }
 
   private respond(input: {
@@ -138,6 +214,8 @@ export class QueryService {
     handoff?: QueryHandoff;
     investigation?: QueryResponse["investigation"];
     errors?: QueryReasonCode[];
+    /** Preview responses are not logged; the terminal response is. */
+    silent?: boolean;
   }): QueryResponse {
     const { telemetry, state, gate } = input;
     telemetry.routingOutcome = state;
@@ -158,7 +236,7 @@ export class QueryService {
       nextOperations: nextOperations(state, result),
       telemetry,
     };
-    this.deps.log?.(telemetry);
+    if (!input.silent) this.deps.log?.(telemetry);
     return response;
   }
 }

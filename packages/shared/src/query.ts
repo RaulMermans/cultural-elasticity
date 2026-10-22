@@ -21,22 +21,24 @@ export type QueryIntent = (typeof QUERY_INTENTS)[number];
 export type QueryDisposition = "EXECUTABLE" | "NEEDS_CLARIFICATION" | "PARTIALLY_SUPPORTED" | "UNSUPPORTED" | "CONTEXT_UNAVAILABLE" | "NAVIGATION";
 
 /**
- * UI-facing state of one query. INVESTIGATION_STARTED is reserved for asynchronous execution: the current API runs an
- * investigation to its end before answering, so it returns COMPLETED / INCOMPLETE / NEEDS_INPUT / FAILED instead.
+ * UI-facing state of one query. INVESTIGATION_STARTED is the asynchronous preview: the gate has accepted the
+ * investigation and it is still running. A terminal state replaces it when the run finishes.
  */
-export type QueryState =
-  | "INTERPRETED"
-  | "NEEDS_CLARIFICATION"
-  | "UNSUPPORTED_OPERATION"
-  | "PARTIALLY_SUPPORTED"
-  | "CONTEXT_UNAVAILABLE"
-  | "INTERPRETATION_FAILED"
-  | "RETURNED_TO_INVESTIGATION"
-  | "INVESTIGATION_STARTED"
-  | "INVESTIGATION_NEEDS_INPUT"
-  | "INVESTIGATION_COMPLETED"
-  | "INVESTIGATION_INCOMPLETE"
-  | "INVESTIGATION_FAILED";
+export const QUERY_STATES = [
+  "INTERPRETED",
+  "NEEDS_CLARIFICATION",
+  "UNSUPPORTED_OPERATION",
+  "PARTIALLY_SUPPORTED",
+  "CONTEXT_UNAVAILABLE",
+  "INTERPRETATION_FAILED",
+  "RETURNED_TO_INVESTIGATION",
+  "INVESTIGATION_STARTED",
+  "INVESTIGATION_NEEDS_INPUT",
+  "INVESTIGATION_COMPLETED",
+  "INVESTIGATION_INCOMPLETE",
+  "INVESTIGATION_FAILED",
+] as const;
+export type QueryState = (typeof QUERY_STATES)[number];
 
 /** How the parent-child relationship came about. An Atlas edge is an investigation step, never a cultural distance. */
 export type InvestigationOperation = "NEW_INVESTIGATION" | "FOLLOW_UP" | "REFINE_TERRITORY" | "SWITCH_TERRITORY" | "CHANGE_BRAND";
@@ -165,8 +167,3 @@ export type QueryResponse = {
   telemetry: QueryTelemetry;
 };
 
-export function isQueryResponse(value: unknown): value is QueryResponse {
-  if (typeof value !== "object" || value === null) return false;
-  const record = value as Record<string, unknown>;
-  return record.schemaVersion === QUERY_SCHEMA_VERSION && typeof record.queryId === "string" && typeof record.state === "string";
-}

@@ -124,3 +124,27 @@ export async function postQuery(path: "/api/agent/interpret" | "/api/agent/query
     return { status: "unavailable" };
   }
 }
+
+async function backendFetch(path: string, init: RequestInit, timeoutMs: number): Promise<{ status: number; body: unknown } | null> {
+  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  try {
+    const response = await fetch(new URL(path, baseUrl), { ...init, cache: "no-store", signal: AbortSignal.timeout(timeoutMs) });
+    const body: unknown = await response.json().catch(() => null);
+    return { status: response.status, body };
+  } catch {
+    return null;
+  }
+}
+
+/** Product path. The browser never calls the investigation API directly. */
+export async function createJob(body: unknown): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch("/api/agent/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }, 15_000);
+}
+
+export async function readJob(id: string, token: string): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}`, { headers: { "x-job-token": token } }, 10_000);
+}
+
+export async function cancelJob(id: string, token: string): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}/cancel`, { method: "POST", headers: { "x-job-token": token } }, 10_000);
+}

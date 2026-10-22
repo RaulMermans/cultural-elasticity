@@ -4,7 +4,13 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 5B.1 — Query Intelligence
+## Current status: Sprint 5B.2 — The Living Atlas
+
+- **Sprint 5B.2** is the product surface on the unchanged agent and query layer. A natural-language question goes through Haiku, the execution gate, and an in-process job. The Living Atlas draws the investigation as a lineage, not a measured map. See [docs/sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md](docs/sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md) and the design skill [`.agents/skills/living-atlas-design/SKILL.md`](.agents/skills/living-atlas-design/SKILL.md).
+- Jobs live in the backend process. A restart drops them. This is not a serverless background worker.
+- The agent itself stays **`AGENT_MODEL_NOT_READY`** (Sprint 5A.2). Query-layer readiness stays the Sprint 5B.1 result: **`QUERY_LAYER_READY`**, with the limitations recorded there.
+
+## Previous status: Sprint 5B.1 — Query Intelligence
 
 - **Sprint 5B.1** adds the natural-language control layer on top of the unchanged agent:
   - `POST /api/agent/interpret` (dry run), `/api/agent/query` and `/api/agent/follow-up`, sharing one interpretation policy: one Claude Haiku 5.5 structured interpretation, then a deterministic execution gate;

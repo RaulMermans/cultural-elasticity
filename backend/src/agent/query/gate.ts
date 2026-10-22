@@ -88,6 +88,8 @@ export function runGate(input: GateInput): GateResult {
   if (p.systemDirectives.length > 0) {
     unsupported.push("SYSTEM_DIRECTIVE");
     reason("SYSTEM_DIRECTIVE_REFUSED", `instructions aimed at the system are not authorized by a query: ${p.systemDirectives.map((d) => `"${d}"`).join("; ")}`);
+    if (p.primaryIntent === "return_to_parent") reason("DIRECTIVE_BLOCKS_NAVIGATION", "a return that carries system directives is refused rather than performed");
+    reason("DIRECTIVE_BLOCKS_CONFIRMATION", "a request that contains system directives is refused in full; no alternative is offered or stored for later confirmation");
   }
 
   const secondaries = dedupe(p.secondaryIntents).filter((i) => i !== p.primaryIntent) as QueryIntent[];
@@ -120,6 +122,8 @@ export function runGate(input: GateInput): GateResult {
     alternative: extra.alternative ?? null,
     navigation: extra.navigation ?? null,
   });
+  // Refuse before any plan or alternative is built. A later confirm must not be able to execute the tainted request.
+  if (p.systemDirectives.length > 0) return finish("UNSUPPORTED");
   // A message carrying system directives is never answered with a benign clarification question: it is refused.
   const directive = p.systemDirectives.length > 0;
   const clarify = (code: string, detail: string, question: string) => {
@@ -138,6 +142,7 @@ export function runGate(input: GateInput): GateResult {
   if (DEFERRED.has(p.primaryIntent)) {
     unsupported.push(p.primaryIntent);
     reason("UNSUPPORTED_OPERATION", `${p.primaryIntent} is recognized but not implemented; the runtime investigates one brand at a time and never compares separate Qloo calls numerically`);
+    if (directive) return finish("UNSUPPORTED");
     const alt = deferredAlternative(p.primaryIntent, brandsNamed, explicit, territories);
     const altPlan = alt ? plan(alt.intent, { name: alt.brand, source: "EXPLICIT" }, alt.territories.map((name) => ({ name })), null, "NEW_INVESTIGATION", input, null) : null;
     return finish("UNSUPPORTED", { alternative: alt && altPlan?.ok ? { description: alt.description, plan: altPlan.plan } : null });
@@ -209,6 +214,7 @@ export function runGate(input: GateInput): GateResult {
     }
   }
   const partial = reasons.some((r) => r.code === "SYSTEM_DIRECTIVE_REFUSED" || r.code === "UNSUPPORTED_SECONDARY_OBJECTIVE" || r.code === "COMPOUND_NOT_EXECUTED");
+  if (partial && directive) return finish("UNSUPPORTED");
   if (partial) return finish("PARTIALLY_SUPPORTED", { alternative: { description: `Run only the supported part: ${describe(built.plan.handoff)}. The rest of the request is not performed.`, plan: built.plan } });
   return finish("EXECUTABLE", { plan: built.plan });
 }

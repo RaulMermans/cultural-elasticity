@@ -52,6 +52,8 @@ export class QlooToolProvider implements AgentToolProvider {
   readonly mode: "live" | "scripted";
   readonly evidenceSource: string;
   private lastCall = 0;
+  /** Serializes calls so concurrent investigations share one spacing and rate-limit clock. */
+  private queue: Promise<void> = Promise.resolve();
   /** Sprint 5A latency telemetry: time spent waiting on call spacing and on rate-limit back-off. */
   readonly waits = { spacingMs: 0, rateLimitMs: 0 };
 
@@ -69,6 +71,20 @@ export class QlooToolProvider implements AgentToolProvider {
   }
 
   async call<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], callOptions: { maxRetries?: number } = {}): Promise<QlooCallResult> {
+    const previous = this.queue;
+    let release: () => void = () => undefined;
+    this.queue = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await previous;
+    try {
+      return await this.callExclusive(operation, input, callOptions);
+    } finally {
+      release();
+    }
+  }
+
+  private async callExclusive<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], callOptions: { maxRetries?: number } = {}): Promise<QlooCallResult> {
     const maxRetries = Math.min(this.options.maxRetries ?? 1, callOptions.maxRetries ?? 1);
     for (let attempt = 1; ; attempt += 1) {
       const wait = this.lastCall + this.options.spacingMs - Date.now();

@@ -3,6 +3,9 @@ dist/
 .next/
 out/
 coverage/
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
 *.tsbuildinfo
 next-env.d.ts
 

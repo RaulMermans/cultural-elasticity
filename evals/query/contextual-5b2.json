@@ -1,0 +1,21 @@
+{
+  "fixtureType": "synthetic",
+  "label": "SYNTHETIC. Independently specified Sprint 5B.2 contextual scenarios. Not part of the frozen held-out manifest. Scripted proposals are routing and state evidence, never language-understanding evidence. UI scenarios are covered by frontend/e2e and classified as UI.",
+  "scenarios": [
+    { "id": "C01", "title": "Broad investigation", "layer": "investigation" },
+    { "id": "C02", "title": "Narrow follow-up", "layer": "routing" },
+    { "id": "C03", "title": "Repeated narrowing", "layer": "routing" },
+    { "id": "C04", "title": "Return to parent", "layer": "state" },
+    { "id": "C05", "title": "Switch branch", "layer": "routing" },
+    { "id": "C06", "title": "User correction of the brand", "layer": "routing" },
+    { "id": "C07", "title": "Clarification before any investigation", "layer": "interpretation" },
+    { "id": "C08", "title": "Unsupported competitor comparison", "layer": "routing" },
+    { "id": "C09", "title": "Partial supported alternative", "layer": "routing" },
+    { "id": "C10", "title": "Missing parent", "layer": "state" },
+    { "id": "C11", "title": "Evicted parent", "layer": "state" },
+    { "id": "C12", "title": "Two concurrent investigations", "layer": "investigation" },
+    { "id": "C13", "title": "Refresh after the job expires", "layer": "state" },
+    { "id": "C14", "title": "Directive cannot be confirmed", "layer": "routing" },
+    { "id": "C15", "title": "Unseen wording does not change the gated route", "layer": "routing" }
+  ]
+}

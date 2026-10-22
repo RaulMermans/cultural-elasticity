@@ -20,6 +20,7 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
       redact: {
         paths: [
           "req.headers.authorization",
+          "req.headers['x-job-token']",
           "req.headers['x-api-key']",
           "*.headers['x-api-key']",
           "*.headers['X-Api-Key']",

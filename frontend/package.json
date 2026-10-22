@@ -7,7 +7,9 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start --port 3000",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test src/components/atlas/atlas-model.test.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@cultural-elasticity/shared": "workspace:*",
@@ -17,6 +19,7 @@
     "server-only": "0.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/node": "^22.19.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

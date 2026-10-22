@@ -49,17 +49,20 @@ export type AgentRuntimeDeps = {
 };
 
 /** Sprint 5B.1: a gate-approved interpretation and the run's parent-child link (both optional). */
-export type RunOptions = { interpretation?: Interpretation; link?: InvestigationLink };
+/** Sprint 5B.2: `signal` aborts between turns. The in-flight model or Qloo call is allowed to finish; its result is not a completed finding. */
+export type RunOptions = { interpretation?: Interpretation; link?: InvestigationLink; signal?: AbortSignal };
 
 /** Rejection codes a repair attempt can act on (the validator's reason tells the model what to change). */
 const REPAIRABLE = new Set(["INVALID_MODEL_OUTPUT", "INVALID_DECISION", "UNKNOWN_TOOL", "INVALID_ARGUMENTS", "NOT_EXPOSED", "WRONG_PHASE", "PRECONDITION", "NOT_READY", "FINISH_BEFORE_SUFFICIENCY", "NOTHING_ANALYZED", "UNKNOWN_RESULT_IDS", "NO_OPEN_AMBIGUITY", "REFERENCES_PENDING", "TYPE_ALIGNMENT_PENDING"]);
 
-type TurnOutcome = { stop: "needs_input" | "finish" | "failed" | null; lastTurn: AgentDecisionContext["lastTurn"] };
+type TurnOutcome = { stop: "needs_input" | "finish" | "failed" | "cancelled" | null; lastTurn: AgentDecisionContext["lastTurn"] };
 
 export class AgentRuntime {
   private readonly registry: ToolRegistry;
   private readonly skills: SkillRegistry;
   readonly store: RunStore;
+  /** Cooperative cancellation. Not serialized into the run, so it never becomes evidence. */
+  private readonly cancelSignals = new WeakMap<AgentRunState, AbortSignal>();
 
   constructor(private readonly deps: AgentRuntimeDeps) {
     this.registry = deps.registry ?? new ToolRegistry();
@@ -88,11 +91,13 @@ export class AgentRuntime {
     this.store.put(state);
     transition(state, "PLANNING", "request validated");
     if (check?.ok) applyInterpretation(state, check.interpretation, "query_layer");
+    if (options.signal) this.cancelSignals.set(state, options.signal);
+    if (this.cancelled(state)) return this.cancel(state);
     return this.loop(state);
   }
 
   /** Resumes a NEEDS_INPUT run with the user's clarification. Budgets already spent stay spent. */
-  async continue(runId: string, clarification: string): Promise<AgentRunResponse> {
+  async continue(runId: string, clarification: string, options: { signal?: AbortSignal } = {}): Promise<AgentRunResponse> {
     const state = this.store.get(runId);
     if (!state) throw new RunNotFoundError(runId);
     if (state.status !== "NEEDS_INPUT") throw new RunNotWaitingError(runId, state.status);
@@ -102,13 +107,30 @@ export class AgentRuntime {
     state.trace.userClarifications.push(text);
     state.pendingQuestion = null;
     transition(state, "PLANNING", "user clarification received");
+    if (options.signal) this.cancelSignals.set(state, options.signal);
+    if (this.cancelled(state)) return this.cancel(state);
     return this.loop(state);
+  }
+
+  private cancelled(state: AgentRunState): boolean {
+    return this.cancelSignals.get(state)?.aborted === true;
+  }
+
+  /** Stops future turns. Does not abort the Qloo call already in flight, and does not present the run as complete. */
+  private async cancel(state: AgentRunState): Promise<AgentRunResponse> {
+    if (TERMINAL_STATUSES.includes(state.status) && state.final) return state.final;
+    const detail = "the investigation was cancelled; evidence gathered before it finished is not a completed finding";
+    state.trace.stopReason = { code: "INVESTIGATION_CANCELLED", detail };
+    state.trace.errors.push({ iteration: state.usage.iterations, code: "INVESTIGATION_CANCELLED", detail });
+    if (!TERMINAL_STATUSES.includes(state.status)) transition(state, "FAILED", "investigation cancelled");
+    return this.finish(state);
   }
 
   private async loop(state: AgentRunState): Promise<AgentRunResponse> {
     let lastTurn: AgentDecisionContext["lastTurn"] = null;
     try {
       for (;;) {
+        if (this.cancelled(state)) return this.cancel(state);
         this.syncPhase(state);
         const sufficiency = assessEvidenceSufficiency(state);
         const lastVerdict = state.trace.sufficiency.at(-1);
@@ -128,6 +150,7 @@ export class AgentRuntime {
           state.turnOpen = false;
         });
         lastTurn = turn.lastTurn;
+        if (turn.stop === "cancelled") return this.cancel(state);
         if (turn.stop === "needs_input") return needsInputResponse(state);
         if (turn.stop === "failed") return await this.fail(state, `model produced no valid action for ${state.limits.maxInvalidTurns} consecutive turns`);
         if (turn.stop === "finish") return await this.complete(state, "agent finished");
@@ -184,6 +207,7 @@ export class AgentRuntime {
       stop = outcome.stop;
       if (attempt === 1) turnTrace.firstAttemptValid = outcome.valid;
       const repairable = rejections.filter((r) => REPAIRABLE.has(r.code));
+      if (stop === "cancelled") return { stop, lastTurn: { results, rejections } };
       if (accepted > 0 || stop || repairable.length === 0 || attempt === 2) break;
       repair = { attempt: 2, rejections: repairable.slice(0, 8) };
       turnTrace.repairReason = repairable.map((r) => `${r.code}: ${r.reason}`).join(" | ").slice(0, 400);
@@ -253,6 +277,7 @@ export class AgentRuntime {
       raw = { invalid: `model call failed: ${error instanceof Error ? error.message.slice(0, 200) : String(error)}` };
     }
     turnTrace.latencyMs += Date.now() - started;
+    if (this.cancelled(state)) return { accepted: 0, stop: "cancelled", valid: false };
     if (!Array.isArray(raw) || raw.length === 0) {
       const reason = Array.isArray(raw) ? "no decisions" : raw.invalid;
       turnTrace.invalidOutput = reason;
@@ -270,6 +295,7 @@ export class AgentRuntime {
       rejections.push({ action: extra.tool ?? action, code, reason });
     };
     for (const [index, item] of raw.entries()) {
+      if (this.cancelled(state)) return { accepted, stop: "cancelled", valid: false };
       if (stop) {
         reject("ignored", "AFTER_TERMINAL_ACTION", "a terminal action (analyze/ask_user/finish) must be the last decision of a turn");
         continue;
