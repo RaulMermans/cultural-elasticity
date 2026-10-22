@@ -13,7 +13,7 @@
 import type { AgentRunStatus, AgentToolCallTrace } from "@cultural-elasticity/shared";
 import { z } from "zod";
 import { applyConceptDedup, canonicalTagName, deterministicDuplicate } from "./concept-dedup.js";
-import { AGENT_INTENTS, DEFAULT_QLOO_CALLS, RANKABLE_TYPES, shortEntityType, type RankableType } from "./contracts.js";
+import { AGENT_INTENTS, RANKABLE_TYPES, shortEntityType, type RankableType } from "./contracts.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { callQloo, describedEntity, PROFILE_TAKE, recordFindTags, recordPool, recordProfile, recordRelated, recordResolved } from "./qloo-gateway.js";
 import { strategyExhausted } from "./readiness.js";
@@ -21,7 +21,7 @@ import { referenceCandidates } from "./reference-strategy.js";
 import { alternateAnchorRefusal, anchorOnObservedMembers, FRONTIER_EVIDENCE_BASE, FRONTIER_RELATED_TAKE, recordAnchorDecision } from "./frontier.js";
 import { alignmentDeferral } from "./representation-alignment.js";
 import { validateTerritoryRepresentation } from "./representation-planner.js";
-import { resolveInterpretation } from "./router.js";
+import { applyInterpretation, resolveInterpretation } from "./router.js";
 import { assessReferenceConcept, incidentalConcept } from "./semantic-comparison.js";
 import { activeTerritories, addTerritory, derivePhase, findTerritory, recordEntity, type AgentRunState } from "./state.js";
 import type { AgentToolProvider } from "./tool-provider.js";
@@ -76,16 +76,7 @@ const interpretRequest: AgentTool<{ intent: (typeof AGENT_INTENTS)[number]; bran
   async execute({ state }, input) {
     const check = resolveInterpretation(state.request, input);
     if (!check.ok) return failed("INVALID_INTERPRETATION", check.reason);
-    state.interpretation = check.interpretation;
-    state.brand.query = check.interpretation.brand;
-    state.trace.intent = check.interpretation.intent;
-    state.trace.interpretedRequest = { ...check.interpretation };
-    if (!state.qlooBudgetExplicit && !state.request.intent) {
-      // Budget defaults are per intent (spec §25); the intent is only known now.
-      state.limits.maxQlooCalls = Math.max(state.usage.qlooCalls, DEFAULT_QLOO_CALLS[check.interpretation.intent]);
-      state.trace.limits.maxQlooCalls = state.limits.maxQlooCalls;
-    }
-    for (const label of check.interpretation.territories) addTerritory(state, { label, role: "target", origin: "user", rationale: "named by the user" });
+    applyInterpretation(state, check.interpretation, "agent_turn");
     return { status: "ok", summary: `intent ${check.interpretation.intent}; brand "${check.interpretation.brand}"; ${check.interpretation.territories.length} named territory(ies)`, data: { territories: state.territories.map((t) => ({ key: t.key, label: t.label })) } };
   },
 };

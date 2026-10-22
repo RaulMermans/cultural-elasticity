@@ -9,12 +9,14 @@
 
 import type { Limitation } from "./analysis.js";
 import type { CulturalElasticityResult, ElasticityClass, RobustnessLevel } from "./methodology.js";
+import type { InvestigationLink } from "./query.js";
 
 /**
  * 0.3 (Sprint 5A, additive): semantic comparison assessments, grounded findings, synthesis attempt details,
  * model effort, reference-plan and latency telemetry. Every 0.2 field is unchanged.
  * Sprint 5A.1 adds only OPTIONAL fields under the same version (candidate canonicalization, evidence status, probe
  * views, representation plans, completion checks, frontier candidate pool, probe metrics): a 0.3 reader keeps working.
+ * Sprint 5B.1 adds two more optional trace fields (interpretation source, investigation link) under the same version.
  */
 export const AGENT_RESULT_SCHEMA_VERSION = "ce-agent-result/0.3" as const;
 
@@ -501,6 +503,10 @@ export type AgentTrace = {
   anchorDecisions?: AnchorDecision[];
   /** Sprint 5A.2: the evidence-ranked probe recommended per unresolved territory, recorded whenever it changes. */
   probeRecommendations?: { iteration: number; territoryKey: string; conceptKey: string; namespace: string; type: string; priority: ProbePriority; reason: string }[];
+  /** Sprint 5B.1: who recorded the interpretation (the agent's own interpret_request turn, or the query layer's gate). */
+  interpretationSource?: "agent_turn" | "query_layer";
+  /** Sprint 5B.1: the parent-child link of a query-layer run (null for a new investigation started outside it). */
+  investigationLink?: InvestigationLink | null;
   errors: { iteration: number; code: string; detail: string }[];
   userClarifications: string[];
 };

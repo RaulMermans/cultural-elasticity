@@ -16,11 +16,11 @@
  * validator's reasons (no generic self-reflection). When no material evidence gap remains and the model
  * still proposes nothing acceptable, the runtime analyzes the ready territories itself.
  */
-import type { AgentDecisionTrace, AgentRunResponse } from "@cultural-elasticity/shared";
+import type { AgentDecisionTrace, AgentRunResponse, InvestigationLink } from "@cultural-elasticity/shared";
 import { runAnalysis } from "./analysis-runner.js";
 import { applyConceptDedup } from "./concept-dedup.js";
 import { buildDecisionContext, contextSize } from "./context.js";
-import { agentDecisionSchema, agentRequestSchema, type AgentDecision, type AgentRequest, type InvestigationLimits } from "./contracts.js";
+import { agentDecisionSchema, agentRequestSchema, type AgentDecision, type AgentRequest, type Interpretation, type InvestigationLimits } from "./contracts.js";
 import { AgentInputError, RunNotFoundError, RunNotWaitingError } from "./errors.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { finalize, needsInputResponse } from "./finalizer.js";
@@ -33,6 +33,7 @@ import { recordPlanRevision } from "./planner.js";
 import { MAX_REFERENCE_DEFERRALS, referencePlan } from "./reference-strategy.js";
 import { probeRecommendations } from "./probe-policy.js";
 import { comparisonRepresentationPlan, preferredTypeFor } from "./representation-alignment.js";
+import { applyInterpretation, resolveInterpretation } from "./router.js";
 import { RunStore } from "./run-store.js";
 import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState } from "./state.js";
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
@@ -46,6 +47,9 @@ export type AgentRuntimeDeps = {
   skills?: SkillRegistry;
   store?: RunStore;
 };
+
+/** Sprint 5B.1: a gate-approved interpretation and the run's parent-child link (both optional). */
+export type RunOptions = { interpretation?: Interpretation; link?: InvestigationLink };
 
 /** Rejection codes a repair attempt can act on (the validator's reason tells the model what to change). */
 const REPAIRABLE = new Set(["INVALID_MODEL_OUTPUT", "INVALID_DECISION", "UNKNOWN_TOOL", "INVALID_ARGUMENTS", "NOT_EXPOSED", "WRONG_PHASE", "PRECONDITION", "NOT_READY", "FINISH_BEFORE_SUFFICIENCY", "NOTHING_ANALYZED", "UNKNOWN_RESULT_IDS", "NO_OPEN_AMBIGUITY", "REFERENCES_PENDING", "TYPE_ALIGNMENT_PENDING"]);
@@ -63,13 +67,27 @@ export class AgentRuntime {
     this.store = deps.store ?? new RunStore();
   }
 
-  /** Validates the request (throws AgentInputError) and runs until COMPLETE, NEEDS_INPUT, FAILED or BUDGET_EXHAUSTED. */
-  async run(rawRequest: unknown, limits?: InvestigationLimits): Promise<AgentRunResponse> {
+  /**
+   * Validates the request (throws AgentInputError) and runs until COMPLETE, NEEDS_INPUT, FAILED or BUDGET_EXHAUSTED.
+   *
+   * Sprint 5B.1: the query layer passes the interpretation its deterministic gate approved. It is re-checked against
+   * the request with the same resolveInterpretation and recorded by the same applyInterpretation as the agent's own
+   * interpret_request turn, which then never runs: one authoritative interpretation, no second model call.
+   */
+  async run(rawRequest: unknown, limits?: InvestigationLimits, options: RunOptions = {}): Promise<AgentRunResponse> {
     const parsed = agentRequestSchema.safeParse(rawRequest);
     if (!parsed.success) throw new AgentInputError(parsed.error.issues.map((i) => ({ path: i.path.map(String).join(".") || "(root)", message: i.message })));
-    const state = createRunState(parsed.data as AgentRequest, this.deps.model.info, { name: this.deps.provider.name, mode: this.deps.provider.mode, evidenceSource: this.deps.provider.evidenceSource }, limits);
+    const request = parsed.data as AgentRequest;
+    const check = options.interpretation ? resolveInterpretation(request, options.interpretation) : null;
+    if (check && !check.ok) throw new AgentInputError([{ path: "interpretation", message: check.reason }]);
+    const state = createRunState(request, this.deps.model.info, { name: this.deps.provider.name, mode: this.deps.provider.mode, evidenceSource: this.deps.provider.evidenceSource }, limits);
+    if (options.link) {
+      state.link = options.link;
+      state.trace.investigationLink = options.link;
+    }
     this.store.put(state);
     transition(state, "PLANNING", "request validated");
+    if (check?.ok) applyInterpretation(state, check.interpretation, "query_layer");
     return this.loop(state);
   }
 

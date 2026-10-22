@@ -90,6 +90,11 @@ export const usageOf = (usage: Usage) =>
  */
 const FALLBACK_MODELS = new Set(["claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"]);
 
+/** Request parameters for the server-side refusal fallback; empty for models without one (Haiku 5.5). */
+export function fallbackParams(model: string): { betas?: string[]; fallbacks?: "default" } {
+  return FALLBACK_MODELS.has(model) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const } : {};
+}
+
 export class AnthropicAgentModel implements AgentModel {
   readonly info: AgentModelInfo;
   private readonly client: Pick<Anthropic, "beta">;
@@ -100,7 +105,7 @@ export class AnthropicAgentModel implements AgentModel {
   constructor(options: AnthropicAgentModelOptions = {}) {
     this.model = options.model ?? DEFAULT_AGENT_MODEL;
     this.effort = options.effort ?? DEFAULT_AGENT_EFFORT;
-    this.fallback = FALLBACK_MODELS.has(this.model) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const } : {};
+    this.fallback = fallbackParams(this.model);
     // An org-level key that is not scoped to a workspace needs the workspace id on every request.
     const workspace = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
     this.client = options.client ?? new Anthropic(workspace ? { defaultHeaders: { "anthropic-workspace-id": workspace } } : {});

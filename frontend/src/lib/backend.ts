@@ -4,9 +4,11 @@ import {
   isAnalysisIngredients,
   isCulturalElasticityResult,
   isHealthResponse,
+  isQueryResponse,
   type AgentRunResponse,
   type AnalysisIngredients,
   type CulturalElasticityResult,
+  type QueryResponse,
 } from "@cultural-elasticity/shared";
 
 export type BackendStatus = "connected" | "unavailable";
@@ -93,6 +95,30 @@ export async function postAgent(path: "/api/agent/analyze" | "/api/agent/continu
     });
     const json: unknown = await response.json();
     if (response.ok && isAgentRunResponse(json)) return { status: "ok", response: json };
+    return { status: "rejected", detail: JSON.stringify(json).slice(0, 2000) };
+  } catch {
+    return { status: "unavailable" };
+  }
+}
+
+export type QueryResult = { status: "ok"; response: QueryResponse } | { status: "rejected"; detail: string } | { status: "unavailable" };
+
+/**
+ * Sprint 5B.1: the natural-language query layer. /interpret is a dry run (no Qloo call); /query starts a new
+ * investigation; /follow-up starts a new linked child run from an existing one. The backend validates every run id.
+ */
+export async function postQuery(path: "/api/agent/interpret" | "/api/agent/query" | "/api/agent/follow-up", body: unknown): Promise<QueryResult> {
+  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  try {
+    const response = await fetch(new URL(path, baseUrl), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+      cache: "no-store",
+      signal: AbortSignal.timeout(path === "/api/agent/interpret" ? 60_000 : 15 * 60_000),
+    });
+    const json: unknown = await response.json();
+    if (response.ok && isQueryResponse(json)) return { status: "ok", response: json };
     return { status: "rejected", detail: JSON.stringify(json).slice(0, 2000) };
   } catch {
     return { status: "unavailable" };

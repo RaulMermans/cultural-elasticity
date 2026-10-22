@@ -102,11 +102,15 @@ const UNSUPPORTED_STATE_CODES = new Set([
 ]);
 
 export function modelCostUsd(state: AgentRunState): number | null {
-  const price = state.model.kind === "llm" ? MODEL_PRICES[state.model.id] : undefined;
+  const usd = state.model.kind === "llm" ? priceUsd(state.model.id, state.usage) : null;
+  return usd === null ? null : Math.round(usd * 10_000) / 10_000;
+}
+
+/** Unrounded USD for provider-reported usage on a model with a known price (Sprint 5B.1: also used for query interpretation). */
+export function priceUsd(modelId: string, u: { uncachedInputTokens: number; cacheReadTokens: number; cacheCreationTokens: number; outputTokens: number }): number | null {
+  const price = MODEL_PRICES[modelId];
   if (!price) return null;
-  const u = state.usage;
-  const usd = (u.uncachedInputTokens * price.input + u.cacheReadTokens * price.cacheRead + u.cacheCreationTokens * price.cacheWrite + u.outputTokens * price.output) / 1_000_000;
-  return Math.round(usd * 10_000) / 10_000;
+  return (u.uncachedInputTokens * price.input + u.cacheReadTokens * price.cacheRead + u.cacheCreationTokens * price.cacheWrite + u.outputTokens * price.output) / 1_000_000;
 }
 
 export function computeMetrics(state: AgentRunState, results: AgentTerritoryResult[]): AgentMetrics {

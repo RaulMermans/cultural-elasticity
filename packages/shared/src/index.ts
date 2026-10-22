@@ -19,3 +19,4 @@ export function isHealthResponse(value: unknown): value is HealthResponse {
 export * from "./analysis.js";
 export * from "./methodology.js";
 export * from "./agent.js";
+export * from "./query.js";
