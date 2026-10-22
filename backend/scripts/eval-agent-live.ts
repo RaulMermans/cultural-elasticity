@@ -7,7 +7,7 @@
  *   --stability N           run each frontier case N times in total in the model arm (Sprint 5A readiness needs 3)
  *   --benchmark [keys]      also run benchmark brands through the agent (comma-separated keys; default all)
  *   --baseline-from <file>  reuse the BASELINE runs' metrics of an earlier report.json (only with the case ids it covered)
- *   --out <dir>             output directory (default backend/feasibility-output/sprint5a1-live/<timestamp>)
+ *   --out <dir>             output directory (default backend/feasibility-output/sprint5a2-live/<timestamp>)
  *
  * Sprint 5A.1: the controlled positive scenario(s) of evals/agent/controlled-cases.json run too (in both arms, after a live
  * preflight of their preconditions) whenever --cases is absent or names them; they are reported separately and never
@@ -59,7 +59,7 @@ async function main(): Promise<number> {
   const controlledDoc = loadControlledCases();
   const controlledCases = controlledDoc.cases.filter((c) => !wanted || wanted.includes(c.id));
   const stamp = new Date().toISOString().replace(/[:.]/gu, "-");
-  const out = resolve(process.env.INIT_CWD ?? process.cwd(), flag("--out") ?? join(backendRoot, "feasibility-output", "sprint5a1-live", stamp));
+  const out = resolve(process.env.INIT_CWD ?? process.cwd(), flag("--out") ?? join(backendRoot, "feasibility-output", "sprint5a2-live", stamp));
   mkdirSync(out, { recursive: true });
 
   let provider;

@@ -78,6 +78,8 @@ export type TerritoryState = {
   semanticJudgment: { relevance: SemanticRelevance; reason: string } | null;
   /** Sprint 5A.1: the Qloo tag that grounded a generated candidate (its first evidence tag), if any. */
   sourceTagId: string | null;
+  /** Sprint 5A.2: every Qloo evidence tag given at proposal (sourceTagId is the first); anchoring any of them keeps provenance. */
+  evidenceTagIds: string[];
 };
 
 export type BrandState = {
@@ -319,7 +321,7 @@ export function territoryKey(state: AgentRunState, label: string): string {
   return key;
 }
 
-export function addTerritory(state: AgentRunState, input: { label: string; role: TerritoryRole; origin: TerritoryOrigin; rationale: string; source?: CandidateSource; sourceEvidence?: string; sourceTagId?: string | null }): TerritoryState {
+export function addTerritory(state: AgentRunState, input: { label: string; role: TerritoryRole; origin: TerritoryOrigin; rationale: string; source?: CandidateSource; sourceEvidence?: string; sourceTagId?: string | null; evidenceTagIds?: string[] }): TerritoryState {
   const territory: TerritoryState = {
     key: territoryKey(state, input.label),
     label: input.label.trim(),
@@ -338,6 +340,7 @@ export function addTerritory(state: AgentRunState, input: { label: string; role:
     conceptOnly: null,
     semanticJudgment: null,
     sourceTagId: input.sourceTagId ?? null,
+    evidenceTagIds: input.evidenceTagIds ?? (input.sourceTagId ? [input.sourceTagId] : []),
   };
   state.territories.push(territory);
   return territory;

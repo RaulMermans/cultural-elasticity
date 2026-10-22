@@ -69,11 +69,12 @@ describe("runtime skills", () => {
       interpret_request: 1,
       resolve_brand: 1,
       // Sprint 5A bumps (see docs/sprint-5a/HAIKU_AGENT_RELIABILITY.md, Runtime Skills); Sprint 5A.1 bumps
-      // (docs/sprint-5a1/INVESTIGATION_RELIABILITY.md): probing, alignment, completion, frontier discovery.
-      resolve_territory: 4,
+      // (docs/sprint-5a1/INVESTIGATION_RELIABILITY.md): probing, alignment, completion, frontier discovery. Sprint 5A.2
+      // bumps (docs/sprint-5a2/FRONTIER_RELIABILITY.md): evidence-ranked probe types, source-evidence anchoring.
+      resolve_territory: 5,
       build_territory_representation: 4,
       build_comparison_set: 3,
-      explore_candidate_territories: 3,
+      explore_candidate_territories: 4,
       analyze_territories: 2,
     });
   });

@@ -167,6 +167,8 @@ export type TerritoryEvidenceStatus = "EVIDENCE_SUPPORTED_TERRITORY" | "PARTIAL_
 export type ConceptProbeView = {
   conceptKey: string;
   label: string;
+  /** Sprint 5A.2: the concept's Qloo tag namespace (category:source, e.g. "genre:media"). */
+  namespace?: string;
   attemptedTypes: string[];
   emptyTypes: string[];
   successfulTypes: string[];
@@ -194,6 +196,33 @@ export type CandidateCanonicalization = {
   anchorRelation: "SAME_CONCEPT" | "SAME_CANONICAL_NAME" | "ALIAS_TOKEN_CONTAINMENT" | "DIFFERENT_NAME" | "NOT_ANCHORED" | "NO_SOURCE_TAG";
   /** Set when equivalence between the source tag and the anchored concept is not established. */
   uncertainty: string | null;
+};
+
+/**
+ * Sprint 5A.2: evidence priority of a recommended probe type. CONCEPT_MEMBERS: the type returned members for the
+ * concept. NAMESPACE_MEMBERS: for other concepts of its Qloo tag namespace. COMPARISON_TYPE: the comparison's shared type.
+ * STRUCTURAL: a same-named concept or an observed profile carries it. EXPLORATION: bounded exploration of the rest.
+ */
+export type ProbePriority = "CONCEPT_MEMBERS" | "NAMESPACE_MEMBERS" | "COMPARISON_TYPE" | "STRUCTURAL" | "EXPLORATION";
+
+/**
+ * Sprint 5A.2: one anchoring decision for a generated candidate. SOURCE_TAG_MEMBERS: the runtime anchored the candidate
+ * to its grounding tag once Qloo returned members for it. LABEL_TAG_MEMBERS: the runtime anchored a territory to a tag
+ * its own search returned whose canonical name is the territory's name, once that tag returned members. MODEL_ANCHOR: the agent anchored it (same concept or another
+ * of its evidence tags). ALTERNATE_WITH_MEMBERS: an accepted alternate anchor (same canonical name or alias, with
+ * observed members, the grounding tag having none). REFUSED: an alternate anchor the runtime refused (reasonCode).
+ */
+export type AnchorDecision = {
+  iteration: number;
+  territoryKey: string;
+  sourceTagId: string | null;
+  anchoredTagId: string;
+  relation: CandidateCanonicalization["anchorRelation"];
+  basis: "SOURCE_TAG_MEMBERS" | "LABEL_TAG_MEMBERS" | "MODEL_ANCHOR" | "ALTERNATE_WITH_MEMBERS" | "REFUSED";
+  decidedBy: "runtime" | "agent";
+  reasonCode: string | null;
+  evidence: string;
+  correlationIds: string[];
 };
 
 /** Sprint 5A.1: can the territories of one comparison share a Qloo entity type? Planned before expensive anchoring. */
@@ -468,6 +497,10 @@ export type AgentTrace = {
   representationPlans?: { iteration: number; plan: ComparisonRepresentationPlan }[];
   /** Sprint 5A.1: completion-feasibility checks, recorded whenever the verdict or reason changes. */
   completion?: ({ iteration: number } & CompletionFeasibility)[];
+  /** Sprint 5A.2: every anchoring of a generated candidate (who anchored it, to what, on which Qloo evidence) and refusals. */
+  anchorDecisions?: AnchorDecision[];
+  /** Sprint 5A.2: the evidence-ranked probe recommended per unresolved territory, recorded whenever it changes. */
+  probeRecommendations?: { iteration: number; territoryKey: string; conceptKey: string; namespace: string; type: string; priority: ProbePriority; reason: string }[];
   errors: { iteration: number; code: string; detail: string }[];
   userClarifications: string[];
 };
@@ -526,6 +559,12 @@ export type AgentMetrics = {
   probe_limit_refusals?: number;
   type_alignment_deferrals?: number;
   reference_namespace_refusals?: number;
+  // Sprint 5A.2
+  successful_type_probes?: number;
+  namespace_type_refusals?: number;
+  alternate_anchor_refusals?: number;
+  source_evidence_anchors?: number;
+  frontier_completion_refusals?: number;
 };
 
 export type AgentAnalysisResult = {

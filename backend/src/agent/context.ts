@@ -12,7 +12,8 @@
  */
 import { exemplarCandidates } from "./candidate-discovery.js";
 import { frontierCandidatePool } from "./frontier.js";
-import { comparisonRepresentationPlan } from "./representation-alignment.js";
+import { comparisonRepresentationPlan, preferredTypeFor } from "./representation-alignment.js";
+import { namespaceProbeEvidence, probeRecommendations, territoryQueryTags, type ProbeRecommendation } from "./probe-policy.js";
 import { conceptDuplicates } from "./concept-dedup.js";
 import { RANKABLE_TYPES } from "./contracts.js";
 import { assessEvidenceSufficiency, investigationStage } from "./evidence-sufficiency.js";
@@ -69,6 +70,8 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
       : { status: state.brand.notFound ? "not_found" : "unresolved", query: state.brand.query };
 
   const detail = needs.has("exemplarCandidates") || needs.has("representationRecovery");
+  // Sprint 5A.2: the evidence-ranked next probe per territory without Qloo members (diversified across a namespace).
+  const next = new Map(probeRecommendations(state, activeTerritories(state), (t) => preferredTypeFor(state, t)).map((r) => [r.territoryKey, nextProbeView(state, r)]));
   const territories: AgentDecisionContext["territories"] = state.territories.map((t) => {
     const readiness = territoryReadiness(state, t);
     const base: AgentDecisionContext["territories"][number] = {
@@ -84,7 +87,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
     };
     if (t.status === "dropped") return { ...base, dropReason: t.dropReason?.code ?? null };
     // Sprint 5A: a territory still being resolved sees which probes were made and what is untried.
-    if (readiness.state === "needs_concept" && (state.searchedQueries.has(t.label.trim().toLowerCase()) || t.sourceTagId)) return { ...base, probes: probeLedger(state, t), recoveryGuidance: recoveryGuidance(state, t) };
+    if (readiness.state === "needs_concept" && (territoryQueryTags(state, t) || t.sourceTagId)) return { ...base, probes: probeLedger(state, t), recoveryGuidance: recoveryGuidance(state, t), ...(next.has(t.key) && { nextProbe: next.get(t.key) }) };
     // Representation detail only for territories the active skills are working on.
     if (!detail || !t.concept || (readiness.state !== "needs_representation" && !recoverable(state, t))) return base;
     const rejectedIds = new Set(t.rejectedExemplars.flatMap((r) => (r.id ? [r.id] : [])));
@@ -98,6 +101,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
           .map((c) => ({ type, id: c.id, label: c.label, popularity: c.popularity, support: c.conceptSupport, profiled: state.profiles.has(c.id) })),
       ).slice(0, MAX_CANDIDATES_PER_TERRITORY),
       ...(needs.has("representationRecovery") && { recovery: recoveryOptions(state, t), recoveryGuidance: recoveryGuidance(state, t) }),
+      ...(next.has(t.key) && { nextProbe: next.get(t.key) }),
     };
   });
 
@@ -105,7 +109,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
   if (needs.has("observedTags")) {
     const queries = activeTerritories(state)
       .filter((t) => !t.concept)
-      .flatMap((t) => state.searchedQueries.get(t.label.trim().toLowerCase()) ?? []);
+      .flatMap((t) => territoryQueryTags(state, t) ?? []);
     const ids = [...new Set(queries)].slice(0, MAX_TAGS);
     evidence.observedTags = ids.flatMap((id) => (state.tags.has(id) ? [{ id, label: state.tags.get(id)!.label, type: state.tags.get(id)!.type }] : []));
   }
@@ -174,6 +178,22 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
     }),
     actions: [...exposure.actions],
     repair: options.repair ?? null,
+  };
+}
+
+/** Sprint 5A.2: what the model sees of a probe recommendation (with the namespace evidence behind it). */
+function nextProbeView(state: AgentRunState, r: ProbeRecommendation): NonNullable<AgentDecisionContext["territories"][number]["nextProbe"]> {
+  const ns = namespaceProbeEvidence(state, r.namespace, r.conceptKey).observedEntityTypes.map((e) => `${e.type} ${e.successfulProbes} with members / ${e.emptyProbes} empty`);
+  return {
+    tagId: r.conceptKey,
+    entityType: r.type,
+    priority: r.priority,
+    reason: r.reason,
+    namespace: r.namespace,
+    namespaceEvidence: ns,
+    tested: r.tested.map((x) => `${x.type}:${x.members}`),
+    emptyProbesLeft: r.emptySlotsLeft,
+    call: `qloo_recommend {targetType: "${r.type}", tagIds: ["${r.conceptKey}"], conditionOnBrand: false}`,
   };
 }
 

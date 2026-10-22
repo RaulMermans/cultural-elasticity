@@ -89,7 +89,11 @@ export const resolveTerritorySkill: SkillDefinition<{ territories: string[] }, {
   // v4 (Sprint 5A.1): bounded probing (3 empty types per concept, 6 per territory; then unsupported), entity-type
   // alignment across a comparison (the shared type is probed on other concepts first; one bounded anchor deferral),
   // grounded candidates are tested on their own Qloo tag first.
-  version: 4,
+  // v5 (Sprint 5A.2, live L-E1/L-E2): probe types are ranked per concept by Qloo evidence (members for the concept,
+  // then for its tag namespace, then the comparison's shared type, then structural observations, then bounded
+  // exploration) and shown as nextProbe; a type barren for 2 other concepts of the namespace is deferred; a grounding
+  // tag that returns members anchors its candidate; tag searches named after the grounding tag stay attached.
+  version: 5,
   purpose: "Anchor each territory to one Qloo concept tag, choosing among tags by the Qloo members they carry; drop territories Qloo cannot express.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "an in-scope territory has no concept and resolution is possible"],
@@ -106,9 +110,9 @@ export const resolveTerritorySkill: SkillDefinition<{ territories: string[] }, {
   budget: { maxTurns: 5, maxQlooCalls: 8, perTerritory: true },
   stoppingConditions: ["every territory anchored or dropped", "Qloo budget spent → anchor with the evidence already gathered", "turn budget spent → remaining territories reported unsupported"],
   failureModes: ["TERRITORY_RESOLUTION_ERROR", "QLOO_DATA_LIMIT", "TOOL_SELECTION_ERROR"],
-  evalIds: ["er-exact", "ie-unmeasurable", "gen-unseen-brand-territory", "s5-barren-probe-switches-type", "s51-probe-limit-unsupported", "s51-type-alignment-compare"],
+  evalIds: ["er-exact", "ie-unmeasurable", "gen-unseen-brand-territory", "s5-barren-probe-switches-type", "s51-probe-limit-unsupported", "s51-type-alignment-compare", "s52-frontier-namespace-type-evidence"],
   procedure:
-    "Search Qloo tags for the territory (qloo_find_tags). Prefer a tag named like the territory; when several fit, probe brand-independent pools (qloo_recommend, conditionOnBrand=false) and anchor the tag whose members best express it. If one entity type comes back empty for two tags, switch to an untried supported type listed in recoveryGuidance (e.g. place for activity and venue territories) instead of probing more tags with the same type. In a comparison, follow focus 'type alignment': when other territories already have members of one type, probe that type on this territory's other concepts before switching type. A concept is probed with at most 3 entity types that return nothing (further probes are refused); after 6 empty probes with no member the territory is unsupported. If no probe finds members, anchor the best-named tag anyway (analysis can still use concept-level evidence). Drop a territory only with a taxonomy code when Qloo has no concept for it.",
+    "Search Qloo tags for the territory (qloo_find_tags). Prefer a tag named like the territory; when several fit, probe brand-independent pools (qloo_recommend, conditionOnBrand=false, one tag per call) and anchor the tag whose members best express it. Choose each probe's entity type from the territory's nextProbe: it is ranked by Qloo evidence (CONCEPT_MEMBERS, then NAMESPACE_MEMBERS: the type other concepts of the same tag namespace returned members of, then COMPARISON_TYPE, STRUCTURAL, EXPLORATION). When several territories share a namespace with no evidence yet, their nextProbe types differ: probe them in parallel to test several types in one turn. A type that returned nothing for 2 other concepts of a namespace is deferred while the concept has other options. In a comparison, follow focus 'type alignment': when other territories already have members of one type, probe that type on this territory's other concepts before switching type. A concept is probed with at most 3 entity types that return nothing (further probes are refused); after 6 empty probes with no member the territory is unsupported. If no probe finds members, anchor the best-named tag anyway (analysis can still use concept-level evidence). Drop a territory only with a taxonomy code when Qloo has no concept for it.",
 };
 
 export const buildRepresentationSkill: SkillDefinition<{ territories: string[] }, { represented: string[]; conceptOnly: string[] }> = {
@@ -187,7 +191,10 @@ export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: n
   // v3 (Sprint 5A.1): two-stage discovery — a fixed evidence base (related take 8, first 6 related profiles in Qloo
   // order) feeds a canonical, deduplicated, stably ordered candidate pool; candidates keep their grounding tag as
   // canonical identity and are tested on it first.
-  version: 3,
+  // v4 (Sprint 5A.2, live L-E1/L-E2): a candidate whose grounding tag returns members is anchored to it by the runtime;
+  // an alternate anchor must be the same concept (same canonical name or alias) with observed members while the
+  // grounding tag has none; in the last two turns, candidates with members are represented and analyzed first.
+  version: 4,
   purpose: "Generate distinct frontier candidates from two channels (Qloo-grounded concepts and agent hypotheses), each of which must still pass Qloo validation.",
   intents: ["explore_frontier"],
   preconditions: ["explore_frontier", "brand resolved", `fewer than ${FRONTIER_TARGET} viable candidates`, "room in the candidate and call budgets"],
@@ -209,9 +216,9 @@ export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: n
   budget: { maxTurns: 6, maxQlooCalls: 20 },
   stoppingConditions: [`${FRONTIER_TARGET} viable, distinct candidates`, "candidate or call budget reached", "no Qloo-supported concept left"],
   failureModes: ["CONCEPT_DUPLICATION_ERROR", "TERRITORY_RESOLUTION_ERROR", "QLOO_DATA_LIMIT"],
-  evalIds: ["ir-frontier", "dtd-unsupported-hypothesis", "dtd-near-duplicate", "sk-frontier-two-channels", "sk-frontier-morph-duplicate", "sk-dedup-model-distinct", "s5-frontier-incidental-excluded", "s51-frontier-evidence-base", "s51-frontier-canonical-anchor"],
+  evalIds: ["ir-frontier", "dtd-unsupported-hypothesis", "dtd-near-duplicate", "sk-frontier-two-channels", "sk-frontier-morph-duplicate", "sk-dedup-model-distinct", "s5-frontier-incidental-excluded", "s51-frontier-evidence-base", "s51-frontier-canonical-anchor", "s52-frontier-namespace-type-evidence"],
   procedure:
-    "Channel A (Qloo-grounded): fetch the brand profile, the Qloo-related brands, and the tag profiles of the first 6 related brands in Qloo's order (the fixed evidence base); frontierConcepts is the resulting candidate pool (canonical, deduplicated, ordered by support). Propose candidates from it with origin qloo_evidence and their tag in evidenceTagIds; test each on that tag first and anchor it when Qloo returns members, else the find_tags result with the same canonical name. Prefer candidates that can share one entity type (focus type alignment). Channel B (agent hypothesis): you may propose a non-obvious lateral territory (origin agent_hypothesis); it must then be found in Qloo tags, anchored, and shown to have Qloo members, or it is dropped. Aim for candidates that are coherent cultural territories, distinct from each other (not venue amenities, decor or service options); give your semantic judgment when proposing; label likely duplicates with assess_concept_duplicates.",
+    "Channel A (Qloo-grounded): fetch the brand profile, the Qloo-related brands, and the tag profiles of the first 6 related brands in Qloo's order (the fixed evidence base); frontierConcepts is the resulting candidate pool (canonical, deduplicated, ordered by support). Propose candidates from it with origin qloo_evidence and their tag in evidenceTagIds; test each on that tag first with the entity type its nextProbe recommends (Qloo evidence, not a fixed place/brand order). A grounding tag that returns members anchors its candidate automatically; validate its representation next. Anchor another tag only when the grounding tag returned no members and the other tag is the same concept (same canonical name) with observed members; a different concept is proposed as its own candidate. Prefer candidates that can share one entity type (focus type alignment). In the last two turns, represent and analyze the candidates that have members instead of probing new ones. Channel B (agent hypothesis): you may propose a non-obvious lateral territory (origin agent_hypothesis); it must then be found in Qloo tags, anchored, and shown to have Qloo members, or it is dropped. Aim for candidates that are coherent cultural territories, distinct from each other (not venue amenities, decor or service options); give your semantic judgment when proposing; label likely duplicates with assess_concept_duplicates.",
 };
 
 export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { analyzed: string[] }> = {

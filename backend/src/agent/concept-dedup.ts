@@ -8,6 +8,10 @@
  *   Layer 2 structural     NEAR_DUPLICATE  brand-independent member pools overlap (Jaccard ≥ 0.6, or one
  *                                          pool nearly contained in the other); a shared accepted exemplar;
  *                                          the two concept tags co-occur in most profiles that carry either
+ *                                          (v2: profiles of the brand's related entities are excluded — frontier
+ *                                          candidates are SELECTED from those profiles, so their co-occurrence there is
+ *                                          an artefact of discovery, not evidence of one concept; live L-E2 dropped two
+ *                                          candidates with movie members as "near-duplicates" of folk this way)
  *   Layer 3 semantic       the model may label a pair DUPLICATE / NEAR_DUPLICATE / DISTINCT with a reason
  *                          (advisory, recorded separately)
  *
@@ -23,7 +27,7 @@ import type { ConceptDedupDecision, ConceptDedupVerdict } from "@cultural-elasti
 import { setOverlap } from "../analysis/overlap.js";
 import type { AgentRunState, TerritoryState } from "./state.js";
 
-export const DEDUP_RULES_VERSION = "concept-dedup-v1";
+export const DEDUP_RULES_VERSION = "concept-dedup-v2";
 
 /** Member-pool Jaccard at or above this marks two territories as near-duplicates. */
 export const NEAR_DUPLICATE_POOL_JACCARD = 0.6;
@@ -119,7 +123,9 @@ export function structuralDuplicate(state: AgentRunState, a: TerritoryState, b: 
   const shared = (b.representation?.exemplars ?? []).filter((e) => ea.has(e.id));
   if (shared.length > 0) return { verdict: "NEAR_DUPLICATE", layer: "structural", basis: `shares exemplar(s) ${shared.map((e) => e.label).join(", ")}`, morphologyOnly: false };
   if (a.concept && b.concept) {
-    const carrying = [...state.profiles.values()].filter((p) => p.tagIds.includes(a.concept!.id) || p.tagIds.includes(b.concept!.id));
+    const brandId = state.brand.entity?.id;
+    const discoverySource = new Set(state.related.filter((r) => r.subjectId === brandId).flatMap((r) => r.memberIds));
+    const carrying = [...state.profiles.values()].filter((p) => p.subjectId !== brandId && !discoverySource.has(p.subjectId) && (p.tagIds.includes(a.concept!.id) || p.tagIds.includes(b.concept!.id)));
     const both = carrying.filter((p) => p.tagIds.includes(a.concept!.id) && p.tagIds.includes(b.concept!.id));
     if (both.length >= 2 && both.length / carrying.length >= CO_OCCURRENCE_SHARE) return { verdict: "NEAR_DUPLICATE", layer: "structural", basis: `the two Qloo concept tags co-occur in ${both.length} of ${carrying.length} profiles carrying either`, morphologyOnly: false };
   }

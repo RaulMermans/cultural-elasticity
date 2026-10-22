@@ -4,7 +4,19 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 5A.1 — Haiku Investigation Reliability
+## Current status: Sprint 5A.2 — Frontier Reliability
+
+- **Sprint 5A.2** fixed the 5A.1 frontier regressions generically. It adds:
+  - evidence-ranked probe types (namespace evidence, `nextProbe`);
+  - runtime anchoring of a territory's own concept once it returns members;
+  - validated alternate anchors;
+  - dedup v2, so discovery co-occurrence is no longer duplication;
+  - degraded instead of failed analysis on an incomplete optional rank panel;
+  - 13 runtime evaluators and `pnpm eval:agent:replay`.
+
+  Live: L-E1 Oatly went from 0 to 2–3 supported candidates, and L-C1 stays 3 × FULL with fewer calls. Readiness: **`AGENT_MODEL_NOT_READY` (`LIVE_VALIDATION_INCOMPLETE`)**, because the final gate run was still executing when this was written. See [docs/sprint-5a2/FRONTIER_RELIABILITY.md](docs/sprint-5a2/FRONTIER_RELIABILITY.md).
+
+### Sprint 5A.1 — Haiku Investigation Reliability
 
 - **Sprint 5A.1** made Haiku's investigations more reliable, without new agents, models or budgets. It added:
   - bounded entity-type probing;
@@ -109,8 +121,9 @@ pnpm eval:elasticity   # offline methodology benchmark over captured live eviden
 pnpm eval:agent        # offline agent-runtime evals (SYNTHETIC world; not Qloo or live-model validation)
 pnpm agent:run -- "Could Glossier move into pottery?" --brand Glossier --territories Pottery --model baseline
                        # one investigation; live Qloo (or --synthetic); --model auto runs Haiku 5.5 and needs ANTHROPIC_API_KEY
-pnpm eval:agent:live -- --arms baseline,model --stability 3 --out backend/feasibility-output/sprint5a-live/<name>
+pnpm eval:agent:live -- --arms baseline,model --stability 3 --out backend/feasibility-output/sprint5a2-live/<name>
                        # live readiness run (live Qloo + Haiku; arms reported separately)
+pnpm eval:agent:replay -- <results dir>   # offline replay of current evaluators over stored live results
 pnpm methodology:jacquemus            # Jacquemus × 6 territories through the methodology (offline replay)
 pnpm methodology:jacquemus -- --live  # refresh the Jacquemus evidence from Qloo first
 pnpm feasibility:qloo  # live Qloo investigation (needs a credential; hackathon host only)

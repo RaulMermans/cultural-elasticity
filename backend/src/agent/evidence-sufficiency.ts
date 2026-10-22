@@ -36,7 +36,7 @@ import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
 import { barrenTypes, isReady, recoverable, recoveryOptions, territoryReadiness, typePreference } from "./readiness.js";
 import { comparisonSetSize, referenceEntityType, referencePlan } from "./reference-strategy.js";
 import { MIN_COMPARISON_SET } from "./router.js";
-import { conceptPools } from "./probe-policy.js";
+import { conceptPools, territoryQueryTags } from "./probe-policy.js";
 import { activeTerritories, remainingQlooCalls, turnsAvailable, type AgentRunState } from "./state.js";
 
 export { MIN_FRONTIER_SUPPORTED };
@@ -65,11 +65,11 @@ export function nextActionValues(state: AgentRunState): NextActionValue[] {
   const open = activeTerritories(state).filter((t) => t.status !== "analyzed");
   for (const t of open) {
     const r = territoryReadiness(state, t);
-    if (r.state === "needs_concept" && t.sourceTagId && conceptPools(state, t.sourceTagId).length === 0 && !state.searchedQueries.has(t.label.trim().toLowerCase())) {
+    if (r.state === "needs_concept" && t.sourceTagId && conceptPools(state, t.sourceTagId).length === 0 && !territoryQueryTags(state, t)) {
       // Sprint 5A.1: a grounded candidate is first tested on the Qloo tag that grounded it (its canonical concept).
       add("qloo_recommend", t.key, "HIGH", `probe the candidate's own Qloo concept ${t.sourceTagId} before searching other tags`);
       add("qloo_find_tags", t.key, "MEDIUM", "search for an alternate concept only if the grounding tag has no members");
-    } else if (r.state === "needs_concept") add(state.searchedQueries.has(t.label.trim().toLowerCase()) ? "anchor_territory" : "qloo_find_tags", t.key, "HIGH", r.reason);
+    } else if (r.state === "needs_concept") add(territoryQueryTags(state, t) ? "anchor_territory" : "qloo_find_tags", t.key, "HIGH", r.reason);
     else if (r.state === "unsupported") add("investigate", t.key, "NONE", `${r.reason}; report it as unsupported`);
     else if (r.state === "needs_representation") {
       const options = recoveryOptions(state, t);
@@ -130,7 +130,7 @@ export function nextActionValues(state: AgentRunState): NextActionValue[] {
 /** Sprint 5A: entity types a brand-independent probe should not repeat for this territory (barren), and what is untried. */
 export function barrenProbe(state: AgentRunState, tagId: string, type: string): { barren: string; untried: string[] } | null {
   for (const t of activeTerritories(state).filter((x) => x.status !== "analyzed")) {
-    const tags = new Set([...(t.concept ? [t.concept.id] : []), ...(state.searchedQueries.get(t.label.trim().toLowerCase()) ?? [])]);
+    const tags = new Set([...(t.concept ? [t.concept.id] : []), ...(territoryQueryTags(state, t) ?? [])]);
     if (!tags.has(tagId)) continue;
     const barren = barrenTypes(state, t);
     if (!barren.includes(type as never)) continue;

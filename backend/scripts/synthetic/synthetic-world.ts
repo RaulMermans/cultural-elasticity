@@ -9,7 +9,7 @@
  * unchanged:
  *   describe     exact name / identifier → ok; ambiguous → needs_input with candidates; unknown → needs_input, no candidates
  *   find_tags    tags whose name shares a word with the query
- *   entity_tags  the entity's tags in world order, saturated affinities (as observed live)
+ *   entity_tags  the entity's tags in world order (then its profileOnlyTags), saturated affinities (as observed live)
  *   recommend    members of the include tags; signal entity → ordered by tag-set similarity,
  *                tag-only signal → flat affinity in id order (as observed live); member type "urn:entity"
  *   rank         options ordered by tag-set similarity to the signal
@@ -25,8 +25,14 @@ const worldEntitySchema = z.strictObject({
   id: z.string().regex(/^SYN-/u, "synthetic entity ids must start with SYN-"),
   name: z.string().min(1),
   type: z.string().min(1),
-  popularity: z.number(),
+  /** null reproduces the live `popularity: null` member shape (Sprint 5A traces). */
+  popularity: z.number().nullable(),
   tags: z.array(z.string().min(1)),
+  /**
+   * Tags the entity's profile carries that are NOT recommend filters for its type. Reproduces the live quirk that brand
+   * profiles carry media/music tags while brand pools for those tags are empty (Sprint 3 and Sprint 5A.1 traces).
+   */
+  profileOnlyTags: z.array(z.string().min(1)).optional(),
 });
 const faultSchema = z.strictObject({
   operation: z.string(),
@@ -162,7 +168,8 @@ export class SyntheticWorldTransport implements QlooTransport {
       case "entity_tags": {
         const ids = list(input.entities).map((value) => this.lookup(value)?.id).filter((id): id is string => id !== undefined);
         const limit = Number(input.limit ?? 10);
-        const tagIds = ids.length === 1 ? (this.entities.get(ids[0]!)?.tags ?? []) : [...new Set(ids.flatMap((id) => this.entities.get(id)?.tags ?? []))];
+        const profile = (id: string) => [...(this.entities.get(id)?.tags ?? []), ...(this.entities.get(id)?.profileOnlyTags ?? [])];
+        const tagIds = ids.length === 1 ? profile(ids[0]!) : [...new Set(ids.flatMap(profile))];
         const results = tagIds.slice(0, limit).map((id, i) => ({ id, name: this.tags.get(id)?.name ?? id, type: id.split(":").slice(0, 4).join(":"), affinity: Math.round((1 - i * 0.0005) * 1e6) / 1e6 }));
         return { status: results.length ? "ok" : "empty", fields: { interpretation: { entities: ids.map((id) => this.interpreted(id, id, "identifier")) }, results } };
       }

@@ -5350,6 +5350,420 @@
     "minTerritories": 1,
     "allCandidatesCanonical": true
    }
+  },
+  {
+   "id": "s52-frontier-namespace-type-evidence",
+   "category": "S52_FRONTIER_TYPE_EVIDENCE",
+   "description": "Live failure class (L-E1 Oatly, Sprint 5A.1): frontier candidates grounded in media-namespace tags that related BRAND profiles carry (brand pools empty) were probed place-first and brand-first, and three empty types exhausted concepts whose members Qloo keeps as books. Here: the third place probe in the namespace is deferred (NAMESPACE_TYPE_BARREN) after two empty answers; once one concept returns book members, its namespace siblings are recommended book (NAMESPACE_MEMBERS); every candidate whose grounding tag returns members is anchored to it by the runtime (SOURCE_TAG_MEMBERS, no lost support); concepts that co-occur in the discovery profiles are not merged; an unrelated alternate anchor is refused; the music concept with no members is honestly INSUFFICIENT. Members include popularity null (unknown, sorted last, never zero). SYNTHETIC, fictional names.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Where could Brindlewood Oat expand culturally?",
+    "brand": "Brindlewood Oat",
+    "territories": []
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Brindlewood Oat",
+       "territories": []
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Brindlewood Oat",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-5201"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_related_entities",
+      "arguments": {
+       "entityId": "SYN-BR-5201",
+       "targetType": "brand",
+       "limit": 5
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-5202"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-5203"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-5204"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-5205"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-5206"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-5207"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Hearth cooking",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:genre:synmedia:hearth_cooking"
+       ],
+       "rationale": "carried by the brand's related brands"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Quiet activism",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:genre:synmedia:quiet_activism"
+       ],
+       "rationale": "carried by the brand's related brands"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Slow mornings",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:genre:synmedia:slow_mornings"
+       ],
+       "rationale": "carried by the brand's related brands"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Porch folk",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:genre:synmusic:porch_folk"
+       ],
+       "rationale": "carried by the brand's related brands"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:synmedia:hearth_cooking"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:synmedia:quiet_activism"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:synmedia:slow_mornings"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:synmusic:porch_folk"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "book",
+       "tagIds": [
+        "urn:tag:genre:synmedia:hearth_cooking"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "book",
+       "tagIds": [
+        "urn:tag:genre:synmedia:quiet_activism"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "book",
+       "tagIds": [
+        "urn:tag:genre:synmedia:slow_mornings"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "artist",
+       "tagIds": [
+        "urn:tag:genre:synmusic:porch_folk"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "porch_folk",
+       "tagId": "urn:tag:lifestyle:syn:plant_forward"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "hearth_cooking",
+       "entityType": "book",
+       "exemplars": [
+        {
+         "id": "SYN-BK-5201",
+         "reason": "Qloo tag member"
+        },
+        {
+         "id": "SYN-BK-5202",
+         "reason": "Qloo tag member"
+        },
+        {
+         "id": "SYN-BK-5203",
+         "reason": "Qloo tag member"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "quiet_activism",
+       "entityType": "book",
+       "exemplars": [
+        {
+         "id": "SYN-BK-5204",
+         "reason": "Qloo tag member"
+        },
+        {
+         "id": "SYN-BK-5205",
+         "reason": "Qloo tag member"
+        },
+        {
+         "id": "SYN-BK-5206",
+         "reason": "Qloo tag member"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "slow_mornings",
+       "entityType": "book",
+       "exemplars": [
+        {
+         "id": "SYN-BK-5207",
+         "reason": "Qloo tag member"
+        },
+        {
+         "id": "SYN-BK-5208",
+         "reason": "Qloo tag member"
+        },
+        {
+         "id": "SYN-BK-5209",
+         "reason": "Qloo tag member"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "drop_territory",
+      "arguments": {
+       "territoryKey": "porch_folk",
+       "code": "TERRITORY_UNRESOLVED",
+       "reason": "no Qloo members for its grounding tag in any probed type"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "hearth_cooking",
+       "quiet_activism",
+       "slow_mornings"
+      ],
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [],
+      "reasonSummary": "scenario step"
+     }
+    ]
+   ],
+   "expect": {
+    "status": "COMPLETE",
+    "intent": "explore_frontier",
+    "rejections": [
+     "NAMESPACE_TYPE_BARREN",
+     "ALTERNATE_ANCHOR_REFUSED"
+    ],
+    "contextIncludes": [
+     "NAMESPACE_MEMBERS",
+     "\"nextProbe\""
+    ],
+    "resolvedConcepts": {
+     "hearth_cooking": "urn:tag:genre:synmedia:hearth_cooking",
+     "quiet_activism": "urn:tag:genre:synmedia:quiet_activism",
+     "slow_mornings": "urn:tag:genre:synmedia:slow_mornings"
+    },
+    "routes": {
+     "hearth_cooking": "FULL_RELATIVE_ANALYSIS",
+     "quiet_activism": "FULL_RELATIVE_ANALYSIS",
+     "slow_mornings": "FULL_RELATIVE_ANALYSIS",
+     "porch_folk": "INSUFFICIENT_EVIDENCE"
+    },
+    "evidenceStatus": {
+     "porch_folk": "UNSUPPORTED",
+     "hearth_cooking": "EVIDENCE_SUPPORTED_TERRITORY"
+    },
+    "maxEmptyTypeProbesPerConcept": 3,
+    "allCandidatesCanonical": true,
+    "sourceEvidenceAnchors": 3,
+    "noDuplicateDrops": true
+   }
   }
  ]
 }

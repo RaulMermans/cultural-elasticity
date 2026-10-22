@@ -20,7 +20,7 @@
  */
 import type { ComparisonRepresentationPlan } from "@cultural-elasticity/shared";
 import { RANKABLE_TYPES, type RankableType } from "./contracts.js";
-import { conceptPools, conceptProbeState, eligibleMembers, territoryConcepts, territoryProbeState, typePreference } from "./probe-policy.js";
+import { conceptPools, conceptProbeState, eligibleMembers, territoryBarrenTypes, territoryConcepts, territoryProbeState, typePreference } from "./probe-policy.js";
 import { MIN_COMPARISON_SET } from "./router.js";
 import { activeTerritories, type AgentRunState, type TerritoryState } from "./state.js";
 
@@ -43,7 +43,8 @@ export function supportsType(state: AgentRunState, t: TerritoryState, type: Rank
 
 /** Concepts of the territory that have not been probed with the type and whose probing is not exhausted. */
 export function untestedConceptsFor(state: AgentRunState, t: TerritoryState, type: RankableType): string[] {
-  if (t.representation || territoryProbeState(state, t).exhausted) return [];
+  // Sprint 5A.2: a type the barren-probe rule refuses for this territory is no probe path (live L-C2).
+  if (t.representation || territoryProbeState(state, t).exhausted || territoryBarrenTypes(state, t).includes(type)) return [];
   return territoryConcepts(state, t).filter((id) => {
     const probe = conceptProbeState(state, id);
     return !probe.attemptedTypes.includes(type) && !probe.probingExhausted;

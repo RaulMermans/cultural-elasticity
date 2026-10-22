@@ -18,7 +18,7 @@ import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { callQloo, describedEntity, PROFILE_TAKE, recordFindTags, recordPool, recordProfile, recordRelated, recordResolved } from "./qloo-gateway.js";
 import { strategyExhausted } from "./readiness.js";
 import { referenceCandidates } from "./reference-strategy.js";
-import { FRONTIER_EVIDENCE_BASE, FRONTIER_RELATED_TAKE } from "./frontier.js";
+import { alternateAnchorRefusal, anchorOnObservedMembers, FRONTIER_EVIDENCE_BASE, FRONTIER_RELATED_TAKE, recordAnchorDecision } from "./frontier.js";
 import { alignmentDeferral } from "./representation-alignment.js";
 import { validateTerritoryRepresentation } from "./representation-planner.js";
 import { resolveInterpretation } from "./router.js";
@@ -118,7 +118,7 @@ const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier
   async execute({ state }, input) {
     const reference = input.role === "reference" ? referenceCandidates(state).find((c) => input.evidenceTagIds?.includes(c.tagId)) : undefined;
     const evidence = input.origin === "qloo_evidence" ? `Qloo tag(s) ${(input.evidenceTagIds ?? []).join(", ")}${reference ? `; ${reference.justification}` : ""}` : `agent hypothesis: ${input.rationale}`;
-    const t = addTerritory(state, { label: input.label, role: input.role, origin: input.origin, rationale: input.rationale, source: input.role === "reference" ? "reference_strategy" : input.origin === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded", sourceEvidence: evidence.slice(0, 400), sourceTagId: input.origin === "qloo_evidence" ? (input.evidenceTagIds?.[0] ?? null) : null });
+    const t = addTerritory(state, { label: input.label, role: input.role, origin: input.origin, rationale: input.rationale, source: input.role === "reference" ? "reference_strategy" : input.origin === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded", sourceEvidence: evidence.slice(0, 400), sourceTagId: input.origin === "qloo_evidence" ? (input.evidenceTagIds?.[0] ?? null) : null, evidenceTagIds: input.origin === "qloo_evidence" ? (input.evidenceTagIds ?? []) : [] });
     if (input.semantic) t.semanticJudgment = { relevance: input.semantic.relevance.toUpperCase() as "STRONG" | "ADEQUATE" | "WEAK" | "MISMATCH", reason: input.semantic.reason.trim() };
     // Sprint 5A.1 (live L-C2: propose, anchor and validate spread over three turns, so usable references were never
     // validated): a reference proposed with exactly one Qloo evidence tag IS that concept. When the semantic validator
@@ -153,6 +153,9 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
     }
     const unobserved = observedTag(state, input.tagId);
     if (unobserved) return unobserved;
+    // Sprint 5A.2: a grounded frontier candidate keeps its concept identity; an alternate anchor needs Qloo support.
+    const alternate = alternateAnchorRefusal(state, t, input.tagId);
+    if (alternate) return `ALTERNATE_ANCHOR_REFUSED: ${alternate.code} — ${alternate.reason}`;
     // Sprint 5A.1: bounded entity-type alignment for comparisons (representation-alignment.ts).
     const deferral = alignmentDeferral(state, t, input.tagId);
     return deferral ? `TYPE_ALIGNMENT_PENDING: ${deferral}` : undefined;
@@ -175,6 +178,10 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
     t.concept = { id: tag.id, label: tag.label, type: tag.type };
     if (changed) t.representation = null;
     t.status = "anchored";
+    if (t.role === "frontier_candidate" && t.sourceTagId) {
+      const alternate = tag.id !== t.sourceTagId && !t.evidenceTagIds.includes(tag.id);
+      recordAnchorDecision(state, t, tag.id, alternate ? "ALTERNATE_WITH_MEMBERS" : "MODEL_ANCHOR", "agent", null, alternate ? "alternate with observed Qloo members; the grounding tag returned none" : "anchored to its own evidence tag");
+    }
     return { status: "ok", summary: `${t.key} anchored to ${tag.label} (${tag.id})${changed ? "; previous representation cleared" : ""}` };
   },
 };
@@ -398,7 +405,7 @@ function profileView(state: AgentRunState, id: string) {
 const recommend: AgentTool<{ targetType: RankableType; tagIds: string[]; conditionOnBrand: boolean; limit: number }> = {
   name: "qloo_recommend",
   description:
-    "1 Qloo call. Entities of one type that Qloo associates with concept tag(s). conditionOnBrand=false: a brand-independent member pool — use it to test whether a concept has members of an entity type and to discover exemplar candidates (order not meaningful; popularity shown). conditionOnBrand=true: the brand-conditioned list (evidence about the brand, never exemplars; analysis collects it itself). Common failures: empty pool for that type (follow recoveryGuidance: the comparison's shared type on another concept first, then an untried type; after 3 empty types a concept is not probed further), tag not observed. Tags must have been returned by Qloo in this run.",
+    "1 Qloo call. Entities of one type that Qloo associates with concept tag(s). conditionOnBrand=false: a brand-independent member pool — use it to test whether a concept has members of an entity type and to discover exemplar candidates (order not meaningful; popularity shown). conditionOnBrand=true: the brand-conditioned list (evidence about the brand, never exemplars; analysis collects it itself). Several tagIds are an INTERSECTION (members must carry every tag), so probe one tag per call. Choose the entity type from the territory's nextProbe (ranked by Qloo evidence: members for this concept, then for its tag namespace, then the comparison's shared type); after 3 empty types a concept is not probed further, and a type that returned nothing for 2 other concepts of the namespace is deferred. A frontier candidate whose own grounding tag returns members is anchored to it automatically. Tags must have been returned by Qloo in this run.",
   permission: "read_only_external",
   inputSchema: z.strictObject({ targetType: rankableType, tagIds: z.array(text).min(1).max(3), conditionOnBrand: z.boolean(), limit: z.number().int().min(1).max(20).default(20) }),
   maxQlooCalls: 1,
@@ -416,11 +423,13 @@ const recommend: AgentTool<{ targetType: RankableType; tagIds: string[]; conditi
     const ids = already ? state.pools.find((p) => p.call.envelope.execution.correlation_id === result.call.envelope.execution.correlation_id)!.memberIds : recordPool(state, result.call, { tagIds: input.tagIds, targetType: input.targetType, conditionedOn: input.conditionOnBrand ? brandId : null });
     const scope = { tagIds: input.tagIds, targetType: input.targetType, conditionOnBrand: input.conditionOnBrand };
     if (ids.length === 0) return { status: "empty", summary: `Qloo returned no ${input.targetType} entities for ${input.tagIds.join(" + ")}`, data: { ...scope, members: [] } };
+    // Sprint 5A.2: a territory whose own concept (grounding tag, or same-named searched tag) returned members is anchored.
+    const anchored = !input.conditionOnBrand && input.tagIds.length === 1 && !already ? anchorOnObservedMembers(state, input.tagIds[0]!, input.targetType, ids.filter((id) => id !== brandId).length) : [];
     const members = ids.map((id) => {
       const e = state.entities.get(id)!;
       return { id, label: e.label, popularity: e.sources.find((s) => s.correlationId === result.call.envelope.execution.correlation_id)?.popularity ?? null, isBrand: id === brandId };
     });
-    return { status: "ok", summary: `${ids.length} ${input.targetType} entities${input.conditionOnBrand ? " (brand-conditioned: evidence only, not exemplar candidates)" : " (brand-independent pool)"}`, data: { ...scope, members } };
+    return { status: "ok", summary: `${ids.length} ${input.targetType} entities${input.conditionOnBrand ? " (brand-conditioned: evidence only, not exemplar candidates)" : " (brand-independent pool)"}${anchored.length ? `; ${anchored.join(", ")} anchored to this tag (its own concept; next: validate_territory_representation with ${input.targetType})` : ""}`, data: { ...scope, members, ...(anchored.length && { anchored }) } };
   },
 };
 

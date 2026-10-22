@@ -61,6 +61,15 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 5. **Readiness is SAFETY and COMPETENCE** (`agent-readiness-gate-v3`). Competence criteria are defined before a live run and versioned (`evals/agent/stability-criteria.json`). A green gate is never overridden to red by hand: a missing criterion is added to the gate.
 6. **Controlled scenarios use real, verified Qloo evidence** (`evals/agent/controlled-cases.json`). They are re-verified live before each run (`PRECONDITION_CHANGED` otherwise) and kept outside the prescribed-case denominator.
 
+## Frontier reliability (permanent, from Sprint 5A.2)
+
+1. **Probe types are ranked by observed evidence** (`probe-policy-v2`). The order is: members for the concept, then members for the same tag namespace, then the comparison's shared type, then structural observations, then bounded exploration. There is no fixed place- or brand-first order once evidence exists.
+2. **Namespace evidence is scoped, never proof.** It applies only within its namespace and run. A namespace's English name never implies an entity type. A type barren for two other concepts of a namespace is deferred, not banned.
+3. **Grounded identity is preserved.** A candidate whose grounding tag returns members is anchored to it by the runtime. An alternate anchor must be the same concept (same canonical name or an alias), with observed members, after the grounding tag returned none. A different concept is a different candidate. Every anchoring is recorded in `trace.anchorDecisions`.
+4. **Discovery artefacts are not evidence.** Co-occurrence in the profiles a candidate was discovered from never makes two concepts duplicates.
+5. **Optional evidence degrades; it never invalidates.** An incomplete optional rank panel is excluded with a limitation. The primary panel is never dropped.
+6. **No support twice is not stability.** Runs with no supported candidate score 0 supported overlap (`frontier-stability-metrics-v3`). Stored live results are rescored only by replay (`pnpm eval:agent:replay`), alongside the as-run reports, never in place of them.
+
 ## Engineering
 
 - Keep **frontend/backend boundaries clean.** The frontend talks only to the backend. Only the backend talks to Qloo, through `QlooClient` (`backend/src/qloo`).
@@ -81,5 +90,7 @@ pnpm eval:methodology   # offline, synthetic; never report as Qloo validation
 pnpm eval:agent         # offline, synthetic world; never report as Qloo or live-model validation
 pnpm eval:agent:live -- --arms baseline,model --stability 3
                         # live Qloo + Haiku: all 7 cases, case-matched baseline, frontier stability (model arm needs ANTHROPIC_API_KEY)
+pnpm eval:agent:replay -- <dir>
+                        # offline replay of current evaluators/stability metrics over stored live results
 pnpm feasibility:qloo   # live; report its result separately
 ```

@@ -22,7 +22,8 @@
  * usable, and they rank first. `referencePlan` states the exact outstanding requirement (how many references are
  * still needed, which candidates were rejected and why, and whether FULL is still feasible within the budget).
  */
-import { matchOperationalRule, tagNamespace } from "../methodology/operational-tags.js";
+import { matchOperationalRule } from "../methodology/operational-tags.js";
+import { tagNamespace, territoryQueryTags } from "./probe-policy.js";
 import { exemplarCandidates } from "./candidate-discovery.js";
 import { deterministicDuplicate, structuralDuplicate } from "./concept-dedup.js";
 import type { RankableType } from "./contracts.js";
@@ -55,10 +56,8 @@ export type ReferenceCandidate = {
   semantic: Pick<ReferenceVerdict, "status" | "reasonCode" | "explanation">;
 };
 
-export function namespaceKey(tagId: string): string {
-  const ns = tagNamespace({ id: tagId });
-  return ns ? `${ns.namespace}:${ns.source}` : "unknown";
-}
+/** One namespace definition for the run (probe-policy.ts tagNamespace). */
+export const namespaceKey = tagNamespace;
 
 /** Entity type of the represented targets (the comparison set must share it); null if none is represented. */
 export function referenceEntityType(state: AgentRunState): RankableType | null {
@@ -105,7 +104,7 @@ export function namespaceYield(state: AgentRunState, entityType: RankableType): 
 export function barrenReferenceNamespace(state: AgentRunState, tagId: string, type: RankableType): string | null {
   const intent = state.interpretation?.intent;
   if ((intent !== "analyze_move" && intent !== "compare_territories") || referenceEntityType(state) !== type) return null;
-  if (activeTerritories(state).some((t) => t.concept?.id === tagId || t.sourceTagId === tagId || (state.searchedQueries.get(t.label.trim().toLowerCase()) ?? []).includes(tagId))) return null;
+  if (activeTerritories(state).some((t) => t.concept?.id === tagId || t.sourceTagId === tagId || (territoryQueryTags(state, t) ?? []).includes(tagId))) return null;
   const ns = namespaceKey(tagId);
   const y = namespaceYield(state, type).get(ns);
   if (!y || y.productive > 0 || y.barren < 2) return null;

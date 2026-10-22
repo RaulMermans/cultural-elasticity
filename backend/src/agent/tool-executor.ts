@@ -23,6 +23,12 @@
  *   REFERENCE_NAMESPACE_BARREN   a reference probe in a tag namespace already barren twice for that type
  *   FRONTIER_EVIDENCE_BASE       a related-entity profile outside the fixed frontier evidence base
  *   TYPE_ALIGNMENT_PENDING       (precondition, once per target) an off-type anchor while the shared type is untested
+ * Sprint 5A.2:
+ *   NAMESPACE_TYPE_BARREN        a probe type that returned nothing for 2 other concepts of the tag namespace (and never
+ *                                members there) while the concept still has another option (probe-policy.ts)
+ *   FRONTIER_COMPLETION_RESERVE  the last two turns belong to representing and analyzing frontier candidates with members
+ *   ALTERNATE_ANCHOR_REFUSED     (precondition) an alternate anchor for a grounded frontier candidate that is a different
+ *                                concept, unsupported by Qloo members, or not needed (its grounding tag has members)
  * Refusals that save Qloo calls are recorded in trace.earlyStops with callsAvoided.
  * Then: run with a timeout; a thrown error becomes a failed tool result, never a crashed run.
  */
@@ -36,11 +42,11 @@ import { skillRef } from "./skills/contracts.js";
 import type { SkillRegistry } from "./skills/registry.js";
 import { analysisReserve } from "./analysis-runner.js";
 import type { RankableType } from "./contracts.js";
-import { outsideFrontierEvidenceBase } from "./frontier.js";
-import { probeRefusal } from "./probe-policy.js";
+import { frontierCompletionReserve, outsideFrontierEvidenceBase, recordAnchorDecision } from "./frontier.js";
+import { namespaceTypeBarren, probeRefusal } from "./probe-policy.js";
 import { isReady, territoryReadiness } from "./readiness.js";
 import { barrenReferenceNamespace } from "./reference-strategy.js";
-import { activeTerritories, derivePhase, remainingQlooCalls, type AgentRunState } from "./state.js";
+import { activeTerritories, derivePhase, findTerritory, remainingQlooCalls, type AgentRunState } from "./state.js";
 import type { AgentToolProvider } from "./tool-provider.js";
 import type { ToolPermission, ToolRegistry, ToolResult } from "./tool-registry.js";
 
@@ -112,6 +118,10 @@ export function valueOfToolCall(state: AgentRunState, tool: string, input: Recor
     const outside = outsideFrontierEvidenceBase(state, input.entityId);
     if (outside) return { value: "NONE", reason: outside, code: "FRONTIER_EVIDENCE_BASE" };
   }
+  // Sprint 5A.2: the last two turns of a frontier run belong to the candidates that have Qloo members.
+  const tagIds = Array.isArray(input.tagIds) ? input.tagIds.map(String) : [];
+  const reserve = frontierCompletionReserve(state, tool, tool === "qloo_recommend" && input.conditionOnBrand === false && tagIds.length === 1 ? tagIds[0]! : null);
+  if (reserve) return { value: "NONE", reason: reserve.replace(/^FRONTIER_COMPLETION_RESERVE: /u, ""), code: "FRONTIER_COMPLETION_RESERVE" };
   // Sprint 5A: an entity type that already came back empty for ≥ 2 of a territory's concepts has no expected gain.
   if (tool === "qloo_recommend" && input.conditionOnBrand === false && Array.isArray(input.tagIds) && input.tagIds.length === 1 && typeof input.targetType === "string") {
     const tagId = String(input.tagIds[0]);
@@ -122,6 +132,10 @@ export function valueOfToolCall(state: AgentRunState, tool: string, input: Recor
     if (barren) return { value: "NONE", reason: `${barren.barren}; probe an untried supported entity type instead (${barren.untried.join(", ") || "none left"}), anchor a concept with members, or declare_concept_only` };
     const namespace = barrenReferenceNamespace(state, tagId, input.targetType as RankableType);
     if (namespace) return { value: "NONE", reason: namespace, code: "REFERENCE_NAMESPACE_BARREN" };
+    // Sprint 5A.2 (after the more specific reference rule): namespace evidence defers a type the namespace has shown to be
+    // barren while the concept has better-evidenced options.
+    const namespaceBarren = namespaceTypeBarren(state, tagId, input.targetType as RankableType);
+    if (namespaceBarren) return { value: "NONE", reason: namespaceBarren, code: "NAMESPACE_TYPE_BARREN" };
   }
   if (!assessment.materialGap) {
     const reserved = assessment.nextActions.find((a) => a.value === "NONE" && /reserved for the analysis/u.test(a.reason));
@@ -172,6 +186,13 @@ export async function executeToolCall(
     const key = (parsed.data as { territoryKey?: string }).territoryKey;
     if (key) state.alignmentDeferrals.add(key);
     return rejected(state, name, rawArguments, "TYPE_ALIGNMENT_PENDING", refusal.replace(/^TYPE_ALIGNMENT_PENDING: /u, ""));
+  }
+  if (refusal?.startsWith("ALTERNATE_ANCHOR_REFUSED")) {
+    const { territoryKey, tagId } = parsed.data as { territoryKey: string; tagId: string };
+    const code = /^ALTERNATE_ANCHOR_REFUSED: (\w+)/u.exec(refusal)?.[1] ?? null;
+    const t = findTerritory(state, territoryKey);
+    if (t) recordAnchorDecision(state, t, tagId, "REFUSED", "runtime", code, refusal.replace(/^ALTERNATE_ANCHOR_REFUSED: \w+ — /u, ""));
+    return earlyStop(state, name, rawArguments, "ALTERNATE_ANCHOR_REFUSED", refusal.replace(/^ALTERNATE_ANCHOR_REFUSED: /u, ""), 0);
   }
   if (refusal) return rejected(state, name, rawArguments, "PRECONDITION", refusal);
   let expectedValue: ExpectedValue | undefined;

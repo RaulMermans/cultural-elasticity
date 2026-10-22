@@ -56,7 +56,10 @@ const compactTagSchema = z.looseObject({
   id: z.string().min(1),
   name: z.string(),
   type: z.string().optional(),
-  popularity: z.number().optional(),
+  // [harness 0.1.26] compactTag passes `tag.popularity` through unchanged, exactly as compactEntity does for entities,
+  // whose null was observed live. A tag null was not observed; it is accepted the same way (unknown, never zero) so a
+  // nonessential field can never discard a whole tag result.
+  popularity: z.number().nullable().optional(),
   affinity: z.number().optional(),
 });
 
@@ -155,7 +158,7 @@ export function toTagSignals(operation: QlooOperation, envelope: QlooEnvelope): 
       label: tag.name,
       ...(tag.type !== undefined ? { type: tag.type } : {}),
       ...(tag.affinity !== undefined ? { affinity: tag.affinity } : {}),
-      ...(tag.popularity !== undefined ? { popularity: tag.popularity } : {}),
+      ...(tag.popularity !== undefined && tag.popularity !== null ? { popularity: tag.popularity } : {}),
       sourceCorrelationId: envelope.execution.correlation_id,
     };
   });

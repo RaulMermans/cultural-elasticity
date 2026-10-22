@@ -331,6 +331,56 @@
    "id": "urn:tag:keyword:syn:riff_culture",
    "name": "Riff Culture",
    "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:product_category:syn:oat_drink",
+   "name": "Oat Drink",
+   "type": "urn:tag:product_category:syn"
+  },
+  {
+   "id": "urn:tag:lifestyle:syn:plant_forward",
+   "name": "Plant Forward",
+   "type": "urn:tag:lifestyle:syn"
+  },
+  {
+   "id": "urn:tag:keyword:syn:barista_culture",
+   "name": "Barista Culture",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:genre:synmedia:hearth_cooking",
+   "name": "Hearth Cooking",
+   "type": "urn:tag:genre:synmedia"
+  },
+  {
+   "id": "urn:tag:genre:synmedia:quiet_activism",
+   "name": "Quiet Activism",
+   "type": "urn:tag:genre:synmedia"
+  },
+  {
+   "id": "urn:tag:genre:synmedia:slow_mornings",
+   "name": "Slow Mornings",
+   "type": "urn:tag:genre:synmedia"
+  },
+  {
+   "id": "urn:tag:keyword:synmedia:found_family",
+   "name": "Found Family",
+   "type": "urn:tag:keyword:synmedia"
+  },
+  {
+   "id": "urn:tag:genre:synmusic:porch_folk",
+   "name": "Porch Folk",
+   "type": "urn:tag:genre:synmusic"
+  },
+  {
+   "id": "urn:tag:music:syn:porch_folk",
+   "name": "Porch Folk",
+   "type": "urn:tag:music:syn"
+  },
+  {
+   "id": "urn:tag:subgenre:syn:thrash_revival",
+   "name": "Thrash Revival Scene",
+   "type": "urn:tag:subgenre:syn"
   }
  ],
  "entities": [
@@ -1426,6 +1476,247 @@
    "popularity": 0.76,
    "tags": [
     "urn:tag:genre:syn:thrash_revival"
+   ]
+  },
+  {
+   "id": "SYN-BR-5201",
+   "name": "Brindlewood Oat",
+   "type": "brand",
+   "popularity": 0.71,
+   "tags": [
+    "urn:tag:product_category:syn:oat_drink",
+    "urn:tag:lifestyle:syn:plant_forward",
+    "urn:tag:keyword:syn:barista_culture"
+   ]
+  },
+  {
+   "id": "SYN-BR-5202",
+   "name": "Fallowmere Dairy-Free",
+   "type": "brand",
+   "popularity": 0.6,
+   "tags": [
+    "urn:tag:product_category:syn:oat_drink",
+    "urn:tag:lifestyle:syn:plant_forward"
+   ],
+   "profileOnlyTags": [
+    "urn:tag:genre:synmedia:hearth_cooking",
+    "urn:tag:genre:synmedia:quiet_activism",
+    "urn:tag:genre:synmusic:porch_folk",
+    "urn:tag:keyword:synmedia:found_family"
+   ]
+  },
+  {
+   "id": "SYN-BR-5203",
+   "name": "Copperleaf Pantry",
+   "type": "brand",
+   "popularity": 0.6,
+   "tags": [
+    "urn:tag:product_category:syn:oat_drink",
+    "urn:tag:lifestyle:syn:plant_forward"
+   ],
+   "profileOnlyTags": [
+    "urn:tag:genre:synmedia:hearth_cooking",
+    "urn:tag:genre:synmedia:quiet_activism",
+    "urn:tag:genre:synmedia:slow_mornings",
+    "urn:tag:keyword:synmedia:found_family"
+   ]
+  },
+  {
+   "id": "SYN-BR-5204",
+   "name": "Wrenfield Grains",
+   "type": "brand",
+   "popularity": 0.6,
+   "tags": [
+    "urn:tag:lifestyle:syn:plant_forward",
+    "urn:tag:keyword:syn:barista_culture"
+   ],
+   "profileOnlyTags": [
+    "urn:tag:genre:synmedia:hearth_cooking",
+    "urn:tag:genre:synmedia:quiet_activism",
+    "urn:tag:genre:synmedia:slow_mornings",
+    "urn:tag:genre:synmusic:porch_folk"
+   ]
+  },
+  {
+   "id": "SYN-BR-5205",
+   "name": "Marrowdown Foods",
+   "type": "brand",
+   "popularity": 0.6,
+   "tags": [
+    "urn:tag:product_category:syn:oat_drink",
+    "urn:tag:keyword:syn:barista_culture"
+   ],
+   "profileOnlyTags": [
+    "urn:tag:genre:synmedia:slow_mornings",
+    "urn:tag:keyword:synmedia:found_family",
+    "urn:tag:genre:synmusic:porch_folk"
+   ]
+  },
+  {
+   "id": "SYN-BR-5206",
+   "name": "Thistlecombe Kitchen",
+   "type": "brand",
+   "popularity": 0.6,
+   "tags": [
+    "urn:tag:lifestyle:syn:plant_forward",
+    "urn:tag:keyword:syn:barista_culture"
+   ],
+   "profileOnlyTags": [
+    "urn:tag:genre:synmedia:hearth_cooking",
+    "urn:tag:genre:synmedia:quiet_activism",
+    "urn:tag:genre:synmedia:slow_mornings",
+    "urn:tag:keyword:synmedia:found_family"
+   ]
+  },
+  {
+   "id": "SYN-BR-5207",
+   "name": "Larchwick Larder",
+   "type": "brand",
+   "popularity": 0.6,
+   "tags": [
+    "urn:tag:product_category:syn:oat_drink",
+    "urn:tag:lifestyle:syn:plant_forward"
+   ],
+   "profileOnlyTags": [
+    "urn:tag:genre:synmedia:hearth_cooking",
+    "urn:tag:genre:synmedia:quiet_activism",
+    "urn:tag:genre:synmedia:slow_mornings",
+    "urn:tag:genre:synmusic:porch_folk"
+   ]
+  },
+  {
+   "id": "SYN-BK-5201",
+   "name": "Embers and Bread",
+   "type": "book",
+   "popularity": 0.52,
+   "tags": [
+    "urn:tag:genre:synmedia:hearth_cooking"
+   ]
+  },
+  {
+   "id": "SYN-BK-5202",
+   "name": "The Long Supper",
+   "type": "book",
+   "popularity": null,
+   "tags": [
+    "urn:tag:genre:synmedia:hearth_cooking"
+   ]
+  },
+  {
+   "id": "SYN-BK-5203",
+   "name": "Coals at Dusk",
+   "type": "book",
+   "popularity": 0.47,
+   "tags": [
+    "urn:tag:genre:synmedia:hearth_cooking"
+   ]
+  },
+  {
+   "id": "SYN-BK-5204",
+   "name": "Small Hands, Loud Hearts",
+   "type": "book",
+   "popularity": 0.55,
+   "tags": [
+    "urn:tag:genre:synmedia:quiet_activism"
+   ]
+  },
+  {
+   "id": "SYN-BK-5205",
+   "name": "The Patient Placard",
+   "type": "book",
+   "popularity": 0.41,
+   "tags": [
+    "urn:tag:genre:synmedia:quiet_activism"
+   ]
+  },
+  {
+   "id": "SYN-BK-5206",
+   "name": "Kettle Petitions",
+   "type": "book",
+   "popularity": null,
+   "tags": [
+    "urn:tag:genre:synmedia:quiet_activism"
+   ]
+  },
+  {
+   "id": "SYN-BK-5207",
+   "name": "Before the Kettle",
+   "type": "book",
+   "popularity": 0.5,
+   "tags": [
+    "urn:tag:genre:synmedia:slow_mornings"
+   ]
+  },
+  {
+   "id": "SYN-BK-5208",
+   "name": "Dew Hour",
+   "type": "book",
+   "popularity": 0.44,
+   "tags": [
+    "urn:tag:genre:synmedia:slow_mornings"
+   ]
+  },
+  {
+   "id": "SYN-BK-5209",
+   "name": "The Unhurried Window",
+   "type": "book",
+   "popularity": 0.39,
+   "tags": [
+    "urn:tag:genre:synmedia:slow_mornings"
+   ]
+  },
+  {
+   "id": "SYN-MV-5201",
+   "name": "The Borrowed Table",
+   "type": "movie",
+   "popularity": 0.62,
+   "tags": [
+    "urn:tag:keyword:synmedia:found_family"
+   ]
+  },
+  {
+   "id": "SYN-MV-5202",
+   "name": "Neighbours of Larch Lane",
+   "type": "movie",
+   "popularity": null,
+   "tags": [
+    "urn:tag:keyword:synmedia:found_family"
+   ]
+  },
+  {
+   "id": "SYN-MV-5203",
+   "name": "Lantern Kin",
+   "type": "movie",
+   "popularity": 0.58,
+   "tags": [
+    "urn:tag:keyword:synmedia:found_family"
+   ]
+  },
+  {
+   "id": "SYN-AR-5201",
+   "name": "The Screen Door Choir",
+   "type": "artist",
+   "popularity": 0.46,
+   "tags": [
+    "urn:tag:music:syn:porch_folk"
+   ]
+  },
+  {
+   "id": "SYN-AR-5202",
+   "name": "Rocking Chair Republic",
+   "type": "artist",
+   "popularity": null,
+   "tags": [
+    "urn:tag:music:syn:porch_folk"
+   ]
+  },
+  {
+   "id": "SYN-AR-5203",
+   "name": "Hollis & the Lanterns",
+   "type": "artist",
+   "popularity": 0.4,
+   "tags": [
+    "urn:tag:music:syn:porch_folk"
    ]
   }
  ],
