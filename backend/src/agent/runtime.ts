@@ -31,7 +31,8 @@ import { refs, SkillRegistry } from "./skills/registry.js";
 import type { AgentDecisionContext, AgentModel } from "./model/provider.js";
 import { recordPlanRevision } from "./planner.js";
 import { MAX_REFERENCE_DEFERRALS, referencePlan } from "./reference-strategy.js";
-import { comparisonRepresentationPlan } from "./representation-alignment.js";
+import { probeRecommendations } from "./probe-policy.js";
+import { comparisonRepresentationPlan, preferredTypeFor } from "./representation-alignment.js";
 import { RunStore } from "./run-store.js";
 import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState } from "./state.js";
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
@@ -444,7 +445,10 @@ export class AgentRuntime {
   }
 }
 
-/** Sprint 5A.1 observability: representation-alignment plans and completion checks, recorded when they change. */
+/**
+ * Sprint 5A.1 observability: representation-alignment plans and completion checks, recorded when they change.
+ * Sprint 5A.2: the evidence-ranked probe recommended per unresolved territory, recorded when it changes.
+ */
 function recordPlans(state: AgentRunState): void {
   const plan = comparisonRepresentationPlan(state);
   const plans = (state.trace.representationPlans ??= []);
@@ -453,4 +457,9 @@ function recordPlans(state: AgentRunState): void {
   const checks = (state.trace.completion ??= []);
   const last = checks.at(-1);
   if (completion && (!last || last.fullAnalysisFeasible !== completion.fullAnalysisFeasible || last.reason !== completion.reason)) checks.push({ iteration: state.usage.iterations, ...completion });
+  const recommended = (state.trace.probeRecommendations ??= []);
+  for (const r of probeRecommendations(state, activeTerritories(state), (t) => preferredTypeFor(state, t))) {
+    const prev = [...recommended].reverse().find((x) => x.territoryKey === r.territoryKey);
+    if (!prev || prev.conceptKey !== r.conceptKey || prev.type !== r.type || prev.priority !== r.priority) recommended.push({ iteration: state.usage.iterations, territoryKey: r.territoryKey, conceptKey: r.conceptKey, namespace: r.namespace, type: r.type, priority: r.priority, reason: r.reason });
+  }
 }

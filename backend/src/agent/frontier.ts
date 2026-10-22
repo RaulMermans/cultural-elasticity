@@ -16,15 +16,16 @@
  * Relative positions and classes depend on the comparison set, so how the set was built is always
  * recorded (ComparisonSetConstruction) and returned with the result.
  */
-import type { AgentTerritoryResult, CandidateCanonicalization, CandidateSource, ComparisonSetConstruction, TerritoryEvidenceStatus } from "@cultural-elasticity/shared";
+import type { AgentTerritoryResult, AnchorDecision, CandidateCanonicalization, CandidateSource, ComparisonSetConstruction, TerritoryEvidenceStatus } from "@cultural-elasticity/shared";
 import { setOverlap } from "../analysis/overlap.js";
 import { matchOperationalRule } from "../methodology/operational-tags.js";
 import { frontierConcepts, labelTokens } from "./candidate-discovery.js";
-import { canonicalConceptKey, canonicalRelation } from "./concept-dedup.js";
-import { conceptPools, eligibleMembers } from "./probe-policy.js";
+import { canonicalConceptKey, canonicalRelation, canonicalTagName } from "./concept-dedup.js";
+import { conceptPools, eligibleMembers, territoryQueryTags } from "./probe-policy.js";
+import { preferredTypeFor } from "./representation-alignment.js";
 import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
 import { incidentalConcept } from "./semantic-comparison.js";
-import type { AgentRunState, TerritoryState } from "./state.js";
+import { activeTerritories, turnsAvailable, type AgentRunState, type TerritoryState } from "./state.js";
 
 /** Union-of-exemplar-profile Jaccard at or above this marks two candidates as culturally overlapping. */
 export const DIVERSITY_OVERLAP = 0.5;
@@ -193,6 +194,95 @@ export function candidateCanonicalization(state: AgentRunState, t: TerritoryStat
   return { originalLabel: t.label, sourceTagId: t.sourceTagId, resolvedId, canonicalConceptKey: key, normalizationReason: reason, candidateSource: source, anchorRelation: relation, uncertainty };
 }
 
+// ---- Sprint 5A.2: anchor identity (live L-E1 / L-E2) ----
+
+/** Brand-independent pools of a concept that returned eligible members. */
+function supportingPools(state: AgentRunState, tagId: string) {
+  return conceptPools(state, tagId).filter((p) => eligibleMembers(state, p) > 0);
+}
+
+/** Records one anchoring decision of a generated candidate (trace.anchorDecisions). */
+export function recordAnchorDecision(state: AgentRunState, t: TerritoryState, tagId: string, basis: AnchorDecision["basis"], decidedBy: AnchorDecision["decidedBy"], reasonCode: string | null, evidence: string): void {
+  const pools = supportingPools(state, tagId);
+  const relation = !t.sourceTagId ? "NO_SOURCE_TAG" : tagId === t.sourceTagId ? "SAME_CONCEPT" : relationOf(t.sourceTagId, tagId);
+  (state.trace.anchorDecisions ??= []).push({ iteration: state.usage.iterations, territoryKey: t.key, sourceTagId: t.sourceTagId, anchoredTagId: tagId, relation, basis, decidedBy, reasonCode, evidence: evidence.slice(0, 300), correlationIds: pools.map((p) => p.call.envelope.execution.correlation_id) });
+}
+
+function relationOf(sourceTagId: string, tagId: string): CandidateCanonicalization["anchorRelation"] {
+  const rel = canonicalRelation(canonicalConceptKey(sourceTagId), canonicalConceptKey(tagId));
+  return rel === "SAME" ? "SAME_CANONICAL_NAME" : rel === "ALIAS" ? "ALIAS_TOKEN_CONTAINMENT" : "DIFFERENT_NAME";
+}
+
+/**
+ * When a brand-independent probe returns members for a territory's OWN concept, the runtime anchors the territory to it,
+ * so observed support cannot be lost to the turn or resolution budget:
+ *   SOURCE_TAG_MEMBERS  a frontier candidate's grounding tag (live L-E1: Cooking and Feminism found book members on their
+ *                       own tags in the second-to-last turn, were never anchored, and ended INSUFFICIENT). The grounding
+ *                       tag is the candidate's canonical identity, so this also removes anchor drift.
+ *   LABEL_TAG_MEMBERS   a tag the territory's own search returned whose canonical name IS the territory's name, of the
+ *                       comparison's shared type when one is planned (live L-C2, Sprint 5A.2 full run: Heavy Metal found
+ *                       place members on interests:…:heavy_metal in the turn that spent its resolution budget, then was
+ *                       declared unsupported and dropped).
+ * Nothing is anchored for a tag another territory already uses (or shares its canonical name with). Returns the keys.
+ */
+export function anchorOnObservedMembers(state: AgentRunState, tagId: string, targetType: string, members: number): string[] {
+  if (members <= 0) return [];
+  const tag = state.tags.get(tagId);
+  if (!tag) return [];
+  const anchored: string[] = [];
+  for (const t of activeTerritories(state)) {
+    if (t.concept || t.status !== "open" || t.role === "reference") continue;
+    const source = t.role === "frontier_candidate" && t.sourceTagId === tagId;
+    const preferred = preferredTypeFor(state, t);
+    const named = !source && canonicalConceptKey(tagId) === canonicalConceptKey(t.label) && (territoryQueryTags(state, t) ?? []).includes(tagId) && (preferred === null || preferred === targetType);
+    if (!source && !named) continue;
+    if (activeTerritories(state).some((o) => o.key !== t.key && o.concept && (o.concept.id === tagId || canonicalTagName(o.concept.id) === canonicalTagName(tagId)))) continue;
+    t.concept = { id: tag.id, label: tag.label, type: tag.type };
+    t.status = "anchored";
+    recordAnchorDecision(state, t, tagId, source ? "SOURCE_TAG_MEMBERS" : "LABEL_TAG_MEMBERS", "runtime", null, `${source ? "grounding tag" : "the territory's own same-named tag"} returned ${members} ${targetType} member(s) (brand-independent pool)`);
+    anchored.push(t.key);
+  }
+  return anchored;
+}
+
+/**
+ * Refusal of an ALTERNATE anchor for a Qloo-grounded frontier candidate (a tag other than its evidence tags), or null.
+ * An alternate is allowed only when it is the same concept under another tag (same canonical name, or a token alias,
+ * recorded as uncertain), Qloo returned members for it, and the grounding tag was probed and returned none. A different
+ * concept is a different candidate: it is proposed with its own provenance and the original stays unsupported.
+ */
+export function alternateAnchorRefusal(state: AgentRunState, t: TerritoryState, tagId: string): { code: string; reason: string } | null {
+  if (t.role !== "frontier_candidate" || !t.sourceTagId || tagId === t.sourceTagId || t.evidenceTagIds.includes(tagId)) return null;
+  const source = state.tags.get(t.sourceTagId)?.label ?? t.sourceTagId;
+  const relation = relationOf(t.sourceTagId, tagId);
+  if (relation === "DIFFERENT_NAME") return { code: "ALTERNATE_ANCHOR_UNRELATED", reason: `${tagId} does not share the canonical name of the grounding tag ${source} [${t.sourceTagId}]; a different concept is a different candidate (propose_territory with its own evidence tag), and this one stays unsupported unless its own tag has members` };
+  const sourcePools = conceptPools(state, t.sourceTagId);
+  const sourceMembers = sourcePools.filter((p) => eligibleMembers(state, p) > 0);
+  if (sourceMembers.length > 0) return { code: "ALTERNATE_ANCHOR_SOURCE_SUPPORTED", reason: `the grounding tag ${source} [${t.sourceTagId}] has ${[...new Set(sourceMembers.map((p) => p.targetType))].join(", ")} members: anchor it (it is the candidate's canonical concept)` };
+  if (sourcePools.length === 0) return { code: "ALTERNATE_ANCHOR_SOURCE_UNTESTED", reason: `probe the grounding tag ${source} [${t.sourceTagId}] first (qloo_recommend, conditionOnBrand=false, the type its probe plan recommends); anchor an alternate only when the grounding tag has no members` };
+  if (supportingPools(state, tagId).length === 0) return { code: "ALTERNATE_ANCHOR_UNSUPPORTED", reason: `${tagId} has no brand-independent members observed in this run: probe it first and anchor it only if Qloo returns members` };
+  return null;
+}
+
+/**
+ * Frontier completion reserve: in the last two turns, while a frontier candidate with Qloo members is still unanalyzed,
+ * probing candidates without any member (and new tag searches) cannot finish in time and is refused, so the supported
+ * candidates are represented and analyzed instead (live L-E1: the last turns went to low-yield probes and the supported
+ * candidates were never analyzed). Returns the reason, or null.
+ */
+export function frontierCompletionReserve(state: AgentRunState, tool: string, tagId: string | null): string | null {
+  if (state.interpretation?.intent !== "explore_frontier" || turnsAvailable(state) > 2) return null;
+  const open = activeTerritories(state).filter((t) => t.role === "frontier_candidate" && t.status !== "analyzed");
+  const supported = open.filter((t) => t.concept && supportingPools(state, t.concept.id).length > 0);
+  if (supported.length === 0) return null;
+  if (tool === "qloo_find_tags") return `FRONTIER_COMPLETION_RESERVE: ${turnsAvailable(state)} turn(s) left and ${supported.map((t) => t.key).join(", ")} ha${supported.length === 1 ? "s" : "ve"} Qloo members: represent and analyze ${supported.length === 1 ? "it" : "them"} instead of searching new concepts`;
+  if (tool !== "qloo_recommend" || !tagId) return null;
+  if (supported.some((t) => t.concept!.id === tagId)) return null;
+  const owner = open.find((t) => t.sourceTagId === tagId || t.concept?.id === tagId);
+  if (owner && supportingPools(state, owner.concept?.id ?? tagId).length > 0) return null;
+  return `FRONTIER_COMPLETION_RESERVE: ${turnsAvailable(state)} turn(s) left; ${supported.map((t) => t.key).join(", ")} ha${supported.length === 1 ? "s" : "ve"} Qloo members and must still be represented and analyzed, so probing a candidate without members has no expected value now`;
+}
+
 /** Sprint 5A.1 evidence status for the UI (a connected node never implies a measured distance). */
 export function evidenceStatus(r: AgentTerritoryResult): TerritoryEvidenceStatus {
   if (r.analysisRoute === "FULL_RELATIVE_ANALYSIS") return "EVIDENCE_SUPPORTED_TERRITORY";
@@ -300,7 +390,12 @@ export type FrontierStability = {
   comparisonSetCompatibility?: { comparablePairs: number; pairsWithFull: number };
 };
 
-export const FRONTIER_STABILITY_METRICS_VERSION = "frontier-stability-metrics-v2";
+/**
+ * v3 (Sprint 5A.2, grader fix): two runs with NO supported candidate count 0 for supportedCanonicalOverlap, not 1 —
+ * nothing supported twice is not stability (v2 scored it 1, so repeated unsupported runs could look stable). Every other
+ * metric is unchanged from v2; results scored with v2 are kept as run.
+ */
+export const FRONTIER_STABILITY_METRICS_VERSION = "frontier-stability-metrics-v3";
 
 const THEME_STOPWORDS = new Set(["and", "the", "of", "for", "with", "culture", "lifestyle", "living"]);
 const themeTokens = (label: string) => new Set(labelTokens(label).filter((t) => !THEME_STOPWORDS.has(t)));
@@ -308,13 +403,13 @@ const themeTokens = (label: string) => new Set(labelTokens(label).filter((t) => 
 const mean = (values: number[]) => (values.length === 0 ? null : Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 1000) / 1000);
 
 export function frontierStability(runs: readonly FrontierRun[]): FrontierStability {
-  const pairwise = (key: (c: FrontierRun["candidates"][number]) => string | null) => {
+  const pairwise = (key: (c: FrontierRun["candidates"][number]) => string | null, emptyPair = 1) => {
     const values: number[] = [];
     for (let i = 0; i < runs.length; i += 1)
       for (let j = i + 1; j < runs.length; j += 1) {
         const a = runs[i]!.candidates.map(key).filter((x): x is string => x !== null);
         const b = runs[j]!.candidates.map(key).filter((x): x is string => x !== null);
-        values.push(setOverlap(a, b).jaccard ?? (a.length === 0 && b.length === 0 ? 1 : 0));
+        values.push(setOverlap(a, b).jaccard ?? (a.length === 0 && b.length === 0 ? emptyPair : 0));
       }
     return mean(values);
   };
@@ -342,7 +437,7 @@ export function frontierStability(runs: readonly FrontierRun[]): FrontierStabili
 }
 
 /** Sprint 5A.1 canonical-level stability (see FrontierStability). */
-function canonicalStability(runs: readonly FrontierRun[], pairwise: (key: (c: FrontierRun["candidates"][number]) => string | null) => number | null) {
+function canonicalStability(runs: readonly FrontierRun[], pairwise: (key: (c: FrontierRun["candidates"][number]) => string | null, emptyPair?: number) => number | null) {
   const supported = (c: FrontierRun["candidates"][number]) => c.route !== "INSUFFICIENT_EVIDENCE";
   const counts = new Map<string, number>();
   for (const r of runs) for (const k of new Set(r.candidates.filter(supported).flatMap((c) => (c.canonicalKey ? [c.canonicalKey] : [])))) counts.set(k, (counts.get(k) ?? 0) + 1);
@@ -374,7 +469,7 @@ function canonicalStability(runs: readonly FrontierRun[], pairwise: (key: (c: Fr
   const r3 = (v: number) => Math.round(v * 1000) / 1000;
   return {
     canonicalConceptOverlap: runs.length < 2 ? null : pairwise((c) => c.canonicalKey ?? null),
-    supportedCanonicalOverlap: runs.length < 2 ? null : pairwise((c) => (supported(c) ? (c.canonicalKey ?? null) : null)),
+    supportedCanonicalOverlap: runs.length < 2 ? null : pairwise((c) => (supported(c) ? (c.canonicalKey ?? null) : null), 0),
     recurringSupportedCanonical: [...counts.entries()].filter(([, n]) => n >= 2).map(([k]) => k).sort(),
     anchorConsistency: recurring.length === 0 ? null : r3(recurring.filter((a) => a.ids.size === 1 && !a.ids.has("(unanchored)")).length / recurring.length),
     themeOverlapProxy: themePairs.length === 0 ? null : r3(themePairs.reduce((a, b) => a + b, 0) / themePairs.length),

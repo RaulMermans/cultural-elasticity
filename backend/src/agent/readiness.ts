@@ -16,9 +16,9 @@
  */
 import { exemplarCandidates } from "./candidate-discovery.js";
 import { RANKABLE_TYPES, type RankableType } from "./contracts.js";
-import { conceptProbeState, MAX_EMPTY_TYPE_PROBES_PER_CONCEPT, territoryConcepts, territoryProbeState, typePreference } from "./probe-policy.js";
+import { conceptProbeState, MAX_EMPTY_TYPE_PROBES_PER_CONCEPT, probeRecommendations, territoryBarrenTypes, territoryConcepts, territoryProbeState, territoryQueryTags, typePreference } from "./probe-policy.js";
 import { comparisonRepresentationPlan, preferredTypeFor, supportsType, untestedConceptsFor } from "./representation-alignment.js";
-import type { AgentRunState, TerritoryState } from "./state.js";
+import { activeTerritories, remainingQlooCalls, turnsAvailable, type AgentRunState, type TerritoryState } from "./state.js";
 
 export { typePreference };
 
@@ -45,7 +45,7 @@ export function strategyExhausted(t: TerritoryState, conceptId: string, entityTy
 
 /** Tags returned by find_tags for this territory's own label (alternate concepts for recovery). */
 export function queryTags(state: AgentRunState, t: TerritoryState): string[] {
-  return state.searchedQueries.get(t.label.trim().toLowerCase()) ?? [];
+  return territoryQueryTags(state, t) ?? [];
 }
 
 /** Brand-independent pools observed for a concept, by entity type. */
@@ -137,6 +137,9 @@ export function recoveryGuidance(state: AgentRunState, t: TerritoryState): strin
   const alignment = alignmentLine(state, t, preferred);
   if (!t.concept) {
     const tags = queryTags(state, t);
+    // Sprint 5A.2: the concrete next probe first, with the Qloo evidence behind it and the budget it must fit in.
+    const next = nextProbeLine(state, t);
+    if (next && !territoryProbe.exhausted) out.push(next);
     if (t.sourceTagId && !tags.includes(t.sourceTagId)) out.push(sourceLine(state, t));
     if (tags.length === 0 && !t.sourceTagId) return ["search Qloo's tag vocabulary for this territory (qloo_find_tags)"];
     const withMembers = ledger.filter((l) => l.probes.some((p) => p.members > 0));
@@ -149,9 +152,11 @@ export function recoveryGuidance(state: AgentRunState, t: TerritoryState): strin
     }
     if (exhaustedConcepts.length > 0) out.push(`probing exhausted (refused): ${exhaustedConcepts.map((c) => `${state.tags.get(c.conceptKey)?.label ?? c.conceptKey} (${c.emptyTypes.join(", ")} empty)`).join("; ")}`);
     if (barren.length > 0) out.push(`${barren.join(", ")} probes of ${ledger.filter((l) => l.probes.some((p) => barren.includes(p.type))).length} of this territory's Qloo concepts returned no members: ${tried.size > barren.length ? `yield differs by tag namespace, so ${barren.join("/")} may still be probed on concepts not yet tried with it` : `probe another supported entity type before ${barren.join("/")} again`}`);
-    const untried = typePreference(state, preferred).filter((type) => !tried.has(type)).slice(0, MAX_EMPTY_TYPE_PROBES_PER_CONCEPT);
-    if (untried.length > 0 && withMembers.length === 0) out.push(`next entity types to probe, in order (at most ${MAX_EMPTY_TYPE_PROBES_PER_CONCEPT} empty types per concept): ${untried.join(", ")} (qloo_recommend, conditionOnBrand=false, on the concept named most like the territory)`);
-    if (withMembers.length === 0 && untried.length === 0) out.push("no probe found members: anchor the concept named most like the territory and declare_concept_only, or drop it");
+    const focusConcept = t.sourceTagId ?? tags[0] ?? null;
+    const refused = territoryBarrenTypes(state, t);
+    const ranked = focusConcept ? conceptProbeState(state, focusConcept, preferred).typeRanking.filter((r) => !refused.includes(r.type) && !r.namespaceBarren) : [];
+    if (ranked.length > 0 && withMembers.length === 0) out.push(`evidence-ranked entity types for ${state.tags.get(focusConcept!)?.label ?? focusConcept} (at most ${MAX_EMPTY_TYPE_PROBES_PER_CONCEPT} empty types per concept): ${ranked.map((r) => `${r.type} (${r.priority})`).join(", ")}`);
+    if (withMembers.length === 0 && ranked.length === 0) out.push("no probe found members: anchor the concept named most like the territory and declare_concept_only, or drop it");
     return out;
   }
   const options = recoveryOptions(state, t);
@@ -162,6 +167,8 @@ export function recoveryGuidance(state: AgentRunState, t: TerritoryState): strin
   }
   if (t.rejectedExemplars.length > 0) out.push(`rejected exemplars (do not propose again): ${t.rejectedExemplars.slice(-6).map((r) => `${r.label} (${r.code})`).join(", ")}`);
   const noStrategy = !options.strategies.some((s) => s.status === "available");
+  const next = options.strategies.length === 0 ? nextProbeLine(state, t) : null;
+  if (next) out.unshift(next);
   if (alignment && noStrategy) out.push(alignment);
   const anchorProbe = conceptProbeState(state, t.concept.id, preferred);
   if (anchorProbe.probingExhausted && noStrategy) out.push(`probing exhausted (refused): ${anchorProbe.exhaustionReason}`);
@@ -172,6 +179,14 @@ export function recoveryGuidance(state: AgentRunState, t: TerritoryState): strin
   }
   out.push(`${attemptsLeft} representation attempt(s) left; when no strategy remains, declare_concept_only (an honest partial result, never a forced weak panel)`);
   return out;
+}
+
+/** Sprint 5A.2: the recommended probe for a territory without members (probe-policy probeRecommendations), as one line. */
+function nextProbeLine(state: AgentRunState, t: TerritoryState): string | null {
+  const r = probeRecommendations(state, activeTerritories(state), (x) => preferredTypeFor(state, x)).find((x) => x.territoryKey === t.key);
+  if (!r) return null;
+  const tested = r.tested.length ? `tested ${r.tested.map((x) => `${x.type}:${x.members}`).join(", ")}; ` : "";
+  return `next probe: qloo_recommend ${r.type} on ${state.tags.get(r.conceptKey)?.label ?? r.conceptKey} [${r.conceptKey}], conditionOnBrand=false — ${r.priority}: ${r.reason} (${tested}${r.emptySlotsLeft} empty probe(s) left for this concept; ${turnsAvailable(state)} turn(s), ${remainingQlooCalls(state)} Qloo call(s) left)`;
 }
 
 /** Sprint 5A.1: frontier candidates are canonically identified by the Qloo tag that grounded them. */
@@ -199,8 +214,9 @@ export function territoryReadiness(state: AgentRunState, t: TerritoryState): Ter
   if (t.status === "dropped") return { state: "dropped" };
   if (t.status === "analyzed") return { state: "analyzed" };
   if (!t.concept) {
-    const searched = state.searchedQueries.get(t.label.trim().toLowerCase());
-    if (searched && searched.length === 0) return { state: "unsupported", reason: "Qloo tag search returned no concept for this territory" };
+    const searched = territoryQueryTags(state, t);
+    // A grounded candidate still has its own evidence tag when a tag search finds nothing else.
+    if (searched && searched.length === 0 && !t.sourceTagId) return { state: "unsupported", reason: "Qloo tag search returned no concept for this territory" };
     if (resolutionExhausted) return { state: "unsupported", reason: "territory resolution budget spent without a Qloo concept" };
     // Sprint 5A.1: bounded probing — enough empty probes with no member anywhere means Qloo does not support it.
     const probe = territoryProbeState(state, t);

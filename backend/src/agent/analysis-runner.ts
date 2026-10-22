@@ -34,6 +34,7 @@ import { applyOperationalTagPolicy, OPERATIONAL_TAG_POLICY_VERSION } from "../me
 import { assembleTerritoryEvidence } from "../methodology/territory-evidence.js";
 import { ElasticityInvariantError } from "../methodology/validate.js";
 import { brandProfileFromEntityTags, callProvenance, conditionedEntitiesFromRecommend, emptyConditionedEvidence, rankingFromRank, type LiveCall } from "../qloo/live-adapter.js";
+import { toEntitySignals } from "../qloo/normalize.js";
 import { callQloo, PROFILE_TAKE, provenanceOf, recordPool, recordProfile } from "./qloo-gateway.js";
 import { assessDiversity, planRepresentation } from "./representation-planner.js";
 import { planComparisonGroups, selectAnalysisRoute, MIN_COMPARISON_SET, type ComparisonGroup } from "./router.js";
@@ -220,7 +221,19 @@ export async function runAnalysis(state: AgentRunState, provider: AgentToolProvi
   // ---- FULL groups: the Sprint 2 methodology, unchanged ----
   const fullResults = new Map<string, { view: TerritoryElasticity; group: ComparisonGroup; runId: string }>();
   for (const [gi, group] of groups.entries()) {
-    const panels = [...panelsFor(group), { id: "A-repeat", purpose: "repeat" as const, repeatOf: "A", exemplarIndex: 0 }].filter((p) => rankCalls.has(`${gi}:${p.id}`) || p.purpose !== "repeat");
+    // Sprint 5A.2 (live L-E1): an OPTIONAL panel is used only when Qloo ranked exactly its assigned exemplars. An
+    // uncollected or incomplete optional panel is excluded with a limitation (robustness then rests on fewer panels)
+    // instead of invalidating the whole methodology input; the primary panel is never dropped, so its failure still fails.
+    const panels = [...panelsFor(group), { id: "A-repeat", purpose: "repeat" as const, repeatOf: "A", exemplarIndex: 0 }].filter((p) => {
+      if (p.purpose === "primary") return true;
+      const call = rankCalls.get(`${gi}:${p.id}`);
+      if (!call) return false;
+      const assigned = new Set(group.territoryKeys.map((k) => exemplarAt(state, k, p.exemplarIndex).id));
+      const ranked = new Set(toEntitySignals(call.operation, call.envelope).map((e) => e.qlooId));
+      if (assigned.size === ranked.size && [...assigned].every((id) => ranked.has(id))) return true;
+      for (const k of group.territoryKeys) note(k, { code: "PANEL_RANKING_INCOMPLETE", detail: `panel ${p.id}: Qloo ranked ${ranked.size} of the ${assigned.size} assigned exemplars (${corr(call)}); the panel is excluded and robustness uses the remaining panels` });
+      return false;
+    });
     const raw = methodologyInput(state, brandProfile, group, panels, (panelId) => rankCalls.get(`${gi}:${panelId}`), conditioned);
     const methodologyTrace = openTrace("run_elasticity_methodology", "local_computation", { territoryKeys: group.territoryKeys, entityType: group.entityType, panels: panels.map((p) => p.id) });
     try {

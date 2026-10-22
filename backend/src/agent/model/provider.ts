@@ -61,6 +61,8 @@ export type AgentDecisionContext = {
     recoveryGuidance?: string[];
     /** Sprint 5A: brand-independent probes already made for this territory's candidate concepts. */
     probes?: { tagId: string; label: string; probes: { type: string; members: number }[] }[];
+    /** Sprint 5A.2: the evidence-ranked next probe (priority and reason, the namespace evidence behind it, slots left). */
+    nextProbe?: { tagId: string; entityType: string; priority: string; reason: string; namespace: string; namespaceEvidence: string[]; tested: string[]; emptyProbesLeft: number; call: string };
   }[];
   /** Only the sections the active skills require. */
   evidence: {

@@ -113,6 +113,38 @@ Two eval-side files feed the live readiness gate v3:
 - `evals/agent/controlled-cases.json` (`agent-controlled-v1`) holds the controlled positive scenario `C-FULL-1`. Its preconditions are real Qloo observations with correlation ids from stored Sprint 5A traces, and they are re-verified live before every run. It is evaluator-constructed (owner review pending) and kept outside the seven-case denominator.
 - `evals/agent/stability-criteria.json` (`frontier-stability-criteria-v1`) holds the frontier criteria. They were defined before the Sprint 5A.1 live run, with Sprint 5A baselines computed by the same code. Thresholds must not be changed after seeing results.
 
+## Agent evals (Sprint 5A.2 update)
+
+`evals/agent/scenarios.json` holds **53** scenarios. `s52-frontier-namespace-type-evidence` reproduces the Sprint 5A.1 L-E1/L-E2 frontier failure class with fictional entities (world additions `SYN-*-52xx`):
+- frontier candidates are grounded in media-namespace tags that related **brand** profiles carry while brand pools for them are empty;
+- the world field `profileOnlyTags` models this live quirk: a profile tag that is not a recommend filter.
+
+The scenario checks:
+- a third place probe in the namespace is deferred (`NAMESPACE_TYPE_BARREN`);
+- siblings are recommended book after one concept returns book members (`NAMESPACE_MEMBERS` in context);
+- each grounding tag with members anchors its candidate (`sourceEvidenceAnchors`);
+- discovery co-occurrence does not merge candidates (`noDuplicateDrops`; it is mutation-checked, failing under the v1 dedup rule);
+- an unrelated alternate anchor is refused (`ALTERNATE_ANCHOR_REFUSED`);
+- the concept without members ends INSUFFICIENT;
+- some members carry `popularity: null`.
+
+The runtime evaluators are `run-evaluators-v2`: the six Sprint 5A.1 evaluators plus the following, and the run requires 0 failures:
+- `TAG_TYPE_EVIDENCE_VALID`
+- `PROBE_PRIORITY_JUSTIFIED`
+- `NULL_POPULARITY_HANDLED`
+- `ANCHOR_PROVENANCE_PRESERVED`
+- `SUPPORTED_CONCEPT_NOT_LOST`
+- `RECOVERY_WITHIN_BUDGET`
+- `FRONTIER_RESULT_CONSISTENCY`
+
+`backend/tests/agent-sprint5a2.test.ts` adds 18 targeted tests.
+
+The frontier metrics are `frontier-stability-metrics-v3`: two runs with no supported candidate score 0 supported overlap, where v2 scored them 1. `stability-criteria.json` is unchanged (`frontier-stability-criteria-v1`).
+
+`pnpm eval:agent:replay -- <dir> […]` replays the current evaluators and stability metrics over stored live results. It writes `replay-*.json` to `backend/feasibility-output/sprint5a2-live/replay` and never rewrites the as-run reports. It is offline, so it is not live validation.
+
+All of this is SYNTHETIC or offline.
+
 ### Live agent evaluation (`pnpm eval:agent:live`)
 
 `evals/agent/live-cases.json` (`agent-live-v1`) is unchanged: L-M1–M3, L-C1–C2, L-E1–E2.
@@ -125,7 +157,7 @@ pnpm eval:agent:live -- --arms baseline,model --stability 3 --out backend/feasib
 
 It runs both arms on the identical cases and repeats each frontier case three times in the model arm. Sprint 5A.1:
 - The controlled scenario(s) run in both arms after a live preflight, whenever `--cases` is absent or names them.
-- The default output directory is `backend/feasibility-output/sprint5a1-live/<timestamp>`.
+- The default output directory is `backend/feasibility-output/sprint5a2-live/<timestamp>` (Sprint 5A.2; it was `sprint5a1-live`).
 - The gate (`agent-readiness-gate-v3`) reports **SAFETY** (the list below) and **COMPETENCE** separately. Overall READY needs both.
 - The nine competence checks are: recovery, probe limits, meaningful FULL demonstrated, controlled FULL, frontier criteria, no regression, synthesis usable, honest degradation, runtime evaluators.
 

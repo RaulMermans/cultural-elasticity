@@ -84,6 +84,10 @@ type Expect = {
   relatedTake?: number;
   /** Sprint 5A.1: every generated candidate carries a canonical key from its grounding tag, anchored to that concept. */
   allCandidatesCanonical?: boolean;
+  /** Sprint 5A.2: candidates the runtime anchored to their grounding tag after it returned members. */
+  sourceEvidenceAnchors?: number;
+  /** Sprint 5A.2: no territory was dropped as a duplicate. */
+  noDuplicateDrops?: boolean;
 };
 
 export type Scenario = {
@@ -220,6 +224,8 @@ function check(s: Scenario, response: AgentRunResponse): string[] {
     const related = r.trace.toolCalls.find((c) => c.tool === "qloo_related_entities" && c.status === "ok");
     eq("related take (members returned)", related ? Number(related.summary.split(" ")[0]) : null, e.relatedTake);
   }
+  if (e.sourceEvidenceAnchors !== undefined) eq("source-evidence anchors", r.metrics.source_evidence_anchors ?? 0, e.sourceEvidenceAnchors);
+  if (e.noDuplicateDrops) for (const d of trace.conceptDedup.filter((x) => x.dropped)) f.push(`${d.dropped} dropped as ${d.verdict} of ${d.a.key === d.dropped ? d.b.key : d.a.key} (${d.layer}: ${d.basis})`);
   if (e.allCandidatesCanonical) {
     const generated = r.territories.filter((x) => x.role === "frontier_candidate" && x.resolvedConcept);
     if (generated.length === 0) f.push("no anchored frontier candidate to check canonicalization");

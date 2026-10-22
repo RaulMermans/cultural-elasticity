@@ -340,8 +340,8 @@ export function needsInputResponse(state: AgentRunState): AgentNeedsInputRespons
   };
 }
 
-/** Sprint 5A.1 probe telemetry: empty probes (from pools), and refusals by the new rules (from early stops). */
-function probeMetrics(state: AgentRunState): Pick<AgentMetrics, "empty_type_probes" | "max_empty_type_probes_per_concept" | "probe_limit_refusals" | "type_alignment_deferrals" | "reference_namespace_refusals"> {
+/** Sprint 5A.1/5A.2 probe telemetry: empty and successful probes (from pools), refusals by rule (from early stops), anchors. */
+function probeMetrics(state: AgentRunState): Pick<AgentMetrics, "empty_type_probes" | "max_empty_type_probes_per_concept" | "probe_limit_refusals" | "type_alignment_deferrals" | "reference_namespace_refusals" | "successful_type_probes" | "namespace_type_refusals" | "alternate_anchor_refusals" | "source_evidence_anchors" | "frontier_completion_refusals"> {
   const concepts = [...new Set(state.pools.filter((p) => p.conditionedOn === null && p.tagIds.length === 1).map((p) => p.tagIds[0]!))].map((id) => conceptProbeState(state, id).totalEmptyTypeProbes);
   const stops = (code: string) => state.trace.earlyStops.filter((e) => e.code === code).length;
   return {
@@ -350,5 +350,10 @@ function probeMetrics(state: AgentRunState): Pick<AgentMetrics, "empty_type_prob
     probe_limit_refusals: stops("PROBE_LIMIT_REACHED"),
     type_alignment_deferrals: state.alignmentDeferrals.size,
     reference_namespace_refusals: stops("REFERENCE_NAMESPACE_BARREN"),
+    successful_type_probes: [...new Set(state.pools.filter((p) => p.conditionedOn === null && p.tagIds.length === 1).map((p) => p.tagIds[0]!))].reduce((n, id) => n + conceptProbeState(state, id).successfulTypes.length, 0),
+    namespace_type_refusals: stops("NAMESPACE_TYPE_BARREN"),
+    alternate_anchor_refusals: stops("ALTERNATE_ANCHOR_REFUSED"),
+    source_evidence_anchors: (state.trace.anchorDecisions ?? []).filter((d) => d.basis === "SOURCE_TAG_MEMBERS" || d.basis === "LABEL_TAG_MEMBERS").length,
+    frontier_completion_refusals: stops("FRONTIER_COMPLETION_RESERVE"),
   };
 }
