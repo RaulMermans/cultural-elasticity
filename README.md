@@ -4,7 +4,16 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 5A.2 — Frontier Reliability
+## Current status: Sprint 5B.1 — Query Intelligence
+
+- **Sprint 5B.1** adds the natural-language control layer on top of the unchanged agent:
+  - `POST /api/agent/interpret` (dry run), `/api/agent/query` and `/api/agent/follow-up`, sharing one interpretation policy: one Claude Haiku 5.5 structured interpretation, then a deterministic execution gate;
+  - typed follow-ups (refine, switch, correct, return), linked as parent/child runs validated against server state;
+  - explicit typed states for clarification, unsupported operations (competitor comparison is recognized, not executed), partial support, unavailable context and injection refusal;
+  - the Living Atlas contract (`ce-query/0.1`) for Sprint 5B.2.
+- Real Haiku interpretation on the frozen 58-case manifest (dry run, no Qloo): held-out targets met in 4/4 runs, 0 unsafe handoffs, ≈ $0.0003 and ≈ 1.5 s per query. Query layer: **`QUERY_LAYER_READY`** (gold labels pending owner review). The agent itself stays **`AGENT_MODEL_NOT_READY`** (5A.2). See [docs/sprint-5b1/QUERY_INTELLIGENCE.md](docs/sprint-5b1/QUERY_INTELLIGENCE.md).
+
+### Sprint 5A.2 — Frontier Reliability
 
 - **Sprint 5A.2** fixed the 5A.1 frontier regressions generically. It adds:
   - evidence-ranked probe types (namespace evidence, `nextProbe`);
@@ -14,7 +23,13 @@ Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Bouti
   - degraded instead of failed analysis on an incomplete optional rank panel;
   - 13 runtime evaluators and `pnpm eval:agent:replay`.
 
-  Live: L-E1 Oatly went from 0 to 2–3 supported candidates, and L-C1 stays 3 × FULL with fewer calls. Readiness: **`AGENT_MODEL_NOT_READY` (`LIVE_VALIDATION_INCOMPLETE`)**, because the final gate run was still executing when this was written. See [docs/sprint-5a2/FRONTIER_RELIABILITY.md](docs/sprint-5a2/FRONTIER_RELIABILITY.md).
+  Live final run (7/7 cases, case-matched baseline, 3-run stability, controlled scenario):
+  - SAFETY 13/13;
+  - competence 8/9, with the frontier criteria passing for the first time (L-E1 and L-E2);
+  - controlled scenario 3 × FULL; 6 valid / 0 invalid FULL;
+  - 12 useful investigations against the baseline's 8.
+
+  Gate decision: **`AGENT_MODEL_NOT_READY`**, on C9. A timed-out Qloo call's late answer was recorded as evidence; this is fixed afterwards and not yet live-validated. See [docs/sprint-5a2/FRONTIER_RELIABILITY.md](docs/sprint-5a2/FRONTIER_RELIABILITY.md).
 
 ### Sprint 5A.1 — Haiku Investigation Reliability
 

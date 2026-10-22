@@ -6,7 +6,7 @@
  * allowed-transition table and records every change in the trace.
  */
 import { randomUUID } from "node:crypto";
-import type { AgentAnalysisResult, AgentIntent, AgentModelInfo, AgentRunStatus, AgentTerritoryResult, AgentTrace, CandidateSource, ConceptDedupVerdict, RepresentationFailureCode, SemanticRelevance, SkillRef, TerritoryOrigin, TerritoryRole } from "@cultural-elasticity/shared";
+import type { AgentAnalysisResult, AgentIntent, AgentModelInfo, InvestigationLink, AgentRunStatus, AgentTerritoryResult, AgentTrace, CandidateSource, ConceptDedupVerdict, RepresentationFailureCode, SemanticRelevance, SkillRef, TerritoryOrigin, TerritoryRole } from "@cultural-elasticity/shared";
 import type { Limitation } from "../evidence/schema.js";
 import type { LiveCall } from "../qloo/live-adapter.js";
 import type { ConceptRef } from "../contracts/qloo.js";
@@ -144,6 +144,8 @@ export type AgentRunState = {
   turnOpen: boolean;
   /** Sprint 5A.1: targets whose off-type anchoring was deferred once for entity-type alignment. */
   alignmentDeferrals: Set<string>;
+  /** Sprint 5B.1: parent-child link of a query-layer run (server-recorded; null for a run started outside it). */
+  link: InvestigationLink | null;
   startedAt: number;
   trace: AgentTrace;
   toolCallCounter: number;
@@ -188,6 +190,7 @@ export function createRunState(request: AgentRequest, model: AgentModelInfo, too
     timing: { analysisMs: 0, synthesisMs: 0 },
     turnOpen: false,
     alignmentDeferrals: new Set(),
+    link: null,
     startedAt: Date.now(),
     toolCallCounter: 0,
     trace: {

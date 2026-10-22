@@ -69,6 +69,16 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 4. **Discovery artefacts are not evidence.** Co-occurrence in the profiles a candidate was discovered from never makes two concepts duplicates.
 5. **Optional evidence degrades; it never invalidates.** An incomplete optional rank panel is excluded with a limitation. The primary panel is never dropped.
 6. **No support twice is not stability.** Runs with no supported candidate score 0 supported overlap (`frontier-stability-metrics-v3`). Stored live results are rescored only by replay (`pnpm eval:agent:replay`), alongside the as-run reports, never in place of them.
+7. **A failed call is never evidence, even if Qloo answers late.** A tool call that timed out has its late answer discarded (counted against the budget, never cached or recorded).
+
+## Query layer (permanent, from Sprint 5B.1)
+
+1. **One interpretation policy.** Natural-language requests enter through `backend/src/agent/query/` (`/interpret`, `/query`, `/follow-up`): one Haiku structured interpretation (no tools, ≤ 1 schema repair), then the deterministic gate (`gate.ts`). The runtime receives the gate's interpretation through `applyInterpretation`, shared with the `interpret_request` tool; never interpret the same query twice.
+2. **Only EXECUTABLE runs.** The model proposes; the gate approves. No user text or model output may authorize tools, budgets, evidence, entity ids or run ids, and the proposal schema has no field for them. System directives are refused, never executed, and never answered with a benign question.
+3. **No keyword, brand or category routing** in production query code. Routing reads typed proposal fields, the caller's structured fields and server state only. Explicit fields always win; a contradiction is a clarification, never a merge.
+4. **Recognized is not supported.** Deferred operations (competitor comparison, whitespace, bridges, portfolios) are reported as unsupported. A smaller alternative is offered as non-equivalent and runs only on confirmation. A compound or partially supported request is never reported as complete.
+5. **Context comes from the server.** A follow-up is a new bounded child run linked to its parent; only the brand identity is carried over, and it is re-resolved in Qloo. Classifications, positions and evidence are never inherited. A parent the process no longer holds is `CONTEXT_UNAVAILABLE`, never reconstructed. `/continue` is only for NEEDS_INPUT clarifications.
+6. **Query evals are labelled honestly.** The offline `pnpm eval:query` replays gold-derived proposals; it is never language-understanding evidence. `--live` is `LIVE_HAIKU_INTERPRETATION` (no Qloo call), never agent or Qloo validation. HELD_OUT and ADVERSARIAL cases stay frozen (`evals/query/manifest.json`), and changes are recorded as amendments with the original results kept. Failures are fixed generally, never as case rules.
 
 ## Engineering
 
@@ -92,5 +102,8 @@ pnpm eval:agent:live -- --arms baseline,model --stability 3
                         # live Qloo + Haiku: all 7 cases, case-matched baseline, frontier stability (model arm needs ANTHROPIC_API_KEY)
 pnpm eval:agent:replay -- <dir>
                         # offline replay of current evaluators/stability metrics over stored live results
+pnpm eval:query         # offline gate/handoff replay over the query manifest (synthetic); never NLU evidence
+pnpm eval:query -- --live
+                        # real Haiku interpretation, dry run (no Qloo): LIVE_HAIKU_INTERPRETATION
 pnpm feasibility:qloo   # live; report its result separately
 ```

@@ -169,3 +169,19 @@ The SAFETY half requires:
 - zero permission, secret or benchmark leakage, methodology overrides, budget violations, accepted unsupported claims, and **semantically invalid FULL results**.
 
 Reported separately from the historical route mix: `semanticallyValidFullRate`, `invalidFullComparisonRate`, `meaningfulPartialRate` (a rule-based proxy, not human judgment), synthesis first-attempt / after-repair / fallback / usefulness rates, and the latency split (model, Qloo, spacing, analysis, synthesis).
+
+## Query interpretation evals (Sprint 5B.1)
+
+```sh
+pnpm eval:query                    # offline: gate, context, routing and runtime handoff (synthetic world)
+pnpm eval:query -- --live          # real Claude Haiku 5.5 interpretation, dry run: no Qloo call
+pnpm eval:query -- --json out.json # also write the report;  --cases D01,H03 for a subset
+```
+
+`evals/query/manifest.json` (`"fixtureType": "synthetic"`, `ce-query-eval/1.0`) holds 58 cases in three splits: DEVELOPMENT 23, HELD_OUT 25 and ADVERSARIAL 10. They cover categories A–P (discovery, moves, comparisons, paraphrases, unseen brands, unfamiliar concepts, follow-ups, switching, inheritance, corrections, ambiguity, compound, competitor, unsupported, injection and invalid context), in English and Spanish. Context fixtures are baseline runs over the synthetic agent world.
+
+- **Gold labels** are author-written and pending owner review; `AMBIGUOUS_GOLD` cases are excluded from scores.
+- **HELD_OUT and ADVERSARIAL** are frozen by hash (`freeze.heldOutSha256`; `-- --freeze` sets it once). Changes go under `amendments`.
+- **Scoring is deterministic:** intent, disposition, entities (normalized match against gold alternatives), inheritance, handoff arguments, forbidden operations, constraints, injection refusal and missing-context safety.
+
+The **offline** run feeds gold-derived ideal proposals through the real gate and runtime. It always reports `LIVE_HAIKU_QUERY_VALIDATION_NOT_RUN`: it is not language-understanding evidence. The **live** run is `LIVE_HAIKU_INTERPRETATION`, never Qloo or agent validation. Results: [docs/sprint-5b1/QUERY_INTELLIGENCE.md](../docs/sprint-5b1/QUERY_INTELLIGENCE.md).

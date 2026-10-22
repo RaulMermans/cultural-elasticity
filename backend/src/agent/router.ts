@@ -3,6 +3,7 @@
  *
  *   resolveInterpretation   the model proposes intent / brand / territories; explicit request fields win
  *                           and a proposal that contradicts them is rejected (never silently merged)
+ *   applyInterpretation     the one place an accepted interpretation changes run state (agent turn or query layer)
  *   planComparisonGroups    which territories can share one rank-panel comparison set
  *   selectAnalysisRoute     FULL / PARTIAL / DESCRIPTIVE / INSUFFICIENT from capability availability
  *
@@ -10,9 +11,9 @@
  */
 import type { AnalysisRoute, CapabilityAvailability } from "@cultural-elasticity/shared";
 import { MAX_PANEL_OPTIONS } from "../methodology/contracts.js";
-import { interpretationSchema, type AgentRequest, type Interpretation, type RankableType } from "./contracts.js";
+import { DEFAULT_QLOO_CALLS, interpretationSchema, type AgentRequest, type Interpretation, type RankableType } from "./contracts.js";
 import { planRepresentation } from "./representation-planner.js";
-import type { AgentRunState, TerritoryState } from "./state.js";
+import { addTerritory, type AgentRunState, type TerritoryState } from "./state.js";
 
 /**
  * A relative position needs at least three territories in one panel: with two options every rank
@@ -37,6 +38,24 @@ export function resolveInterpretation(request: AgentRequest, proposed: unknown):
     if (wanted.length !== got.length || wanted.some((t, i) => t !== got[i])) return { ok: false, reason: "the request fixes the territory list" };
   }
   return { ok: true, interpretation: value };
+}
+
+/**
+ * Records an interpretation already accepted by resolveInterpretation. Sprint 5B.1: shared by the agent's own
+ * interpret_request turn and the query layer's execution gate, so both paths have identical effects.
+ */
+export function applyInterpretation(state: AgentRunState, interpretation: Interpretation, source: "agent_turn" | "query_layer"): void {
+  state.interpretation = interpretation;
+  state.brand.query = interpretation.brand;
+  state.trace.intent = interpretation.intent;
+  state.trace.interpretedRequest = { ...interpretation };
+  state.trace.interpretationSource = source;
+  if (!state.qlooBudgetExplicit && !state.request.intent) {
+    // Budget defaults are per intent (spec §25); the intent is only known now.
+    state.limits.maxQlooCalls = Math.max(state.usage.qlooCalls, DEFAULT_QLOO_CALLS[interpretation.intent]);
+    state.trace.limits.maxQlooCalls = state.limits.maxQlooCalls;
+  }
+  for (const label of interpretation.territories) addTerritory(state, { label, role: "target", origin: "user", rationale: "named by the user" });
 }
 
 /** Intent implied by the request structure alone, when it is unambiguous. */

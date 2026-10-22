@@ -16,6 +16,7 @@ import { AgentNotConfiguredError } from "./errors.js";
 import { AnthropicAgentModel } from "./model/anthropic.js";
 import { BaselinePolicyModel } from "./model/baseline.js";
 import type { AgentModel } from "./model/provider.js";
+import { AnthropicQueryInterpreter, StructuralQueryInterpreter, type QueryInterpreter } from "./query/interpreter.js";
 import { QlooToolProvider } from "./tool-provider.js";
 
 export const LIVE_AGENT_MODEL_VALIDATION_NOT_RUN = "LIVE_AGENT_MODEL_VALIDATION_NOT_RUN";
@@ -35,6 +36,21 @@ export function createAgentModel(choice: ModelChoice = "auto", env: NodeJS.Proce
   return new AnthropicAgentModel({
     ...(env.AGENT_MODEL?.trim() && { model: env.AGENT_MODEL.trim() }),
     ...(effort && ["low", "medium", "high", "xhigh", "max"].includes(effort) && { effort: effort as "low" | "medium" | "high" | "xhigh" | "max" }),
+  });
+}
+
+/**
+ * Sprint 5B.1 query interpreter: the same model and credential policy as the agent (Haiku 5.5; AGENT_MODEL for
+ * development only), at its own effort (AGENT_QUERY_EFFORT, default low). "baseline" selects the structural
+ * interpreter, which reads structured fields only; it is never substituted silently for a missing credential.
+ */
+export function createQueryInterpreter(choice: ModelChoice = "auto", env: NodeJS.ProcessEnv = process.env): QueryInterpreter {
+  if (choice === "baseline") return new StructuralQueryInterpreter();
+  if (!hasModelCredential(env)) throw new AgentNotConfiguredError("AGENT_MODEL_NOT_CONFIGURED", "no ANTHROPIC_API_KEY is configured (LIVE_HAIKU_QUERY_VALIDATION_NOT_RUN)");
+  const effort = env.AGENT_QUERY_EFFORT?.trim();
+  return new AnthropicQueryInterpreter({
+    ...(env.AGENT_MODEL?.trim() && { model: env.AGENT_MODEL.trim() }),
+    ...(effort && ["low", "medium", "high"].includes(effort) && { effort: effort as "low" | "medium" | "high" }),
   });
 }
 

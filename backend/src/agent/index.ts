@@ -17,6 +17,7 @@ export * from "./model/scripted.js";
 export * from "./planner.js";
 export * from "./prompts.js";
 export * from "./qloo-gateway.js";
+export * from "./query/index.js";
 export * from "./readiness.js";
 export * from "./reference-strategy.js";
 export * from "./representation-planner.js";
