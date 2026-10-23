@@ -76,6 +76,29 @@ describe("T–V mock Qloo subprocess, MCP handshake, subprocess failure", () => 
   });
 });
 
+describe("function / MCP poc (local; hosted is a separate gate)", () => {
+  it("spawns the fake MCP server, completes initialize, and calls tools/call", async () => {
+    const { runFunctionPoc } = await import("../scripts/vercel-feasibility/function-poc.js");
+    const poc = await runFunctionPoc();
+    expect(poc.node).toMatch(/^v22\./u);
+    expect(poc.gates.find((g) => g.gate === "MCP_SUBPROCESS_COMPATIBLE")?.outcome).toBe("PASS");
+    expect(poc.gates.find((g) => g.gate === "LIVE_QLOO_CONNECTIVITY")?.outcome).toBe("NOT_TESTED");
+    expect(JSON.stringify(poc)).not.toMatch(/sk-ant-|QLOO_API_KEY=/u);
+  });
+});
+
+describe("official Workflow SDK source (compiler is a separate hosted gate)", () => {
+  it("runs the documented journey as TypeScript and refuses an uncertain external retry", async () => {
+    const { syntheticInvestigationWorkflow, investigationRequestSchema, UnsafeExternalRetryError } = await import("../scripts/vercel-feasibility/official-workflow.js");
+    expect(investigationRequestSchema.safeParse({ query: "", brand: "x" }).success).toBe(false);
+    const out = await syntheticInvestigationWorkflow({ query: "Where could a synthetic brand expand?", brand: "SYN-BRAND" });
+    expect(out.status).toBe("COMPLETE");
+    expect(out.findings).toBe(1);
+    expect((out.resumed as { uncertain: string }).uncertain).toBe("refused");
+    await expect(Promise.reject(new UnsafeExternalRetryError("qloo_find_tags"))).rejects.toBeInstanceOf(UnsafeExternalRetryError);
+  });
+});
+
 describe("W durable state requirements", () => {
   it("names each state class separately and marks spend as requiring durability", () => {
     const kinds = DURABLE_STATE_REQUIREMENTS.map((r) => r.kind);

@@ -16,7 +16,7 @@ import { comparisonRepresentationPlan, preferredTypeFor } from "./representation
 import { namespaceProbeEvidence, probeRecommendations, territoryQueryTags, type ProbeRecommendation } from "./probe-policy.js";
 import { conceptDuplicates } from "./concept-dedup.js";
 import { RANKABLE_TYPES } from "./contracts.js";
-import { assessEvidenceSufficiency, investigationStage } from "./evidence-sufficiency.js";
+import { assessEvidenceSufficiency, investigationStage, type SufficiencyAssessment } from "./evidence-sufficiency.js";
 import type { AgentDecisionContext, DecisionFocus } from "./model/provider.js";
 import { probeLedger, recoverable, recoveryGuidance, recoveryOptions, territoryReadiness } from "./readiness.js";
 import { referenceCandidates, referencePlan } from "./reference-strategy.js";
@@ -34,6 +34,8 @@ export type ContextOptions = {
   active?: readonly SkillDefinition[];
   exposure?: { tools: readonly string[]; actions: readonly TerminalAction[] };
   repair?: AgentDecisionContext["repair"];
+  /** Reuse the loop's sufficiency assessment instead of recomputing it during context assembly. */
+  sufficiency?: SufficiencyAssessment;
 };
 
 const defaultSkills = new SkillRegistry();
@@ -144,7 +146,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
     evidence.analysisResults = [...state.results.values()].map((r) => ({ key: r.key, route: r.analysisRoute, classification: r.classification?.label ?? null, robustness: r.robustness?.level ?? null }));
   }
 
-  const sufficiency = assessEvidenceSufficiency(state);
+  const sufficiency = options.sufficiency ?? assessEvidenceSufficiency(state);
   return {
     focus: decisionFocus(state, active, exposure, sufficiency, lastTurn),
     runId: state.runId,

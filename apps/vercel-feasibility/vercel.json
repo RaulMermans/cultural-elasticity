@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "functions": {
+    "app/api/poc/route.ts": {
+      "maxDuration": 30,
+      "includeFiles": "fixtures/fake-qloo-mcp.mjs"
+    },
+    "app/api/health/route.ts": {
+      "maxDuration": 10
+    },
+    "app/api/workflow/route.ts": {
+      "maxDuration": 30
+    }
+  }
+}

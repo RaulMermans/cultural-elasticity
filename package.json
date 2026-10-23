@@ -11,10 +11,10 @@
     "dev": "pnpm --parallel --filter frontend --filter backend dev",
     "dev:frontend": "pnpm --filter frontend dev",
     "dev:backend": "pnpm --filter backend dev",
-    "build": "pnpm -r build",
+    "build": "pnpm -r --filter=!@cultural-elasticity/vercel-feasibility build",
     "test": "pnpm -r test",
     "lint": "eslint .",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm -r --filter=!@cultural-elasticity/vercel-feasibility typecheck",
     "check:secrets": "node scripts/check-secrets.mjs",
     "eval:methodology": "pnpm --filter backend eval:methodology",
     "eval:live": "pnpm --filter backend eval:live",
@@ -30,7 +30,10 @@
     "test:e2e": "pnpm --filter frontend test:e2e",
     "smoke:offline": "node scripts/smoke-offline.mjs",
     "smoke:docker": "bash scripts/smoke-docker.sh",
-    "perf:agent": "pnpm --filter backend perf:agent"
+    "perf:agent": "pnpm --filter backend perf:agent",
+    "perf:live-trace": "pnpm --filter backend perf:live-trace",
+    "effort:compare": "pnpm --filter backend effort:compare",
+    "poc:vercel": "pnpm --filter backend poc:vercel"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

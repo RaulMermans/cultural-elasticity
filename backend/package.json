@@ -22,7 +22,10 @@
     "eval:agent:replay": "tsx scripts/replay-evaluators.ts",
     "eval:query": "tsx scripts/eval-query.ts",
     "living-atlas:live": "tsx scripts/living-atlas-live.ts",
-    "perf:agent": "tsx scripts/perf-agent.ts"
+    "perf:agent": "tsx scripts/perf-agent.ts",
+    "perf:live-trace": "tsx scripts/perf-live-trace.ts",
+    "effort:compare": "tsx scripts/effort-compare.ts",
+    "poc:vercel": "tsx scripts/vercel-feasibility/run-poc.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.131.0",

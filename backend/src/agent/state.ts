@@ -149,6 +149,16 @@ export type AgentRunState = {
   startedAt: number;
   trace: AgentTrace;
   toolCallCounter: number;
+  /**
+   * Sprint 8B: true after finish/cancel so a provider callback cannot mutate a published result.
+   * Late settlements still record observed cost on `lateSettlements` without rewriting evidence.
+   */
+  finalized: boolean;
+  /** Operation ids whose budget settlement already ran (prevents double-counting one provider call). */
+  settledOperationIds: Set<string>;
+  /** In-flight Qloo reservations not yet settled (included in usage.qlooCalls). */
+  qlooInFlight: number;
+  lateSettlements: { operationId: string; observedAttempts: number; charged: number; discarded: boolean; afterFinalization: boolean }[];
 };
 
 export function createRunState(request: AgentRequest, model: AgentModelInfo, toolProvider: AgentRunState["toolProvider"], limits?: InvestigationLimits): AgentRunState {
@@ -193,6 +203,10 @@ export function createRunState(request: AgentRequest, model: AgentModelInfo, too
     link: null,
     startedAt: Date.now(),
     toolCallCounter: 0,
+    finalized: false,
+    settledOperationIds: new Set(),
+    qlooInFlight: 0,
+    lateSettlements: [],
     trace: {
       runId,
       intent: request.intent ?? null,

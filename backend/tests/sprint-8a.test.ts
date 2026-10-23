@@ -274,6 +274,7 @@ describe("historical 810s parent", () => {
     } as unknown as AgentAnalysisResult);
     expect(historical.reconstructable).toBe(false);
     expect(historical.historicalNote).toBe(HISTORICAL_LATENCY_NOT_FULLY_RECONSTRUCTABLE);
+    expect(historical.outcomes.invalidFull).toBeNull();
   });
 });
 

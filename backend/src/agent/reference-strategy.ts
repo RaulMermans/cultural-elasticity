@@ -29,6 +29,7 @@ import { deterministicDuplicate, structuralDuplicate } from "./concept-dedup.js"
 import type { RankableType } from "./contracts.js";
 import { analysisReserve } from "./analysis-runner.js";
 import { MIN_COMPARISON_SET } from "./router.js";
+import { memoRun } from "./derived-cache.js";
 import { assessReferenceConcept, assessReferenceTerritory, type ReferenceVerdict } from "./semantic-comparison.js";
 import { activeTerritories, remainingQlooCalls, turnsAvailable, type AgentRunState } from "./state.js";
 import type { CompletionFeasibility } from "@cultural-elasticity/shared";
@@ -239,6 +240,10 @@ export type ReferencePlan = {
  * result is an honest PARTIAL.
  */
 export function referencePlan(state: AgentRunState): ReferencePlan {
+  return memoRun(state, "referencePlan", () => computeReferencePlan(state));
+}
+
+function computeReferencePlan(state: AgentRunState): ReferencePlan {
   const intent = state.interpretation?.intent;
   const entityType = referenceEntityType(state);
   const empty: ReferencePlan = { applicable: false, entityType, required: MIN_COMPARISON_SET, valid: 0, pending: [], needed: 0, meaningfulCandidates: [], rejectedCandidates: [], feasible: false, reason: "", outstanding: null, completion: null };
