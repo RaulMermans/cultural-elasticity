@@ -555,6 +555,8 @@ export type AgentMetrics = {
   synthesis_latency_ms?: number;
   analysis_latency_ms?: number;
   qloo_spacing_ms?: number;
+  /** Wall time not covered by sequential model + Qloo + analysis + synthesis clocks. */
+  unattributed_ms?: number;
   synthesis_first_attempt_valid?: boolean | null;
   synthesis_valid_after_repair?: boolean | null;
   synthesis_fallback?: boolean;

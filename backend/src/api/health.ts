@@ -20,6 +20,13 @@ export type ReadyResponse = {
   acceptingInvestigations: boolean;
   publicRuntime: boolean;
   reasons: ReadyReason[];
+  /** Admission only. Never a claim that Qloo, Haiku, or the agent competence gate passed. */
+  semantics: {
+    liveness: "not_this_endpoint";
+    admission: "ready" | "not_ready";
+    providerConnectivity: "not_verified_by_this_endpoint";
+    agentCompetence: "not_this_endpoint";
+  };
   dependencies: {
     qlooCredential: boolean;
     modelCredential: boolean;
@@ -43,13 +50,20 @@ export function readiness(env: NodeJS.ProcessEnv = process.env): ReadyResponse {
   if (publicRuntime(env) && !internalAuth) reasons.push("MISSING_INTERNAL_AUTH");
   if (publicRuntime(env) && spend.configuredBudgetUsd() === null) reasons.push("BUDGET_UNAVAILABLE");
   if (spend.configuredBudgetUsd() !== null && (spend.snapshot().availableUsd ?? 0) <= 0) reasons.push("BUDGET_EXHAUSTED");
+  const admission = reasons.length === 0 ? "ready" : "not_ready";
   return {
-    status: reasons.length === 0 ? "ready" : "not_ready",
+    status: admission,
     service: API_SERVICE_NAME,
     bootId: lifecycle().bootId,
     acceptingInvestigations: canAcceptInvestigations(),
     publicRuntime: publicRuntime(env),
     reasons,
+    semantics: {
+      liveness: "not_this_endpoint",
+      admission,
+      providerConnectivity: "not_verified_by_this_endpoint",
+      agentCompetence: "not_this_endpoint",
+    },
     dependencies: {
       qlooCredential,
       modelCredential,

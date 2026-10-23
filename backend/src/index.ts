@@ -1,6 +1,7 @@
 import { buildApp } from "./app.js";
 import { assertPublicRuntimeSafe, loadLocalEnvFile, readConfig } from "./config/env.js";
 import { beginShutdown, lifecycle } from "./ops/lifecycle.js";
+import { registerLiveProviderProbes } from "./ops/live-probes.js";
 import { opsMetrics } from "./ops/metrics.js";
 import { registeredJobs } from "./ops/server.js";
 
@@ -14,10 +15,12 @@ try {
 }
 
 const app = buildApp({ logLevel: config.logLevel });
+registerLiveProviderProbes();
 opsMetrics().record("backend_restart");
 
 const shutdown = async (signal: string) => {
   beginShutdown();
+  opsMetrics().record("backend_shutdown");
   registeredJobs()?.shutdown("The investigation service is stopping.");
   app.log.info({ signal, bootId: lifecycle().bootId }, "cultural-elasticity-api shutting down");
   try {

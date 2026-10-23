@@ -26,10 +26,23 @@ export function visitorCookie(id: string, secure: boolean): string {
   return parts.join("; ");
 }
 
+const identities = new WeakMap<Request, { id: string; setCookie: string | null }>();
+
+/**
+ * One request uses one visitor identity. Admission and Set-Cookie must share it.
+ * A WeakMap keeps that identity stable even if the proxy reads it more than once.
+ */
 export function visitorFromRequest(request: Request): { id: string; setCookie: string | null } {
+  const cached = identities.get(request);
+  if (cached) return cached;
   const existing = readVisitorId(request.headers.get("cookie"));
-  if (existing) return { id: existing, setCookie: null };
-  const id = newVisitorId();
-  const secure = process.env.NODE_ENV === "production";
-  return { id, setCookie: visitorCookie(id, secure) };
+  const identity = existing
+    ? { id: existing, setCookie: null }
+    : (() => {
+        const id = newVisitorId();
+        const secure = process.env.NODE_ENV === "production";
+        return { id, setCookie: visitorCookie(id, secure) };
+      })();
+  identities.set(request, identity);
+  return identity;
 }

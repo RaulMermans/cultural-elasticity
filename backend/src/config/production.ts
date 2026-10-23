@@ -1,5 +1,8 @@
 import { QLOO_HACKATHON_ORIGIN, requireHackathonBaseUrl } from "../qloo/environment.js";
 
+/** Keep in sync with `floorReserveUsd()` in ops/pricing.ts. Production config must not import the ledger. */
+const MIN_PUBLIC_RESERVE_USD = 0.5;
+
 export const INTERNAL_AUTH_HEADER = "x-ce-internal-auth";
 export const VISITOR_HEADER = "x-ce-visitor";
 export const OPERATOR_HEADER = "x-ce-operator";
@@ -55,6 +58,23 @@ export function validatePublicRuntime(env: NodeJS.ProcessEnv = process.env): Pro
   }
   if (positiveNumber(env.CE_SPEND_BUDGET_USD) === null) {
     issues.push({ code: "SPEND_BUDGET_MISSING", message: "CE_SPEND_BUDGET_USD must be a non-negative number." });
+  }
+  if (env.CE_INVESTIGATION_RESERVE_USD !== undefined && env.CE_INVESTIGATION_RESERVE_USD !== "") {
+    const reserve = Number(env.CE_INVESTIGATION_RESERVE_USD);
+    if (!Number.isFinite(reserve) || reserve <= 0) {
+      issues.push({ code: "RESERVE_INVALID", message: "CE_INVESTIGATION_RESERVE_USD must be a positive number." });
+    } else if (reserve < MIN_PUBLIC_RESERVE_USD) {
+      issues.push({
+        code: "RESERVE_TOO_LOW",
+        message: `CE_INVESTIGATION_RESERVE_USD must be at least ${MIN_PUBLIC_RESERVE_USD} USD so a low reserve cannot disable spend protection.`,
+      });
+    }
+  }
+  if (env.CE_REPLICA_COUNT !== undefined && env.CE_REPLICA_COUNT !== "" && env.CE_REPLICA_COUNT !== "1") {
+    issues.push({
+      code: "REPLICA_COUNT_UNSUPPORTED",
+      message: "This process keeps jobs and spend in memory. CE_REPLICA_COUNT must be 1.",
+    });
   }
   if (!env.QLOO_API_KEY?.trim()) {
     issues.push({ code: "QLOO_CREDENTIAL_MISSING", message: "QLOO_API_KEY is required for a public process." });

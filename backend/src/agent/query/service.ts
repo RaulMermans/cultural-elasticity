@@ -12,6 +12,8 @@
 import { createHash, randomUUID } from "node:crypto";
 import { QUERY_SCHEMA_VERSION, type AgentRunResponse, type InvestigationLink, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type QueryResponse, type QueryState, type QueryTelemetry, type QueryTerritoryNode } from "@cultural-elasticity/shared";
 import { priceUsd } from "../finalizer.js";
+import { interpretCeilingUsd } from "../../ops/pricing.js";
+import type { SpendBound } from "../../ops/spend.js";
 import type { AgentRuntime } from "../runtime.js";
 import { resolveContext, interpreterContextView, type ResolvedContext } from "./context.js";
 import { comparisonFromSources } from "./comparison.js";
@@ -49,6 +51,8 @@ export type QueryHooks = {
   onProgress?: (event: QueryProgress) => void;
   /** A real gate outcome, published before a long investigation. Territories are not yet investigated. */
   onPreview?: (response: QueryResponse) => void;
+  /** Per-job spend envelope. A refused call is incomplete, not fabricated evidence. */
+  spend?: SpendBound;
 };
 
 export type QueryServiceDeps = { runtime: AgentRuntime; interpreter: QueryInterpreter; queries?: QueryStore; log?: (telemetry: QueryTelemetry) => void };
@@ -81,7 +85,7 @@ export class QueryService {
     telemetry.parentRunId = runId;
     if (hooks?.signal?.aborted) return this.cancelledResponse(telemetry, null, "Cancelled before the answer was applied.");
     hooks?.onProgress?.({ phase: "investigating", intent: null });
-    const result = await this.deps.runtime.continue(runId, clarification, { signal: hooks?.signal });
+    const result = await this.deps.runtime.continue(runId, clarification, { signal: hooks?.signal, spend: hooks?.spend });
     return this.finishRun(telemetry, null, result, hooks);
   }
 
@@ -134,9 +138,24 @@ export class QueryService {
       if (!resolved.ok) return this.respond({ telemetry, state: "CONTEXT_UNAVAILABLE", interpretation: null, errors: [resolved.failure] });
       context = resolved.context;
     }
+    if (hooks?.spend && !hooks.spend.authorizeNextCall(interpretCeilingUsd())) {
+      return this.respond({
+        telemetry,
+        state: "INVESTIGATION_FAILED",
+        interpretation: null,
+        errors: [{ code: "SPEND_LIMIT_REACHED", detail: "the authorized model spend cannot cover interpreting this question; no investigation started" }],
+      });
+    }
 
     const outcome = await this.deps.interpreter.interpret({ query: body.query, explicit, context: context ? interpreterContextView(context) : null });
     recordUsage(telemetry, outcome, this.deps.interpreter.info.model);
+    if (outcome.usage && (outcome.usage.inputTokens > 0 || outcome.usage.outputTokens > 0)) {
+      const usd = telemetry.interpretationCostUsd;
+      if (usd !== null) hooks?.spend?.addObserved(usd);
+      else hooks?.spend?.markUnknownCall(interpretCeilingUsd());
+    } else if (this.deps.interpreter.info.kind === "llm") {
+      hooks?.spend?.markUnknownCall(interpretCeilingUsd());
+    }
     if (!outcome.ok) return this.respond({ telemetry, state: "INTERPRETATION_FAILED", interpretation: null, context, errors: [{ code: outcome.code, detail: outcome.detail }] });
 
     const gate = runGate({ query: body.query, explicit, proposal: outcome.proposal, context, interpreter: this.deps.interpreter.info });
@@ -179,7 +198,7 @@ export class QueryService {
     const preview = this.respond({ telemetry, state: "INVESTIGATION_STARTED", interpretation, context, gate, handoff: plan.handoff, silent: true });
     hooks?.onPreview?.(structuredClone(preview));
     const link = { ...plan.link, queryId };
-    const result = await this.deps.runtime.run(plan.request, undefined, { interpretation: plan.interpretation, link, signal: hooks?.signal });
+    const result = await this.deps.runtime.run(plan.request, undefined, { interpretation: plan.interpretation, link, signal: hooks?.signal, spend: hooks?.spend });
     telemetry.childRunId = result.runId;
     const warnings: string[] = [];
     // The inherited brand was handed over by id; the child re-resolved it in Qloo. A different entity is reported, not hidden.

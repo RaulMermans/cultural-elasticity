@@ -4,15 +4,22 @@ import { operatorToken } from "../config/production.js";
 import { verifyOperator } from "../ops/identity.js";
 import { lifecycle } from "../ops/lifecycle.js";
 import { opsMetrics } from "../ops/metrics.js";
+import { probeProviders, providerConnectivity, type ProviderName } from "../ops/providers.js";
 import { registeredJobs } from "../ops/server.js";
 import { spendLedger } from "../ops/spend.js";
 import { readiness } from "./health.js";
 
+function operatorDenied(request: { headers: unknown }, reply: { code: (n: number) => { send: (b: unknown) => unknown } }): boolean {
+  if (!operatorToken() || !verifyOperator(request.headers as Record<string, unknown>)) {
+    void reply.code(404).send({ error: "not_found", message: "This route is not available." });
+    return true;
+  }
+  return false;
+}
+
 export async function opsRoutes(app: FastifyInstance): Promise<void> {
   app.get("/ops/status", async (request, reply) => {
-    if (!operatorToken() || !verifyOperator(request.headers as Record<string, unknown>)) {
-      return reply.code(404).send({ error: "not_found", message: "This route is not available." });
-    }
+    if (operatorDenied(request, reply)) return;
     const jobs = registeredJobs()?.counts();
     if (jobs) opsMetrics().setQueue(jobs.queued, jobs.running);
     return {
@@ -21,9 +28,20 @@ export async function opsRoutes(app: FastifyInstance): Promise<void> {
       startedAt: lifecycle().startedAt,
       shuttingDown: lifecycle().shuttingDown,
       readiness: readiness(),
+      providerConnectivity: providerConnectivity(),
       spend: spendLedger().snapshot(),
       metrics: opsMetrics().snapshot(),
       jobs: jobs ?? { running: 0, queued: 0, held: 0 },
     };
+  });
+
+  app.post("/ops/providers/probe", async (request, reply) => {
+    if (operatorDenied(request, reply)) return;
+    const body = request.body as { providers?: unknown } | undefined;
+    const requested = Array.isArray(body?.providers)
+      ? body.providers.filter((name): name is ProviderName => name === "qloo" || name === "haiku")
+      : (["qloo", "haiku"] as ProviderName[]);
+    const result = await probeProviders(requested.length > 0 ? requested : ["qloo", "haiku"]);
+    return { service: API_SERVICE_NAME, providerConnectivity: result };
   });
 }

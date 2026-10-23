@@ -35,6 +35,7 @@ Provider-specific shapes (harness envelopes, Qloo entity/tag records, `compare_a
 - Sprint 5B.2: the Living Atlas product surface and in-process JobManager. See [sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md](sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md).
 - Sprint 5B.3: Atlas product quality — clarification continuity, return navigation, comparison integrity, evidence attribution, job expiry, public guards, intelligent narrowing, and a recorded live example. See [sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md](sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md).
 - Sprint 7A: deployment foundation — persistent backend host, server-to-server auth, visitor admission, reservation-based spend control, health/readiness, and a verified recorded example. See [sprint-7a/DEPLOYMENT_FOUNDATION.md](sprint-7a/DEPLOYMENT_FOUNDATION.md). Jobs remain in-process. A freeze-after-response host is still incompatible.
+- Sprint 7B: controlled public launch — observed spend is never truncated, one visitor identity per request, readiness is admission not provider proof, operator-triggered provider probes, runtime pre-call spend bounds. See [sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md](sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md). Public Railway/Vercel publication still needs owner approval.
 
 ## Cultural Evidence Core pipeline
 
@@ -83,14 +84,14 @@ Hackathon keys work only on `https://hackathon.api.qloo.com`. The harness would 
 - Envelope → zod validation (`normalize.ts`) → internal contracts. Contract mismatches raise `QlooContractError` and are never retried.
 - The harness runs as a local child or stdio process. That is why the backend needs a container-capable runtime and why Qloo calls never run in the browser or in ordinary serverless functions.
 
-## Deployment (prepared, not deployed)
+## Deployment (prepared, not published)
 
 | Part | Target | Notes |
 | --- | --- | --- |
-| frontend | Vercel | Needs `BACKEND_URL` (server-side env) only |
-| backend | Any container runtime | `backend/Dockerfile`, built from the repo root. `QLOO_API_KEY` and `QLOO_API_BASE_URL` are injected at runtime. The image contains neither. |
+| frontend | Vercel | Next.js Living Atlas. Server-only `BACKEND_URL` and `CE_INTERNAL_API_SECRET`. No `NEXT_PUBLIC_` secrets. Root directory `frontend/`. |
+| backend | Railway (primary), Render fallback | Persistent Docker from `backend/Dockerfile`, one replica. `railway.json` and `deploy/render.yaml`. Jobs and spend are in-memory. |
 
-The two deploy independently. No platform-specific configuration has been added yet.
+The two deploy independently. Do not host `JobManager` on freeze-after-response functions. Canonical runbook: [sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md](sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md). Owner actions (create projects, set secrets, publish URLs) are unexecuted until approved.
 
 ## Validation categories
 

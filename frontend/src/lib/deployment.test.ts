@@ -23,6 +23,16 @@ test("a visitor cookie is issued once and reused", () => {
   assert.ok(newVisitorId().length >= 16);
 });
 
+test("one request keeps a single visitor identity for admission and the cookie", () => {
+  const request = new Request("http://localhost/api/agent/jobs");
+  const admitted = visitorFromRequest(request);
+  const cookie = visitorFromRequest(request);
+  assert.equal(cookie.id, admitted.id);
+  assert.equal(cookie.setCookie, admitted.setCookie);
+  const other = visitorFromRequest(new Request("http://localhost/api/agent/jobs"));
+  assert.notEqual(other.id, admitted.id);
+});
+
 test("a missing production backend URL is an availability failure, not localhost", () => {
   assert.equal(backendBaseUrl({ NODE_ENV: "production", BACKEND_URL: "   " }), null);
   assert.equal(publicFailure(503, { error: "unavailable" }), "The investigation service is not available right now.");

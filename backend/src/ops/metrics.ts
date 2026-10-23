@@ -10,8 +10,11 @@ export type OpsEventName =
   | "job_expired"
   | "admission_rejected"
   | "provider_call_failed"
+  | "budget_reserved"
   | "budget_exceeded"
+  | "budget_reconciled"
   | "backend_restart"
+  | "backend_shutdown"
   | "result_unavailable";
 
 export type LatencyBucket = { count: number; totalMs: number; maxMs: number };
@@ -25,6 +28,7 @@ export type OpsSnapshot = {
   qlooCalls: number;
   modelTokens: { input: number; output: number };
   estimatedModelCostUsd: number;
+  overageUsd: number;
   failureRate: number | null;
   cancellationRate: number | null;
   qlooProviderErrorRate: number | null;
@@ -42,8 +46,11 @@ const EVENT_NAMES: OpsEventName[] = [
   "job_expired",
   "admission_rejected",
   "provider_call_failed",
+  "budget_reserved",
   "budget_exceeded",
+  "budget_reconciled",
   "backend_restart",
+  "backend_shutdown",
   "result_unavailable",
 ];
 
@@ -72,6 +79,7 @@ export class OpsMetrics {
   private qlooCallFailures = 0;
   private modelTokens = { input: 0, output: 0 };
   private estimatedModelCostUsd = 0;
+  private overageUsd = 0;
 
   record(name: OpsEventName, extra: Record<string, unknown> = {}): void {
     this.events[name] += 1;
@@ -92,6 +100,9 @@ export class OpsMetrics {
     if (typeof extra.estimatedModelCostUsd === "number" && extra.estimatedModelCostUsd > 0) {
       this.estimatedModelCostUsd += extra.estimatedModelCostUsd;
     }
+    if (typeof extra.overageUsd === "number" && extra.overageUsd > 0) {
+      this.overageUsd += extra.overageUsd;
+    }
   }
 
   setQueue(depth: number, running: number): void {
@@ -110,6 +121,7 @@ export class OpsMetrics {
       qlooCalls: this.qlooCalls,
       modelTokens: { ...this.modelTokens },
       estimatedModelCostUsd: Math.round(this.estimatedModelCostUsd * 1_000_000) / 1_000_000,
+      overageUsd: Math.round(this.overageUsd * 1_000_000) / 1_000_000,
       failureRate: finished === 0 ? null : this.events.job_failed / finished,
       cancellationRate: finished === 0 ? null : this.events.job_cancelled / finished,
       qlooProviderErrorRate: this.qlooCalls === 0 ? null : this.qlooCallFailures / this.qlooCalls,
