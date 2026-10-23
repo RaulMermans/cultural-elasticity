@@ -35,6 +35,7 @@ import type { ConceptProbeView, ProbePriority } from "@cultural-elasticity/share
 import { tagNamespace as parseTagNamespace } from "../methodology/operational-tags.js";
 import { canonicalConceptKey } from "./concept-dedup.js";
 import { RANKABLE_TYPES, type RankableType } from "./contracts.js";
+import { memoRun, probeSlot } from "./derived-cache.js";
 import type { AgentRunState, PoolRecord, TerritoryState } from "./state.js";
 
 export const PROBE_POLICY_VERSION = "probe-policy-v2";
@@ -334,6 +335,10 @@ export type ProbeRecommendation = {
  * the executor: types it would refuse (exhausted concept, namespace-barren, territory-barren) are never recommended.
  */
 export function probeRecommendations(state: AgentRunState, territories: readonly TerritoryState[], preferredFor: (t: TerritoryState) => RankableType | null = () => null): ProbeRecommendation[] {
+  return memoRun(state, probeSlot(territories), () => computeProbeRecommendations(state, territories, preferredFor));
+}
+
+function computeProbeRecommendations(state: AgentRunState, territories: readonly TerritoryState[], preferredFor: (t: TerritoryState) => RankableType | null): ProbeRecommendation[] {
   const out: ProbeRecommendation[] = [];
   const claimed = new Set<string>();
   for (const t of territories) {

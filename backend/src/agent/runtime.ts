@@ -22,7 +22,7 @@ import { applyConceptDedup } from "./concept-dedup.js";
 import { buildDecisionContext, contextSize } from "./context.js";
 import { agentDecisionSchema, agentRequestSchema, type AgentDecision, type AgentRequest, type Interpretation, type InvestigationLimits } from "./contracts.js";
 import { AgentInputError, RunNotFoundError, RunNotWaitingError } from "./errors.js";
-import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
+import { assessEvidenceSufficiency, type SufficiencyAssessment } from "./evidence-sufficiency.js";
 import { computeMetrics, finalize, needsInputResponse, sealSpans } from "./finalizer.js";
 import { gateFrontierCandidates, pruneForDiversity } from "./frontier.js";
 import { isReady, territoryReadiness } from "./readiness.js";
@@ -178,7 +178,7 @@ export class AgentRuntime {
 
         state.usage.iterations += 1;
         state.turnOpen = true;
-        const turn = await this.turn(state, lastTurn, sufficiency.verdict).finally(() => {
+        const turn = await this.turn(state, lastTurn, sufficiency).finally(() => {
           state.turnOpen = false;
         });
         lastTurn = turn.lastTurn;
@@ -199,7 +199,8 @@ export class AgentRuntime {
     if (phase !== state.status && phase !== "NEEDS_INPUT") transition(state, phase, "evidence changed the working phase");
   }
 
-  private async turn(state: AgentRunState, lastTurn: AgentDecisionContext["lastTurn"], verdict: string): Promise<TurnOutcome> {
+  private async turn(state: AgentRunState, lastTurn: AgentDecisionContext["lastTurn"], sufficiency: SufficiencyAssessment): Promise<TurnOutcome> {
+    const verdict = sufficiency.verdict;
     const active = this.skills.select(state);
     const exposure = this.skills.exposure(state, this.registry, active);
     state.activeSkills = refs(active);
@@ -227,8 +228,8 @@ export class AgentRuntime {
     for (let attempt = 1; attempt <= 2; attempt += 1) {
       const spans = recorderOf(state);
       const context = spans
-        ? spans.measureSync({ runId: state.runId, turnIndex: state.usage.iterations, phase: "CONTEXT_ASSEMBLY", operation: `attempt-${attempt}` }, () => buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair }))
-        : buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair });
+        ? spans.measureSync({ runId: state.runId, turnIndex: state.usage.iterations, phase: "CONTEXT_ASSEMBLY", operation: `attempt-${attempt}` }, () => buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair, sufficiency }))
+        : buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair, sufficiency });
       const size = contextSize(context);
       turnTrace.contextChars = Math.max(turnTrace.contextChars ?? 0, size.chars);
       turnTrace.contextTokensEstimate = Math.max(turnTrace.contextTokensEstimate ?? 0, size.tokensEstimate);
@@ -375,7 +376,9 @@ export class AgentRuntime {
       const outcome = await this.execute(state, decision, results, reject, gate, actions);
       if (outcome.accepted) {
         accepted += 1;
-        this.refreshGate(state, gate);
+        const rec = recorderOf(state);
+        if (rec) rec.measureSync({ runId: state.runId, turnIndex: state.usage.iterations, phase: "STATE_UPDATE", operation: "refreshGate" }, () => this.refreshGate(state, gate));
+        else this.refreshGate(state, gate);
         decisionsTrace.push({ action: decision.action, ...(decision.action === "call_tool" && { tool: decision.tool, arguments: decision.arguments }), reasonSummary: "reasonSummary" in decision ? (decision.reasonSummary ?? "") : "", accepted: true });
       }
       if (outcome.stop) stop = outcome.stop;
@@ -583,6 +586,7 @@ export class AgentRuntime {
   }
 
   private async finish(state: AgentRunState): Promise<AgentRunResponse> {
+    state.finalized = true;
     state.trace.skillUsage = [...state.skillUsage.values()].map(({ skill, turns, qlooCalls, toolCalls }) => ({ skill, turns, qlooCalls, toolCalls }));
     const skipSynthesis = this.spendRefused(state, "synthesis");
     const spans = recorderOf(state);
@@ -605,7 +609,8 @@ export class AgentRuntime {
 function recordPlans(state: AgentRunState): void {
   const plan = comparisonRepresentationPlan(state);
   const plans = (state.trace.representationPlans ??= []);
-  if (plan && JSON.stringify(plans.at(-1)?.plan) !== JSON.stringify(plan)) plans.push({ iteration: state.usage.iterations, plan });
+  const previous = plans.at(-1)?.plan;
+  if (plan && (previous?.reasonCodes.join() !== plan.reasonCodes.join() || previous?.preferredCommonType !== plan.preferredCommonType || previous?.feasibility !== plan.feasibility)) plans.push({ iteration: state.usage.iterations, plan });
   const completion = referencePlan(state).completion;
   const checks = (state.trace.completion ??= []);
   const last = checks.at(-1);

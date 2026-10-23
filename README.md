@@ -4,7 +4,15 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 7A — Deployment foundation
+## Current status: Sprint 8B — Live agent optimization and Vercel proof
+
+- **Sprint 8B** traces a live Haiku+Qloo parent investigation (95% span coverage), reserves Qloo budget at dispatch, memos duplicate derived views, and validates C9’s late-answer grader on live L-C2 and L-E1 (`TAG_TYPE_EVIDENCE_VALID:pass`). A protected Hobby preview proves Node 22 Functions and fake-MCP subprocesses. Official Workflow SDK compiles locally; hosted step registration failed. The agent stays **`AGENT_MODEL_NOT_READY`** (full 7-case gate not repeated). Vercel-only is **`VERCEL_ONLY_CONDITIONAL`**. See [docs/sprint-8b/LIVE_AGENT_OPTIMIZATION_AND_VERCEL_PROOF.md](docs/sprint-8b/LIVE_AGENT_OPTIMIZATION_AND_VERCEL_PROOF.md). No commit/push without owner approval.
+
+## Previous status: Sprint 8A — Agent performance and Vercel feasibility
+
+- **Sprint 8A** established a performance baseline (spans, coverage, eval-only effort/token config) and local Vercel MCP/Workflow proofs. C9 still blocked live readiness. Vercel-only was **not** proven. See [docs/sprint-8a/AGENT_PERFORMANCE_AND_VERCEL_FEASIBILITY.md](docs/sprint-8a/AGENT_PERFORMANCE_AND_VERCEL_FEASIBILITY.md).
+
+## Previous status: Sprint 7A — Deployment foundation
 
 - **Sprint 7A** prepares a public-deployment-capable Living Atlas without publishing it. The backend remains one persistent Node 22 process (`JobManager` is still in-memory). Frontend and backend are intended to deploy separately. See [docs/sprint-7a/DEPLOYMENT_FOUNDATION.md](docs/sprint-7a/DEPLOYMENT_FOUNDATION.md). Owner approval is required before any paid host, DNS or credential change. The agent stays **`AGENT_MODEL_NOT_READY`**.
 

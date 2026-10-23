@@ -43,13 +43,20 @@ export type PerfReport = {
   invalidOverhead: { invalidActions: number; repairs: number; rejectedToolCalls: number };
   waste: WasteFinding[];
   outcomes: {
-    supportedFindings: number;
+    /** FULL territories whose comparison set is known MEANINGFUL. Not combined with PARTIAL. */
     validFull: number;
-    invalidFull: number;
+    /**
+     * FULL territories the semantic validator rejected. `null` when no evaluator/semantic
+     * result exists — missing evaluation is not zero invalid FULL outcomes.
+     */
+    invalidFull: number | null;
     partial: number;
+    descriptive: number;
     insufficient: number;
-    supportedPerMinute: number | null;
-    supportedPerQlooCall: number | null;
+    unsupported: number;
+    validFullPerMinute: number | null;
+    partialPerMinute: number | null;
+    validFullPerQlooCall: number | null;
     validOutcomesPerDollar: number | null;
   };
 };
@@ -91,9 +98,51 @@ export function classifyWaste(result: AgentRunResponse): WasteFinding[] {
   return findings;
 }
 
+export function routeCounts(result: AgentRunResponse): {
+  validFull: number;
+  invalidFull: number | null;
+  partial: number;
+  descriptive: number;
+  insufficient: number;
+  unsupported: number;
+} {
+  if (!isAnalysis(result)) {
+    return { validFull: 0, invalidFull: 0, partial: 0, descriptive: 0, insufficient: 0, unsupported: 0 };
+  }
+  const territories = result.territories;
+  const full = territories.filter((t) => t.analysisRoute === "FULL_RELATIVE_ANALYSIS");
+  const assessments = result.comparisonSetConstruction?.semanticAssessments ?? result.trace.semanticAssessments;
+  const hasSemantic =
+    full.some((t) => t.comparisonSet?.semanticStatus !== undefined) || (assessments !== undefined && assessments.length > 0);
+  let invalidFull: number | null;
+  let validFull: number;
+  if (full.length === 0) {
+    invalidFull = hasSemantic ? 0 : assessments === undefined ? null : 0;
+    validFull = 0;
+  } else if (!hasSemantic) {
+    invalidFull = null;
+    validFull = 0;
+  } else {
+    invalidFull = 0;
+    validFull = 0;
+    for (const t of full) {
+      const status = t.comparisonSet?.semanticStatus;
+      const used = assessments?.some((a) => a.usedForFull && a.memberTerritoryKeys.includes(t.key)) ?? false;
+      if (status === "MEANINGFUL" || used) validFull += 1;
+      else invalidFull += 1;
+    }
+  }
+  const partial = territories.filter((t) => t.analysisRoute === "PARTIAL_CULTURAL_ANALYSIS").length;
+  const descriptive = territories.filter((t) => t.analysisRoute === "DESCRIPTIVE_ANALYSIS").length;
+  const insufficient = territories.filter((t) => t.analysisRoute === "INSUFFICIENT_EVIDENCE").length;
+  const unsupported = territories.filter((t) => t.evidenceStatus === "UNSUPPORTED" || t.analysisRoute === "INSUFFICIENT_EVIDENCE").length;
+  return { validFull, invalidFull, partial, descriptive, insufficient, unsupported };
+}
+
+/** @deprecated Sprint 8B: FULL and PARTIAL are not one equivalent count. Prefer routeCounts(). */
 export function supportedFindingCount(result: AgentRunResponse): number {
-  if (!isAnalysis(result)) return 0;
-  return result.territories.filter((t) => t.analysisRoute === "FULL_RELATIVE_ANALYSIS" || t.analysisRoute === "PARTIAL_CULTURAL_ANALYSIS").length;
+  const counts = routeCounts(result);
+  return counts.validFull + counts.partial;
 }
 
 export function buildPerfReport(result: AgentRunResponse): PerfReport {
@@ -121,9 +170,9 @@ export function buildPerfReport(result: AgentRunResponse): PerfReport {
   }));
   const toolMs = result.trace.toolCalls.map((c) => c.latencyMs);
   const cached = result.trace.toolCalls.flatMap((c) => c.qlooOperations.filter((o) => o.includes("cached"))).length;
-  const supported = supportedFindingCount(result);
+  const counts = routeCounts(result);
   const minutes = m.latency_ms > 0 ? m.latency_ms / 60_000 : 0;
-  const validFull = isAnalysis(result) ? result.territories.filter((t) => t.analysisRoute === "FULL_RELATIVE_ANALYSIS").length : 0;
+  const perMin = (n: number) => (minutes > 0 ? Math.round((n / minutes) * 1000) / 1000 : null);
   return {
     runId: result.runId,
     reconstructable,
@@ -164,14 +213,16 @@ export function buildPerfReport(result: AgentRunResponse): PerfReport {
     },
     waste: classifyWaste(result),
     outcomes: {
-      supportedFindings: supported,
-      validFull,
-      invalidFull: 0,
-      partial: isAnalysis(result) ? result.territories.filter((t) => t.analysisRoute === "PARTIAL_CULTURAL_ANALYSIS").length : 0,
-      insufficient: isAnalysis(result) ? result.territories.filter((t) => t.analysisRoute === "INSUFFICIENT_EVIDENCE").length : 0,
-      supportedPerMinute: minutes > 0 ? Math.round((supported / minutes) * 1000) / 1000 : null,
-      supportedPerQlooCall: m.qloo_calls > 0 ? Math.round((supported / m.qloo_calls) * 1000) / 1000 : null,
-      validOutcomesPerDollar: m.model_cost_usd && m.model_cost_usd > 0 ? Math.round((supported / m.model_cost_usd) * 1000) / 1000 : null,
+      validFull: counts.validFull,
+      invalidFull: counts.invalidFull,
+      partial: counts.partial,
+      descriptive: counts.descriptive,
+      insufficient: counts.insufficient,
+      unsupported: counts.unsupported,
+      validFullPerMinute: perMin(counts.validFull),
+      partialPerMinute: perMin(counts.partial),
+      validFullPerQlooCall: m.qloo_calls > 0 ? Math.round((counts.validFull / m.qloo_calls) * 1000) / 1000 : null,
+      validOutcomesPerDollar: m.model_cost_usd && m.model_cost_usd > 0 ? Math.round((counts.validFull / m.model_cost_usd) * 1000) / 1000 : null,
     },
   };
 }
@@ -184,7 +235,8 @@ export function formatPerfReport(report: PerfReport): string {
     report.historicalNote ? report.historicalNote : `span coverage ${cov?.coverageRatio ?? "n/a"} covered ${cov?.coveredMs ?? 0} unattributed ${cov?.unattributedMs ?? 0} skew ${cov?.clockSkewMs ?? 0}`,
     `naive stages model=${report.naiveStages.stages.modelMs} qloo=${report.naiveStages.stages.qlooMs} analysis=${report.naiveStages.stages.analysisMs} synthesis=${report.naiveStages.stages.synthesisMs} residual=${report.naiveStages.unattributedMs}`,
     `model tokens in=${report.model.inputTokens} out=${report.model.outputTokens} cost=${report.model.costUsd ?? "n/a"} effort=${report.model.effort ?? "n/a"}`,
-    `supported ${report.outcomes.supportedFindings} /min ${report.outcomes.supportedPerMinute ?? "n/a"} /qloo ${report.outcomes.supportedPerQlooCall ?? "n/a"} /$ ${report.outcomes.validOutcomesPerDollar ?? "n/a"}`,
+    `outcomes validFull=${report.outcomes.validFull} invalidFull=${report.outcomes.invalidFull ?? "unmeasured"} partial=${report.outcomes.partial} descriptive=${report.outcomes.descriptive} insufficient=${report.outcomes.insufficient} unsupported=${report.outcomes.unsupported}`,
+    `validFull /min ${report.outcomes.validFullPerMinute ?? "n/a"} /qloo ${report.outcomes.validFullPerQlooCall ?? "n/a"} /$ ${report.outcomes.validOutcomesPerDollar ?? "n/a"}`,
     ...report.waste.map((w) => `waste ${w.classification} ${w.kind} ×${w.count}: ${w.detail}`),
   ];
   return lines.join("\n");

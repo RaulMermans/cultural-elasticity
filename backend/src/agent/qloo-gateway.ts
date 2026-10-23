@@ -14,7 +14,9 @@ import type { QlooOperation, QlooOperationInput } from "../qloo/types.js";
 import { recorderOf } from "../ops/spans.js";
 import { shortEntityType, type RankableType } from "./contracts.js";
 import { recordEntity, recordTag, remainingQlooCalls, type AgentRunState } from "./state.js";
-import type { AgentToolProvider, QlooCallResult } from "./tool-provider.js";
+import type { AgentToolProvider, QlooCallMeta, QlooCallResult } from "./tool-provider.js";
+
+const EMPTY_META = (operationId: string): QlooCallMeta => ({ operationId, spacingMs: 0, rateLimitMs: 0, startupMs: 0 });
 
 /** [live] The harness caps entity_tags at 20; tie order depends on take, so one fixed take everywhere. */
 export const PROFILE_TAKE = 20;
@@ -41,6 +43,25 @@ export function cacheKey(operation: QlooOperation, input: unknown): string {
  */
 export const abandonedToolCalls = new WeakSet<AgentToolCallTrace>();
 
+function refuse(code: string, detail: string, attempts: number, callMeta: QlooCallMeta): QlooCallResult {
+  return { outcome: "failed", code, retryable: false, detail, attempts, callMeta };
+}
+
+/**
+ * Charge at most `attempts` against the run budget. The first unit is reserved at dispatch; extra
+ * retries settle here. Never exceeds `maxQlooCalls`. Returns how many units were newly charged.
+ */
+function settleAttempts(state: AgentRunState, operationId: string, observedAttempts: number, reserved: number): number {
+  if (state.settledOperationIds.has(operationId)) return 0;
+  state.settledOperationIds.add(operationId);
+  const extra = Math.max(0, observedAttempts - reserved);
+  const room = Math.max(0, state.limits.maxQlooCalls - state.usage.qlooCalls);
+  const chargeExtra = Math.min(extra, room);
+  state.usage.qlooCalls += chargeExtra;
+  state.usage.retries += extra;
+  return reserved + chargeExtra;
+}
+
 export async function callQloo<O extends QlooOperation>(
   state: AgentRunState,
   provider: AgentToolProvider,
@@ -64,55 +85,90 @@ export async function callQloo<O extends QlooOperation>(
     });
     return cached;
   }
+  if (state.finalized) {
+    return refuse("RUN_FINALIZED", "the investigation already finalized; a pending provider call cannot become evidence", 0, EMPTY_META(`${trace.id}:${operation}:finalized`));
+  }
   const remaining = remainingQlooCalls(state);
-  if (remaining < 1) return { outcome: "failed", code: "BUDGET_EXHAUSTED", retryable: false, detail: `Qloo call budget (${state.limits.maxQlooCalls}) is spent`, attempts: 0 };
+  if (remaining < 1) return refuse("BUDGET_EXHAUSTED", `Qloo call budget (${state.limits.maxQlooCalls}) is spent`, 0, EMPTY_META(`${trace.id}:${operation}:budget`));
+
+  const operationId = `${state.runId}:${trace.id}:${operation}:${state.usage.qlooCalls}`;
+  state.usage.qlooCalls += 1;
+  state.qlooInFlight += 1;
+  trace.attempts += 1;
+  const reserved = 1;
 
   const started = performance.now();
-  const waits = (provider as { waits?: { spacingMs: number; rateLimitMs: number } }).waits;
-  const waitedBefore = waits ? waits.spacingMs + waits.rateLimitMs : 0;
   const rec = recorderOf(state);
   const requestSpan = rec?.start({ runId: state.runId, turnIndex: state.usage.iterations, phase: "QLOO_REQUEST", operation, parentSpanId: null });
-  const result = await provider.call(operation, input, { maxRetries: Math.min(state.limits.maxRetryPerToolCall, remaining - 1) });
-  state.usage.qlooLatencyMs += Math.round(performance.now() - started);
-  if (waits) state.usage.qlooSpacingMs += waits.spacingMs + waits.rateLimitMs - waitedBefore;
-  const meta = (provider as { lastCallMeta?: { spacingMs: number; rateLimitMs: number; startupMs: number } }).lastCallMeta;
-  if (rec && requestSpan && meta) {
-    const origin = rec.offsetMs() - Math.round(performance.now() - started);
-    if (meta.spacingMs + meta.rateLimitMs > 0) {
-      rec.record({ runId: state.runId, turnIndex: state.usage.iterations, phase: "QLOO_SPACING", operation: `${operation}:spacing`, parentSpanId: requestSpan.spanId, startOffsetMs: Math.max(0, origin), durationMs: meta.spacingMs + meta.rateLimitMs });
+  try {
+    const result = await provider.call(operation, input, { maxRetries: Math.min(state.limits.maxRetryPerToolCall, remaining - 1) });
+    const elapsed = Math.round(performance.now() - started);
+    const meta: QlooCallMeta = result.callMeta ?? EMPTY_META(operationId);
+    const abandoned = abandonedToolCalls.has(trace);
+    const afterFinalization = state.finalized;
+    const observedAttempts = Math.max(reserved, result.attempts);
+    const charged = afterFinalization ? reserved : settleAttempts(state, operationId, observedAttempts, reserved);
+    if (afterFinalization) {
+      state.settledOperationIds.add(operationId);
+      state.lateSettlements.push({ operationId, observedAttempts, charged: reserved, discarded: true, afterFinalization: true });
+    } else if (abandoned) {
+      state.lateSettlements.push({ operationId, observedAttempts, charged, discarded: true, afterFinalization: false });
     }
-    if (meta.startupMs > 0) {
-      rec.record({ runId: state.runId, turnIndex: state.usage.iterations, phase: "QLOO_TRANSPORT_STARTUP", operation: `${operation}:startup`, parentSpanId: requestSpan.spanId, startOffsetMs: Math.max(0, origin + meta.spacingMs + meta.rateLimitMs), durationMs: meta.startupMs });
+    if (!afterFinalization) {
+      state.usage.qlooLatencyMs += elapsed;
+      if (meta.spacingMs + meta.rateLimitMs > 0) state.usage.qlooSpacingMs += meta.spacingMs + meta.rateLimitMs;
+      if (observedAttempts > reserved) trace.attempts += observedAttempts - reserved;
     }
+    if (rec && requestSpan && !afterFinalization) {
+      const origin = rec.offsetMs() - elapsed;
+      if (meta.spacingMs + meta.rateLimitMs > 0) {
+        rec.record({ runId: state.runId, turnIndex: state.usage.iterations, phase: "QLOO_SPACING", operation: `${operation}:spacing`, parentSpanId: requestSpan.spanId, startOffsetMs: Math.max(0, origin), durationMs: meta.spacingMs + meta.rateLimitMs });
+      }
+      if (meta.startupMs > 0) {
+        rec.record({ runId: state.runId, turnIndex: state.usage.iterations, phase: "QLOO_TRANSPORT_STARTUP", operation: `${operation}:startup`, parentSpanId: requestSpan.spanId, startOffsetMs: Math.max(0, origin + meta.spacingMs + meta.rateLimitMs), durationMs: meta.startupMs });
+      }
+    }
+    const qlooOutcome = result.outcome === "ok" || result.outcome === "empty" ? result.outcome : result.outcome === "needs_input" ? "ok" : "error";
+    if (!afterFinalization) {
+      requestSpan?.end(abandoned ? "timeout" : qlooOutcome, "code" in result ? result.code : undefined);
+      rec?.record({
+        runId: state.runId,
+        turnIndex: state.usage.iterations,
+        phase: "QLOO_RESPONSE",
+        operation: `${operation}:${abandoned ? "timeout" : result.outcome}`,
+        parentSpanId: requestSpan?.spanId ?? null,
+        startOffsetMs: rec.offsetMs(),
+        durationMs: 0,
+        outcome: abandoned ? "timeout" : qlooOutcome,
+      });
+    }
+    if (abandoned || afterFinalization) {
+      if (!afterFinalization) trace.qlooOperations.push(`${operation} (late answer discarded)`);
+      return refuse(
+        afterFinalization ? "RUN_FINALIZED" : "TOOL_TIMEOUT",
+        afterFinalization
+          ? "the Qloo answer arrived after the investigation finalized and was discarded"
+          : "the Qloo answer arrived after the tool timeout and was discarded",
+        observedAttempts,
+        meta,
+      );
+    }
+    trace.qlooOperations.push(operation);
+    if ("call" in result) {
+      trace.correlationIds.push(result.call.envelope.execution.correlation_id);
+      state.flags.push(...result.flags);
+      state.callCache.set(key, result);
+    } else if (result.correlationId) {
+      trace.correlationIds.push(result.correlationId);
+    }
+    return result;
+  } catch (error) {
+    if (!state.settledOperationIds.has(operationId) && !state.finalized) settleAttempts(state, operationId, reserved, reserved);
+    requestSpan?.end("error", error instanceof Error ? error.name.slice(0, 80) : "QLOO_ERROR");
+    throw error;
+  } finally {
+    state.qlooInFlight = Math.max(0, state.qlooInFlight - 1);
   }
-  const qlooOutcome = result.outcome === "ok" || result.outcome === "empty" ? result.outcome : result.outcome === "needs_input" ? "ok" : "error";
-  requestSpan?.end(abandonedToolCalls.has(trace) ? "timeout" : qlooOutcome, "code" in result ? result.code : undefined);
-  rec?.record({
-    runId: state.runId,
-    turnIndex: state.usage.iterations,
-    phase: "QLOO_RESPONSE",
-    operation: `${operation}:${result.outcome}`,
-    parentSpanId: requestSpan?.spanId ?? null,
-    startOffsetMs: rec.offsetMs(),
-    durationMs: 0,
-    outcome: abandonedToolCalls.has(trace) ? "timeout" : qlooOutcome,
-  });
-  state.usage.qlooCalls += result.attempts;
-  state.usage.retries += Math.max(0, result.attempts - 1);
-  trace.attempts += result.attempts;
-  if (abandonedToolCalls.has(trace)) {
-    trace.qlooOperations.push(`${operation} (late answer discarded)`);
-    return { outcome: "failed", code: "TOOL_TIMEOUT", retryable: false, detail: "the Qloo answer arrived after the tool timeout and was discarded", attempts: result.attempts };
-  }
-  trace.qlooOperations.push(operation);
-  if ("call" in result) {
-    trace.correlationIds.push(result.call.envelope.execution.correlation_id);
-    state.flags.push(...result.flags);
-    state.callCache.set(key, result);
-  } else if (result.correlationId) {
-    trace.correlationIds.push(result.correlationId);
-  }
-  return result;
 }
 
 const corr = (call: LiveCall) => call.envelope.execution.correlation_id;

@@ -21,6 +21,7 @@
 import type { ComparisonRepresentationPlan } from "@cultural-elasticity/shared";
 import { RANKABLE_TYPES, type RankableType } from "./contracts.js";
 import { conceptPools, conceptProbeState, eligibleMembers, territoryBarrenTypes, territoryConcepts, territoryProbeState, typePreference } from "./probe-policy.js";
+import { memoRun } from "./derived-cache.js";
 import { MIN_COMPARISON_SET } from "./router.js";
 import { activeTerritories, type AgentRunState, type TerritoryState } from "./state.js";
 
@@ -52,6 +53,10 @@ export function untestedConceptsFor(state: AgentRunState, t: TerritoryState, typ
 }
 
 export function comparisonRepresentationPlan(state: AgentRunState): ComparisonRepresentationPlan | null {
+  return memoRun(state, "alignment", () => computeComparisonRepresentationPlan(state));
+}
+
+function computeComparisonRepresentationPlan(state: AgentRunState): ComparisonRepresentationPlan | null {
   const territories = alignmentTerritories(state);
   const intent = state.interpretation?.intent;
   if (territories.length < 2 || !state.brand.entity) return null;

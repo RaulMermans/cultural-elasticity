@@ -22,6 +22,7 @@ import { matchOperationalRule } from "../methodology/operational-tags.js";
 import { frontierConcepts, labelTokens } from "./candidate-discovery.js";
 import { canonicalConceptKey, canonicalRelation, canonicalTagName } from "./concept-dedup.js";
 import { conceptPools, eligibleMembers, territoryQueryTags } from "./probe-policy.js";
+import { memoRun } from "./derived-cache.js";
 import { preferredTypeFor } from "./representation-alignment.js";
 import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
 import { incidentalConcept } from "./semantic-comparison.js";
@@ -157,6 +158,10 @@ export type FrontierPoolEntry = { tagId: string; label: string; canonicalConcept
  * every choice is still validated with Qloo.
  */
 export function frontierCandidatePool(state: AgentRunState): FrontierPoolEntry[] {
+  return memoRun(state, "frontierPool", () => computeFrontierCandidatePool(state));
+}
+
+function computeFrontierCandidatePool(state: AgentRunState): FrontierPoolEntry[] {
   const base = new Set(frontierEvidenceBase(state));
   const concepts = frontierConcepts(state, 1).map((c) => ({ ...c, support: countSupport(state, c.tagId, base) })).filter((c) => c.support > 0);
   const byKey = new Map<string, (typeof concepts)[number]>();

@@ -355,11 +355,12 @@ describe("Sprint 5A.2 a timed-out call never becomes evidence (live final run: l
     };
     const out = await exec(...probe("book", HC));
     expect(out.accepted ? out.result.errorCode : JSON.stringify(out)).toBe("TOOL_TIMEOUT");
-    const before = state.usage.qlooCalls;
+    const atTimeout = state.usage.qlooCalls;
+    expect(atTimeout).toBeGreaterThan(0);
     await new Promise((r) => setTimeout(r, 150));
     expect(state.pools.filter((p) => p.tagIds.includes(HC))).toEqual([]);
     expect([...state.callCache.keys()].some((k) => k.includes("recommend"))).toBe(false);
-    expect(state.usage.qlooCalls).toBe(before + 1);
+    expect(state.usage.qlooCalls).toBe(atTimeout);
     expect(state.trace.toolCalls.at(-1)!.qlooOperations).toEqual(["recommend (late answer discarded)"]);
   });
 });

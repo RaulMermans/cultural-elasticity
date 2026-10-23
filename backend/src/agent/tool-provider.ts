@@ -10,6 +10,7 @@
  *   - QLOO_AUTH is never retried.
  * It never interprets results; the tools and the deterministic planner do that.
  */
+import { randomUUID } from "node:crypto";
 import type { Limitation } from "../evidence/schema.js";
 import { QlooContractError, QlooError } from "../qloo/errors.js";
 import { liveCall, QLOO_LIVE_SOURCE, type LiveCall } from "../qloo/live-adapter.js";
@@ -20,10 +21,18 @@ import type { QlooOperation, QlooOperationInput } from "../qloo/types.js";
 /** Provenance source for the scripted synthetic world (shared with the Sprint 1 synthetic fixtures). */
 export const SYNTHETIC_SOURCE = "synthetic-fixture";
 
+/** Per-call timing, returned with the result so concurrent investigations cannot share last-call fields. */
+export type QlooCallMeta = {
+  operationId: string;
+  spacingMs: number;
+  rateLimitMs: number;
+  startupMs: number;
+};
+
 export type QlooCallResult =
-  | { outcome: "ok" | "empty"; call: LiveCall; attempts: number; flags: Limitation[] }
-  | { outcome: "needs_input"; call: LiveCall; issues: ResolutionIssue[]; attempts: number; flags: Limitation[] }
-  | { outcome: "failed"; code: string; retryable: boolean; detail: string; attempts: number; correlationId?: string };
+  | { outcome: "ok" | "empty"; call: LiveCall; attempts: number; flags: Limitation[]; callMeta: QlooCallMeta }
+  | { outcome: "needs_input"; call: LiveCall; issues: ResolutionIssue[]; attempts: number; flags: Limitation[]; callMeta: QlooCallMeta }
+  | { outcome: "failed"; code: string; retryable: boolean; detail: string; attempts: number; correlationId?: string; callMeta: QlooCallMeta };
 
 export interface AgentToolProvider {
   readonly name: string;
@@ -56,8 +65,11 @@ export class QlooToolProvider implements AgentToolProvider {
   private queue: Promise<void> = Promise.resolve();
   /** Sprint 5A latency telemetry: time spent waiting on call spacing and on rate-limit back-off. */
   readonly waits = { spacingMs: 0, rateLimitMs: 0 };
-  /** Sprint 8A: waits and subprocess startup for the most recent exclusive call only. */
-  lastCallMeta = { spacingMs: 0, rateLimitMs: 0, startupMs: 0 };
+  /**
+   * Most recent exclusive call only. Not authoritative for trace attribution when calls overlap
+   * across investigations: use `QlooCallResult.callMeta` (stable operationId) instead.
+   */
+  lastCallMeta: QlooCallMeta = { operationId: "", spacingMs: 0, rateLimitMs: 0, startupMs: 0 };
 
   constructor(
     private readonly transport: QlooTransport,
@@ -88,12 +100,12 @@ export class QlooToolProvider implements AgentToolProvider {
 
   private async callExclusive<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], callOptions: { maxRetries?: number } = {}): Promise<QlooCallResult> {
     const maxRetries = Math.min(this.options.maxRetries ?? 1, callOptions.maxRetries ?? 1);
-    this.lastCallMeta = { spacingMs: 0, rateLimitMs: 0, startupMs: 0 };
+    const callMeta: QlooCallMeta = { operationId: randomUUID(), spacingMs: 0, rateLimitMs: 0, startupMs: 0 };
     for (let attempt = 1; ; attempt += 1) {
       const wait = this.lastCall + this.options.spacingMs - Date.now();
       if (wait > 0) {
         this.waits.spacingMs += wait;
-        this.lastCallMeta.spacingMs += wait;
+        callMeta.spacingMs += wait;
         await this.sleep(wait);
       }
       this.lastCall = Date.now();
@@ -103,7 +115,7 @@ export class QlooToolProvider implements AgentToolProvider {
       try {
         const result = await this.transport.execute(operation, input);
         const startup = (this.transport as { lastStartupMs?: number }).lastStartupMs;
-        if (typeof startup === "number" && startup > 0) this.lastCallMeta.startupMs += startup;
+        if (typeof startup === "number" && startup > 0) callMeta.startupMs += startup;
         if (result.kind === "failure") {
           failure = { code: result.failure.code, retryable: result.failure.retryable, detail: result.failure.recovery, ...(result.failure.correlationId && { correlationId: result.failure.correlationId }) };
         } else {
@@ -112,8 +124,9 @@ export class QlooToolProvider implements AgentToolProvider {
           if (error) failure = { code: error.code, retryable: error.retryable, detail: error.recovery, correlationId: call.envelope.execution.correlation_id };
         }
       } catch (error) {
-        if (error instanceof QlooContractError) return { outcome: "failed", code: "QLOO_CONTRACT", retryable: false, detail: error.message, attempts: attempt };
-        if (error instanceof QlooError) return { outcome: "failed", code: "QLOO_TRANSPORT", retryable: false, detail: error.message, attempts: attempt };
+        this.lastCallMeta = { ...callMeta };
+        if (error instanceof QlooContractError) return { outcome: "failed", code: "QLOO_CONTRACT", retryable: false, detail: error.message, attempts: attempt, callMeta };
+        if (error instanceof QlooError) return { outcome: "failed", code: "QLOO_TRANSPORT", retryable: false, detail: error.message, attempts: attempt, callMeta };
         throw error;
       }
 
@@ -122,12 +135,13 @@ export class QlooToolProvider implements AgentToolProvider {
           if (failure.code === "QLOO_RATE_LIMIT") {
             const pause = this.options.rateLimitWaitMs ?? 60_000;
             this.waits.rateLimitMs += pause;
-            this.lastCallMeta.rateLimitMs += pause;
+            callMeta.rateLimitMs += pause;
             await this.sleep(pause);
           }
           continue;
         }
-        return { outcome: "failed", ...failure, attempts: attempt };
+        this.lastCallMeta = { ...callMeta };
+        return { outcome: "failed", ...failure, attempts: attempt, callMeta };
       }
 
       const ok = call as LiveCall;
@@ -136,9 +150,10 @@ export class QlooToolProvider implements AgentToolProvider {
       if (status === "partial" || status === "degraded") {
         flags.push({ code: `QLOO_${status.toUpperCase()}`, detail: `${operation} ${ok.envelope.execution.correlation_id}: Qloo marked this result ${status} (${(ok.envelope.warnings ?? []).join("; ") || "no detail"})` });
       }
-      if (status === "needs_input") return { outcome: "needs_input", call: ok, issues: toResolutionIssues(operation, ok.envelope), attempts: attempt, flags };
+      this.lastCallMeta = { ...callMeta };
+      if (status === "needs_input") return { outcome: "needs_input", call: ok, issues: toResolutionIssues(operation, ok.envelope), attempts: attempt, flags, callMeta };
       const empty = status === "empty" || (Array.isArray(ok.envelope.results) && ok.envelope.results.length === 0);
-      return { outcome: empty ? "empty" : "ok", call: ok, attempts: attempt, flags };
+      return { outcome: empty ? "empty" : "ok", call: ok, attempts: attempt, flags, callMeta };
     }
   }
 
