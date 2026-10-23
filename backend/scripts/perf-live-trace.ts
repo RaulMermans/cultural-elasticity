@@ -54,7 +54,7 @@ async function main(): Promise<number> {
   const result = await runtime.run(REQUEST);
   const wall = Date.now() - started;
   const report = buildPerfReport(result);
-  const outDir = join(backendRoot, "feasibility-output", "sprint8b-live-trace");
+  const outDir = join(backendRoot, "feasibility-output", "sprint8c-live-trace");
   mkdirSync(outDir, { recursive: true });
   const payload = {
     notice: "LIVE Haiku + LIVE Qloo. One run. Not a full readiness gate.",

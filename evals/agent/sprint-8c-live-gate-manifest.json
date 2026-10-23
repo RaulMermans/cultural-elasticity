@@ -1,0 +1,26 @@
+{
+  "fixtureType": "evaluation-criteria",
+  "notice": "Sprint 8C execution manifest for the frozen live readiness gate. Not a result. LIVE Haiku + LIVE Qloo if executed. Credentials on disk are not this authorization.",
+  "version": "sprint-8c-live-gate-manifest-v1",
+  "gate": "agent-readiness-gate-v3",
+  "evaluators": "run-evaluators-v2.1",
+  "stabilityMetrics": "frontier-stability-metrics-v3",
+  "stabilityCriteria": "frontier-stability-criteria-v1",
+  "model": { "id": "claude-haiku-5-5", "effort": "high", "decisionMaxTokens": 16000 },
+  "cases": {
+    "prescribedModel": ["L-M1", "L-M2", "L-M3", "L-C1", "L-C2", "L-E1", "L-E2"],
+    "prescribedBaseline": ["L-M1", "L-M2", "L-M3", "L-C1", "L-C2", "L-E1", "L-E2"],
+    "frontierStability": { "cases": ["L-E1", "L-E2"], "requiredRuns": 3 },
+    "controlled": "evals/agent/controlled-cases.json (outside prescribed denominator)"
+  },
+  "expectedMaxima": {
+    "modelCalls": 220,
+    "modelOutputTokens": 3520000,
+    "qlooCalls": 900,
+    "durationMinutes": 180,
+    "conservativeUsdReserve": 2.5,
+    "quotaAssumptions": "Haiku 5.5 list price 2026-10-07; Qloo hackathon calls unit-capped, no published USD"
+  },
+  "command": "pnpm eval:agent:live -- --arms baseline,model --stability 3 --out backend/feasibility-output/sprint8c-live-gate",
+  "authorization": "Sprint 8C owner brief Objective C / §17. This manifest must exist before the spend. Do not treat a later cherry-pick as the gate."
+}

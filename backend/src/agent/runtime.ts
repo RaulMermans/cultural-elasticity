@@ -35,6 +35,7 @@ import { probeRecommendations } from "./probe-policy.js";
 import { comparisonRepresentationPlan, preferredTypeFor } from "./representation-alignment.js";
 import { applyInterpretation, resolveInterpretation } from "./router.js";
 import { RunStore } from "./run-store.js";
+import { clearDerivedCache } from "./derived-cache.js";
 import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState } from "./state.js";
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
 import type { SpendBound } from "../ops/spend.js";
@@ -587,6 +588,7 @@ export class AgentRuntime {
 
   private async finish(state: AgentRunState): Promise<AgentRunResponse> {
     state.finalized = true;
+    clearDerivedCache(state);
     state.trace.skillUsage = [...state.skillUsage.values()].map(({ skill, turns, qlooCalls, toolCalls }) => ({ skill, turns, qlooCalls, toolCalls }));
     const skipSynthesis = this.spendRefused(state, "synthesis");
     const spans = recorderOf(state);

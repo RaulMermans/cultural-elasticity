@@ -4,39 +4,50 @@ import { z } from "zod";
 export const requestSchema = z.object({
   query: z.string().min(1).max(500),
   brand: z.string().min(1).max(120),
+  mode: z.enum(["complete", "refuse_retry"]).default("complete"),
 });
 
-async function validateRequest(request: z.infer<typeof requestSchema>) {
+export async function validateRequest(request: z.infer<typeof requestSchema>) {
   "use step";
   return requestSchema.parse(request);
 }
 
-async function syntheticAgentDecision(validated: z.infer<typeof requestSchema>) {
+export async function syntheticAgentDecision(validated: z.infer<typeof requestSchema>) {
   "use step";
   return { action: "call_tool" as const, tool: "qloo_find_tags", query: validated.brand };
 }
 
-async function mockedQlooTool(decision: { tool: string; query: string }) {
+export async function mockedQlooTool(decision: { tool: string; query: string }) {
   "use step";
-  return { tool: decision.tool, tags: 1, correlationId: "syn-corr-workflow", committed: true, operationId: "qloo_find_tags:synthetic" };
+  return {
+    tool: decision.tool,
+    tags: 1,
+    correlationId: "syn-corr-workflow",
+    committed: true,
+    operationId: "qloo_find_tags:synthetic",
+  };
 }
 
-async function persistStep(result: { correlationId: string; operationId: string }) {
+export async function persistStep(result: { correlationId: string; operationId: string }) {
   "use step";
   return { stored: true, result };
 }
 
-async function resumeCommitted(persisted: { stored: boolean; result: unknown }) {
+export async function resumeCommitted(persisted: { stored: boolean; result: unknown }) {
   "use step";
   if (!persisted.stored) throw new FatalError("no committed Qloo step to resume");
   return persisted.result;
 }
 
-async function uncertainExternal(operationId: string) {
+export async function uncertainExternal(operationId: string) {
   "use step";
   throw new FatalError(`retrying ${operationId} is unsafe`);
 }
 
+/**
+ * Happy-path synthetic investigation. Completes with a validated artifact.
+ * Replay of resumeCommitted is a no-op on already-stored output (SDK step log).
+ */
 export async function syntheticInvestigationWorkflow(input: z.infer<typeof requestSchema>) {
   "use workflow";
   const validated = await validateRequest(input);
@@ -44,12 +55,16 @@ export async function syntheticInvestigationWorkflow(input: z.infer<typeof reque
   const tool = await mockedQlooTool(decision);
   const persisted = await persistStep(tool);
   await resumeCommitted(persisted);
-  let uncertain: "refused" | "unexpected" = "refused";
-  try {
-    await uncertainExternal("qloo_find_tags");
-    uncertain = "unexpected";
-  } catch (error) {
-    if (!(error instanceof FatalError) && !(error instanceof Error && error.name === "FatalError")) throw error;
-  }
-  return { status: "COMPLETE" as const, findings: 1, uncertain };
+  return { status: "COMPLETE" as const, findings: 1, operationId: tool.operationId };
+}
+
+/**
+ * Official FatalError path: the runtime must not retry a paid-looking external call.
+ * FatalError is not catchable inside the workflow; the run fails.
+ */
+export async function refusedRetryWorkflow(input: z.infer<typeof requestSchema>) {
+  "use workflow";
+  const validated = await validateRequest(input);
+  await uncertainExternal(validated.brand);
+  return { status: "UNEXPECTED" as const };
 }

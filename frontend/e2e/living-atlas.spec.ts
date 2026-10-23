@@ -4,8 +4,24 @@ const sentinelQloo = ["SENTINEL", "QLOO", "NOT", "IN", "BROWSER"].join("_");
 const sentinelModel = ["SENTINEL", "MODEL", "NOT", "IN", "BROWSER"].join("_");
 
 async function open(page: import("@playwright/test").Page) {
-  await page.goto("/", { waitUntil: "domcontentloaded", timeout: 120_000 });
-  await expect(page.locator("form.composer[data-hydrated='true']")).toBeVisible({ timeout: 30_000 });
+  const pageErrors: string[] = [];
+  const consoleErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  page.on("console", (msg) => {
+    if (msg.type() === "error") consoleErrors.push(msg.text());
+  });
+  const response = await page.goto("/", { waitUntil: "domcontentloaded", timeout: 120_000 });
+  if (!response || response.status() >= 500) {
+    throw new Error(`Living Atlas GET / failed: status=${response?.status() ?? "none"}`);
+  }
+  const composer = page.locator("form.composer");
+  await expect(composer, "composer markup should render before hydration").toBeVisible({ timeout: 30_000 });
+  try {
+    await expect(composer).toHaveAttribute("data-hydrated", "true", { timeout: 30_000 });
+  } catch (error) {
+    const detail = `hydration failed status=${response.status()} pageErrors=${pageErrors.join(" | ") || "none"} console=${consoleErrors.join(" | ") || "none"}`;
+    throw new Error(detail, { cause: error });
+  }
 }
 
 function branch(page: import("@playwright/test").Page, name: RegExp) {

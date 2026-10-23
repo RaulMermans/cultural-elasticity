@@ -11,6 +11,7 @@ const write = (message) => process.stdout.write(`${JSON.stringify(message)}\n`);
 const rl = createInterface({ input: process.stdin, terminal: false });
 rl.on("line", (line) => {
   const request = JSON.parse(line);
+  if (mode === "hang-init") return;
   if (request.method === "initialize") return write({ jsonrpc: "2.0", id: request.id, result: { protocolVersion: "2024-11-05", capabilities: { tools: {} }, serverInfo: { name: "fake" } } });
   if (request.method === "notifications/initialized") return;
   if (request.method !== "tools/call") return write({ jsonrpc: "2.0", id: request.id, error: { code: -32601, message: "Method not found" } });

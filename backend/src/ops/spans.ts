@@ -207,17 +207,41 @@ export function exclusiveDuration(parent: Interval, children: readonly Interval[
   return Math.max(0, parent.end - parent.start - unionDuration(clipped));
 }
 
-export type PhaseExclusive = { phase: RuntimeSpanPhase; exclusiveMs: number; inclusiveMs: number; count: number };
+export type PhaseExclusive = {
+  phase: RuntimeSpanPhase;
+  /** Sum of span durations minus parented children. Not wall-exclusive when unparented spans overlap. */
+  exclusiveMs: number;
+  /** Sum of span durations of this phase (nested children still included). Can exceed wall. */
+  inclusiveMs: number;
+  /** Union of this phase's intervals. Overlap within the phase is counted once. */
+  wallUnionMs: number;
+  count: number;
+};
+
+export type SpanHierarchyNode = {
+  spanId: string;
+  parentSpanId: string | null;
+  phase: RuntimeSpanPhase;
+  operation: string;
+  inclusiveMs: number;
+  exclusiveOfChildrenMs: number;
+};
 
 export type SpanCoverage = {
   wallMs: number;
   monotonicElapsedMs: number;
+  /** Union of all activity intervals. Overlap is counted once. This is the honest coverage clock. */
   coveredMs: number;
   unattributedMs: number;
   overlapMs: number;
   clockSkewMs: number;
   coverageRatio: number | null;
   exclusiveByPhase: PhaseExclusive[];
+  /** Sum of exclusive-of-children across phases. Can exceed coveredMs when unparented spans overlap. */
+  exclusiveSumMs: number;
+  inclusiveSumMs: number;
+  exclusiveSumExceedsCovered: boolean;
+  hierarchy: SpanHierarchyNode[];
   note: string;
 };
 
@@ -237,25 +261,45 @@ export function reconcileSpanCoverage(spans: readonly RuntimeSpan[], wallMs: num
   const clockSkewMs = Math.max(0, round(wallMs) - round(monotonicElapsedMs));
   const unattributedMs = Math.max(0, round(monotonicElapsedMs) - coveredMs);
   const coverageRatio = monotonicElapsedMs > 0 ? Math.round((coveredMs / monotonicElapsedMs) * 1000) / 1000 : null;
-  const byPhase = new Map<RuntimeSpanPhase, { exclusiveMs: number; inclusiveMs: number; count: number }>();
-  for (const span of activity) {
+  const byPhase = new Map<RuntimeSpanPhase, { exclusiveMs: number; inclusiveMs: number; intervals: Interval[]; count: number }>();
+  const hierarchy: SpanHierarchyNode[] = activity.map((span) => {
     const children = activity.filter((s) => s.parentSpanId === span.spanId);
     const exclusiveMs = exclusiveDuration(spanInterval(span), children.map(spanInterval));
-    const cur = byPhase.get(span.phase) ?? { exclusiveMs: 0, inclusiveMs: 0, count: 0 };
+    const cur = byPhase.get(span.phase) ?? { exclusiveMs: 0, inclusiveMs: 0, intervals: [], count: 0 };
     cur.exclusiveMs += exclusiveMs;
     cur.inclusiveMs += span.durationMs;
+    cur.intervals.push(spanInterval(span));
     cur.count += 1;
     byPhase.set(span.phase, cur);
-  }
+    return {
+      spanId: span.spanId,
+      parentSpanId: span.parentSpanId,
+      phase: span.phase,
+      operation: span.operation,
+      inclusiveMs: round(span.durationMs),
+      exclusiveOfChildrenMs: round(exclusiveMs),
+    };
+  });
   const exclusiveByPhase = [...byPhase.entries()]
-    .map(([phase, v]) => ({ phase, exclusiveMs: round(v.exclusiveMs), inclusiveMs: round(v.inclusiveMs), count: v.count }))
+    .map(([phase, v]) => ({
+      phase,
+      exclusiveMs: round(v.exclusiveMs),
+      inclusiveMs: round(v.inclusiveMs),
+      wallUnionMs: round(unionDuration(v.intervals)),
+      count: v.count,
+    }))
     .sort((a, b) => b.exclusiveMs - a.exclusiveMs || a.phase.localeCompare(b.phase));
+  const exclusiveSumMs = exclusiveByPhase.reduce((n, p) => n + p.exclusiveMs, 0);
+  const inclusiveSumMs = exclusiveByPhase.reduce((n, p) => n + p.inclusiveMs, 0);
+  const exclusiveSumExceedsCovered = exclusiveSumMs > coveredMs;
   const note =
     spans.length === 0
       ? HISTORICAL_LATENCY_NOT_FULLY_RECONSTRUCTABLE
-      : coverageRatio !== null && coverageRatio >= 0.95
-        ? "Measured spans cover at least 95% of monotonic elapsed time."
-        : "Unattributed monotonic time is a gap between measured spans (scheduling, uninstrumented work), not a second copy of nested activity.";
+      : exclusiveSumExceedsCovered
+        ? "exclusive-of-children sums can exceed union coverage when overlapping spans are not parented; coveredMs is the honest wall-time clock."
+        : coverageRatio !== null && coverageRatio >= 0.95
+          ? "Measured spans cover at least 95% of monotonic elapsed time."
+          : "Unattributed monotonic time is a gap between measured spans (scheduling, uninstrumented work), not a second copy of nested activity.";
   return {
     wallMs: round(wallMs),
     monotonicElapsedMs: round(monotonicElapsedMs),
@@ -265,6 +309,10 @@ export function reconcileSpanCoverage(spans: readonly RuntimeSpan[], wallMs: num
     clockSkewMs,
     coverageRatio,
     exclusiveByPhase,
+    exclusiveSumMs,
+    inclusiveSumMs,
+    exclusiveSumExceedsCovered,
+    hierarchy,
     note,
   };
 }
