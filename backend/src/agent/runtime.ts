@@ -23,7 +23,7 @@ import { buildDecisionContext, contextSize } from "./context.js";
 import { agentDecisionSchema, agentRequestSchema, type AgentDecision, type AgentRequest, type Interpretation, type InvestigationLimits } from "./contracts.js";
 import { AgentInputError, RunNotFoundError, RunNotWaitingError } from "./errors.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
-import { finalize, needsInputResponse } from "./finalizer.js";
+import { computeMetrics, finalize, needsInputResponse, sealSpans } from "./finalizer.js";
 import { gateFrontierCandidates, pruneForDiversity } from "./frontier.js";
 import { isReady, territoryReadiness } from "./readiness.js";
 import type { TerminalAction } from "./skills/contracts.js";
@@ -39,6 +39,7 @@ import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TER
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
 import type { SpendBound } from "../ops/spend.js";
 import { decisionCeilingUsd, priceUsd, roundUsd, synthesisCeilingUsd } from "../ops/pricing.js";
+import { attachRecorder, recorderOf } from "../ops/spans.js";
 import type { AgentToolProvider } from "./tool-provider.js";
 import { ToolRegistry } from "./tool-registry.js";
 
@@ -52,7 +53,14 @@ export type AgentRuntimeDeps = {
 
 /** Sprint 5B.1: a gate-approved interpretation and the run's parent-child link (both optional). */
 /** Sprint 5B.2: `signal` aborts between turns. The in-flight model or Qloo call is allowed to finish; its result is not a completed finding. */
-export type RunOptions = { interpretation?: Interpretation; link?: InvestigationLink; signal?: AbortSignal; spend?: SpendBound };
+export type RunOptions = {
+  interpretation?: Interpretation;
+  link?: InvestigationLink;
+  signal?: AbortSignal;
+  spend?: SpendBound;
+  /** Queue wait and query-layer interpretation measured outside the agent loop. */
+  admission?: { queueWaitMs?: number; interpretationMs?: number };
+};
 
 /** Rejection codes a repair attempt can act on (the validator's reason tells the model what to change). */
 const REPAIRABLE = new Set(["INVALID_MODEL_OUTPUT", "INVALID_DECISION", "UNKNOWN_TOOL", "INVALID_ARGUMENTS", "NOT_EXPOSED", "WRONG_PHASE", "PRECONDITION", "NOT_READY", "FINISH_BEFORE_SUFFICIENCY", "NOTHING_ANALYZED", "UNKNOWN_RESULT_IDS", "NO_OPEN_AMBIGUITY", "REFERENCES_PENDING", "TYPE_ALIGNMENT_PENDING"]);
@@ -94,6 +102,14 @@ export class AgentRuntime {
       state.trace.investigationLink = options.link;
     }
     this.store.put(state);
+    const spans = attachRecorder(state, state.runId);
+    spans.record({ runId: state.runId, phase: "RUN_START", operation: "run", startOffsetMs: 0, durationMs: 0 });
+    if ((options.admission?.queueWaitMs ?? 0) > 0) {
+      spans.record({ runId: state.runId, phase: "QUEUE_ADMISSION", operation: "job_queue", startOffsetMs: 0, durationMs: options.admission!.queueWaitMs! });
+    }
+    if ((options.admission?.interpretationMs ?? 0) > 0) {
+      spans.record({ runId: state.runId, phase: "QUERY_INTERPRETATION", operation: "interpret", startOffsetMs: 0, durationMs: options.admission!.interpretationMs! });
+    }
     transition(state, "PLANNING", "request validated");
     if (check?.ok) applyInterpretation(state, check.interpretation, "query_layer");
     if (options.signal) this.cancelSignals.set(state, options.signal);
@@ -115,6 +131,7 @@ export class AgentRuntime {
     transition(state, "PLANNING", "user clarification received");
     if (options.signal) this.cancelSignals.set(state, options.signal);
     if (options.spend) this.spendBounds.set(state, options.spend);
+    attachRecorder(state, state.runId);
     if (this.cancelled(state)) return this.cancel(state);
     return this.loop(state);
   }
@@ -130,6 +147,7 @@ export class AgentRuntime {
     state.trace.stopReason = { code: "INVESTIGATION_CANCELLED", detail };
     state.trace.errors.push({ iteration: state.usage.iterations, code: "INVESTIGATION_CANCELLED", detail });
     if (!TERMINAL_STATUSES.includes(state.status)) transition(state, "FAILED", "investigation cancelled");
+    recorderOf(state)?.flush("cancelled");
     return this.finish(state);
   }
 
@@ -139,12 +157,16 @@ export class AgentRuntime {
       for (;;) {
         if (this.cancelled(state)) return this.cancel(state);
         this.syncPhase(state);
-        const sufficiency = assessEvidenceSufficiency(state);
+        const spans = recorderOf(state);
+        const sufficiency = spans
+          ? spans.measureSync({ runId: state.runId, turnIndex: state.usage.iterations, phase: "EVIDENCE_SUFFICIENCY", operation: "assess" }, () => assessEvidenceSufficiency(state))
+          : assessEvidenceSufficiency(state);
         const lastVerdict = state.trace.sufficiency.at(-1);
         if (!lastVerdict || lastVerdict.verdict !== sufficiency.verdict || lastVerdict.reasons.join() !== sufficiency.reasons.join()) {
           state.trace.sufficiency.push({ iteration: state.usage.iterations, verdict: sufficiency.verdict, reasons: [...sufficiency.reasons, ...sufficiency.nextSteps], nextActions: sufficiency.nextActions, materialGap: sufficiency.materialGap });
         }
-        recordPlans(state);
+        if (spans) spans.measureSync({ runId: state.runId, turnIndex: state.usage.iterations, phase: "REPRESENTATION_SELECTION", operation: "recordPlans" }, () => recordPlans(state));
+        else recordPlans(state);
         // Sufficient with no iteration left: finalize without granting an extra turn.
         if (sufficiency.verdict === "SUFFICIENT" && state.usage.iterations >= state.limits.maxAgentIterations) return await this.complete(state, "sufficient at the iteration budget");
         if (state.finishRequested || sufficiency.verdict === "INSUFFICIENT") return await this.complete(state, sufficiency.verdict === "INSUFFICIENT" ? "evidence insufficient" : "agent finished");
@@ -203,7 +225,10 @@ export class AgentRuntime {
     let stop: TurnOutcome["stop"] = null;
     let repair: AgentDecisionContext["repair"] = null;
     for (let attempt = 1; attempt <= 2; attempt += 1) {
-      const context = buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair });
+      const spans = recorderOf(state);
+      const context = spans
+        ? spans.measureSync({ runId: state.runId, turnIndex: state.usage.iterations, phase: "CONTEXT_ASSEMBLY", operation: `attempt-${attempt}` }, () => buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair }))
+        : buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair });
       const size = contextSize(context);
       turnTrace.contextChars = Math.max(turnTrace.contextChars ?? 0, size.chars);
       turnTrace.contextTokensEstimate = Math.max(turnTrace.contextTokensEstimate ?? 0, size.tokensEstimate);
@@ -266,7 +291,9 @@ export class AgentRuntime {
     gate: SkillGate,
   ): Promise<{ accepted: number; stop: TurnOutcome["stop"]; valid: boolean }> {
     let raw: unknown[] | { invalid: string };
-    const started = Date.now();
+    const started = performance.now();
+    const spans = recorderOf(state);
+    const modelSpan = spans?.start({ runId: state.runId, turnIndex: state.usage.iterations, phase: "MODEL_REQUEST", operation: context.repair ? "decide:repair" : "decide" });
     try {
       const modelTurn = await this.deps.model.decide(context);
       raw = modelTurn.decisions;
@@ -286,17 +313,32 @@ export class AgentRuntime {
     } catch (error) {
       raw = { invalid: `model call failed: ${error instanceof Error ? error.message.slice(0, 200) : String(error)}` };
       this.noteUnknownModelSpend(state, "decision");
+      modelSpan?.end("error", "MODEL_CALL_FAILED");
     }
-    turnTrace.latencyMs += Date.now() - started;
+    if (modelSpan && !spans?.snapshot().some((s) => s.spanId === modelSpan.spanId)) modelSpan.end("ok");
+    spans?.record({
+      runId: state.runId,
+      turnIndex: state.usage.iterations,
+      phase: "MODEL_RESPONSE",
+      operation: Array.isArray(raw) ? `decisions:${raw.length}` : "invalid",
+      parentSpanId: modelSpan?.spanId ?? null,
+      startOffsetMs: spans.offsetMs(),
+      durationMs: 0,
+      outcome: Array.isArray(raw) ? "ok" : "error",
+    });
+    turnTrace.latencyMs += Math.round(performance.now() - started);
     this.noteObservedModelSpend(state);
     if (this.cancelled(state)) return { accepted: 0, stop: "cancelled", valid: false };
+    const validationSpan = spans?.start({ runId: state.runId, turnIndex: state.usage.iterations, phase: "OUTPUT_VALIDATION", operation: "decisions", parentSpanId: modelSpan?.spanId ?? null });
     if (!Array.isArray(raw) || raw.length === 0) {
+      validationSpan?.end("error", "INVALID_MODEL_OUTPUT");
       const reason = Array.isArray(raw) ? "no decisions" : raw.invalid;
       turnTrace.invalidOutput = reason;
       rejections.push({ action: "turn", code: "INVALID_MODEL_OUTPUT", reason });
       decisionsTrace.push({ action: "turn", reasonSummary: "", accepted: false, rejection: `INVALID_MODEL_OUTPUT: ${reason}` });
       return { accepted: 0, stop: null, valid: false };
     }
+    validationSpan?.end("ok");
 
     let accepted = 0;
     let invalid = 0;
@@ -316,16 +358,20 @@ export class AgentRuntime {
         reject("ignored", "TOO_MANY_ACTIONS", `at most ${state.limits.maxActionsPerTurn} actions per turn`);
         continue;
       }
+      const routing = spans?.start({ runId: state.runId, turnIndex: state.usage.iterations, phase: "TOOL_ROUTING", operation: typeof (item as { action?: unknown })?.action === "string" ? String((item as { action: string }).action) : "unknown" });
       const parsed = agentDecisionSchema.safeParse(item);
       if (!parsed.success) {
+        routing?.end("rejected", "INVALID_DECISION");
         reject(typeof (item as { action?: unknown })?.action === "string" ? String((item as { action: string }).action) : "unknown", "INVALID_DECISION", parsed.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`).join("; "));
         continue;
       }
       const decision = parsed.data;
       if (decision.action !== "call_tool" && !gate.actions.includes(decision.action)) {
+        routing?.end("rejected", "NOT_EXPOSED");
         reject(decision.action, "NOT_EXPOSED", `${decision.action} is not offered by the active skills (${gate.active.map((s) => s.id).join(", ") || "none"})`, { reasonSummary: "reasonSummary" in decision ? (decision.reasonSummary ?? "") : "" });
         continue;
       }
+      routing?.end("ok");
       const outcome = await this.execute(state, decision, results, reject, gate, actions);
       if (outcome.accepted) {
         accepted += 1;
@@ -361,9 +407,11 @@ export class AgentRuntime {
     if (state.interpretation?.intent === "explore_frontier") kept = pruneForDiversity(state, kept);
     if (kept.length === 0) return { ok: false, code: "NOTHING_TO_ANALYZE", reason: "every requested territory was unsupported, a duplicate, or out of scope" };
     transition(state, "ANALYZING", `analyze ${kept.join(", ")}`);
-    const started = Date.now();
-    const outcome = await runAnalysis(state, this.deps.provider, kept, (tool, permission, args) => openToolTrace(state, tool, permission, args));
-    state.timing.analysisMs += Date.now() - started;
+    const started = performance.now();
+    const run = () => runAnalysis(state, this.deps.provider, kept, (tool, permission, args) => openToolTrace(state, tool, permission, args));
+    const rec = recorderOf(state);
+    const outcome = rec ? await rec.measure({ runId: state.runId, turnIndex: state.usage.iterations, phase: "METHODOLOGY_ANALYSIS", operation: kept.join(",") }, run) : await run();
+    state.timing.analysisMs += Math.round(performance.now() - started);
     transition(state, "INVESTIGATING", "analysis step done");
     return outcome;
   }
@@ -511,9 +559,14 @@ export class AgentRuntime {
       gateFrontierCandidates(state, pending);
       applyConceptDedup(state, activeTerritories(state));
       const kept = pending.filter((k) => state.territories.some((t) => t.key === k && t.status !== "dropped"));
-      const started = Date.now();
-      if (kept.length > 0) await runAnalysis(state, this.deps.provider, kept, (tool, permission, args) => openToolTrace(state, tool, permission, args));
-      state.timing.analysisMs += Date.now() - started;
+      const started = performance.now();
+      if (kept.length > 0) {
+        const rec = recorderOf(state);
+        const run = () => runAnalysis(state, this.deps.provider, kept, (tool, permission, args) => openToolTrace(state, tool, permission, args));
+        if (rec) await rec.measure({ runId: state.runId, turnIndex: state.usage.iterations, phase: "METHODOLOGY_ANALYSIS", operation: "budget-exhausted-final" }, run);
+        else await run();
+      }
+      state.timing.analysisMs += Math.round(performance.now() - started);
     }
     state.trace.stopReason ??= { code: "AGENT_BUDGET_EXHAUSTED", detail: reason };
     transition(state, "BUDGET_EXHAUSTED", reason);
@@ -532,8 +585,14 @@ export class AgentRuntime {
   private async finish(state: AgentRunState): Promise<AgentRunResponse> {
     state.trace.skillUsage = [...state.skillUsage.values()].map(({ skill, turns, qlooCalls, toolCalls }) => ({ skill, turns, qlooCalls, toolCalls }));
     const skipSynthesis = this.spendRefused(state, "synthesis");
+    const spans = recorderOf(state);
+    const handle = spans?.start({ runId: state.runId, turnIndex: state.usage.iterations, phase: "FINALIZATION", operation: skipSynthesis ? "finalize:skip-synthesis" : "finalize" });
     const result = await finalize(state, this.deps.model, { skipSynthesis });
+    handle?.end("ok");
     this.noteObservedModelSpend(state);
+    sealSpans(state);
+    result.trace = state.trace;
+    result.metrics = computeMetrics(state, result.territories);
     state.final = result;
     return result;
   }

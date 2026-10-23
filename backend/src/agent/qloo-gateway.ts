@@ -11,6 +11,7 @@ import type { AgentToolCallTrace } from "@cultural-elasticity/shared";
 import { toEntitySignals, toTagSignals } from "../qloo/normalize.js";
 import type { LiveCall } from "../qloo/live-adapter.js";
 import type { QlooOperation, QlooOperationInput } from "../qloo/types.js";
+import { recorderOf } from "../ops/spans.js";
 import { shortEntityType, type RankableType } from "./contracts.js";
 import { recordEntity, recordTag, remainingQlooCalls, type AgentRunState } from "./state.js";
 import type { AgentToolProvider, QlooCallResult } from "./tool-provider.js";
@@ -52,17 +53,50 @@ export async function callQloo<O extends QlooOperation>(
   if (cached) {
     trace.qlooOperations.push(`${operation} (cached)`);
     if ("call" in cached) trace.correlationIds.push(cached.call.envelope.execution.correlation_id);
+    recorderOf(state)?.record({
+      runId: state.runId,
+      turnIndex: state.usage.iterations,
+      phase: "QLOO_REQUEST",
+      operation: `${operation}:cached`,
+      startOffsetMs: recorderOf(state)?.offsetMs() ?? 0,
+      durationMs: 0,
+      outcome: "cached",
+    });
     return cached;
   }
   const remaining = remainingQlooCalls(state);
   if (remaining < 1) return { outcome: "failed", code: "BUDGET_EXHAUSTED", retryable: false, detail: `Qloo call budget (${state.limits.maxQlooCalls}) is spent`, attempts: 0 };
 
-  const started = Date.now();
+  const started = performance.now();
   const waits = (provider as { waits?: { spacingMs: number; rateLimitMs: number } }).waits;
   const waitedBefore = waits ? waits.spacingMs + waits.rateLimitMs : 0;
+  const rec = recorderOf(state);
+  const requestSpan = rec?.start({ runId: state.runId, turnIndex: state.usage.iterations, phase: "QLOO_REQUEST", operation, parentSpanId: null });
   const result = await provider.call(operation, input, { maxRetries: Math.min(state.limits.maxRetryPerToolCall, remaining - 1) });
-  state.usage.qlooLatencyMs += Date.now() - started;
+  state.usage.qlooLatencyMs += Math.round(performance.now() - started);
   if (waits) state.usage.qlooSpacingMs += waits.spacingMs + waits.rateLimitMs - waitedBefore;
+  const meta = (provider as { lastCallMeta?: { spacingMs: number; rateLimitMs: number; startupMs: number } }).lastCallMeta;
+  if (rec && requestSpan && meta) {
+    const origin = rec.offsetMs() - Math.round(performance.now() - started);
+    if (meta.spacingMs + meta.rateLimitMs > 0) {
+      rec.record({ runId: state.runId, turnIndex: state.usage.iterations, phase: "QLOO_SPACING", operation: `${operation}:spacing`, parentSpanId: requestSpan.spanId, startOffsetMs: Math.max(0, origin), durationMs: meta.spacingMs + meta.rateLimitMs });
+    }
+    if (meta.startupMs > 0) {
+      rec.record({ runId: state.runId, turnIndex: state.usage.iterations, phase: "QLOO_TRANSPORT_STARTUP", operation: `${operation}:startup`, parentSpanId: requestSpan.spanId, startOffsetMs: Math.max(0, origin + meta.spacingMs + meta.rateLimitMs), durationMs: meta.startupMs });
+    }
+  }
+  const qlooOutcome = result.outcome === "ok" || result.outcome === "empty" ? result.outcome : result.outcome === "needs_input" ? "ok" : "error";
+  requestSpan?.end(abandonedToolCalls.has(trace) ? "timeout" : qlooOutcome, "code" in result ? result.code : undefined);
+  rec?.record({
+    runId: state.runId,
+    turnIndex: state.usage.iterations,
+    phase: "QLOO_RESPONSE",
+    operation: `${operation}:${result.outcome}`,
+    parentSpanId: requestSpan?.spanId ?? null,
+    startOffsetMs: rec.offsetMs(),
+    durationMs: 0,
+    outcome: abandonedToolCalls.has(trace) ? "timeout" : qlooOutcome,
+  });
   state.usage.qlooCalls += result.attempts;
   state.usage.retries += Math.max(0, result.attempts - 1);
   trace.attempts += result.attempts;

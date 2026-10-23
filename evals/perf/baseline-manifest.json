@@ -1,0 +1,75 @@
+{
+  "fixtureType": "evaluation-criteria",
+  "notice": "Immutable Sprint 8A performance and competence baseline. Frozen from sprint/7b-controlled-public-launch at 51c887c before Sprint 8A instrumentation. Do not rewrite these historical numbers. Fresh traced runs are compared against this configuration, not against rewritten history.",
+  "version": "sprint-8a-baseline-v1",
+  "frozenAt": "2026-10-23",
+  "codeCommit": "51c887c",
+  "branchAtFreeze": "sprint/7b-controlled-public-launch",
+  "model": {
+    "id": "claude-haiku-5-5",
+    "effort": "high",
+    "decisionMaxTokens": 16000,
+    "synthesisMaxTokens": 16000,
+    "interpretMaxTokens": 4000,
+    "interpretEffort": "low"
+  },
+  "qloo": {
+    "harness": "0.1.26",
+    "defaultTransport": "qloo-mcp",
+    "execFallback": "qloo-harness-exec",
+    "spacingMs": 7000,
+    "toolTimeoutMs": 300000,
+    "budgets": {
+      "analyze_move": 24,
+      "compare_territories": 32,
+      "explore_frontier": 32
+    }
+  },
+  "skills": {
+    "interpret_request": 1,
+    "resolve_brand": 1,
+    "resolve_territory": 5,
+    "build_territory_representation": 4,
+    "build_comparison_set": 3,
+    "explore_candidate_territories": 4,
+    "analyze_territories": 2
+  },
+  "evaluators": {
+    "runEvaluators": "run-evaluators-v2.1",
+    "stabilityMetrics": "frontier-stability-metrics-v3",
+    "stabilityCriteria": "frontier-stability-criteria-v1",
+    "readinessGate": "agent-readiness-gate-v3"
+  },
+  "referenceFixtures": {
+    "syntheticWorld": "evals/fixtures/synthetic/agent/world.json",
+    "agentScenarios": "evals/agent/scenarios.json",
+    "liveCases": "evals/agent/live-cases.json",
+    "controlledCases": "evals/agent/controlled-cases.json",
+    "recordedExample": "frontend/src/demo/recorded-example.json",
+    "recordedExampleSha256": "064c7f6e87692a45cc5790cf4901b879dd75d8ecbb0b72ad2aee0a76e41d3f75"
+  },
+  "competenceAtFreeze": {
+    "status": "AGENT_MODEL_NOT_READY",
+    "source": "backend/feasibility-output/sprint5a2-live/final (as-run gate v3, Sprint 5A.2 attempt 4)",
+    "safety": "13/13",
+    "competence": "8/9",
+    "blocker": "C9 runtime evaluators",
+    "c9AsRunFailures": 3,
+    "c9ReplayV21Failures": 2,
+    "liveFullGateRepeatedAfterRemediation": false
+  },
+  "historicalParentLatency": {
+    "source": "docs/sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md §14; Sprint 5B.3 live parent that became the recorded example",
+    "wallMs": 810000,
+    "modelMs": 62000,
+    "qlooMs": 119000,
+    "qlooSpacingMs": 95000,
+    "qlooActiveMs": 24000,
+    "analysisMs": 21000,
+    "synthesisMs": 36000,
+    "naiveSumMs": 238000,
+    "unattributedMs": 572000,
+    "reconstructable": false,
+    "label": "HISTORICAL_LATENCY_NOT_FULLY_RECONSTRUCTABLE"
+  }
+}

@@ -53,6 +53,8 @@ export type QueryHooks = {
   onPreview?: (response: QueryResponse) => void;
   /** Per-job spend envelope. A refused call is incomplete, not fabricated evidence. */
   spend?: SpendBound;
+  /** Queue wait measured by JobManager; not part of agent wall time. */
+  queueWaitMs?: number;
 };
 
 export type QueryServiceDeps = { runtime: AgentRuntime; interpreter: QueryInterpreter; queries?: QueryStore; log?: (telemetry: QueryTelemetry) => void };
@@ -198,7 +200,13 @@ export class QueryService {
     const preview = this.respond({ telemetry, state: "INVESTIGATION_STARTED", interpretation, context, gate, handoff: plan.handoff, silent: true });
     hooks?.onPreview?.(structuredClone(preview));
     const link = { ...plan.link, queryId };
-    const result = await this.deps.runtime.run(plan.request, undefined, { interpretation: plan.interpretation, link, signal: hooks?.signal, spend: hooks?.spend });
+    const result = await this.deps.runtime.run(plan.request, undefined, {
+      interpretation: plan.interpretation,
+      link,
+      signal: hooks?.signal,
+      spend: hooks?.spend,
+      admission: { queueWaitMs: hooks?.queueWaitMs, interpretationMs: telemetry.interpretationLatencyMs },
+    });
     telemetry.childRunId = result.runId;
     const warnings: string[] = [];
     // The inherited brand was handed over by id; the child re-resolved it in Qloo. A different entity is reported, not hidden.

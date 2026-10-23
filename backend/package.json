@@ -21,7 +21,8 @@
     "eval:agent:live": "tsx scripts/eval-agent-live.ts",
     "eval:agent:replay": "tsx scripts/replay-evaluators.ts",
     "eval:query": "tsx scripts/eval-query.ts",
-    "living-atlas:live": "tsx scripts/living-atlas-live.ts"
+    "living-atlas:live": "tsx scripts/living-atlas-live.ts",
+    "perf:agent": "tsx scripts/perf-agent.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.131.0",

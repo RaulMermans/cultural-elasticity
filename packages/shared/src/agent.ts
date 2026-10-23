@@ -17,6 +17,7 @@ import type { InvestigationLink } from "./query.js";
  * Sprint 5A.1 adds only OPTIONAL fields under the same version (candidate canonicalization, evidence status, probe
  * views, representation plans, completion checks, frontier candidate pool, probe metrics): a 0.3 reader keeps working.
  * Sprint 5B.1 adds two more optional trace fields (interpretation source, investigation link) under the same version.
+ * Sprint 8A adds optional runtime spans and span-coverage metrics under the same version.
  */
 export const AGENT_RESULT_SCHEMA_VERSION = "ce-agent-result/0.3" as const;
 
@@ -444,6 +445,53 @@ export type AgentTurnTrace = {
   firstAttemptValid?: boolean;
 };
 
+/** Sprint 8A: monotonic runtime phases. Markers (RUN_START/RUN_END) have duration 0. */
+export const RUNTIME_SPAN_PHASES = [
+  "RUN_START",
+  "QUERY_INTERPRETATION",
+  "QUEUE_ADMISSION",
+  "CONTEXT_ASSEMBLY",
+  "MODEL_REQUEST",
+  "MODEL_RESPONSE",
+  "OUTPUT_VALIDATION",
+  "TOOL_ROUTING",
+  "TOOL_DISPATCH",
+  "TOOL_EXECUTION",
+  "QLOO_SPACING",
+  "QLOO_TRANSPORT_STARTUP",
+  "QLOO_REQUEST",
+  "QLOO_RESPONSE",
+  "RESULT_NORMALIZATION",
+  "STATE_UPDATE",
+  "EVIDENCE_SUFFICIENCY",
+  "REPRESENTATION_SELECTION",
+  "METHODOLOGY_ANALYSIS",
+  "SYNTHESIS",
+  "FINALIZATION",
+  "RUN_END",
+] as const;
+
+export type RuntimeSpanPhase = (typeof RUNTIME_SPAN_PHASES)[number];
+
+export type RuntimeSpanOutcome = "ok" | "error" | "cancelled" | "rejected" | "empty" | "timeout" | "cached";
+
+/**
+ * One timed interval of agent work. Durations are monotonic (`performance.now`), offsets are from run origin.
+ * Spans never contain prompts, credentials, or raw Qloo payloads.
+ */
+export type RuntimeSpan = {
+  spanId: string;
+  parentSpanId: string | null;
+  runId: string;
+  turnIndex: number | null;
+  phase: RuntimeSpanPhase;
+  operation: string;
+  startOffsetMs: number;
+  durationMs: number;
+  outcome: RuntimeSpanOutcome;
+  errorCode?: string;
+};
+
 export type AgentToolCallTrace = {
   id: string;
   iteration: number;
@@ -509,6 +557,8 @@ export type AgentTrace = {
   investigationLink?: InvestigationLink | null;
   errors: { iteration: number; code: string; detail: string }[];
   userClarifications: string[];
+  /** Sprint 8A: monotonic activity spans. Absent on historical traces → HISTORICAL_LATENCY_NOT_FULLY_RECONSTRUCTABLE. */
+  spans?: RuntimeSpan[];
 };
 
 export type AgentMetrics = {
@@ -573,6 +623,12 @@ export type AgentMetrics = {
   alternate_anchor_refusals?: number;
   source_evidence_anchors?: number;
   frontier_completion_refusals?: number;
+  // Sprint 8A span coverage (absent when the run predates instrumentation)
+  span_covered_ms?: number;
+  span_unattributed_ms?: number;
+  span_coverage_ratio?: number | null;
+  monotonic_elapsed_ms?: number;
+  wall_clock_skew_ms?: number;
 };
 
 export type AgentAnalysisResult = {

@@ -75,6 +75,10 @@ const SYNTHESIS_SCHEMA = {
 export type AnthropicAgentModelOptions = {
   model?: string;
   effort?: "low" | "medium" | "high" | "xhigh" | "max";
+  /** Decision/repair ceiling. Production default 16_000; eval-only overrides must not change competence. */
+  decisionMaxTokens?: number;
+  /** Synthesis ceiling. Production default 16_000. */
+  synthesisMaxTokens?: number;
   /** Injected in tests; otherwise the SDK client reads ANTHROPIC_API_KEY from the environment. */
   client?: Pick<Anthropic, "beta">;
 };
@@ -100,11 +104,15 @@ export class AnthropicAgentModel implements AgentModel {
   private readonly client: Pick<Anthropic, "beta">;
   private readonly model: string;
   private readonly effort: NonNullable<AnthropicAgentModelOptions["effort"]>;
+  private readonly decisionMaxTokens: number;
+  private readonly synthesisMaxTokens: number;
   private readonly fallback: { betas?: string[]; fallbacks?: "default" };
 
   constructor(options: AnthropicAgentModelOptions = {}) {
     this.model = options.model ?? DEFAULT_AGENT_MODEL;
     this.effort = options.effort ?? DEFAULT_AGENT_EFFORT;
+    this.decisionMaxTokens = options.decisionMaxTokens ?? 16_000;
+    this.synthesisMaxTokens = options.synthesisMaxTokens ?? 16_000;
     this.fallback = fallbackParams(this.model);
     // An org-level key that is not scoped to a workspace needs the workspace id on every request.
     const workspace = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
@@ -127,7 +135,7 @@ export class AnthropicAgentModel implements AgentModel {
     ];
     const response = await this.client.beta.messages.create({
       model: this.model,
-      max_tokens: 16_000,
+      max_tokens: this.decisionMaxTokens,
       ...this.fallback,
       output_config: { effort: this.effort },
       system: [{ type: "text", text: AGENT_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
@@ -141,6 +149,7 @@ export class AnthropicAgentModel implements AgentModel {
       ],
     });
     const usage = usageOf(response.usage as Usage);
+    if (response.stop_reason === "max_tokens") return { decisions: { invalid: "output truncated (stop_reason max_tokens)" }, ...(usage && { usage }) };
     if (response.stop_reason === "refusal") return { decisions: { invalid: "model refused" }, ...(usage && { usage }) };
     const decisions: unknown[] = [];
     for (const block of response.content) {
@@ -161,7 +170,7 @@ export class AnthropicAgentModel implements AgentModel {
   async synthesize(context: FinalizationContext, feedback: string[]): Promise<SynthesisTurn> {
     const response = await this.client.beta.messages.create({
       model: this.model,
-      max_tokens: 16_000,
+      max_tokens: this.synthesisMaxTokens,
       ...this.fallback,
       output_config: { effort: this.effort, format: { type: "json_schema", schema: SYNTHESIS_SCHEMA } },
       system: SYNTHESIS_SYSTEM_PROMPT,
@@ -173,6 +182,7 @@ export class AnthropicAgentModel implements AgentModel {
       ],
     });
     const usage = usageOf(response.usage as Usage);
+    if (response.stop_reason === "max_tokens") return { invalid: "output truncated (stop_reason max_tokens)", ...(usage && { usage }) };
     if (response.stop_reason === "refusal") return { invalid: "model refused", ...(usage && { usage }) };
     const text = response.content.flatMap((b) => (b.type === "text" ? [b.text] : [])).join("");
     try {

@@ -53,6 +53,10 @@ export class HarnessMcpTransport implements QlooTransport {
   private readonly pending = new Map<string, Pending>();
   /** Calls are serialized: one request in flight keeps rate limiting and ordering simple. */
   private queue: Promise<unknown> = Promise.resolve();
+  /** Monotonic milliseconds for the most recent child start + initialize handshake (0 when the child was already ready). */
+  lastStartupMs = 0;
+  /** Last successful handshake duration; 0 until the first start. */
+  startupDurationMs = 0;
 
   constructor(options: HarnessMcpTransportOptions = {}) {
     this.binPath = options.binPath ?? defaultHarnessBinPath();
@@ -87,7 +91,11 @@ export class HarnessMcpTransport implements QlooTransport {
   }
 
   private start(operation: QlooOperation): Promise<void> {
-    if (this.ready) return this.ready;
+    if (this.ready) {
+      this.lastStartupMs = 0;
+      return this.ready;
+    }
+    const started = performance.now();
     const child = spawn(process.execPath, [this.binPath, "mcp"], { env: this.env, stdio: ["pipe", "pipe", "pipe"] });
     this.child = child;
     child.stdout.setEncoding("utf8").on("data", (chunk: string) => this.onData(chunk));
@@ -104,6 +112,8 @@ export class HarnessMcpTransport implements QlooTransport {
     });
     this.ready = this.request(operation, "initialize", { protocolVersion: MCP_PROTOCOL_VERSION, capabilities: {}, clientInfo: { name: "cultural-elasticity", version: "0.0.0" } }).then(() => {
       this.write({ jsonrpc: "2.0", method: "notifications/initialized" });
+      this.lastStartupMs = Math.round(performance.now() - started);
+      this.startupDurationMs = this.lastStartupMs;
     });
     this.ready.catch(() => {
       this.ready = undefined;

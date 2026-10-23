@@ -36,6 +36,7 @@ import type { AgentToolCallTrace } from "@cultural-elasticity/shared";
 import { z } from "zod";
 import type { ExpectedValue } from "@cultural-elasticity/shared";
 import { assessEvidenceSufficiency, barrenProbe, type SufficiencyAssessment } from "./evidence-sufficiency.js";
+import { recorderOf } from "../ops/spans.js";
 import { abandonedToolCalls, cacheKey } from "./qloo-gateway.js";
 import type { SkillDefinition } from "./skills/contracts.js";
 import { skillRef } from "./skills/contracts.js";
@@ -217,13 +218,28 @@ export async function executeToolCall(
   const trace = openToolTrace(state, name, tool.permission === "side_effect" ? "local_computation" : tool.permission, parsed.data);
   trace.skill = skill ? skillRef(skill) : null;
   if (expectedValue) trace.expectedValue = expectedValue;
-  const started = Date.now();
+  const started = performance.now();
+  const rec = recorderOf(state);
+  const dispatch = rec?.start({ runId: state.runId, turnIndex: state.usage.iterations, phase: "TOOL_DISPATCH", operation: name });
+  const execution = rec?.start({ runId: state.runId, turnIndex: state.usage.iterations, phase: "TOOL_EXECUTION", operation: name, parentSpanId: dispatch?.spanId ?? null });
   try {
     const result = await withTimeout(tool.execute({ state, provider, trace }, input), tool.timeoutMs ?? state.limits.toolTimeoutMs);
+    rec?.record({
+      runId: state.runId,
+      turnIndex: state.usage.iterations,
+      phase: "RESULT_NORMALIZATION",
+      operation: name,
+      parentSpanId: execution?.spanId ?? null,
+      startOffsetMs: rec.offsetMs(),
+      durationMs: 0,
+      outcome: result.status === "failed" ? "error" : result.status === "empty" ? "empty" : "ok",
+    });
     trace.status = result.status;
     trace.summary = result.summary;
     if (result.errorCode) trace.error = result.errorCode;
     if (result.status !== "failed") state.executedCalls.add(callKey);
+    execution?.end(result.status === "failed" ? "error" : result.status === "empty" ? "empty" : "ok", result.errorCode);
+    dispatch?.end(result.status === "failed" ? "error" : "ok", result.errorCode);
     return { accepted: true, result, trace };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -234,9 +250,11 @@ export async function executeToolCall(
     trace.summary = `${code}: ${message.slice(0, 300)}`;
     trace.error = code;
     state.trace.errors.push({ iteration: state.usage.iterations, code, detail: `${name}: ${message.slice(0, 300)}` });
+    execution?.end(code === "TOOL_TIMEOUT" ? "timeout" : "error", code);
+    dispatch?.end(code === "TOOL_TIMEOUT" ? "timeout" : "error", code);
     return { accepted: true, result: { status: "failed", summary: trace.summary, errorCode: code }, trace };
   } finally {
-    trace.latencyMs = Date.now() - started;
+    trace.latencyMs = Math.round(performance.now() - started);
     gate?.skills.recordToolCall(state, skill, trace.attempts);
   }
 }
