@@ -12,6 +12,12 @@ import { RunStore } from "../agent/run-store.js";
 import { AgentRuntime } from "../agent/runtime.js";
 import type { AgentToolProvider } from "../agent/tool-provider.js";
 import type { EvidenceIssue } from "../evidence/schema.js";
+import { admitVisitor, verifyInternalAuth } from "../ops/identity.js";
+import { canAcceptInvestigations } from "../ops/lifecycle.js";
+import { opsMetrics } from "../ops/metrics.js";
+import { registerJobManager } from "../ops/server.js";
+import { spendLedger } from "../ops/spend.js";
+import type { ObservedUsage } from "../ops/usage.js";
 
 /** Builds (or reuses) the runtime for a model choice. Injected in tests; lazily wired to live Qloo otherwise. */
 export type AgentRuntimeFactory = (model: ModelChoice) => AgentRuntime;
@@ -80,21 +86,80 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
   return async function routes(app: FastifyInstance): Promise<void> {
     // Query-layer telemetry carries no raw query text (length + hash only), no prompt and no credential.
     const log = (telemetry: unknown) => app.log.info({ queryTelemetry: telemetry }, "query");
+    const reservations = new Map<string, { id: string; started: boolean }>();
     const jobs = new JobManager({
       runnerFor: (model) => service(model === "baseline" ? "baseline" : "auto", log),
-      log: (event) => log(event),
+      log: (event) => {
+        log(event);
+        const name = typeof event.event === "string" ? event.event : undefined;
+        const usage = event.usage as ObservedUsage | undefined;
+        if (name === "job_started") {
+          const hold = typeof event.jobId === "string" ? reservations.get(event.jobId) : undefined;
+          if (hold) {
+            spendLedger().markStarted(hold.id);
+            hold.started = true;
+          }
+        }
+        if (name === "job_completed" || name === "job_failed" || name === "job_cancelled" || name === "job_expired") {
+          const jobId = typeof event.jobId === "string" ? event.jobId : "";
+          const hold = reservations.get(jobId);
+          if (hold) {
+            spendLedger().settle(hold.id, {
+              observedUsd: usage?.observedUsd ?? null,
+              started: hold.started,
+              cancelledBeforeStart: name === "job_cancelled" && !hold.started,
+            });
+            reservations.delete(jobId);
+          }
+        }
+        if (name === "job_queued" || name === "job_started" || name === "job_completed" || name === "job_failed" || name === "job_cancelled" || name === "job_expired") {
+          opsMetrics().record(name, {
+            durationMs: event.durationMs,
+            interpretationLatencyMs: usage?.interpretationLatencyMs ?? undefined,
+            qlooCalls: usage?.qlooCalls,
+            inputTokens: usage?.inputTokens,
+            outputTokens: usage?.outputTokens,
+            estimatedModelCostUsd: usage?.observedUsd ?? undefined,
+          });
+        }
+      },
+    });
+    registerJobManager(jobs);
+    app.addHook("onClose", async () => {
+      jobs.shutdown("The investigation service is stopping.");
     });
     const modelChoice = (model: string | undefined) => (model === "baseline" ? "baseline" : "auto");
+    const headersOf = (request: FastifyRequest) => request.headers as Record<string, unknown>;
+    const rejectUnauthenticated = (request: FastifyRequest, reply: FastifyReply) => {
+      if (verifyInternalAuth(headersOf(request))) return false;
+      opsMetrics().record("admission_rejected");
+      void reply.code(401).send({ error: "unauthorized", message: "This investigation service is not available from that origin." });
+      return true;
+    };
     const rejectBaseline = (model: string | undefined, reply: FastifyReply) => {
       if (model !== "baseline" || baselineAllowed()) return false;
       void reply.code(403).send({ error: "baseline_disabled", message: "The reference policy is not available here." });
       return true;
     };
     const admitCreate = (request: FastifyRequest, reply: FastifyReply) => {
-      const key = request.ip || "local";
-      if (admit(`create:${key}`, jobCreateLimit(), 10 * 60_000) && admit("create:global", globalJobLimit(), 10 * 60_000)) return true;
+      if (rejectUnauthenticated(request, reply)) return false;
+      if (!canAcceptInvestigations()) {
+        opsMetrics().record("admission_rejected");
+        void reply.code(503).send({ error: "admissions_paused", message: "New investigations are not being accepted right now." });
+        return false;
+      }
+      const visitor = admitVisitor(headersOf(request), true);
+      if (admit(`create:${visitor.visitorId}`, jobCreateLimit(), 10 * 60_000) && admit("create:global", globalJobLimit(), 10 * 60_000)) return true;
+      opsMetrics().record("admission_rejected");
       void reply.code(429).send({ error: "too_many_requests", message: "Too many investigations were requested. Wait a moment and try again." });
       return false;
+    };
+    const reserveSpend = (reply: FastifyReply) => {
+      const reserved = spendLedger().reserve();
+      if (reserved.ok) return reserved.reservation;
+      opsMetrics().record(reserved.code === "budget_exhausted" ? "budget_exceeded" : "admission_rejected");
+      void reply.code(reserved.code === "budget_unavailable" ? 503 : 429).send({ error: reserved.code, message: reserved.message });
+      return null;
     };
     const closed = (reply: FastifyReply) => {
       if (developmentRoutesOpen()) return false;
@@ -125,6 +190,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
     });
 
     const queryRoute = (mode: "interpret" | "query" | "follow-up") => async (request: FastifyRequest<{ Body: unknown }>, reply: FastifyReply) => {
+      if (closed(reply)) return;
       if (!admitCreate(request, reply)) return;
       const confirm = mode !== "interpret" ? confirmBody.safeParse(request.body) : null;
       if (confirm?.success) {
@@ -161,22 +227,42 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         if (rejectBaseline(query.data.model, reply)) return;
         jobRequest = { kind: "execute", body: query.data, model: modelChoice(query.data.model) };
       } else return reply.code(400).send({ error: "invalid_job_request", message: "The question could not be accepted." });
+      const hold = reserveSpend(reply);
+      if (!hold) return;
       return handle(reply, async () => {
-        const created = jobs.create(jobRequest);
-        reply.code(202);
-        return created;
+        try {
+          const created = jobs.create(jobRequest);
+          spendLedger().attach(hold.id, created.jobId);
+          const started = created.status === "running";
+          reservations.set(created.jobId, { id: hold.id, started });
+          if (started) spendLedger().markStarted(hold.id);
+          opsMetrics().record("job_accepted");
+          reply.code(202);
+          return created;
+        } catch (error) {
+          spendLedger().settle(hold.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
+          throw error;
+        }
       });
     });
     app.get<{ Params: { id: string } }>("/api/agent/jobs/:id", async (request, reply) => {
+      if (rejectUnauthenticated(request, reply)) return;
       const view = jobs.get(request.params.id, tokenOf(request.headers["x-job-token"]));
-      if (!view) return reply.code(404).send({ error: "job_not_found", message: "This investigation is not available. It may have expired, or the server may have restarted." });
+      if (!view) {
+        opsMetrics().record("result_unavailable");
+        return reply.code(404).send({ error: "job_not_found", message: "This investigation is not available. It may have expired, or the server may have restarted." });
+      }
       return view;
     });
     app.post<{ Params: { id: string } }>("/api/agent/jobs/:id/cancel", async (request, reply) => {
-      const key = request.ip || "local";
-      if (!admit(`cancel:${key}`, 60, 60_000)) return reply.code(429).send({ error: "too_many_requests", message: "Too many stop requests. Wait a moment and try again." });
+      if (rejectUnauthenticated(request, reply)) return;
+      const visitor = admitVisitor(headersOf(request), true);
+      if (!admit(`cancel:${visitor.visitorId}`, 60, 60_000)) return reply.code(429).send({ error: "too_many_requests", message: "Too many stop requests. Wait a moment and try again." });
       const view = jobs.cancel(request.params.id, tokenOf(request.headers["x-job-token"]));
-      if (!view) return reply.code(404).send({ error: "job_not_found", message: "This investigation is not available. It may have expired, or the server may have restarted." });
+      if (!view) {
+        opsMetrics().record("result_unavailable");
+        return reply.code(404).send({ error: "job_not_found", message: "This investigation is not available. It may have expired, or the server may have restarted." });
+      }
       return view;
     });
 

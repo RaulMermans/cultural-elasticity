@@ -42,6 +42,8 @@ export function loadLocalEnvFile(): void {
  * The credential value is intentionally not part of BackendConfig: only the Qloo child process
  * receives it, through its inherited environment. Nothing else in the app can log it by accident.
  */
+export { assertPublicRuntimeSafe, publicRuntime, validatePublicRuntime } from "./production.js";
+
 export function readConfig(env: NodeJS.ProcessEnv = process.env): BackendConfig {
   const parsed = envSchema.parse(env);
   return {

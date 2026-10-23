@@ -197,24 +197,40 @@ describe("job lifecycle", () => {
 });
 
 describe("public execution guards", () => {
-  const previous = { deployment: process.env.CE_PUBLIC_DEPLOYMENT, limit: process.env.CE_JOB_CREATE_LIMIT };
+  const previous = {
+    deployment: process.env.CE_PUBLIC_DEPLOYMENT,
+    limit: process.env.CE_JOB_CREATE_LIMIT,
+    secret: process.env.CE_INTERNAL_API_SECRET,
+    budget: process.env.CE_SPEND_BUDGET_USD,
+  };
   afterEach(() => {
     if (previous.deployment === undefined) delete process.env.CE_PUBLIC_DEPLOYMENT;
     else process.env.CE_PUBLIC_DEPLOYMENT = previous.deployment;
     if (previous.limit === undefined) delete process.env.CE_JOB_CREATE_LIMIT;
     else process.env.CE_JOB_CREATE_LIMIT = previous.limit;
+    if (previous.secret === undefined) delete process.env.CE_INTERNAL_API_SECRET;
+    else process.env.CE_INTERNAL_API_SECRET = previous.secret;
+    if (previous.budget === undefined) delete process.env.CE_SPEND_BUDGET_USD;
+    else process.env.CE_SPEND_BUDGET_USD = previous.budget;
     resetAdmission();
   });
 
   it("disables the baseline and development routes in a public deployment", async () => {
     process.env.CE_PUBLIC_DEPLOYMENT = "1";
+    process.env.CE_INTERNAL_API_SECRET = "sprint5b3-internal-auth-secret-value";
+    process.env.CE_SPEND_BUDGET_USD = "20";
     const runtime = new AgentRuntime({ model: new BaselinePolicyModel(), provider: scripted(), store: new RunStore() });
     const server = buildApp({
       logLevel: "silent",
       agentRuntimeFactory: () => runtime,
       queryInterpreterFactory: () => new ScriptedQueryInterpreter(() => proposal({ primaryIntent: "explore_frontier", brandsNamed: ["Northwind Atelier"] })),
     });
-    const baseline = await server.inject({ method: "POST", url: "/api/agent/jobs", payload: { query: "Where next?", model: "baseline" } });
+    const baseline = await server.inject({
+      method: "POST",
+      url: "/api/agent/jobs",
+      headers: { "x-ce-internal-auth": "sprint5b3-internal-auth-secret-value", "x-ce-visitor": "visitor-public-baseline-01" },
+      payload: { query: "Where next?", model: "baseline" },
+    });
     expect(baseline.statusCode).toBe(403);
     const analyze = await server.inject({ method: "POST", url: "/api/agent/analyze", payload: { query: "Where next?", model: "baseline" } });
     expect(analyze.statusCode).toBe(404);
@@ -226,16 +242,21 @@ describe("public execution guards", () => {
   it("rate limits expensive job creation", async () => {
     process.env.CE_JOB_CREATE_LIMIT = "1";
     resetAdmission();
+    const headers = { "x-ce-visitor": "visitor-public-ratelimit-01" };
     const runtime = new AgentRuntime({ model: new BaselinePolicyModel(), provider: scripted(), store: new RunStore() });
     const server = buildApp({
       logLevel: "silent",
       agentRuntimeFactory: () => runtime,
       queryInterpreterFactory: () => new ScriptedQueryInterpreter(() => proposal({ primaryIntent: "explore_frontier", brandsNamed: ["Northwind Atelier"] })),
     });
-    const first = await server.inject({ method: "POST", url: "/api/agent/jobs", payload: { query: "Where could Northwind Atelier expand?" } });
+    const first = await server.inject({ method: "POST", url: "/api/agent/jobs", headers, payload: { query: "Where could Northwind Atelier expand?" } });
     expect(first.statusCode).toBe(202);
-    const second = await server.inject({ method: "POST", url: "/api/agent/jobs", payload: { query: "Where could Northwind Atelier expand?" } });
+    const second = await server.inject({ method: "POST", url: "/api/agent/jobs", headers, payload: { query: "Where could Northwind Atelier expand?" } });
     expect(second.statusCode).toBe(429);
+    const created = first.json() as { jobId?: string; accessToken?: string };
+    if (created.jobId && created.accessToken) {
+      await server.inject({ method: "POST", url: `/api/agent/jobs/${created.jobId}/cancel`, headers: { ...headers, "x-job-token": created.accessToken } });
+    }
     await server.close();
   });
 });

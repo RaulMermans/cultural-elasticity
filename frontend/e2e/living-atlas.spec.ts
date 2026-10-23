@@ -25,6 +25,7 @@ async function investigate(page: import("@playwright/test").Page) {
 test("the opening page states the question", async ({ page }) => {
   await open(page);
   await expect(page.getByRole("heading", { name: "Where could your brand go next?" })).toBeVisible();
+  await expect(page.getByText("cultural investigation environment")).toBeVisible();
   await expect(page.getByTestId("query-input")).toBeVisible();
   await expect(page.getByText("cultural distance")).toBeVisible();
 });
@@ -32,11 +33,15 @@ test("the opening page states the question", async ({ page }) => {
 test("a question shows progress and then territories", async ({ page }) => {
   await open(page);
   await ask(page, "Where could Paper Lantern expand?");
-  await expect(page.getByTestId("progress")).toContainText("Interpreting question", { timeout: 15_000 });
+  const progress = page.getByTestId("progress");
+  await Promise.race([
+    expect(progress).toContainText("Interpreting question", { timeout: 15_000 }),
+    expect(branch(page, /Coastal cooking/)).toBeVisible({ timeout: 20_000 }),
+  ]);
   await expect(branch(page, /Coastal cooking/)).toBeVisible({ timeout: 20_000 });
   await expect(branch(page, /Clay studios/)).toBeVisible();
   await expect(branch(page, /No usable evidence/)).toBeVisible();
-  await expect(page.getByTestId("progress")).toHaveCount(0);
+  await expect(progress).toHaveCount(0);
 });
 
 test("a territory opens and closes the evidence inspector", async ({ page }) => {

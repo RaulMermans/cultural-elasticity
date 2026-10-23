@@ -45,6 +45,7 @@ export function publicFailure(status: number, body: unknown): string {
   if (isMessage(body) && body.message.length > 0 && body.message.length < 240 && !body.message.includes("\n")) return body.message;
   if (status === 429) return "An investigation is already running. You can start another when it finishes.";
   if (status === 409) return "That confirmation was already used.";
+  if (status === 401) return "The investigation service is not available from that origin.";
   if (status === 404) return "This investigation is no longer available. You can start a new one.";
   if (status === 503) return "The investigation service is not available right now.";
   return "The investigation could not be started.";

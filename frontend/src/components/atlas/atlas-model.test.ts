@@ -213,8 +213,9 @@ test("the recorded example is labelled, live-origin, and parseable without a pro
     responses: QueryResponse[];
   };
   assert.equal(artifact.kind, "RECORDED_EXAMPLE");
-  assert.match(artifact.recordedAt, /^2026-10-22T/u);
+  assert.match(artifact.recordedAt, /^\d{4}-\d{2}-\d{2}T/u);
   assert.match(artifact.note, /does not call a provider/iu);
+  assert.equal(artifact.responses[0]?.state, "INVESTIGATION_INCOMPLETE");
   assert.ok(artifact.responses.length >= 1);
   for (const item of artifact.responses) {
     const parsed = parseQueryResponse(item);

@@ -1,0 +1,25 @@
+# Fallback host. Owner action required before this file is applied.
+# Official Render Docker web service: one persistent instance, HTTP health checks,
+# SIGTERM with a bounded shutdown delay. Do not scale past one instance: jobs are in-memory.
+services:
+  - type: web
+    name: cultural-elasticity-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    numInstances: 1
+    maxShutdownDelaySeconds: 45
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CE_PUBLIC_DEPLOYMENT
+        value: "1"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: QLOO_API_BASE_URL
+        value: https://hackathon.api.qloo.com
+      - key: QLOO_CALL_SPACING_MS
+        value: "7000"
+      - key: CE_ACCEPT_INVESTIGATIONS
+        value: "1"

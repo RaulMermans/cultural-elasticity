@@ -4,7 +4,11 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 5B.3 — Living Atlas product quality
+## Current status: Sprint 7A — Deployment foundation
+
+- **Sprint 7A** prepares a public-deployment-capable Living Atlas without publishing it. The backend remains one persistent Node 22 process (`JobManager` is still in-memory). Frontend and backend are intended to deploy separately. See [docs/sprint-7a/DEPLOYMENT_FOUNDATION.md](docs/sprint-7a/DEPLOYMENT_FOUNDATION.md). Owner approval is required before any paid host, DNS or credential change. The agent stays **`AGENT_MODEL_NOT_READY`**.
+
+## Previous status: Sprint 5B.3 — Living Atlas product quality
 
 - **Sprint 5B.3** corrects clarification continuity, return navigation, comparison integrity, evidence attribution, job expiry, public execution guards, and vague narrowing. A recorded Qloo-backed example can be opened without a provider call. See [docs/sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md](docs/sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md). The agent stays **`AGENT_MODEL_NOT_READY`**.
 

@@ -1,4 +1,5 @@
 import "server-only";
+import { backendBaseUrl } from "./backend-url";
 import {
   isAgentRunResponse,
   isAnalysisIngredients,
@@ -12,11 +13,19 @@ import {
 } from "@cultural-elasticity/shared";
 
 export type BackendStatus = "connected" | "unavailable";
+export { backendBaseUrl };
 
-const DEFAULT_BACKEND_URL = "http://127.0.0.1:4000";
+function internalHeaders(extra?: HeadersInit, visitorId?: string): Headers {
+  const headers = new Headers(extra);
+  const secret = process.env.CE_INTERNAL_API_SECRET?.trim();
+  if (secret) headers.set("x-ce-internal-auth", secret);
+  if (visitorId) headers.set("x-ce-visitor", visitorId);
+  return headers;
+}
 
 export async function getBackendHealth(): Promise<BackendStatus> {
-  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  const baseUrl = backendBaseUrl();
+  if (!baseUrl) return "unavailable";
   try {
     const response = await fetch(new URL("/health", baseUrl), {
       cache: "no-store",
@@ -36,7 +45,8 @@ export type AnalysisResult =
 
 /** Development only: sends an EvidencePacket to the backend's offline analysis endpoint. */
 export async function postAnalysisIngredients(packet: unknown): Promise<AnalysisResult> {
-  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  const baseUrl = backendBaseUrl();
+  if (!baseUrl) return { status: "unavailable" };
   try {
     const response = await fetch(new URL("/api/analysis/ingredients", baseUrl), {
       method: "POST",
@@ -60,7 +70,8 @@ export type MethodologyResult =
 
 /** Development only: sends an assembled methodology input to the backend's deterministic methodology endpoint. */
 export async function postMethodology(input: unknown): Promise<MethodologyResult> {
-  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  const baseUrl = backendBaseUrl();
+  if (!baseUrl) return { status: "unavailable" };
   try {
     const response = await fetch(new URL("/api/methodology/analyze", baseUrl), {
       method: "POST",
@@ -84,7 +95,8 @@ export type AgentResponse = { status: "ok"; response: AgentRunResponse } | { sta
  * spaced Qloo calls and can take several minutes, hence the long timeout.
  */
 export async function postAgent(path: "/api/agent/analyze" | "/api/agent/continue", body: unknown): Promise<AgentResponse> {
-  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  const baseUrl = backendBaseUrl();
+  if (!baseUrl) return { status: "unavailable" };
   try {
     const response = await fetch(new URL(path, baseUrl), {
       method: "POST",
@@ -108,7 +120,8 @@ export type QueryResult = { status: "ok"; response: QueryResponse } | { status: 
  * investigation; /follow-up starts a new linked child run from an existing one. The backend validates every run id.
  */
 export async function postQuery(path: "/api/agent/interpret" | "/api/agent/query" | "/api/agent/follow-up", body: unknown): Promise<QueryResult> {
-  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+  const baseUrl = backendBaseUrl();
+  if (!baseUrl) return { status: "unavailable" };
   try {
     const response = await fetch(new URL(path, baseUrl), {
       method: "POST",
@@ -125,10 +138,16 @@ export async function postQuery(path: "/api/agent/interpret" | "/api/agent/query
   }
 }
 
-async function backendFetch(path: string, init: RequestInit, timeoutMs: number): Promise<{ status: number; body: unknown } | null> {
-  const baseUrl = process.env.BACKEND_URL ?? DEFAULT_BACKEND_URL;
+async function backendFetch(path: string, init: RequestInit, timeoutMs: number, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
+  const baseUrl = backendBaseUrl();
+  if (!baseUrl) return null;
   try {
-    const response = await fetch(new URL(path, baseUrl), { ...init, cache: "no-store", signal: AbortSignal.timeout(timeoutMs) });
+    const response = await fetch(new URL(path, baseUrl), {
+      ...init,
+      headers: internalHeaders(init.headers, visitorId),
+      cache: "no-store",
+      signal: AbortSignal.timeout(timeoutMs),
+    });
     const body: unknown = await response.json().catch(() => null);
     return { status: response.status, body };
   } catch {
@@ -137,14 +156,14 @@ async function backendFetch(path: string, init: RequestInit, timeoutMs: number):
 }
 
 /** Product path. The browser never calls the investigation API directly. */
-export async function createJob(body: unknown): Promise<{ status: number; body: unknown } | null> {
-  return backendFetch("/api/agent/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }, 15_000);
+export async function createJob(body: unknown, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch("/api/agent/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }, 15_000, visitorId);
 }
 
-export async function readJob(id: string, token: string): Promise<{ status: number; body: unknown } | null> {
-  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}`, { headers: { "x-job-token": token } }, 10_000);
+export async function readJob(id: string, token: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}`, { headers: { "x-job-token": token } }, 10_000, visitorId);
 }
 
-export async function cancelJob(id: string, token: string): Promise<{ status: number; body: unknown } | null> {
-  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}/cancel`, { method: "POST", headers: { "x-job-token": token } }, 10_000);
+export async function cancelJob(id: string, token: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}/cancel`, { method: "POST", headers: { "x-job-token": token } }, 10_000, visitorId);
 }
