@@ -9,6 +9,7 @@
  * copied from deterministic code into the result regardless of what the model wrote.
  */
 import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type Limitation } from "@cultural-elasticity/shared";
+import { priceUsd } from "../ops/pricing.js";
 import { unanalyzedResult } from "./analysis-runner.js";
 import { classifyRunFailure } from "./failure-taxonomy.js";
 import { candidateCanonicalization, comparisonSetConstruction, evidenceStatus } from "./frontier.js";
@@ -72,12 +73,7 @@ function templateFollowUps(results: AgentTerritoryResult[]): string[] {
   return [...new Set(out)].slice(0, 6);
 }
 
-/** USD per million tokens for models with a known first-party price; others report cost as unavailable. */
-const MODEL_PRICES: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
-  "claude-opus-5-5": { input: 4, output: 20, cacheRead: 0.2, cacheWrite: 5 },
-  // Prompts up to 100K tokens (every agent turn is far below); cache read/write at the standard 0.1× / 1.25×.
-  "claude-haiku-5-5": { input: 0.1, output: 0.5, cacheRead: 0.01, cacheWrite: 0.125 },
-};
+export { priceUsd } from "../ops/pricing.js";
 
 /** Rejection codes that are valid-schema actions the current state does not support. */
 const UNSUPPORTED_STATE_CODES = new Set([
@@ -104,13 +100,6 @@ const UNSUPPORTED_STATE_CODES = new Set([
 export function modelCostUsd(state: AgentRunState): number | null {
   const usd = state.model.kind === "llm" ? priceUsd(state.model.id, state.usage) : null;
   return usd === null ? null : Math.round(usd * 10_000) / 10_000;
-}
-
-/** Unrounded USD for provider-reported usage on a model with a known price (Sprint 5B.1: also used for query interpretation). */
-export function priceUsd(modelId: string, u: { uncachedInputTokens: number; cacheReadTokens: number; cacheCreationTokens: number; outputTokens: number }): number | null {
-  const price = MODEL_PRICES[modelId];
-  if (!price) return null;
-  return (u.uncachedInputTokens * price.input + u.cacheReadTokens * price.cacheRead + u.cacheCreationTokens * price.cacheWrite + u.outputTokens * price.output) / 1_000_000;
 }
 
 export function computeMetrics(state: AgentRunState, results: AgentTerritoryResult[]): AgentMetrics {

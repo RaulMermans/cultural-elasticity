@@ -34,6 +34,7 @@ Provider-specific shapes (harness envelopes, Qloo entity/tag records, `compare_a
 - Sprint 5B.1: one query interpretation policy and a deterministic execution gate. See [sprint-5b1/QUERY_INTELLIGENCE.md](sprint-5b1/QUERY_INTELLIGENCE.md).
 - Sprint 5B.2: the Living Atlas product surface and in-process JobManager. See [sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md](sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md).
 - Sprint 5B.3: Atlas product quality — clarification continuity, return navigation, comparison integrity, evidence attribution, job expiry, public guards, intelligent narrowing, and a recorded live example. See [sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md](sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md).
+- Sprint 7A: deployment foundation — persistent backend host, server-to-server auth, visitor admission, reservation-based spend control, health/readiness, and a verified recorded example. See [sprint-7a/DEPLOYMENT_FOUNDATION.md](sprint-7a/DEPLOYMENT_FOUNDATION.md). Jobs remain in-process. A freeze-after-response host is still incompatible.
 
 ## Cultural Evidence Core pipeline
 

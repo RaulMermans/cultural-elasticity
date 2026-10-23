@@ -11,6 +11,7 @@
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import type { QueryResponse } from "@cultural-elasticity/shared";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../errors.js";
+import { observedUsage } from "../../ops/usage.js";
 import type { QueryBody } from "./contracts.js";
 import { QueryAlreadyExecutedError, type QueryHooks, type QueryProgress } from "./service.js";
 
@@ -63,6 +64,8 @@ export type JobManagerOptions = {
   log?: (event: Record<string, unknown>) => void;
 };
 
+type AbortReason = "user" | "timeout" | "shutdown" | null;
+
 type Job = {
   id: string;
   tokenHash: string;
@@ -71,6 +74,7 @@ type Job = {
   stage: JobStage;
   intent: string | null;
   stopping: boolean;
+  abortReason: AbortReason;
   response: QueryResponse | null;
   error: { code: string; message: string } | null;
   createdAt: number;
@@ -133,6 +137,7 @@ export class JobManager {
       stage: "queued",
       intent: null,
       stopping: false,
+      abortReason: null,
       response: null,
       error: null,
       createdAt: now,
@@ -145,9 +150,26 @@ export class JobManager {
     this.jobs.set(job.id, job);
     if (request.kind === "confirm") this.confirms.add(request.queryId);
     this.queue.push(job);
-    this.options.log?.({ jobId: job.id, status: job.status, kind: request.kind });
+    this.options.log?.({ jobId: job.id, status: job.status, kind: request.kind, event: "job_queued" });
     this.pump();
     return { ...this.view(job), accessToken };
+  }
+
+  counts(): { running: number; queued: number; held: number } {
+    return { running: this.running, queued: this.queue.filter((job) => job.status === "queued").length, held: this.jobs.size };
+  }
+
+  /** Stops new work and aborts queued or running jobs. Finished results stay readable until TTL. */
+  shutdown(message = "The investigation service is stopping."): void {
+    for (const job of this.jobs.values()) {
+      if (job.status !== "queued" && job.status !== "running") continue;
+      job.abortReason = "shutdown";
+      job.stopping = true;
+      job.controller.abort();
+      if (job.status === "queued") {
+        this.finish(job, "cancelled", null, { code: "BACKEND_RESTART", message });
+      }
+    }
   }
 
   /** Returns null when the id is unknown or the token does not match. The two cases are not distinguished. */
@@ -169,6 +191,7 @@ export class JobManager {
     const job = this.jobs.get(id);
     if (!job || !tokenMatches(job.tokenHash, token)) return null;
     if (job.status !== "queued" && job.status !== "running") return this.view(job);
+    job.abortReason = "user";
     job.stopping = true;
     job.controller.abort();
     job.updatedAt = this.now();
@@ -189,7 +212,11 @@ export class JobManager {
     job.status = "running";
     job.updatedAt = this.now();
     this.running += 1;
-    const timer = setTimeout(() => job.controller.abort(), this.maxRunMs);
+    this.options.log?.({ jobId: job.id, status: job.status, event: "job_started" });
+    const timer = setTimeout(() => {
+      job.abortReason = "timeout";
+      job.controller.abort();
+    }, this.maxRunMs);
     timer.unref?.();
     job.timer = timer;
     void this.execute(job).finally(() => {
@@ -213,13 +240,21 @@ export class JobManager {
     try {
       const runner = this.options.runnerFor(job.request.model);
       const response = await runRequest(runner, job.request, hooks);
-      if (job.controller.signal.aborted || response.reasons.some((reason) => reason.code === "INVESTIGATION_CANCELLED")) {
+      if (job.abortReason === "timeout") {
+        this.finishTimeout(job, response);
+      } else if (job.abortReason === "shutdown") {
+        this.finish(job, "failed", null, { code: "BACKEND_RESTART", message: "The investigation service stopped before this run finished. It is not evidence against the territory." });
+      } else if (job.controller.signal.aborted || response.reasons.some((reason) => reason.code === "INVESTIGATION_CANCELLED")) {
         this.finish(job, "cancelled", response, { code: "INVESTIGATION_CANCELLED", message: "The investigation was stopped. Partial observations were not recorded as findings." });
       } else {
         this.finish(job, "completed", response, null);
       }
     } catch (error) {
-      if (job.controller.signal.aborted || job.stopping) {
+      if (job.abortReason === "timeout") {
+        this.finishTimeout(job, job.response);
+      } else if (job.abortReason === "shutdown") {
+        this.finish(job, "failed", null, { code: "BACKEND_RESTART", message: "The investigation service stopped before this run finished. It is not evidence against the territory." });
+      } else if (job.controller.signal.aborted || job.stopping) {
         this.finish(job, "cancelled", null, { code: "INVESTIGATION_CANCELLED", message: "The investigation was stopped. Partial observations were not recorded as findings." });
       } else {
         this.options.log?.({ jobId: job.id, status: "failed", code: error instanceof Error ? error.name : "Error" });
@@ -235,10 +270,21 @@ export class JobManager {
     job.updatedAt = this.now();
   }
 
+  private finishTimeout(job: Job, response: QueryResponse | null): void {
+    const kept = response ?? job.response;
+    const error = {
+      code: "INVESTIGATION_TIMEOUT",
+      message: kept
+        ? "The investigation reached its time limit. Prepared findings were kept. A timeout is not evidence against a territory."
+        : "The investigation reached its time limit before findings could be prepared. That is not evidence against a territory.",
+    };
+    this.finish(job, kept ? "completed" : "failed", kept, error);
+  }
+
   private finish(job: Job, status: JobStatus, response: QueryResponse | null, error: { code: string; message: string } | null): void {
     if (job.finishedAt !== null) return;
     const aborted = job.stopping || job.controller.signal.aborted;
-    if (aborted && status !== "cancelled" && status !== "expired") {
+    if (aborted && job.abortReason !== "timeout" && job.abortReason !== "shutdown" && status !== "cancelled" && status !== "expired") {
       const alreadyCancelled = response?.reasons.some((reason) => reason.code === "INVESTIGATION_CANCELLED") ?? false;
       status = "cancelled";
       error = { code: "INVESTIGATION_CANCELLED", message: "The investigation was stopped. Partial observations were not recorded as findings." };
@@ -256,7 +302,15 @@ export class JobManager {
     if (job.request.kind === "confirm") this.confirms.delete(job.request.queryId);
     const index = this.queue.indexOf(job);
     if (index >= 0) this.queue.splice(index, 1);
-    this.options.log?.({ jobId: job.id, status });
+    const usage = observedUsage(job.response);
+    this.options.log?.({
+      jobId: job.id,
+      status,
+      event: status === "completed" ? "job_completed" : status === "failed" ? "job_failed" : status === "cancelled" ? "job_cancelled" : status === "expired" ? "job_expired" : "job_completed",
+      durationMs: now - job.createdAt,
+      abortReason: job.abortReason,
+      usage,
+    });
   }
 
   private expire(job: Job): JobView {

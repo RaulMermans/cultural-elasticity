@@ -27,7 +27,9 @@
     "eval:agent:live": "pnpm --filter backend eval:agent:live",
     "eval:agent:replay": "pnpm --filter backend eval:agent:replay",
     "eval:query": "pnpm --filter backend eval:query",
-    "test:e2e": "pnpm --filter frontend test:e2e"
+    "test:e2e": "pnpm --filter frontend test:e2e",
+    "smoke:offline": "node scripts/smoke-offline.mjs",
+    "smoke:docker": "bash scripts/smoke-docker.sh"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

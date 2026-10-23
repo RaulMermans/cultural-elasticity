@@ -1,19 +1,19 @@
 {
   "kind": "RECORDED_EXAMPLE",
-  "recordedAt": "2026-10-22T17:17:09.352Z",
+  "recordedAt": "2026-10-23T06:28:19.052Z",
   "evidenceOrigin": "live",
   "model": "claude-haiku-5-5",
   "qlooCalls": {
-    "parent": 30,
-    "child": 5
+    "parent": 32,
+    "child": 19
   },
-  "sourceSha256": "ab023fe8b8746d9359cf8bfedb2d2c829de01ffc39d5c1a5eeba37d1c040662c",
+  "sourceSha256": "064c7f6e87692a45cc5790cf4901b879dd75d8ecbb0b72ad2aee0a76e41d3f75",
   "note": "Recorded from a verified live investigation. Partial evidence stays partial. This file does not call a provider.",
   "responses": [
     {
       "schemaVersion": "ce-query/0.1",
-      "queryId": "ea30a10c-0532-4424-908f-f9ccf0efdd14",
-      "state": "INVESTIGATION_COMPLETED",
+      "queryId": "0c8a2f3a-a3d8-4824-ae59-6e025e69fe77",
+      "state": "INVESTIGATION_INCOMPLETE",
       "interpretation": {
         "schemaVersion": "ce-query/0.1",
         "rawQuery": "Where could Jacquemus expand?",
@@ -54,7 +54,7 @@
       "supportedAlternative": null,
       "context": null,
       "investigation": {
-        "runId": "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
+        "runId": "75e24386-3071-4798-a62a-544d2bd6734f",
         "reused": false,
         "link": {
           "operation": "NEW_INVESTIGATION",
@@ -63,12 +63,12 @@
           "inheritedBrand": null,
           "constraints": [],
           "reason": "explore_frontier",
-          "queryId": "ea30a10c-0532-4424-908f-f9ccf0efdd14"
+          "queryId": "0c8a2f3a-a3d8-4824-ae59-6e025e69fe77"
         },
         "result": {
           "schemaVersion": "ce-agent-result/0.3",
-          "runId": "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-          "status": "COMPLETE",
+          "runId": "75e24386-3071-4798-a62a-544d2bd6734f",
+          "status": "BUDGET_EXHAUSTED",
           "intent": "explore_frontier",
           "userQuery": "Where could Jacquemus expand?",
           "brand": {
@@ -79,125 +79,233 @@
           },
           "territories": [
             {
-              "key": "bohemian_lifestyle",
-              "label": "Bohemian lifestyle",
-              "role": "frontier_candidate",
-              "evidenceStatus": "PARTIAL_EVIDENCE",
-              "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
-              "keyEvidence": [
-                "Shared cultural signals (operational tags filtered): median 1.5 across 2 exemplar(s) (SPARSE).",
-                "A brand-conditioned Qloo query for this concept returned 1 entities (SPARSE); top: Hopeless Lingerie.",
-                "Evidence quality MEDIUM."
-              ],
-              "limitations": [
-                {
-                  "code": "COMPARISON_SET_TOO_SMALL",
-                  "detail": "only 1 rankable brand territory in this analysis; a relative position needs ≥ 3 of one entity type"
-                },
-                {
-                  "code": "NO_RELATIVE_POSITION",
-                  "detail": "Bohemian lifestyle: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
-                }
-              ],
-              "provenance": {
-                "correlationIds": [
-                  "mcp-56e3bfe2-f537-485d-811e-495d4ec8d402",
-                  "mcp-5a6a3e77-8d51-4cd8-8d63-0a2157dd816f",
-                  "mcp-abb07af3-5845-41d4-829e-3d2755df2f0f",
-                  "mcp-c60dd8c2-919f-4035-afa3-cf321d46839a"
-                ],
-                "sources": [
-                  "qloo-hackathon-api"
-                ]
-              },
-              "classification": null,
-              "relativePosition": null,
-              "robustness": null
-            },
-            {
-              "key": "japanese_drama",
-              "label": "Japanese drama",
-              "role": "frontier_candidate",
-              "evidenceStatus": "PARTIAL_EVIDENCE",
-              "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
-              "keyEvidence": [
-                "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
-                "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Fishbowl Wives, He's Expecting, From Me to You: Kimi ni Todoke, My Husband Won't Fit, The Makanai: Cooking for the Maiko House.",
-                "Evidence quality MEDIUM."
-              ],
-              "limitations": [
-                {
-                  "code": "COMPARISON_SET_TOO_SMALL",
-                  "detail": "only 1 rankable tv_show territory in this analysis; a relative position needs ≥ 3 of one entity type"
-                },
-                {
-                  "code": "CONDITIONED_LIST_TRUNCATED",
-                  "detail": "urn:tag:keyword:media:japanese_drama: the list reached the requested limit; more entities may exist"
-                },
-                {
-                  "code": "NO_RELATIVE_POSITION",
-                  "detail": "Japanese drama: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
-                }
-              ],
-              "provenance": {
-                "correlationIds": [
-                  "mcp-11e3011a-b3b4-43f6-beac-bdb177c9342c",
-                  "mcp-3c79e6ac-4924-4dd1-a4ac-10666640186c",
-                  "mcp-5a6a3e77-8d51-4cd8-8d63-0a2157dd816f",
-                  "mcp-91702f16-dd92-4818-b370-9d5faea4e0f0",
-                  "mcp-a6f49f54-219b-4566-ba42-40ed866452bb",
-                  "mcp-ce758dec-5d7e-4463-a161-3e1453afb0e1",
-                  "mcp-d36e436c-8b5d-4d58-991b-467e21012b8f"
-                ],
-                "sources": [
-                  "qloo-hackathon-api"
-                ]
-              },
-              "classification": null,
-              "relativePosition": null,
-              "robustness": null
-            },
-            {
               "key": "art_and_culture",
               "label": "Art and culture",
               "role": "frontier_candidate",
-              "evidenceStatus": "UNSUPPORTED",
-              "analysisRoute": "INSUFFICIENT_EVIDENCE",
+              "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+              "analysisRoute": "FULL_RELATIVE_ANALYSIS",
               "keyEvidence": [
-                "No measurable evidence: candidate was never anchored to a Qloo concept."
+                "Relative position 1 of 3 (median panel percentile 0.75) within the comparison set Avant-garde experimental fashion, Bohemian lifestyle, Art and culture.",
+                "Representation robustness INSUFFICIENT (1 of 1 exemplars panelled; percentile spread 0.5).",
+                "Provisional class UNCERTAIN_REPRESENTATION_SENSITIVE, relative to this comparison set only.",
+                "Shared cultural signals (operational tags filtered): median 4 across 1 exemplar(s) (SOME).",
+                "Evidence quality MEDIUM."
               ],
               "limitations": [
                 {
-                  "code": "TERRITORY_UNRESOLVED",
-                  "detail": "Art and culture: candidate was never anchored to a Qloo concept"
+                  "code": "CONDITIONED_NOT_COLLECTED",
+                  "detail": "art_and_culture: no brand-conditioned territory evidence (reported as absent, never as zero)"
+                },
+                {
+                  "code": "ROBUSTNESS_INSUFFICIENT",
+                  "detail": "art_and_culture: only one exemplar is declared for this territory, so exemplar substitution cannot be tested"
+                },
+                {
+                  "code": "TERRITORY_APPROXIMATION",
+                  "detail": "art_and_culture: exemplar diversity unknown: fewer than two exemplars"
+                },
+                {
+                  "code": "NOT_COLLECTED_BUDGET",
+                  "detail": "conditioned not collected: Qloo call budget (32) spent"
+                },
+                {
+                  "code": "NOT_COLLECTED_BUDGET",
+                  "detail": "panel not collected: Qloo call budget (32) spent"
                 }
               ],
               "provenance": {
-                "correlationIds": [],
-                "sources": []
+                "correlationIds": [
+                  "mcp-709d48b1-ca77-4374-aebd-94589625862f",
+                  "mcp-89c197d1-a0c3-4847-a9b0-5c5b1b4eb1a2",
+                  "mcp-e4777205-d77b-4d4d-8b07-69e4ad811d67"
+                ],
+                "sources": [
+                  "qloo-hackathon-api"
+                ]
               },
-              "classification": null,
-              "relativePosition": null,
-              "robustness": null
+              "classification": {
+                "label": "UNCERTAIN_REPRESENTATION_SENSITIVE",
+                "status": "PROVISIONAL",
+                "reasons": [
+                  "robustness INSUFFICIENT: the position depends on which exemplar represents the territory",
+                  "only one exemplar is declared for this territory, so exemplar substitution cannot be tested"
+                ]
+              },
+              "relativePosition": {
+                "position": 1,
+                "of": 3,
+                "medianPercentile": 0.75,
+                "medianRank": 1.5
+              },
+              "robustness": {
+                "level": "INSUFFICIENT",
+                "percentileSpread": 0.5,
+                "panelledExemplars": 1,
+                "declaredExemplars": 1,
+                "reasons": [
+                  "only one exemplar is declared for this territory, so exemplar substitution cannot be tested"
+                ]
+              }
+            },
+            {
+              "key": "bohemian_lifestyle",
+              "label": "Bohemian lifestyle",
+              "role": "frontier_candidate",
+              "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+              "analysisRoute": "FULL_RELATIVE_ANALYSIS",
+              "keyEvidence": [
+                "Relative position 2 of 3 (median panel percentile 0.5) within the comparison set Avant-garde experimental fashion, Bohemian lifestyle, Art and culture.",
+                "Representation robustness LOW (2 of 2 exemplars panelled; percentile spread 1).",
+                "Provisional class UNCERTAIN_REPRESENTATION_SENSITIVE, relative to this comparison set only.",
+                "Shared cultural signals (operational tags filtered): median 1.5 across 2 exemplar(s) (SPARSE).",
+                "Evidence quality MEDIUM."
+              ],
+              "limitations": [
+                {
+                  "code": "CONDITIONED_NOT_COLLECTED",
+                  "detail": "bohemian_lifestyle: no brand-conditioned territory evidence (reported as absent, never as zero)"
+                },
+                {
+                  "code": "ROBUSTNESS_LOW",
+                  "detail": "bohemian_lifestyle: 2 exemplars across 2 panel(s); ranks 1–3; percentile spread 1"
+                },
+                {
+                  "code": "NOT_COLLECTED_BUDGET",
+                  "detail": "conditioned not collected: Qloo call budget (32) spent"
+                },
+                {
+                  "code": "NOT_COLLECTED_BUDGET",
+                  "detail": "panel not collected: Qloo call budget (32) spent"
+                }
+              ],
+              "provenance": {
+                "correlationIds": [
+                  "mcp-2d14d883-6dc6-4a45-80c8-e895191d0556",
+                  "mcp-46266ba0-6f1f-47a5-9ada-ba8fb3d3cb1e",
+                  "mcp-89c197d1-a0c3-4847-a9b0-5c5b1b4eb1a2",
+                  "mcp-cea816bc-c6e0-4134-97d0-3af5014dedec",
+                  "mcp-e4777205-d77b-4d4d-8b07-69e4ad811d67",
+                  "mcp-ee1b06b0-9d91-4055-b8ad-ada57d7d946f"
+                ],
+                "sources": [
+                  "qloo-hackathon-api"
+                ]
+              },
+              "classification": {
+                "label": "UNCERTAIN_REPRESENTATION_SENSITIVE",
+                "status": "PROVISIONAL",
+                "reasons": [
+                  "robustness LOW: the position depends on which exemplar represents the territory",
+                  "2 exemplars across 2 panel(s); ranks 1–3; percentile spread 1"
+                ]
+              },
+              "relativePosition": {
+                "position": 2,
+                "of": 3,
+                "medianPercentile": 0.5,
+                "medianRank": 2
+              },
+              "robustness": {
+                "level": "LOW",
+                "percentileSpread": 1,
+                "panelledExemplars": 2,
+                "declaredExemplars": 2,
+                "reasons": [
+                  "2 exemplars across 2 panel(s); ranks 1–3; percentile spread 1"
+                ]
+              }
             },
             {
               "key": "avant_garde_experimental_fashion",
               "label": "Avant-garde experimental fashion",
               "role": "frontier_candidate",
-              "evidenceStatus": "UNSUPPORTED",
-              "analysisRoute": "INSUFFICIENT_EVIDENCE",
+              "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+              "analysisRoute": "FULL_RELATIVE_ANALYSIS",
               "keyEvidence": [
-                "No measurable evidence: candidate was never anchored to a Qloo concept."
+                "Relative position 3 of 3 (median panel percentile 0.25) within the comparison set Avant-garde experimental fashion, Bohemian lifestyle, Art and culture.",
+                "Representation robustness INSUFFICIENT (1 of 1 exemplars panelled; percentile spread 0.5).",
+                "Provisional class UNCERTAIN_REPRESENTATION_SENSITIVE, relative to this comparison set only.",
+                "Shared cultural signals (operational tags filtered): median 1 across 1 exemplar(s) (SPARSE).",
+                "A brand-conditioned Qloo query for this concept returned no entities.",
+                "Evidence quality MEDIUM."
               ],
               "limitations": [
                 {
-                  "code": "TERRITORY_UNRESOLVED",
-                  "detail": "Avant-garde experimental fashion: candidate was never anchored to a Qloo concept"
+                  "code": "CONDITIONED_EMPTY",
+                  "detail": "urn:tag:lifestyle:qloo:avant_garde: the call returned no entities (observed empty, not missing)"
+                },
+                {
+                  "code": "ROBUSTNESS_INSUFFICIENT",
+                  "detail": "avant_garde_experimental_fashion: only one exemplar is declared for this territory, so exemplar substitution cannot be tested"
+                },
+                {
+                  "code": "TERRITORY_APPROXIMATION",
+                  "detail": "avant_garde_experimental_fashion: exemplar diversity unknown: fewer than two exemplars"
+                },
+                {
+                  "code": "NOT_COLLECTED_BUDGET",
+                  "detail": "panel not collected: Qloo call budget (32) spent"
                 }
               ],
               "provenance": {
-                "correlationIds": [],
-                "sources": []
+                "correlationIds": [
+                  "mcp-34886189-1806-4be2-9f0f-7915d83febd4",
+                  "mcp-54612ab8-7911-4f08-b653-ec683a8785da",
+                  "mcp-89c197d1-a0c3-4847-a9b0-5c5b1b4eb1a2",
+                  "mcp-e4777205-d77b-4d4d-8b07-69e4ad811d67"
+                ],
+                "sources": [
+                  "qloo-hackathon-api"
+                ]
+              },
+              "classification": {
+                "label": "UNCERTAIN_REPRESENTATION_SENSITIVE",
+                "status": "PROVISIONAL",
+                "reasons": [
+                  "robustness INSUFFICIENT: the position depends on which exemplar represents the territory",
+                  "only one exemplar is declared for this territory, so exemplar substitution cannot be tested"
+                ]
+              },
+              "relativePosition": {
+                "position": 3,
+                "of": 3,
+                "medianPercentile": 0.25,
+                "medianRank": 2.5
+              },
+              "robustness": {
+                "level": "INSUFFICIENT",
+                "percentileSpread": 0.5,
+                "panelledExemplars": 1,
+                "declaredExemplars": 1,
+                "reasons": [
+                  "only one exemplar is declared for this territory, so exemplar substitution cannot be tested"
+                ]
+              }
+            },
+            {
+              "key": "japanese_drama",
+              "label": "Japanese drama",
+              "role": "frontier_candidate",
+              "evidenceStatus": "UNSUPPORTED",
+              "analysisRoute": "INSUFFICIENT_EVIDENCE",
+              "keyEvidence": [
+                "No measurable evidence: the run's budget ended before this territory was analyzed."
+              ],
+              "limitations": [
+                {
+                  "code": "BUDGET_EXHAUSTED",
+                  "detail": "Japanese drama: the run's budget ended before this territory was analyzed"
+                }
+              ],
+              "provenance": {
+                "correlationIds": [
+                  "mcp-394eecc2-9377-4753-8c05-9ebebc981263",
+                  "mcp-709d48b1-ca77-4374-aebd-94589625862f",
+                  "mcp-b1e1c85a-4904-4a9d-9e2b-aaeac66738a3"
+                ],
+                "sources": [
+                  "qloo-hackathon-api"
+                ]
               },
               "classification": null,
               "relativePosition": null,
@@ -205,7 +313,457 @@
             }
           ],
           "summary": {
-            "text": "On the current evidence, Bohemian lifestyle and Japanese drama are the only territories with any measurable cultural evidence, and neither has a comparison set or relative position, so they cannot be ranked against each other or against any reference territory. Bohemian lifestyle rests on a thin brand-exemplar panel with sparse shared signals, while Japanese drama has a supported but truncated brand-conditioned list alongside no shared signals across its exemplars. Art and culture and avant-garde experimental fashion could not be anchored to any Qloo concept, so the evidence cannot say whether either has a measurable cultural position, and it cannot identify where expansion would fit best.\nBohemian lifestyle: The territory is represented by a brand-exemplar panel of two entities linked to the Bohemian lifestyle concept, and that panel is the only basis for reading it. Shared cultural signals across the exemplars are sparse, with only Model and france held in common, so the shared profile is thin. The brand-conditioned query returned only a sparse list, led by Hopeless Lingerie, so the conditioned evidence for this territory is limited.\nJapanese drama: The brand-conditioned query returned a supported but broad list, led by titles such as Fishbowl Wives, and because the list is truncated it cannot be read as complete. The tv show exemplars share no consistent signals, so this territory has no shared cultural profile across its exemplar set. The route is partial and no relative position is available, so this territory cannot be placed against a comparison set.\nArt and culture: No Qloo concept anchors this territory, so no measurable evidence is available and it cannot be assessed.\nAvant-garde experimental fashion: No Qloo concept anchors this territory, so no measurable evidence is available and it cannot be assessed.",
+            "text": "Jacquemus: 4 territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.\nArt and culture: position 1 of 3 within Avant-garde experimental fashion, Bohemian lifestyle, Art and culture; provisional class uncertain (representation-sensitive) relative to that set, with insufficient robustness.\nBohemian lifestyle: position 2 of 3 within Avant-garde experimental fashion, Bohemian lifestyle, Art and culture; provisional class uncertain (representation-sensitive) relative to that set, with low robustness.\nAvant-garde experimental fashion: position 3 of 3 within Avant-garde experimental fashion, Bohemian lifestyle, Art and culture; provisional class uncertain (representation-sensitive) relative to that set, with insufficient robustness.\nJapanese drama: not measurable with the Qloo evidence available (BUDGET_EXHAUSTED).",
+            "source": "deterministic_template",
+            "claimValidation": {
+              "passed": true,
+              "violations": [
+                "summary: robustness HIGH does not match Art and culture (INSUFFICIENT), Avant-garde experimental fashion (INSUFFICIENT)"
+              ]
+            }
+          },
+          "limitations": [
+            {
+              "code": "NOT_A_SUCCESS_PREDICTION",
+              "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+            },
+            {
+              "code": "NO_APPROVED_SCORE",
+              "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+            },
+            {
+              "code": "RELATIVE_TO_COMPARISON_SET",
+              "detail": "positions and classes hold only for the comparison set shown with each territory"
+            },
+            {
+              "code": "COMPARISON_SET_DEPENDENT",
+              "detail": "relative position depends on the comparison set; see comparisonSetConstruction for how it was assembled and what was rejected"
+            }
+          ],
+          "evidenceOrigin": "live",
+          "model": {
+            "id": "claude-haiku-5-5",
+            "kind": "llm",
+            "live": true,
+            "effort": "high"
+          },
+          "failureCategory": "BUDGET_EXHAUSTED",
+          "layers": {
+            "qlooEvidence": {
+              "brand": {
+                "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+                "label": "Jacquemus",
+                "correlationId": "mcp-46917cbf-b4d0-4bc3-967f-f94a61a5f924"
+              },
+              "concepts": [
+                {
+                  "territoryKey": "avant_garde_experimental_fashion",
+                  "id": "urn:tag:lifestyle:qloo:avant_garde",
+                  "label": "avant-garde",
+                  "correlationIds": [
+                    "mcp-34886189-1806-4be2-9f0f-7915d83febd4"
+                  ]
+                },
+                {
+                  "territoryKey": "bohemian_lifestyle",
+                  "id": "urn:tag:lifestyle:qloo:bohemian_lifestyle",
+                  "label": "Bohemian Lifestyle",
+                  "correlationIds": [
+                    "mcp-2d14d883-6dc6-4a45-80c8-e895191d0556",
+                    "mcp-46266ba0-6f1f-47a5-9ada-ba8fb3d3cb1e"
+                  ]
+                },
+                {
+                  "territoryKey": "japanese_drama",
+                  "id": "urn:tag:keyword:media:japanese_drama",
+                  "label": "japanese drama",
+                  "correlationIds": [
+                    "mcp-394eecc2-9377-4753-8c05-9ebebc981263",
+                    "mcp-709d48b1-ca77-4374-aebd-94589625862f",
+                    "mcp-b1e1c85a-4904-4a9d-9e2b-aaeac66738a3"
+                  ]
+                },
+                {
+                  "territoryKey": "art_and_culture",
+                  "id": "urn:tag:cultural_relevance:qloo:art_and_culture",
+                  "label": "Art and Culture",
+                  "correlationIds": [
+                    "mcp-709d48b1-ca77-4374-aebd-94589625862f"
+                  ]
+                }
+              ],
+              "exemplars": [
+                {
+                  "territoryKey": "avant_garde_experimental_fashion",
+                  "id": "17F9BDB5-F913-40C8-86B3-63850A541FAC",
+                  "label": "Vetements"
+                },
+                {
+                  "territoryKey": "bohemian_lifestyle",
+                  "id": "5A9A64E3-E6E3-4855-B7AD-66129C951294",
+                  "label": "Isabel Marant"
+                },
+                {
+                  "territoryKey": "bohemian_lifestyle",
+                  "id": "84181C69-56CF-4096-97CC-2A0B026665DB",
+                  "label": "Hopeless Lingerie"
+                },
+                {
+                  "territoryKey": "art_and_culture",
+                  "id": "92484DBB-9DE2-4E77-8B69-04F663FF7DCD",
+                  "label": "Dries Van Noten"
+                }
+              ],
+              "qlooCalls": 32
+            },
+            "systemAnalysis": {
+              "routes": [
+                {
+                  "territoryKey": "art_and_culture",
+                  "route": "FULL_RELATIVE_ANALYSIS",
+                  "classification": "UNCERTAIN_REPRESENTATION_SENSITIVE",
+                  "position": 1,
+                  "robustness": "INSUFFICIENT"
+                },
+                {
+                  "territoryKey": "bohemian_lifestyle",
+                  "route": "FULL_RELATIVE_ANALYSIS",
+                  "classification": "UNCERTAIN_REPRESENTATION_SENSITIVE",
+                  "position": 2,
+                  "robustness": "LOW"
+                },
+                {
+                  "territoryKey": "avant_garde_experimental_fashion",
+                  "route": "FULL_RELATIVE_ANALYSIS",
+                  "classification": "UNCERTAIN_REPRESENTATION_SENSITIVE",
+                  "position": 3,
+                  "robustness": "INSUFFICIENT"
+                },
+                {
+                  "territoryKey": "japanese_drama",
+                  "route": "INSUFFICIENT_EVIDENCE",
+                  "classification": null,
+                  "position": null,
+                  "robustness": null
+                }
+              ]
+            },
+            "agentInterpretation": {
+              "summary": "Jacquemus: 4 territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.\nArt and culture: position 1 of 3 within Avant-garde experimental fashion, Bohemian lifestyle, Art and culture; provisional class uncertain (representation-sensitive) relative to that set, with insufficient robustness.\nBohemian lifestyle: position 2 of 3 within Avant-garde experimental fashion, Bohemian lifestyle, Art and culture; provisional class uncertain (representation-sensitive) relative to that set, with low robustness.\nAvant-garde experimental fashion: position 3 of 3 within Avant-garde experimental fashion, Bohemian lifestyle, Art and culture; provisional class uncertain (representation-sensitive) relative to that set, with insufficient robustness.\nJapanese drama: not measurable with the Qloo evidence available (BUDGET_EXHAUSTED).",
+              "source": "deterministic_template",
+              "claimValidationPassed": true
+            }
+          },
+          "trace": {
+            "toolCalls": [],
+            "investigationLink": {
+              "operation": "NEW_INVESTIGATION",
+              "parentRunId": null,
+              "selectedTerritoryKey": null,
+              "inheritedBrand": null,
+              "constraints": [],
+              "reason": "explore_frontier",
+              "queryId": "0c8a2f3a-a3d8-4824-ae59-6e025e69fe77"
+            },
+            "stopReason": {
+              "code": "AGENT_BUDGET_EXHAUSTED",
+              "detail": "Qloo budget (32) spent with 1 territory(ies) unanalyzed"
+            },
+            "model": {
+              "id": "claude-haiku-5-5",
+              "kind": "llm",
+              "live": true,
+              "effort": "high"
+            }
+          }
+        }
+      },
+      "territories": [
+        {
+          "name": "Art and culture",
+          "investigationState": "INVESTIGATED",
+          "territoryKey": "art_and_culture",
+          "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+          "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+        },
+        {
+          "name": "Bohemian lifestyle",
+          "investigationState": "INVESTIGATED",
+          "territoryKey": "bohemian_lifestyle",
+          "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+          "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+        },
+        {
+          "name": "Avant-garde experimental fashion",
+          "investigationState": "INVESTIGATED",
+          "territoryKey": "avant_garde_experimental_fashion",
+          "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+          "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+        },
+        {
+          "name": "Japanese drama",
+          "investigationState": "INVESTIGATED",
+          "territoryKey": "japanese_drama",
+          "evidenceStatus": "UNSUPPORTED",
+          "analysisRoute": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "nextOperations": [
+        "explore_frontier",
+        "analyze_move",
+        "compare_territories",
+        "refine_territory",
+        "switch_territory"
+      ],
+      "telemetry": {
+        "queryId": "0c8a2f3a-a3d8-4824-ae59-6e025e69fe77",
+        "schemaVersion": "ce-query/0.1",
+        "intent": "explore_frontier",
+        "secondaryIntents": [],
+        "explicitFields": [],
+        "inheritedFieldNames": [],
+        "clarificationRequired": false,
+        "validationOutcome": "EXECUTABLE",
+        "selectedCapability": "explore_frontier",
+        "routingOutcome": "INVESTIGATION_INCOMPLETE",
+        "parentRunId": null,
+        "childRunId": "75e24386-3071-4798-a62a-544d2bd6734f",
+        "interpretationLatencyMs": 4254,
+        "interpretationTokens": {
+          "input": 2868,
+          "output": 131
+        },
+        "interpretationCostUsd": 0.000352,
+        "repairAttempts": 0,
+        "executionHandOffStatus": "HANDED_OFF",
+        "errorCodes": [],
+        "queryChars": 29,
+        "queryHash": "d79d6f68bb47"
+      }
+    },
+    {
+      "schemaVersion": "ce-query/0.1",
+      "queryId": "c8f93253-ed7f-458a-94ea-428f00cdc735",
+      "state": "INVESTIGATION_COMPLETED",
+      "interpretation": {
+        "schemaVersion": "ce-query/0.1",
+        "rawQuery": "Investigate design-led boutique hospitality as a narrower part of Art and culture.",
+        "primaryIntent": "refine_territory",
+        "secondaryIntents": [],
+        "brand": {
+          "name": "Jacquemus",
+          "source": "INHERITED",
+          "inheritedId": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823"
+        },
+        "brandsNamed": [],
+        "territories": [
+          {
+            "name": "design-led boutique hospitality",
+            "source": "EXPLICIT"
+          }
+        ],
+        "references": {
+          "parentRunId": "75e24386-3071-4798-a62a-544d2bd6734f",
+          "selectedTerritoryKey": "art_and_culture"
+        },
+        "constraints": [],
+        "unresolvedReferences": [],
+        "systemDirectives": [],
+        "confidence": "HIGH",
+        "disposition": "EXECUTABLE",
+        "unsupportedCapabilities": [],
+        "interpretationWarnings": [
+          "RECORDED_EXAMPLE"
+        ],
+        "reasonCodes": [],
+        "interpreter": {
+          "kind": "llm",
+          "model": "claude-haiku-5-5",
+          "effort": "low"
+        },
+        "refinement": {
+          "parentRunId": "75e24386-3071-4798-a62a-544d2bd6734f",
+          "parentTerritoryKey": "art_and_culture",
+          "userRefinement": "Investigate design-led boutique hospitality as a narrower part of Art and culture.",
+          "proposedChildConcept": "design-led boutique hospitality",
+          "refinementRelationship": "NARROWER",
+          "relationBasis": "USER_EXPLICIT",
+          "requiresClarification": false
+        }
+      },
+      "reasons": [],
+      "handoff": {
+        "intent": "analyze_move",
+        "brand": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+        "territories": [
+          "design-led boutique hospitality"
+        ],
+        "operation": "REFINE_TERRITORY"
+      },
+      "supportedAlternative": null,
+      "context": {
+        "current": {
+          "runId": "75e24386-3071-4798-a62a-544d2bd6734f",
+          "parentRunId": null,
+          "operation": "NEW_INVESTIGATION",
+          "selectedTerritoryKey": null,
+          "intent": "explore_frontier",
+          "status": "BUDGET_EXHAUSTED",
+          "brand": {
+            "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+            "label": "Jacquemus"
+          },
+          "territories": [
+            {
+              "key": "avant_garde_experimental_fashion",
+              "label": "Avant-garde experimental fashion",
+              "role": "frontier_candidate",
+              "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+              "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+            },
+            {
+              "key": "bohemian_lifestyle",
+              "label": "Bohemian lifestyle",
+              "role": "frontier_candidate",
+              "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+              "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+            },
+            {
+              "key": "japanese_drama",
+              "label": "Japanese drama",
+              "role": "frontier_candidate",
+              "evidenceStatus": "UNSUPPORTED",
+              "analysisRoute": "INSUFFICIENT_EVIDENCE"
+            },
+            {
+              "key": "art_and_culture",
+              "label": "Art and culture",
+              "role": "frontier_candidate",
+              "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+              "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+            }
+          ]
+        },
+        "lineage": [
+          {
+            "runId": "75e24386-3071-4798-a62a-544d2bd6734f",
+            "parentRunId": null,
+            "operation": "NEW_INVESTIGATION",
+            "selectedTerritoryKey": null,
+            "intent": "explore_frontier",
+            "status": "BUDGET_EXHAUSTED",
+            "brand": {
+              "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+              "label": "Jacquemus"
+            },
+            "territories": [
+              {
+                "key": "avant_garde_experimental_fashion",
+                "label": "Avant-garde experimental fashion",
+                "role": "frontier_candidate",
+                "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+                "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+              },
+              {
+                "key": "bohemian_lifestyle",
+                "label": "Bohemian lifestyle",
+                "role": "frontier_candidate",
+                "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+                "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+              },
+              {
+                "key": "japanese_drama",
+                "label": "Japanese drama",
+                "role": "frontier_candidate",
+                "evidenceStatus": "UNSUPPORTED",
+                "analysisRoute": "INSUFFICIENT_EVIDENCE"
+              },
+              {
+                "key": "art_and_culture",
+                "label": "Art and culture",
+                "role": "frontier_candidate",
+                "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+                "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+              }
+            ]
+          }
+        ],
+        "lineageTruncated": false,
+        "children": []
+      },
+      "investigation": {
+        "runId": "b75fa354-116e-4c68-83c9-09072c2054a1",
+        "reused": false,
+        "link": {
+          "operation": "REFINE_TERRITORY",
+          "parentRunId": "75e24386-3071-4798-a62a-544d2bd6734f",
+          "selectedTerritoryKey": "art_and_culture",
+          "inheritedBrand": {
+            "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+            "label": "Jacquemus"
+          },
+          "constraints": [],
+          "reason": "refine_territory from run 75e24386-3071-4798-a62a-544d2bd6734f; NARROWER (USER_EXPLICIT)",
+          "queryId": "c8f93253-ed7f-458a-94ea-428f00cdc735"
+        },
+        "result": {
+          "schemaVersion": "ce-agent-result/0.3",
+          "runId": "b75fa354-116e-4c68-83c9-09072c2054a1",
+          "status": "COMPLETE",
+          "intent": "analyze_move",
+          "userQuery": "Investigate design-led boutique hospitality as a narrower part of Art and culture.",
+          "brand": {
+            "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+            "label": "Jacquemus",
+            "type": "urn:entity:brand",
+            "resolution": "confirmed"
+          },
+          "territories": [
+            {
+              "key": "design_led_boutique_hospitality",
+              "label": "design-led boutique hospitality",
+              "role": "target",
+              "evidenceStatus": "PARTIAL_EVIDENCE",
+              "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+              "keyEvidence": [
+                "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+                "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: The Crown, The Esplanade Hotel Newquay, Nissaki Restaurant est. 1971, Legasea Bar & Grill, LAGOM by Chival.",
+                "Evidence quality MEDIUM."
+              ],
+              "limitations": [
+                {
+                  "code": "COMPARISON_SET_TOO_SMALL",
+                  "detail": "only 1 rankable place territory in this analysis; a relative position needs ≥ 3 of one entity type"
+                },
+                {
+                  "code": "CONDITIONED_LIST_TRUNCATED",
+                  "detail": "urn:tag:decor:qloo:boutique_hotel_aesthetic: the list reached the requested limit; more entities may exist"
+                },
+                {
+                  "code": "NO_RELATIVE_POSITION",
+                  "detail": "design-led boutique hospitality: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+                }
+              ],
+              "provenance": {
+                "correlationIds": [
+                  "mcp-24038870-99cc-4c02-92ad-7bf91fd5e6ec",
+                  "mcp-296c2c50-0c31-4142-ab2c-73b30aa5dc3a",
+                  "mcp-974ce694-b009-4550-abc0-1fca6cfe9128",
+                  "mcp-b113a688-a8a0-42ea-bc70-d3b163a3c13e",
+                  "mcp-c9df01d4-d666-44b4-b58a-2d7f804b89f6",
+                  "mcp-e6827e2e-d796-49a7-b0a7-17ebdb645011"
+                ],
+                "sources": [
+                  "qloo-hackathon-api"
+                ]
+              },
+              "classification": null,
+              "relativePosition": null,
+              "robustness": null
+            }
+          ],
+          "summary": {
+            "text": "The design-led boutique hospitality concept is represented only by a small place panel linked to a boutique hotel aesthetic tag, so its route is partial cultural analysis. Shared signals across those exemplars do not form a consistent pattern, and comparative position and robustness are unavailable for this concept. The brand-conditioned entity list is supported but truncated, so it indicates association at the top only, and the evidence cannot say how this narrower concept compares with its parent territory or with other territories.\ndesign-led boutique hospitality: After operational tags are filtered, no cultural signal reaches a shared band across the place exemplars, so no signal is consistently shared in this panel. The brand-conditioned query for this concept returned supported results, with The Crown and The Esplanade Hotel Newquay among the leading entries, though the list is truncated and reflects association only. Evidence quality is medium, but relative position and robustness are unavailable on this partial route, so no comparative or robustness reading is made for this concept.",
             "source": "model",
             "claimValidation": {
               "passed": true,
@@ -220,10 +778,6 @@
             {
               "code": "NO_APPROVED_SCORE",
               "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
-            },
-            {
-              "code": "COMPARISON_SET_DEPENDENT",
-              "detail": "relative position depends on the comparison set; see comparisonSetConstruction for how it was assembled and what was rejected"
             }
           ],
           "evidenceOrigin": "live",
@@ -239,85 +793,42 @@
               "brand": {
                 "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
                 "label": "Jacquemus",
-                "correlationId": "mcp-d9ca8548-fddf-4c79-848e-c5bc93dd7b00"
+                "correlationId": "mcp-0671cf0c-c98a-47dd-ac3b-8b530cedda60"
               },
               "concepts": [
                 {
-                  "territoryKey": "bohemian_lifestyle",
-                  "id": "urn:tag:lifestyle:qloo:bohemian_lifestyle",
-                  "label": "Bohemian Lifestyle",
+                  "territoryKey": "design_led_boutique_hospitality",
+                  "id": "urn:tag:decor:qloo:boutique_hotel_aesthetic",
+                  "label": "Boutique Hotel Aesthetic",
                   "correlationIds": [
-                    "mcp-abb07af3-5845-41d4-829e-3d2755df2f0f"
-                  ]
-                },
-                {
-                  "territoryKey": "japanese_drama",
-                  "id": "urn:tag:keyword:media:japanese_drama",
-                  "label": "japanese drama",
-                  "correlationIds": [
-                    "mcp-91702f16-dd92-4818-b370-9d5faea4e0f0",
-                    "mcp-d36e436c-8b5d-4d58-991b-467e21012b8f",
-                    "mcp-11e3011a-b3b4-43f6-beac-bdb177c9342c",
-                    "mcp-a6f49f54-219b-4566-ba42-40ed866452bb",
-                    "mcp-ce758dec-5d7e-4463-a161-3e1453afb0e1"
+                    "mcp-b113a688-a8a0-42ea-bc70-d3b163a3c13e"
                   ]
                 }
               ],
               "exemplars": [
                 {
-                  "territoryKey": "bohemian_lifestyle",
-                  "id": "5A9A64E3-E6E3-4855-B7AD-66129C951294",
-                  "label": "Isabel Marant"
+                  "territoryKey": "design_led_boutique_hospitality",
+                  "id": "274C9819-9695-4463-86E4-8FFF6D862EC5",
+                  "label": "Hotel Thule"
                 },
                 {
-                  "territoryKey": "bohemian_lifestyle",
-                  "id": "84181C69-56CF-4096-97CC-2A0B026665DB",
-                  "label": "Hopeless Lingerie"
+                  "territoryKey": "design_led_boutique_hospitality",
+                  "id": "2DBB1A9D-8A88-4233-A16D-12746A67F517",
+                  "label": "The Esplanade Hotel Newquay"
                 },
                 {
-                  "territoryKey": "japanese_drama",
-                  "id": "550E7374-6931-41A3-87AE-E7F961A86E89",
-                  "label": "Unnatural"
-                },
-                {
-                  "territoryKey": "japanese_drama",
-                  "id": "ADE8F7AC-B953-4544-B4BF-8CD483D64264",
-                  "label": "Mr. Hiiragi's Homeroom"
-                },
-                {
-                  "territoryKey": "japanese_drama",
-                  "id": "162A20EC-058C-4BE4-ACB7-43F074DB5A78",
-                  "label": "Liar Game"
+                  "territoryKey": "design_led_boutique_hospitality",
+                  "id": "2F6B82ED-837D-402B-A8E8-F8B46D296782",
+                  "label": "Hotel Minerva Grand Vijayawada"
                 }
               ],
-              "qlooCalls": 30
+              "qlooCalls": 19
             },
             "systemAnalysis": {
               "routes": [
                 {
-                  "territoryKey": "bohemian_lifestyle",
+                  "territoryKey": "design_led_boutique_hospitality",
                   "route": "PARTIAL_CULTURAL_ANALYSIS",
-                  "classification": null,
-                  "position": null,
-                  "robustness": null
-                },
-                {
-                  "territoryKey": "japanese_drama",
-                  "route": "PARTIAL_CULTURAL_ANALYSIS",
-                  "classification": null,
-                  "position": null,
-                  "robustness": null
-                },
-                {
-                  "territoryKey": "art_and_culture",
-                  "route": "INSUFFICIENT_EVIDENCE",
-                  "classification": null,
-                  "position": null,
-                  "robustness": null
-                },
-                {
-                  "territoryKey": "avant_garde_experimental_fashion",
-                  "route": "INSUFFICIENT_EVIDENCE",
                   "classification": null,
                   "position": null,
                   "robustness": null
@@ -325,7 +836,7 @@
               ]
             },
             "agentInterpretation": {
-              "summary": "On the current evidence, Bohemian lifestyle and Japanese drama are the only territories with any measurable cultural evidence, and neither has a comparison set or relative position, so they cannot be ranked against each other or against any reference territory. Bohemian lifestyle rests on a thin brand-exemplar panel with sparse shared signals, while Japanese drama has a supported but truncated brand-conditioned list alongside no shared signals across its exemplars. Art and culture and avant-garde experimental fashion could not be anchored to any Qloo concept, so the evidence cannot say whether either has a measurable cultural position, and it cannot identify where expansion would fit best.\nBohemian lifestyle: The territory is represented by a brand-exemplar panel of two entities linked to the Bohemian lifestyle concept, and that panel is the only basis for reading it. Shared cultural signals across the exemplars are sparse, with only Model and france held in common, so the shared profile is thin. The brand-conditioned query returned only a sparse list, led by Hopeless Lingerie, so the conditioned evidence for this territory is limited.\nJapanese drama: The brand-conditioned query returned a supported but broad list, led by titles such as Fishbowl Wives, and because the list is truncated it cannot be read as complete. The tv show exemplars share no consistent signals, so this territory has no shared cultural profile across its exemplar set. The route is partial and no relative position is available, so this territory cannot be placed against a comparison set.\nArt and culture: No Qloo concept anchors this territory, so no measurable evidence is available and it cannot be assessed.\nAvant-garde experimental fashion: No Qloo concept anchors this territory, so no measurable evidence is available and it cannot be assessed.",
+              "summary": "The design-led boutique hospitality concept is represented only by a small place panel linked to a boutique hotel aesthetic tag, so its route is partial cultural analysis. Shared signals across those exemplars do not form a consistent pattern, and comparative position and robustness are unavailable for this concept. The brand-conditioned entity list is supported but truncated, so it indicates association at the top only, and the evidence cannot say how this narrower concept compares with its parent territory or with other territories.\ndesign-led boutique hospitality: After operational tags are filtered, no cultural signal reaches a shared band across the place exemplars, so no signal is consistently shared in this panel. The brand-conditioned query for this concept returned supported results, with The Crown and The Esplanade Hotel Newquay among the leading entries, though the list is truncated and reflects association only. Evidence quality is medium, but relative position and robustness are unavailable on this partial route, so no comparative or robustness reading is made for this concept.",
               "source": "model",
               "claimValidationPassed": true
             }
@@ -333,13 +844,16 @@
           "trace": {
             "toolCalls": [],
             "investigationLink": {
-              "operation": "NEW_INVESTIGATION",
-              "parentRunId": null,
-              "selectedTerritoryKey": null,
-              "inheritedBrand": null,
+              "operation": "REFINE_TERRITORY",
+              "parentRunId": "75e24386-3071-4798-a62a-544d2bd6734f",
+              "selectedTerritoryKey": "art_and_culture",
+              "inheritedBrand": {
+                "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
+                "label": "Jacquemus"
+              },
               "constraints": [],
-              "reason": "explore_frontier",
-              "queryId": "ea30a10c-0532-4424-908f-f9ccf0efdd14"
+              "reason": "refine_territory from run 75e24386-3071-4798-a62a-544d2bd6734f; NARROWER (USER_EXPLICIT)",
+              "queryId": "c8f93253-ed7f-458a-94ea-428f00cdc735"
             },
             "stopReason": {
               "code": "AGENT_FINISHED",
@@ -356,348 +870,11 @@
       },
       "territories": [
         {
-          "name": "Bohemian lifestyle",
+          "name": "design-led boutique hospitality",
           "investigationState": "INVESTIGATED",
-          "territoryKey": "bohemian_lifestyle",
+          "territoryKey": "design_led_boutique_hospitality",
           "evidenceStatus": "PARTIAL_EVIDENCE",
           "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS"
-        },
-        {
-          "name": "Japanese drama",
-          "investigationState": "INVESTIGATED",
-          "territoryKey": "japanese_drama",
-          "evidenceStatus": "PARTIAL_EVIDENCE",
-          "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS"
-        },
-        {
-          "name": "Art and culture",
-          "investigationState": "INVESTIGATED",
-          "territoryKey": "art_and_culture",
-          "evidenceStatus": "UNSUPPORTED",
-          "analysisRoute": "INSUFFICIENT_EVIDENCE"
-        },
-        {
-          "name": "Avant-garde experimental fashion",
-          "investigationState": "INVESTIGATED",
-          "territoryKey": "avant_garde_experimental_fashion",
-          "evidenceStatus": "UNSUPPORTED",
-          "analysisRoute": "INSUFFICIENT_EVIDENCE"
-        }
-      ],
-      "nextOperations": [
-        "explore_frontier",
-        "analyze_move",
-        "compare_territories",
-        "refine_territory",
-        "switch_territory"
-      ],
-      "telemetry": {
-        "queryId": "ea30a10c-0532-4424-908f-f9ccf0efdd14",
-        "schemaVersion": "ce-query/0.1",
-        "intent": "explore_frontier",
-        "secondaryIntents": [],
-        "explicitFields": [],
-        "inheritedFieldNames": [],
-        "clarificationRequired": false,
-        "validationOutcome": "EXECUTABLE",
-        "selectedCapability": "explore_frontier",
-        "routingOutcome": "INVESTIGATION_COMPLETED",
-        "parentRunId": null,
-        "childRunId": "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-        "interpretationLatencyMs": 4050,
-        "interpretationTokens": {
-          "input": 2153,
-          "output": 124
-        },
-        "interpretationCostUsd": 0.000277,
-        "repairAttempts": 0,
-        "executionHandOffStatus": "HANDED_OFF",
-        "errorCodes": [],
-        "queryChars": 29,
-        "queryHash": "d79d6f68bb47"
-      }
-    },
-    {
-      "schemaVersion": "ce-query/0.1",
-      "queryId": "6de5360d-bfc2-4fd2-8dd0-3772ca6b093f",
-      "state": "INVESTIGATION_COMPLETED",
-      "interpretation": {
-        "schemaVersion": "ce-query/0.1",
-        "rawQuery": "Explore Bohemian lifestyle more specifically.",
-        "primaryIntent": "refine_territory",
-        "secondaryIntents": [],
-        "brand": {
-          "name": "Jacquemus",
-          "source": "INHERITED",
-          "inheritedId": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823"
-        },
-        "brandsNamed": [],
-        "territories": [
-          {
-            "name": "Bohemian lifestyle, more specific",
-            "source": "EXPLICIT"
-          }
-        ],
-        "references": {
-          "parentRunId": "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-          "selectedTerritoryKey": "bohemian_lifestyle"
-        },
-        "constraints": [],
-        "unresolvedReferences": [],
-        "systemDirectives": [],
-        "confidence": "HIGH",
-        "disposition": "EXECUTABLE",
-        "unsupportedCapabilities": [],
-        "interpretationWarnings": [
-          "RECORDED_EXAMPLE"
-        ],
-        "reasonCodes": [],
-        "interpreter": {
-          "kind": "llm",
-          "model": "claude-haiku-5-5",
-          "effort": "low"
-        }
-      },
-      "reasons": [],
-      "handoff": {
-        "intent": "analyze_move",
-        "brand": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
-        "territories": [
-          "Bohemian lifestyle, more specific"
-        ],
-        "operation": "REFINE_TERRITORY"
-      },
-      "supportedAlternative": null,
-      "context": {
-        "current": {
-          "runId": "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-          "parentRunId": null,
-          "operation": "NEW_INVESTIGATION",
-          "selectedTerritoryKey": null,
-          "intent": "explore_frontier",
-          "status": "COMPLETE",
-          "brand": {
-            "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
-            "label": "Jacquemus"
-          },
-          "territories": [
-            {
-              "key": "avant_garde_experimental_fashion",
-              "label": "Avant-garde experimental fashion",
-              "role": "frontier_candidate",
-              "evidenceStatus": "UNSUPPORTED",
-              "analysisRoute": "INSUFFICIENT_EVIDENCE"
-            },
-            {
-              "key": "bohemian_lifestyle",
-              "label": "Bohemian lifestyle",
-              "role": "frontier_candidate",
-              "evidenceStatus": "PARTIAL_EVIDENCE",
-              "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS"
-            },
-            {
-              "key": "art_and_culture",
-              "label": "Art and culture",
-              "role": "frontier_candidate",
-              "evidenceStatus": "UNSUPPORTED",
-              "analysisRoute": "INSUFFICIENT_EVIDENCE"
-            },
-            {
-              "key": "japanese_drama",
-              "label": "Japanese drama",
-              "role": "frontier_candidate",
-              "evidenceStatus": "PARTIAL_EVIDENCE",
-              "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS"
-            }
-          ]
-        },
-        "lineage": [
-          {
-            "runId": "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-            "parentRunId": null,
-            "operation": "NEW_INVESTIGATION",
-            "selectedTerritoryKey": null,
-            "intent": "explore_frontier",
-            "status": "COMPLETE",
-            "brand": {
-              "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
-              "label": "Jacquemus"
-            },
-            "territories": [
-              {
-                "key": "avant_garde_experimental_fashion",
-                "label": "Avant-garde experimental fashion",
-                "role": "frontier_candidate",
-                "evidenceStatus": "UNSUPPORTED",
-                "analysisRoute": "INSUFFICIENT_EVIDENCE"
-              },
-              {
-                "key": "bohemian_lifestyle",
-                "label": "Bohemian lifestyle",
-                "role": "frontier_candidate",
-                "evidenceStatus": "PARTIAL_EVIDENCE",
-                "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS"
-              },
-              {
-                "key": "art_and_culture",
-                "label": "Art and culture",
-                "role": "frontier_candidate",
-                "evidenceStatus": "UNSUPPORTED",
-                "analysisRoute": "INSUFFICIENT_EVIDENCE"
-              },
-              {
-                "key": "japanese_drama",
-                "label": "Japanese drama",
-                "role": "frontier_candidate",
-                "evidenceStatus": "PARTIAL_EVIDENCE",
-                "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS"
-              }
-            ]
-          }
-        ],
-        "lineageTruncated": false,
-        "children": []
-      },
-      "investigation": {
-        "runId": "d083c0aa-c4bf-4e08-a7c0-007bc28eb3e6",
-        "reused": false,
-        "link": {
-          "operation": "REFINE_TERRITORY",
-          "parentRunId": "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-          "selectedTerritoryKey": "bohemian_lifestyle",
-          "inheritedBrand": {
-            "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
-            "label": "Jacquemus"
-          },
-          "constraints": [],
-          "reason": "refine_territory from run 8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-          "queryId": "6de5360d-bfc2-4fd2-8dd0-3772ca6b093f"
-        },
-        "result": {
-          "schemaVersion": "ce-agent-result/0.3",
-          "runId": "d083c0aa-c4bf-4e08-a7c0-007bc28eb3e6",
-          "status": "COMPLETE",
-          "intent": "analyze_move",
-          "userQuery": "Explore Bohemian lifestyle more specifically.",
-          "brand": {
-            "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
-            "label": "Jacquemus",
-            "type": "urn:entity:brand",
-            "resolution": "confirmed"
-          },
-          "territories": [
-            {
-              "key": "bohemian_lifestyle_more_specific",
-              "label": "Bohemian lifestyle, more specific",
-              "role": "target",
-              "evidenceStatus": "UNSUPPORTED",
-              "analysisRoute": "INSUFFICIENT_EVIDENCE",
-              "keyEvidence": [
-                "No measurable evidence: No Qloo concept tag was resolved for \"Bohemian lifestyle, more specific\" after the allowed resolution attempts; no exemplar entities could be represented, so it cannot be compared.."
-              ],
-              "limitations": [
-                {
-                  "code": "TERRITORY_UNRESOLVED",
-                  "detail": "Bohemian lifestyle, more specific: No Qloo concept tag was resolved for \"Bohemian lifestyle, more specific\" after the allowed resolution attempts; no exemplar entities could be represented, so it cannot be compared."
-                }
-              ],
-              "provenance": {
-                "correlationIds": [],
-                "sources": []
-              },
-              "classification": null,
-              "relativePosition": null,
-              "robustness": null
-            }
-          ],
-          "summary": {
-            "text": "The results do not establish a cultural position for the more specific Bohemian lifestyle territory relative to Jacquemus, because no Qloo concept tag could be resolved for it. No comparison set was formed, so the evidence cannot say how the brand relates to this territory. The final sufficiency is INSUFFICIENT, so this run offers no usable territory-level reading.\nBohemian lifestyle, more specific: The territory has no Qloo concept anchoring it, and its representation capability is unsupported, so it could not be represented in the analysis. The route is INSUFFICIENT_EVIDENCE, and no exemplar entities could be represented, so no relative position or robustness reading is available for this territory.",
-            "source": "model",
-            "claimValidation": {
-              "passed": true,
-              "violations": []
-            }
-          },
-          "limitations": [
-            {
-              "code": "NOT_A_SUCCESS_PREDICTION",
-              "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
-            },
-            {
-              "code": "NO_APPROVED_SCORE",
-              "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
-            }
-          ],
-          "evidenceOrigin": "live",
-          "model": {
-            "id": "claude-haiku-5-5",
-            "kind": "llm",
-            "live": true,
-            "effort": "high"
-          },
-          "failureCategory": "TERRITORY_RESOLUTION_ERROR",
-          "layers": {
-            "qlooEvidence": {
-              "brand": {
-                "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
-                "label": "Jacquemus",
-                "correlationId": "mcp-36e11427-3268-45af-800f-1aff32ae8c07"
-              },
-              "concepts": [],
-              "exemplars": [],
-              "qlooCalls": 5
-            },
-            "systemAnalysis": {
-              "routes": [
-                {
-                  "territoryKey": "bohemian_lifestyle_more_specific",
-                  "route": "INSUFFICIENT_EVIDENCE",
-                  "classification": null,
-                  "position": null,
-                  "robustness": null
-                }
-              ]
-            },
-            "agentInterpretation": {
-              "summary": "The results do not establish a cultural position for the more specific Bohemian lifestyle territory relative to Jacquemus, because no Qloo concept tag could be resolved for it. No comparison set was formed, so the evidence cannot say how the brand relates to this territory. The final sufficiency is INSUFFICIENT, so this run offers no usable territory-level reading.\nBohemian lifestyle, more specific: The territory has no Qloo concept anchoring it, and its representation capability is unsupported, so it could not be represented in the analysis. The route is INSUFFICIENT_EVIDENCE, and no exemplar entities could be represented, so no relative position or robustness reading is available for this territory.",
-              "source": "model",
-              "claimValidationPassed": true
-            }
-          },
-          "trace": {
-            "toolCalls": [],
-            "investigationLink": {
-              "operation": "REFINE_TERRITORY",
-              "parentRunId": "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-              "selectedTerritoryKey": "bohemian_lifestyle",
-              "inheritedBrand": {
-                "id": "93A50AC5-FCF2-4F47-87C0-E821E0B9F823",
-                "label": "Jacquemus"
-              },
-              "constraints": [],
-              "reason": "refine_territory from run 8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-              "queryId": "6de5360d-bfc2-4fd2-8dd0-3772ca6b093f"
-            },
-            "stopReason": {
-              "code": "EVIDENCE_INSUFFICIENT",
-              "detail": "evidence insufficient"
-            },
-            "model": {
-              "id": "claude-haiku-5-5",
-              "kind": "llm",
-              "live": true,
-              "effort": "high"
-            }
-          }
-        }
-      },
-      "territories": [
-        {
-          "name": "Bohemian lifestyle, more specific",
-          "investigationState": "INVESTIGATED",
-          "territoryKey": "bohemian_lifestyle_more_specific",
-          "evidenceStatus": "UNSUPPORTED",
-          "analysisRoute": "INSUFFICIENT_EVIDENCE"
         }
       ],
       "nextOperations": [
@@ -709,7 +886,7 @@
         "return_to_parent"
       ],
       "telemetry": {
-        "queryId": "6de5360d-bfc2-4fd2-8dd0-3772ca6b093f",
+        "queryId": "c8f93253-ed7f-458a-94ea-428f00cdc735",
         "schemaVersion": "ce-query/0.1",
         "intent": "refine_territory",
         "secondaryIntents": [],
@@ -721,19 +898,19 @@
         "validationOutcome": "EXECUTABLE",
         "selectedCapability": "analyze_move",
         "routingOutcome": "INVESTIGATION_COMPLETED",
-        "parentRunId": "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
-        "childRunId": "d083c0aa-c4bf-4e08-a7c0-007bc28eb3e6",
-        "interpretationLatencyMs": 1395,
+        "parentRunId": "75e24386-3071-4798-a62a-544d2bd6734f",
+        "childRunId": "b75fa354-116e-4c68-83c9-09072c2054a1",
+        "interpretationLatencyMs": 3960,
         "interpretationTokens": {
-          "input": 2506,
-          "output": 153
+          "input": 3263,
+          "output": 499
         },
-        "interpretationCostUsd": 0.000327,
+        "interpretationCostUsd": 0.000576,
         "repairAttempts": 0,
         "executionHandOffStatus": "HANDED_OFF",
         "errorCodes": [],
-        "queryChars": 45,
-        "queryHash": "c934801d4535"
+        "queryChars": 82,
+        "queryHash": "505d73d083c1"
       }
     }
   ]

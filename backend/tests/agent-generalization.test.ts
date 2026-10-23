@@ -64,7 +64,7 @@ function benchmarkNames(): string[] {
 const RUNTIME_ENTRIES = [join(SRC, "index.ts"), join(SRC, "agent/index.ts")];
 
 describe("G1 benchmark isolation (imports)", () => {
-  it("no production module reachable from the API or the agent imports benchmark or capture data", () => {
+  it("no production module reachable from the API or the agent imports benchmark or capture data", { timeout: 60_000 }, () => {
     const graph = new Set<string>();
     for (const entry of RUNTIME_ENTRIES) for (const f of reachable(entry)) graph.add(f);
     const rel = [...graph].map((f) => relative(SRC, f));

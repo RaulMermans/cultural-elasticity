@@ -3,6 +3,7 @@ import { agentRoutes, type AgentRuntimeFactory, type QueryInterpreterFactory } f
 import { analysisRoutes } from "./api/analysis.js";
 import { healthRoutes } from "./api/health.js";
 import { methodologyRoutes } from "./api/methodology.js";
+import { opsRoutes } from "./api/ops.js";
 
 export type BuildAppOptions = {
   logLevel?: string;
@@ -14,6 +15,9 @@ export type BuildAppOptions = {
 
 export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
   const app = Fastify({
+    // Do not trust X-Forwarded-For / Forwarded. Admission uses a visitor id only after
+    // server-to-server authentication. A reverse proxy is not an identity provider.
+    trustProxy: false,
     logger: {
       level: options.logLevel ?? "info",
       // Defence in depth: no route handles credentials, but never let one reach a log line.
@@ -22,10 +26,15 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
           "req.headers.authorization",
           "req.headers['x-job-token']",
           "req.headers['x-api-key']",
+          "req.headers['x-ce-internal-auth']",
+          "req.headers['x-ce-operator']",
           "*.headers['x-api-key']",
           "*.headers['X-Api-Key']",
+          "*.headers['x-ce-internal-auth']",
           "*.QLOO_API_KEY",
           "*.ANTHROPIC_API_KEY",
+          "*.CE_INTERNAL_API_SECRET",
+          "*.CE_OPERATOR_TOKEN",
           "*.apiKey",
           "*.api_key",
         ],
@@ -35,6 +44,7 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
   });
 
   app.register(healthRoutes);
+  app.register(opsRoutes);
   app.register(analysisRoutes);
   app.register(methodologyRoutes);
   app.register(agentRoutes(options.agentRuntimeFactory, options.queryInterpreterFactory));

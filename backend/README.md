@@ -14,8 +14,10 @@ pnpm --filter backend eval:methodology  # offline methodology evals on synthetic
 
 | Path | Role |
 | --- | --- |
-| `src/config/env.ts` | Env parsing. Exposes only *whether* a Qloo credential exists. |
-| `src/api/health.ts` | `GET /health` |
+| `src/config/env.ts` | Env parsing. Exposes only *whether* a Qloo credential exists. Public fail-closed checks live in `src/config/production.ts`. |
+| `src/ops/` | Internal auth, visitor admission, spend ledger, operational metrics, process lifecycle |
+| `src/api/health.ts` | `GET /health` (liveness) and `GET /ready` (admission readiness). Neither calls Qloo. |
+| `src/api/ops.ts` | `GET /ops/status` for an operator token only |
 | `src/api/analysis.ts` | `POST /api/analysis/ingredients`: EvidencePacket → AnalysisIngredients (offline, development only) |
 | `src/api/methodology.ts` | `POST /api/methodology/analyze`: MethodologyInput → CulturalElasticityResult (deterministic, offline, development only) |
 | `src/methodology/` | Cultural Elasticity Methodology v0: panels, rank-only aggregation, robustness, operational tag filter, set coherence, classification, index gate, benchmark calibration |
@@ -36,4 +38,4 @@ pnpm --filter backend eval:methodology  # offline methodology evals on synthetic
 
 Configuration lives in `backend/.env` (see the root `.env.example`). The credential is never part of `BackendConfig` and reaches only the harness child process.
 
-Container: `docker build -f backend/Dockerfile -t cultural-elasticity-api .` from the repo root.
+Container: `docker build -f backend/Dockerfile -t cultural-elasticity-api .` from the repo root. Public deployment uses one replica. See [docs/sprint-7a/DEPLOYMENT_FOUNDATION.md](../docs/sprint-7a/DEPLOYMENT_FOUNDATION.md).
