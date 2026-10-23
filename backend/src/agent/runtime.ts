@@ -37,6 +37,8 @@ import { applyInterpretation, resolveInterpretation } from "./router.js";
 import { RunStore } from "./run-store.js";
 import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState } from "./state.js";
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
+import type { SpendBound } from "../ops/spend.js";
+import { decisionCeilingUsd, priceUsd, roundUsd, synthesisCeilingUsd } from "../ops/pricing.js";
 import type { AgentToolProvider } from "./tool-provider.js";
 import { ToolRegistry } from "./tool-registry.js";
 
@@ -50,7 +52,7 @@ export type AgentRuntimeDeps = {
 
 /** Sprint 5B.1: a gate-approved interpretation and the run's parent-child link (both optional). */
 /** Sprint 5B.2: `signal` aborts between turns. The in-flight model or Qloo call is allowed to finish; its result is not a completed finding. */
-export type RunOptions = { interpretation?: Interpretation; link?: InvestigationLink; signal?: AbortSignal };
+export type RunOptions = { interpretation?: Interpretation; link?: InvestigationLink; signal?: AbortSignal; spend?: SpendBound };
 
 /** Rejection codes a repair attempt can act on (the validator's reason tells the model what to change). */
 const REPAIRABLE = new Set(["INVALID_MODEL_OUTPUT", "INVALID_DECISION", "UNKNOWN_TOOL", "INVALID_ARGUMENTS", "NOT_EXPOSED", "WRONG_PHASE", "PRECONDITION", "NOT_READY", "FINISH_BEFORE_SUFFICIENCY", "NOTHING_ANALYZED", "UNKNOWN_RESULT_IDS", "NO_OPEN_AMBIGUITY", "REFERENCES_PENDING", "TYPE_ALIGNMENT_PENDING"]);
@@ -63,6 +65,9 @@ export class AgentRuntime {
   readonly store: RunStore;
   /** Cooperative cancellation. Not serialized into the run, so it never becomes evidence. */
   private readonly cancelSignals = new WeakMap<AgentRunState, AbortSignal>();
+  /** Per-run spend envelope. A refused model call is budget-limited, not missing evidence. */
+  private readonly spendBounds = new WeakMap<AgentRunState, SpendBound>();
+  private readonly lastPricedUsd = new WeakMap<AgentRunState, number>();
 
   constructor(private readonly deps: AgentRuntimeDeps) {
     this.registry = deps.registry ?? new ToolRegistry();
@@ -92,12 +97,13 @@ export class AgentRuntime {
     transition(state, "PLANNING", "request validated");
     if (check?.ok) applyInterpretation(state, check.interpretation, "query_layer");
     if (options.signal) this.cancelSignals.set(state, options.signal);
+    if (options.spend) this.spendBounds.set(state, options.spend);
     if (this.cancelled(state)) return this.cancel(state);
     return this.loop(state);
   }
 
   /** Resumes a NEEDS_INPUT run with the user's clarification. Budgets already spent stay spent. */
-  async continue(runId: string, clarification: string, options: { signal?: AbortSignal } = {}): Promise<AgentRunResponse> {
+  async continue(runId: string, clarification: string, options: { signal?: AbortSignal; spend?: SpendBound } = {}): Promise<AgentRunResponse> {
     const state = this.store.get(runId);
     if (!state) throw new RunNotFoundError(runId);
     if (state.status !== "NEEDS_INPUT") throw new RunNotWaitingError(runId, state.status);
@@ -108,6 +114,7 @@ export class AgentRuntime {
     state.pendingQuestion = null;
     transition(state, "PLANNING", "user clarification received");
     if (options.signal) this.cancelSignals.set(state, options.signal);
+    if (options.spend) this.spendBounds.set(state, options.spend);
     if (this.cancelled(state)) return this.cancel(state);
     return this.loop(state);
   }
@@ -143,6 +150,9 @@ export class AgentRuntime {
         if (state.finishRequested || sufficiency.verdict === "INSUFFICIENT") return await this.complete(state, sufficiency.verdict === "INSUFFICIENT" ? "evidence insufficient" : "agent finished");
         if (sufficiency.verdict === "BUDGET_EXHAUSTED") return await this.exhausted(state, sufficiency.reasons.join("; "));
         if (sufficiency.verdict === "NEEDS_USER_INPUT" && state.pendingQuestion) return needsInputResponse(state);
+        if (this.spendRefused(state, "decision")) {
+          return await this.exhausted(state, "the authorized model spend cannot cover another decision; findings already supported were kept");
+        }
 
         state.usage.iterations += 1;
         state.turnOpen = true;
@@ -275,8 +285,10 @@ export class AgentRuntime {
       }
     } catch (error) {
       raw = { invalid: `model call failed: ${error instanceof Error ? error.message.slice(0, 200) : String(error)}` };
+      this.noteUnknownModelSpend(state, "decision");
     }
     turnTrace.latencyMs += Date.now() - started;
+    this.noteObservedModelSpend(state);
     if (this.cancelled(state)) return { accepted: 0, stop: "cancelled", valid: false };
     if (!Array.isArray(raw) || raw.length === 0) {
       const reason = Array.isArray(raw) ? "no decisions" : raw.invalid;
@@ -448,6 +460,42 @@ export class AgentRuntime {
     }
   }
 
+  private spendRefused(state: AgentRunState, kind: "decision" | "synthesis"): boolean {
+    const spend = this.spendBounds.get(state);
+    if (!spend) return false;
+    const lastContext = state.trace.turns.at(-1)?.contextTokensEstimate;
+    const estimate = kind === "synthesis" ? synthesisCeilingUsd(lastContext ?? undefined) : decisionCeilingUsd(lastContext ?? undefined);
+    if (spend.authorizeNextCall(estimate)) return false;
+    state.flags.push({
+      code: "SPEND_LIMIT_REACHED",
+      detail: `the next ${kind} call was refused because its conservative ceiling exceeds the remaining authorized spend; provider usage is known only after a call completes, so a small overage is still possible`,
+    });
+    return true;
+  }
+
+  private noteObservedModelSpend(state: AgentRunState): void {
+    const spend = this.spendBounds.get(state);
+    if (!spend || state.model.kind !== "llm") return;
+    const priced = priceUsd(state.model.id, {
+      uncachedInputTokens: state.usage.uncachedInputTokens,
+      cacheReadTokens: state.usage.cacheReadTokens,
+      cacheCreationTokens: state.usage.cacheCreationTokens,
+      outputTokens: state.usage.outputTokens,
+    });
+    if (priced === null) return;
+    const previous = this.lastPricedUsd.get(state) ?? 0;
+    const delta = roundUsd(Math.max(0, priced - previous));
+    this.lastPricedUsd.set(state, priced);
+    if (delta > 0) spend.addObserved(delta);
+  }
+
+  private noteUnknownModelSpend(state: AgentRunState, kind: "decision" | "synthesis"): void {
+    const spend = this.spendBounds.get(state);
+    if (!spend) return;
+    const lastContext = state.trace.turns.at(-1)?.contextTokensEstimate;
+    spend.markUnknownCall(kind === "synthesis" ? synthesisCeilingUsd(lastContext ?? undefined) : decisionCeilingUsd(lastContext ?? undefined));
+  }
+
   private async complete(state: AgentRunState, reason: string): Promise<AgentRunResponse> {
     state.trace.stopReason ??= { code: reason === "evidence insufficient" ? "EVIDENCE_INSUFFICIENT" : reason === "agent finished" ? "AGENT_FINISHED" : "SUFFICIENT_AT_BUDGET", detail: reason };
     transition(state, "COMPLETE", reason);
@@ -483,7 +531,9 @@ export class AgentRuntime {
 
   private async finish(state: AgentRunState): Promise<AgentRunResponse> {
     state.trace.skillUsage = [...state.skillUsage.values()].map(({ skill, turns, qlooCalls, toolCalls }) => ({ skill, turns, qlooCalls, toolCalls }));
-    const result = await finalize(state, this.deps.model);
+    const skipSynthesis = this.spendRefused(state, "synthesis");
+    const result = await finalize(state, this.deps.model, { skipSynthesis });
+    this.noteObservedModelSpend(state);
     state.final = result;
     return result;
   }

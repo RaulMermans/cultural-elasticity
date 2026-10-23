@@ -159,8 +159,8 @@ function Hero({ onRecorded }: { onRecorded: () => void }) {
     <section className="hero">
       <p className="eyebrow">Cultural Elasticity</p>
       <h1>Where could your brand go next?</h1>
-      <p className="hero__lede">A cultural investigation environment. Discover where a brand could expand, then investigate and refine possibilities using real cultural evidence and visible uncertainty.</p>
-      <p className="hero__note">The map shows how an investigation grew. It does not measure cultural distance, and it does not promise success. Open a recorded investigation, or ask your own question.</p>
+      <p className="hero__lede">A cultural investigation environment. Discover where a brand could expand, then investigate which directions deserve deeper research using observed cultural affinities and visible uncertainty.</p>
+      <p className="hero__note">Findings are grounded in observed cultural affinities, not model guesses. The map shows how an investigation grew. It does not measure cultural distance, and it does not promise success. Open a recorded investigation, inspect a territory, or ask a new question.</p>
       <button className="ghost" type="button" data-testid="recorded-open" onClick={onRecorded}>Open a recorded investigation</button>
       <svg className="sprig" width="180" height="72" viewBox="0 0 180 72" aria-hidden="true">
         <path d="M8 58 C 40 58, 52 20, 92 24" fill="none" stroke="currentColor" strokeWidth="1.2" />

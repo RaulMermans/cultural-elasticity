@@ -104,11 +104,16 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
           const jobId = typeof event.jobId === "string" ? event.jobId : "";
           const hold = reservations.get(jobId);
           if (hold) {
-            spendLedger().settle(hold.id, {
+            const settled = spendLedger().settle(hold.id, {
               observedUsd: usage?.observedUsd ?? null,
               started: hold.started,
               cancelledBeforeStart: name === "job_cancelled" && !hold.started,
             });
+            opsMetrics().record("budget_reconciled", {
+              estimatedModelCostUsd: settled?.consumedUsd,
+              overageUsd: settled?.overageUsd,
+            });
+            if (settled && settled.overageUsd > 0) opsMetrics().record("budget_exceeded", { overageUsd: settled.overageUsd });
             reservations.delete(jobId);
           }
         }
@@ -229,9 +234,11 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       } else return reply.code(400).send({ error: "invalid_job_request", message: "The question could not be accepted." });
       const hold = reserveSpend(reply);
       if (!hold) return;
+      opsMetrics().record("budget_reserved");
       return handle(reply, async () => {
         try {
-          const created = jobs.create(jobRequest);
+          const bound = spendLedger().bound(hold.id) ?? undefined;
+          const created = jobs.create(jobRequest, bound ? { spend: bound } : undefined);
           spendLedger().attach(hold.id, created.jobId);
           const started = created.status === "running";
           reservations.set(created.jobId, { id: hold.id, started });

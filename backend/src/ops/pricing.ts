@@ -36,15 +36,74 @@ export function priceUsd(modelId: string, usage: TokenUsage): number | null {
   return tokensToUsd(price, usage);
 }
 
-export function conservativeReserveUsd(env: NodeJS.ProcessEnv = process.env): number {
+/** Decision, synthesis and interpretation ceilings used for pre-call spend checks. */
+export const DECISION_MAX_OUTPUT_TOKENS = 16_000;
+export const SYNTHESIS_MAX_OUTPUT_TOKENS = 16_000;
+export const INTERPRET_MAX_OUTPUT_TOKENS = 4_000;
+export const DEFAULT_DECISION_INPUT_TOKENS = 24_000;
+export const DEFAULT_SYNTHESIS_INPUT_TOKENS = 12_000;
+export const DEFAULT_INTERPRET_INPUT_TOKENS = 8_000;
+
+/** Token-priced conservative envelope (Haiku >100K tier). */
+export function computedConservativeReserveUsd(): number {
+  return roundUsd(
+    tokensToUsd(HAIKU_CONSERVATIVE, {
+      uncachedInputTokens: DEFAULT_RESERVE_INPUT_TOKENS,
+      cacheReadTokens: 0,
+      cacheCreationTokens: 0,
+      outputTokens: DEFAULT_RESERVE_OUTPUT_TOKENS,
+    }),
+  );
+}
+
+/**
+ * Lowest reserve a public process may use. A tiny configured reserve would admit jobs that can still
+ * spend a full Haiku investigation; public mode therefore refuses or floors below this value.
+ */
+export function floorReserveUsd(): number {
+  return Math.max(DEFAULT_INVESTIGATION_RESERVE_USD, computedConservativeReserveUsd());
+}
+
+export function configuredReserveUsd(env: NodeJS.ProcessEnv = process.env): number | null {
+  if (env.CE_INVESTIGATION_RESERVE_USD === undefined || env.CE_INVESTIGATION_RESERVE_USD === "") return null;
   const configured = Number(env.CE_INVESTIGATION_RESERVE_USD);
-  if (Number.isFinite(configured) && configured > 0) return configured;
-  return tokensToUsd(HAIKU_CONSERVATIVE, {
-    uncachedInputTokens: DEFAULT_RESERVE_INPUT_TOKENS,
-    cacheReadTokens: 0,
-    cacheCreationTokens: 0,
-    outputTokens: DEFAULT_RESERVE_OUTPUT_TOKENS,
-  });
+  return Number.isFinite(configured) ? configured : null;
+}
+
+export function conservativeReserveUsd(env: NodeJS.ProcessEnv = process.env): number {
+  const configured = configuredReserveUsd(env);
+  if (configured !== null && configured > 0) {
+    const publicMode = env.NODE_ENV === "production" || env.CE_PUBLIC_DEPLOYMENT === "1";
+    return publicMode ? Math.max(configured, floorReserveUsd()) : configured;
+  }
+  const publicMode = env.NODE_ENV === "production" || env.CE_PUBLIC_DEPLOYMENT === "1";
+  return publicMode ? floorReserveUsd() : computedConservativeReserveUsd();
+}
+
+/** Worst-case USD for one model call. Uses the conservative Haiku tier so a cheap list price cannot under-protect. */
+export function estimateCallCeilingUsd(estimatedInputTokens: number, maxOutputTokens: number): number {
+  const input = Number.isFinite(estimatedInputTokens) && estimatedInputTokens > 0 ? estimatedInputTokens : DEFAULT_DECISION_INPUT_TOKENS;
+  const output = Number.isFinite(maxOutputTokens) && maxOutputTokens > 0 ? maxOutputTokens : DECISION_MAX_OUTPUT_TOKENS;
+  return roundUsd(
+    tokensToUsd(HAIKU_CONSERVATIVE, {
+      uncachedInputTokens: input,
+      cacheReadTokens: 0,
+      cacheCreationTokens: 0,
+      outputTokens: output,
+    }),
+  );
+}
+
+export function interpretCeilingUsd(): number {
+  return estimateCallCeilingUsd(DEFAULT_INTERPRET_INPUT_TOKENS, INTERPRET_MAX_OUTPUT_TOKENS);
+}
+
+export function decisionCeilingUsd(estimatedInputTokens = DEFAULT_DECISION_INPUT_TOKENS): number {
+  return estimateCallCeilingUsd(estimatedInputTokens, DECISION_MAX_OUTPUT_TOKENS);
+}
+
+export function synthesisCeilingUsd(estimatedInputTokens = DEFAULT_SYNTHESIS_INPUT_TOKENS): number {
+  return estimateCallCeilingUsd(estimatedInputTokens, SYNTHESIS_MAX_OUTPUT_TOKENS);
 }
 
 export function tokensToUsd(price: ModelPrice, usage: TokenUsage): number {

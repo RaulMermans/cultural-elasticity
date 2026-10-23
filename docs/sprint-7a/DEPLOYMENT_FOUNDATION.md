@@ -2,6 +2,8 @@
 
 Prepare the existing Living Atlas for a reliable public showcase. This sprint does not publish the product. External hosts, paid plans, DNS and credential updates need owner approval.
 
+Sprint 7B supersedes three 7A findings: observed spend is no longer truncated to the reservation, one request uses one visitor identity, and `/ready` is admission only. Canonical launch runbook: [../sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md](../sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md).
+
 ## 1. Executive Outcome
 
 | Gate | Decision |

@@ -11,6 +11,7 @@
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import type { QueryResponse } from "@cultural-elasticity/shared";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../errors.js";
+import type { SpendBound } from "../../ops/spend.js";
 import { observedUsage } from "../../ops/usage.js";
 import type { QueryBody } from "./contracts.js";
 import { QueryAlreadyExecutedError, type QueryHooks, type QueryProgress } from "./service.js";
@@ -83,6 +84,7 @@ type Job = {
   expiresAt: number;
   controller: AbortController;
   timer: ReturnType<typeof setTimeout> | null;
+  spend?: SpendBound;
 };
 
 const DEFAULT_TTL_MS = 30 * 60 * 1000;
@@ -119,7 +121,7 @@ export class JobManager {
     }
   }
 
-  create(request: JobRequest): JobCreated {
+  create(request: JobRequest, extras?: { spend?: SpendBound }): JobCreated {
     this.sweep();
     if (request.kind === "confirm" && this.confirms.has(request.queryId)) {
       throw new JobRejectedError(409, "query_already_executed", "That confirmation is already running.");
@@ -148,6 +150,7 @@ export class JobManager {
       timer: null,
     };
     this.jobs.set(job.id, job);
+    if (extras?.spend) job.spend = extras.spend;
     if (request.kind === "confirm") this.confirms.add(request.queryId);
     this.queue.push(job);
     this.options.log?.({ jobId: job.id, status: job.status, kind: request.kind, event: "job_queued" });
@@ -236,6 +239,7 @@ export class JobManager {
         job.response = structuredClone(response);
         job.updatedAt = this.now();
       },
+      ...(job.spend ? { spend: job.spend } : {}),
     };
     try {
       const runner = this.options.runnerFor(job.request.model);

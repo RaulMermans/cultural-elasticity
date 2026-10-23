@@ -9,6 +9,7 @@
  * copied from deterministic code into the result regardless of what the model wrote.
  */
 import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type Limitation } from "@cultural-elasticity/shared";
+import { reconcileLatency } from "../ops/latency.js";
 import { priceUsd } from "../ops/pricing.js";
 import { unanalyzedResult } from "./analysis-runner.js";
 import { classifyRunFailure } from "./failure-taxonomy.js";
@@ -112,6 +113,8 @@ export function computeMetrics(state: AgentRunState, results: AgentTerritoryResu
   const executed = calls.filter((c) => c.status !== "rejected");
   const succeeded = executed.filter((c) => c.status === "ok" || c.status === "empty");
   const count = (route: string) => results.filter((r) => r.analysisRoute === route).length;
+  const latencyMs = Date.now() - state.startedAt;
+  const modelLatencyMs = turns.reduce((n, t) => n + t.latencyMs, 0);
   return {
     agent_iterations: state.usage.iterations,
     qloo_calls: state.usage.qlooCalls,
@@ -127,7 +130,7 @@ export function computeMetrics(state: AgentRunState, results: AgentTerritoryResu
     descriptive_analysis_count: count("DESCRIPTIVE_ANALYSIS"),
     unsupported_count: count("INSUFFICIENT_EVIDENCE"),
     methodology_calls: state.methodologyRuns.length,
-    latency_ms: Date.now() - state.startedAt,
+    latency_ms: latencyMs,
     model_input_tokens: state.usage.inputTokens,
     model_output_tokens: state.usage.outputTokens,
     retry_count: state.usage.retries,
@@ -145,7 +148,7 @@ export function computeMetrics(state: AgentRunState, results: AgentTerritoryResu
     avg_context_chars: avg(sizes),
     max_context_chars: sizes.length ? Math.max(...sizes) : null,
     avg_context_tokens_estimate: avg(tokens),
-    model_latency_ms: turns.reduce((n, t) => n + t.latencyMs, 0),
+    model_latency_ms: modelLatencyMs,
     qloo_latency_ms: state.usage.qlooLatencyMs,
     model_cost_usd: modelCostUsd(state),
     model_id: state.model.id,
@@ -154,6 +157,14 @@ export function computeMetrics(state: AgentRunState, results: AgentTerritoryResu
     analysis_latency_ms: state.timing.analysisMs,
     /** Part of qloo_latency_ms spent waiting on rate-limit spacing and back-off (not Qloo response time). */
     qloo_spacing_ms: state.usage.qlooSpacingMs,
+    unattributed_ms: reconcileLatency({
+      latencyMs,
+      modelLatencyMs,
+      qlooLatencyMs: state.usage.qlooLatencyMs,
+      qlooSpacingMs: state.usage.qlooSpacingMs,
+      analysisLatencyMs: state.timing.analysisMs,
+      synthesisLatencyMs: state.timing.synthesisMs,
+    }).unattributedMs,
     synthesis_first_attempt_valid: state.trace.synthesis?.attemptDetails?.length ? state.trace.synthesis.attemptDetails[0]!.accepted : null,
     synthesis_valid_after_repair: state.trace.synthesis?.attemptDetails?.length ? state.trace.synthesis.attemptDetails.some((a) => a.accepted) : null,
     synthesis_fallback: state.trace.synthesis?.source === "deterministic_template",
@@ -225,7 +236,7 @@ export function allResults(state: AgentRunState): AgentTerritoryResult[] {
   );
 }
 
-export async function finalize(state: AgentRunState, model: AgentModel): Promise<AgentAnalysisResult> {
+export async function finalize(state: AgentRunState, model: AgentModel, options: { skipSynthesis?: boolean } = {}): Promise<AgentAnalysisResult> {
   const results = allResults(state);
   state.trace.territoryHypotheses = state.territories.map((t) => ({ key: t.key, label: t.label, role: t.role, origin: t.origin, status: t.dropReason ? `dropped (${t.dropReason.code})` : t.status, rationale: t.rationale }));
   const sufficiency = assessEvidenceSufficiency(state).verdict;
@@ -245,7 +256,7 @@ export async function finalize(state: AgentRunState, model: AgentModel): Promise
   const attemptDetails: NonNullable<NonNullable<AgentRunState["trace"]["synthesis"]>["attemptDetails"]> = [];
   const extraLabels = brandLabel ? [brandLabel] : [];
   const synthesisStarted = Date.now();
-  if (results.length > 0 && state.status !== "FAILED" && model.synthesize) {
+  if (results.length > 0 && state.status !== "FAILED" && model.synthesize && !options.skipSynthesis) {
     for (attempts = 1; attempts <= 2; attempts += 1) {
       state.usage.synthesisAttempts += 1;
       const turn = await model.synthesize(context, violations);
