@@ -114,7 +114,7 @@ async function main(): Promise<number> {
   if (!territory || !parent.response?.investigation?.runId) {
     console.log("\nChild not started: the parent returned no territory with a key.");
   } else {
-    const childQuery = `Explore ${territory.label} more specifically.`;
+    const childQuery = `Investigate design-led boutique hospitality as a narrower part of ${territory.label}.`;
     console.log(`\nChild: ${childQuery}`);
     const child = await settle(jobs, jobs.create({
       kind: "execute",
@@ -134,7 +134,7 @@ async function main(): Promise<number> {
     }
   }
 
-  const dir = fileURLToPath(new URL("../feasibility-output/sprint5b2-living-atlas", import.meta.url));
+  const dir = fileURLToPath(new URL("../feasibility-output/sprint5b3-living-atlas", import.meta.url));
   mkdirSync(dir, { recursive: true });
   const report = { generatedAt: new Date().toISOString(), label: "LIVE_QLOO", parent: parentSummary, child: childSummary };
   const raw = JSON.stringify({ report, parent: parent.response, child: childResponse }, null, 2);

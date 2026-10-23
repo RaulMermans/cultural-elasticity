@@ -1,3 +1,4 @@
+import { developmentRoutesOpen } from "./exposure.js";
 import type { AnalysisIngredients } from "@cultural-elasticity/shared";
 import type { FastifyInstance } from "fastify";
 import { analyzeEvidencePacket } from "../analysis/ingredients.js";
@@ -6,7 +7,8 @@ import { EvidenceValidationError, type EvidenceIssue } from "../evidence/schema.
 
 type AnalysisErrorResponse =
   | { error: "invalid_evidence_packet"; issues: EvidenceIssue[] }
-  | { error: "analysis_invariant_violation"; message: string };
+  | { error: "analysis_invariant_violation"; message: string }
+  | { error: "not_found"; message: string };
 
 /**
  * Development endpoint: EvidencePacket in, AnalysisIngredients out. Fully offline and deterministic.
@@ -14,6 +16,7 @@ type AnalysisErrorResponse =
  */
 export async function analysisRoutes(app: FastifyInstance): Promise<void> {
   app.post<{ Body: unknown; Reply: AnalysisIngredients | AnalysisErrorResponse }>("/api/analysis/ingredients", async (request, reply) => {
+    if (!developmentRoutesOpen()) return reply.code(404).send({ error: "not_found", message: "This route is not available." });
     try {
       return analyzeEvidencePacket(request.body);
     } catch (error) {

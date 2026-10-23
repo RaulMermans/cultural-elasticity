@@ -29,6 +29,18 @@ export const queryProposalSchema = z.strictObject({
   systemDirectives: z.array(text(300)).max(6),
   confidence: z.enum(["HIGH", "MEDIUM", "LOW"]),
   clarificationQuestion: text(300).nullable(),
+  /**
+   * Null unless the message is trying to narrow, replace, or sit beside a context territory.
+   * A desire to "go deeper" is not itself a concept: leave proposedChildConcept null and ask.
+   */
+  refinement: z
+    .strictObject({
+      proposedChildConcept: z.string().trim().min(1).max(120).nullable(),
+      refinementRelationship: z.enum(["NARROWER", "ALTERNATIVE", "RELATED", "UNCLEAR"]),
+      relationBasis: z.enum(["USER_EXPLICIT", "OBSERVED_EVIDENCE", "AGENT_HYPOTHESIS", "UNVERIFIED"]),
+      requiresClarification: z.boolean(),
+    })
+    .nullable(),
 });
 export type QueryProposal = z.output<typeof queryProposalSchema>;
 
@@ -50,14 +62,32 @@ export const QUERY_PROPOSAL_JSON_SCHEMA = {
     systemDirectives: { type: "array", items: { type: "string" } },
     confidence: { type: "string", enum: ["HIGH", "MEDIUM", "LOW"] },
     clarificationQuestion: { anyOf: [{ type: "string" }, { type: "null" }] },
+    refinement: {
+      anyOf: [
+        {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            proposedChildConcept: { anyOf: [{ type: "string" }, { type: "null" }] },
+            refinementRelationship: { type: "string", enum: ["NARROWER", "ALTERNATIVE", "RELATED", "UNCLEAR"] },
+            relationBasis: { type: "string", enum: ["USER_EXPLICIT", "OBSERVED_EVIDENCE", "AGENT_HYPOTHESIS", "UNVERIFIED"] },
+            requiresClarification: { type: "boolean" },
+          },
+          required: ["proposedChildConcept", "refinementRelationship", "relationBasis", "requiresClarification"],
+        },
+        { type: "null" },
+      ],
+    },
   },
-  required: ["primaryIntent", "secondaryIntents", "brandsNamed", "territories", "contextRef", "contextTerritoryKey", "constraints", "unresolvedReferences", "systemDirectives", "confidence", "clarificationQuestion"],
+  required: ["primaryIntent", "secondaryIntents", "brandsNamed", "territories", "contextRef", "contextTerritoryKey", "constraints", "unresolvedReferences", "systemDirectives", "confidence", "clarificationQuestion", "refinement"],
   additionalProperties: false,
 } as const;
 
 // ---- API bodies ----
 
 const contextBody = z.strictObject({ runId: z.string().uuid(), selectedTerritoryKey: text(80).optional() });
+const comparisonSource = z.strictObject({ runId: z.string().uuid(), territoryKey: text(80) });
+const modelField = { model: z.enum(["auto", "baseline"]).optional() };
 
 /** Structured fields the caller may fix explicitly. They always win over the model and a contradiction is never merged. */
 const explicitFields = {
@@ -66,14 +96,36 @@ const explicitFields = {
   territories: z.array(text(200)).max(6).optional(),
 };
 
-export const queryBody = z.strictObject({
+const investigationBody = z.strictObject({
   query: text(2_000),
   ...explicitFields,
   context: contextBody.optional(),
+  /**
+   * Territories chosen from earlier investigations of one brand. The server reads their labels from those runs
+   * and starts a new comparison. Stored positions are not reused.
+   */
+  comparisonSources: z.array(comparisonSource).min(2).max(6).optional(),
   /** Development only: "baseline" uses the structural interpreter and the baseline reference policy. */
-  model: z.enum(["auto", "baseline"]).optional(),
+  ...modelField,
 });
+
+/** Continues a stored NEEDS_CLARIFICATION query. The original question stays on the server. */
+const clarifyContinuationBody = z.strictObject({
+  clarifyQueryId: z.string().uuid(),
+  clarification: text(1_000),
+  ...modelField,
+});
+
+/** Restores a run this process still holds. It does not start an investigation. */
+const navigateBody = z.strictObject({
+  navigateToRunId: z.string().uuid(),
+  territoryKey: text(80).optional(),
+  ...modelField,
+});
+
+export const queryBody = z.union([investigationBody, clarifyContinuationBody, navigateBody]);
 export type QueryBody = z.output<typeof queryBody>;
+export type InvestigationBody = z.output<typeof investigationBody>;
 
 /** Executes a query interpreted earlier (dry run, or a supported alternative) without interpreting it again. */
 export const confirmBody = z.strictObject({ confirmQueryId: z.string().uuid(), model: z.enum(["auto", "baseline"]).optional() });

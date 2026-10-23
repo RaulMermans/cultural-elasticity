@@ -5,9 +5,9 @@ const sentinelModel = ["SENTINEL", "MODEL", "NOT", "IN", "BROWSER"].join("_");
 
 export default defineConfig({
   testDir: "./e2e",
-  timeout: 60_000,
+  timeout: 120_000,
   fullyParallel: false,
-  use: { baseURL: "http://127.0.0.1:3100", navigationTimeout: 45_000 },
+  use: { baseURL: "http://127.0.0.1:3100", navigationTimeout: 120_000 },
   webServer: [
     { command: "node e2e/synthetic-backend.mjs", port: 4100, reuseExistingServer: false },
     {

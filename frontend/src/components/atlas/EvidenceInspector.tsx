@@ -2,11 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import type { QueryResponse } from "@cultural-elasticity/shared";
-import { evidenceSections } from "./atlas-model";
+import { evidenceSections, type EvidenceScope } from "./atlas-model";
 
-export function EvidenceInspector({ response, territoryName, onClose }: { response: QueryResponse; territoryName: string | null; onClose: () => void }) {
+export function EvidenceInspector({ response, scope, onClose }: { response: QueryResponse; scope: EvidenceScope; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
-  const sections = evidenceSections(response, territoryName);
+  const sections = evidenceSections(response, scope);
   useEffect(() => {
     closeRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
@@ -21,12 +21,15 @@ export function EvidenceInspector({ response, territoryName, onClose }: { respon
         Close
       </button>
       <h2 id="evidence-title">What supports this</h2>
+      <p className="quiet">{sections.scopeLabel}</p>
       <p>{sections.caution}</p>
+      {sections.recorded ? <p className="quiet">Recorded example. Not a new live investigation.</p> : null}
       {sections.synthetic ? <p className="quiet">Synthetic evidence. This is not a live investigation.</p> : null}
       <Section title="What was observed" items={sections.observed} />
       <Section title="What was calculated" items={sections.calculated} />
       <Section title="What the agent inferred" items={sections.interpreted} />
       <Section title="What could not be established" items={sections.unavailable} />
+      {sections.aggregate.length > 0 ? <Section title="Whole investigation" items={sections.aggregate} /> : null}
       <details>
         <summary>Provenance</summary>
         {sections.provenance.length > 0 ? (

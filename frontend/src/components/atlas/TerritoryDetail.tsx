@@ -14,6 +14,7 @@ export function TerritoryDetail({
   onReturn,
   onCompareSelected,
   canCompare,
+  comparisonNote,
 }: {
   node: AtlasDraft;
   response: QueryResponse | null;
@@ -24,6 +25,7 @@ export function TerritoryDetail({
   onReturn: () => void;
   onCompareSelected: () => void;
   canCompare: boolean;
+  comparisonNote: string | null;
 }) {
   const [narrower, setNarrower] = useState("");
   const canReturn = response?.nextOperations.includes("return_to_parent") ?? false;
@@ -35,6 +37,9 @@ export function TerritoryDetail({
       <h2 id="territory-title">{node.label}</h2>
       <p><strong>{node.statusLabel}.</strong> {node.detail}</p>
       {node.mismatchedBrand ? <p>The follow-up resolved a different brand, so it stands on its own.</p> : null}
+      {node.recorded ? <p className="quiet">Recorded example. A deeper question starts a new live investigation. It does not continue the recording.</p> : null}
+      {response?.interpretation?.refinement?.relationBasis === "AGENT_HYPOTHESIS" ? <p>This narrower concept is a hypothesis, not a verified category.</p> : null}
+      {response?.interpretation?.refinement && response.interpretation.refinement.refinementRelationship !== "NARROWER" ? <p>This follow-up is not a verified narrower category.</p> : null}
       {summary && node.kind === "brand" ? <p>{summary}</p> : null}
       <div className="actions">
         <button className="primary" type="button" data-testid="evidence-open" onClick={onInspect} disabled={!response?.investigation?.result}>
@@ -61,7 +66,7 @@ export function TerritoryDetail({
             setNarrower("");
           }}
         >
-          <label htmlFor="narrower">Explore this direction more specifically</label>
+          <label htmlFor="narrower">Name a more specific cultural concept</label>
           <input id="narrower" data-testid="follow-up-input" value={narrower} maxLength={2000} onChange={(event) => setNarrower(event.target.value)} />
           <button className="ghost" type="submit" data-testid="follow-up-submit" disabled={narrower.trim().length === 0}>
             Explore deeper
@@ -70,9 +75,10 @@ export function TerritoryDetail({
       ) : null}
       {canCompare ? (
         <button className="ghost" type="button" data-testid="compare-submit" onClick={onCompareSelected}>
-          Compare these possibilities
+          Compare these in a new investigation
         </button>
       ) : null}
+      {comparisonNote ? <p className="quiet">{comparisonNote}</p> : null}
     </section>
   );
 }

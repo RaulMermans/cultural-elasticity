@@ -12,6 +12,8 @@ import {
   QUERY_INTENTS,
   QUERY_SCHEMA_VERSION,
   QUERY_STATES,
+  RELATION_BASES,
+  REFINEMENT_RELATIONSHIPS,
   type QueryResponse,
 } from "./query.js";
 
@@ -23,6 +25,8 @@ const INTENTS = new Set<string>(QUERY_INTENTS);
 const AGENT_INTENTS = new Set<string>(EXECUTABLE_QUERY_INTENTS);
 const OPERATIONS = new Set(["NEW_INVESTIGATION", "FOLLOW_UP", "REFINE_TERRITORY", "SWITCH_TERRITORY", "CHANGE_BRAND"]);
 const DISPOSITIONS = new Set(["EXECUTABLE", "NEEDS_CLARIFICATION", "PARTIALLY_SUPPORTED", "UNSUPPORTED", "CONTEXT_UNAVAILABLE", "NAVIGATION"]);
+const REFINEMENT = new Set<string>(REFINEMENT_RELATIONSHIPS);
+const RELATION = new Set<string>(RELATION_BASES);
 const EVIDENCE = new Set<TerritoryEvidenceStatus>(["EVIDENCE_SUPPORTED_TERRITORY", "PARTIAL_EVIDENCE", "HYPOTHESIS_PENDING_VALIDATION", "UNSUPPORTED"]);
 const ROUTES = new Set<AnalysisRoute>(["FULL_RELATIVE_ANALYSIS", "PARTIAL_CULTURAL_ANALYSIS", "DESCRIPTIVE_ANALYSIS", "INSUFFICIENT_EVIDENCE"]);
 const ROLES = new Set(["target", "reference", "frontier_candidate"]);
@@ -91,6 +95,18 @@ function parseInterpretation(value: unknown, path: string, fail: (path: string, 
   if (!isRecord(value.interpreter) || (value.interpreter.kind !== "llm" && value.interpreter.kind !== "scripted" && value.interpreter.kind !== "structural")) {
     fail(`${path}.interpreter`, "invalid interpreter");
   }
+  if (value.refinement !== undefined && value.refinement !== null) parseRefinement(value.refinement, `${path}.refinement`, fail);
+}
+
+function parseRefinement(value: unknown, path: string, fail: (path: string, message: string) => void): void {
+  if (!isRecord(value)) return fail(path, "expected an object");
+  if (value.parentRunId !== null && (typeof value.parentRunId !== "string" || !UUID.test(value.parentRunId))) fail(`${path}.parentRunId`, "expected a uuid or null");
+  if (value.parentTerritoryKey !== null && typeof value.parentTerritoryKey !== "string") fail(`${path}.parentTerritoryKey`, "expected a string or null");
+  if (typeof value.userRefinement !== "string") fail(`${path}.userRefinement`, "expected a string");
+  if (value.proposedChildConcept !== null && typeof value.proposedChildConcept !== "string") fail(`${path}.proposedChildConcept`, "expected a string or null");
+  if (typeof value.refinementRelationship !== "string" || !REFINEMENT.has(value.refinementRelationship)) fail(`${path}.refinementRelationship`, "unknown relationship");
+  if (typeof value.relationBasis !== "string" || !RELATION.has(value.relationBasis)) fail(`${path}.relationBasis`, "unknown basis");
+  if (typeof value.requiresClarification !== "boolean") fail(`${path}.requiresClarification`, "expected a boolean");
 }
 
 function parseHandoff(value: unknown, path: string, fail: (path: string, message: string) => void): void {

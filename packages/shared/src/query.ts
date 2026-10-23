@@ -43,6 +43,25 @@ export type QueryState = (typeof QUERY_STATES)[number];
 /** How the parent-child relationship came about. An Atlas edge is an investigation step, never a cultural distance. */
 export type InvestigationOperation = "NEW_INVESTIGATION" | "FOLLOW_UP" | "REFINE_TERRITORY" | "SWITCH_TERRITORY" | "CHANGE_BRAND";
 
+/**
+ * Sprint 5B.3. A proposed refinement of one territory. The model may propose it; only the gate records it.
+ * NARROWER is a hypothesis unless relationBasis is USER_EXPLICIT or OBSERVED_EVIDENCE. It is not a Qloo distance.
+ */
+export const REFINEMENT_RELATIONSHIPS = ["NARROWER", "ALTERNATIVE", "RELATED", "UNCLEAR"] as const;
+export type RefinementRelationship = (typeof REFINEMENT_RELATIONSHIPS)[number];
+export const RELATION_BASES = ["USER_EXPLICIT", "OBSERVED_EVIDENCE", "AGENT_HYPOTHESIS", "UNVERIFIED"] as const;
+export type RelationBasis = (typeof RELATION_BASES)[number];
+
+export type RefinementRecord = {
+  parentRunId: string | null;
+  parentTerritoryKey: string | null;
+  userRefinement: string;
+  proposedChildConcept: string | null;
+  refinementRelationship: RefinementRelationship;
+  relationBasis: RelationBasis;
+  requiresClarification: boolean;
+};
+
 export type FieldSource = "EXPLICIT" | "INHERITED" | "UNRESOLVED";
 
 export type QueryReasonCode = { code: string; detail: string };
@@ -71,6 +90,10 @@ export type QueryInterpretation = {
   /** Deterministic reasons for every rejection, deferral or clarification. */
   reasonCodes: QueryReasonCode[];
   interpreter: { kind: "llm" | "scripted" | "structural"; model?: string; effort?: string };
+  /**
+   * Present when the gate assessed a refinement. Absent on older responses. A hypothesis is not verified evidence.
+   */
+  refinement?: RefinementRecord | null;
 };
 
 /** The exact, validated arguments handed to the agent runtime. */

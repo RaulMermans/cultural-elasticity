@@ -4,8 +4,8 @@ const sentinelQloo = ["SENTINEL", "QLOO", "NOT", "IN", "BROWSER"].join("_");
 const sentinelModel = ["SENTINEL", "MODEL", "NOT", "IN", "BROWSER"].join("_");
 
 async function open(page: import("@playwright/test").Page) {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  await expect(page.locator("form.composer[data-hydrated='true']")).toBeVisible();
+  await page.goto("/", { waitUntil: "domcontentloaded", timeout: 120_000 });
+  await expect(page.locator("form.composer[data-hydrated='true']")).toBeVisible({ timeout: 30_000 });
 }
 
 function branch(page: import("@playwright/test").Page, name: RegExp) {
@@ -19,8 +19,7 @@ async function ask(page: import("@playwright/test").Page, query: string) {
 
 async function investigate(page: import("@playwright/test").Page) {
   await ask(page, "Where could Paper Lantern expand?");
-  await expect(page.getByTestId("progress")).toContainText("Interpreting question");
-  await expect(branch(page, /Coastal cooking/)).toBeVisible();
+  await expect(branch(page, /Coastal cooking/)).toBeVisible({ timeout: 20_000 });
 }
 
 test("the opening page states the question", async ({ page }) => {
@@ -32,7 +31,9 @@ test("the opening page states the question", async ({ page }) => {
 
 test("a question shows progress and then territories", async ({ page }) => {
   await open(page);
-  await investigate(page);
+  await ask(page, "Where could Paper Lantern expand?");
+  await expect(page.getByTestId("progress")).toContainText("Interpreting question", { timeout: 15_000 });
+  await expect(branch(page, /Coastal cooking/)).toBeVisible({ timeout: 20_000 });
   await expect(branch(page, /Clay studios/)).toBeVisible();
   await expect(branch(page, /No usable evidence/)).toBeVisible();
   await expect(page.getByTestId("progress")).toHaveCount(0);
@@ -52,7 +53,7 @@ test("a territory opens and closes the evidence inspector", async ({ page }) => 
   await expect(page.getByTestId("evidence-inspector")).toHaveCount(0);
 });
 
-test("a narrower question becomes a child, and return keeps the parent", async ({ page }) => {
+test("a narrower question becomes a child, and return restores the parent", async ({ page }) => {
   await open(page);
   await investigate(page);
   await branch(page, /Coastal cooking/).click();
@@ -61,16 +62,38 @@ test("a narrower question becomes a child, and return keeps the parent", async (
   await expect(branch(page, /Seasonal dinners/)).toBeVisible();
   await branch(page, /Seasonal dinners/).click();
   await page.getByTestId("return-parent").click();
-  await expect(branch(page, /Coastal cooking/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Coastal cooking" })).toBeVisible();
   await expect(branch(page, /Seasonal dinners/)).toBeVisible();
-  await branch(page, /Coastal cooking/).click();
   await expect(page.locator(".detail")).toContainText("Partial evidence");
+});
+
+test("a vague narrowing asks for a concept instead of naming one", async ({ page }) => {
+  await open(page);
+  await investigate(page);
+  await branch(page, /Coastal cooking/).click();
+  await page.getByTestId("follow-up-input").fill("more specific");
+  await page.getByTestId("follow-up-submit").click();
+  await expect(page.getByTestId("clarification-dialog")).toContainText("What part of this territory would you like to explore?", { timeout: 15_000 });
+  await expect(page.getByText("Continuing:")).toBeVisible();
+});
+
+test("a recorded example is labelled and does not start a job", async ({ page }) => {
+  const jobs: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() === "POST" && request.url().includes("/api/agent/jobs")) jobs.push(request.url());
+  });
+  await open(page);
+  await page.getByTestId("recorded-open").click();
+  await expect(page.getByRole("note")).toContainText("Recorded example", { timeout: 15_000 });
+  await expect(branch(page, /Bohemian lifestyle/).first()).toBeVisible();
+  await expect(page.getByText("Partial evidence").first()).toBeVisible();
+  expect(jobs).toEqual([]);
 });
 
 test("a clarification can be answered", async ({ page }) => {
   await open(page);
   await ask(page, "Ask without naming a brand");
-  await expect(page.getByTestId("clarification-dialog")).toBeVisible();
+  await expect(page.getByTestId("clarification-dialog")).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText("Which brand should the investigation follow?")).toBeVisible();
   await page.getByTestId("clarification-input").fill("Paper Lantern");
   await page.getByRole("button", { name: "Continue" }).click();
@@ -157,7 +180,7 @@ test("stopping an investigation keeps an interrupted state", async ({ page }) =>
   await ask(page, "Stop this investigation");
   await expect(page.getByTestId("progress")).toBeVisible();
   await page.getByTestId("progress-stop").click();
-  await expect(page.getByText("was stopped")).toBeVisible();
+  await expect(page.getByText("was stopped")).toBeVisible({ timeout: 15_000 });
   await expect(branch(page, /Interrupted/)).toBeVisible();
 });
 

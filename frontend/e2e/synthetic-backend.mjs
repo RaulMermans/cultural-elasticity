@@ -202,19 +202,22 @@ function whitespace(queryId) {
   });
 }
 
-function returned(queryId, parent) {
+function returned(queryId, parent, territoryKey = null) {
   return checked({
     schemaVersion: QUERY,
     queryId,
     state: "RETURNED_TO_INVESTIGATION",
-    interpretation: interpretation("Return to the previous investigation.", "return_to_parent", { disposition: "NAVIGATION" }),
+    interpretation: interpretation("Return to the previous investigation.", "return_to_parent", {
+      disposition: "NAVIGATION",
+      references: { returnToRunId: parent.investigation.runId, ...(territoryKey ? { selectedTerritoryKey: territoryKey } : {}) },
+    }),
     reasons: [],
     handoff: null,
     supportedAlternative: null,
     context: null,
-    investigation: { runId: parent.investigation.runId, reused: true, link: null, result: parent.investigation.result },
-    territories: [],
-    nextOperations: [],
+    investigation: { runId: parent.investigation.runId, reused: true, link: parent.investigation.link, result: parent.investigation.result },
+    territories: parent.territories,
+    nextOperations: ["refine_territory", "switch_territory", "analyze_move"],
     telemetry: telemetry(queryId, "RETURNED_TO_INVESTIGATION", "return_to_parent", null),
   });
 }
@@ -242,6 +245,12 @@ function responseFor(body) {
   if (body.confirmQueryId) {
     return investigated(queryId, runId, [{ name: "Clay studios", key: "clay_studios", evidenceStatus: "PARTIAL_EVIDENCE", analysisRoute: "DESCRIPTIVE_ANALYSIS" }]);
   }
+  if (body.navigateToRunId) {
+    const parent = findRun(body.navigateToRunId);
+    if (!parent) return missingParent(queryId);
+    return returned(queryId, parent, body.territoryKey ?? null);
+  }
+  if (body.clarifyQueryId) return investigated(queryId, runId, PARENT_TERRITORIES);
   const query = typeof body.query === "string" ? body.query.trim() : "";
   if (query === "Ask without naming a brand") return clarification(queryId, query);
   if (query === "Where is the open space competitors leave?") return whitespace(queryId);
@@ -250,6 +259,27 @@ function responseFor(body) {
     const parent = findRun(body.context?.runId);
     if (!parent) return missingParent(queryId);
     return returned(queryId, parent);
+  }
+  if (query === "more specific" || query === "explore deeper" || query === "something narrower") {
+    return checked({
+      schemaVersion: QUERY,
+      queryId,
+      state: "NEEDS_CLARIFICATION",
+      interpretation: interpretation(query, "refine_territory", {
+        disposition: "NEEDS_CLARIFICATION",
+        clarificationQuestion: "What part of this territory would you like to explore?",
+        reasonCodes: [{ code: "REFINEMENT_NOT_A_CONCEPT", detail: "The message does not name a cultural concept." }],
+        references: { parentRunId: body.context?.runId },
+      }),
+      reasons: [{ code: "REFINEMENT_NOT_A_CONCEPT", detail: "The message does not name a cultural concept." }],
+      handoff: null,
+      supportedAlternative: null,
+      context: null,
+      investigation: null,
+      territories: [],
+      nextOperations: [],
+      telemetry: telemetry(queryId, "NEEDS_CLARIFICATION", "refine_territory", null),
+    });
   }
   if (body.context?.runId) {
     const parent = findRun(body.context.runId);
@@ -311,7 +341,7 @@ function envelope(job, includeToken) {
 
 function accept(body) {
   if (!body || typeof body !== "object") return { status: 400, body: { error: "invalid_job_request", message: "The question could not be accepted." } };
-  if (!body.confirmQueryId && !body.continueRunId && (typeof body.query !== "string" || body.query.trim().length === 0)) {
+  if (!body.confirmQueryId && !body.continueRunId && !body.clarifyQueryId && !body.navigateToRunId && (typeof body.query !== "string" || body.query.trim().length === 0)) {
     return { status: 400, body: { error: "invalid_job_request", message: "The question could not be accepted." } };
   }
   const job = {

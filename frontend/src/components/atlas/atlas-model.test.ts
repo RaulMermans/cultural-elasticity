@@ -141,6 +141,91 @@ test("completed nodes keep their place when a branch is added", () => {
   assert.ok((next.get("c")?.y ?? 0) > (next.get("b")?.y ?? 0));
 });
 
+test("duplicate display names stay separate nodes", () => {
+  const nodes = buildAtlas([
+    response({
+      investigation: { runId: id, reused: false, link: null, result: null },
+      territories: [
+        { name: "Coast", investigationState: "INVESTIGATED", territoryKey: "coast", evidenceStatus: "PARTIAL_EVIDENCE", analysisRoute: "PARTIAL_CULTURAL_ANALYSIS" },
+        { name: "Coast", investigationState: "INVESTIGATED", territoryKey: "coast_other", evidenceStatus: "UNSUPPORTED", analysisRoute: "INSUFFICIENT_EVIDENCE" },
+      ],
+    }),
+  ]);
+  const coasts = nodes.filter((node) => node.label === "Coast");
+  assert.equal(coasts.length, 2);
+  assert.notEqual(coasts[0]?.id, coasts[1]?.id);
+});
+
+test("evidence follows the territory key and fails closed", async () => {
+  const { evidenceSections } = await import("./atlas-model.ts");
+  const packet = response({
+    investigation: {
+      runId: id,
+      reused: false,
+      link: null,
+      result: {
+        status: "COMPLETE",
+        evidenceOrigin: "synthetic",
+        summary: { text: "The whole investigation.", source: "deterministic_template" },
+        limitations: [{ code: "AGG", detail: "This limitation belongs to the investigation." }],
+        layers: {
+          qlooEvidence: {
+            concepts: [
+              { territoryKey: "coast", label: "Sea", correlationIds: ["coast-call"] },
+              { territoryKey: "other", label: "Other concept", correlationIds: ["other-call"] },
+            ],
+            exemplars: [],
+          },
+          systemAnalysis: { routes: [{ territoryKey: "coast", route: "PARTIAL_CULTURAL_ANALYSIS", classification: null, robustness: null, position: null }] },
+        },
+        territories: [
+          { key: "coast", label: "Coast", keyEvidence: ["Coast was observed."], limitations: [{ code: "THIN", detail: "The coast panel is thin." }], provenance: { correlationIds: ["coast-call"] } },
+          { key: "other", label: "Coast", keyEvidence: ["A different coast."], limitations: [], provenance: { correlationIds: ["other-call"] } },
+        ],
+      } as never,
+    },
+  });
+  const coast = evidenceSections(packet, { territoryKey: "coast", territoryName: "Coast", runId: id });
+  assert.match(coast.observed.join(" "), /Sea/u);
+  assert.doesNotMatch(coast.observed.join(" "), /Other concept/u);
+  assert.match(coast.calculated.join(" "), /Coast was observed/u);
+  assert.doesNotMatch(coast.calculated.join(" "), /different coast/u);
+  assert.equal(coast.territorySpecific, true);
+  const missing = evidenceSections(packet, { territoryKey: "missing", territoryName: "Coast", runId: id });
+  assert.match(missing.observed.join(" "), /Territory-specific evidence is unavailable/u);
+  assert.doesNotMatch(missing.observed.join(" "), /Sea|Other concept/u);
+  assert.match(missing.aggregate.join(" "), /investigation/u);
+  const duplicateName = evidenceSections(packet, { territoryKey: null, territoryName: "Coast", runId: id });
+  assert.equal(duplicateName.territorySpecific, false);
+  assert.match(duplicateName.observed.join(" "), /Territory-specific evidence is unavailable/u);
+  const wrongRun = evidenceSections(packet, { territoryKey: "coast", territoryName: "Coast", runId: "00000000-0000-4000-8000-000000000099" });
+  assert.equal(wrongRun.territorySpecific, false);
+  assert.doesNotMatch(wrongRun.observed.join(" "), /Sea/u);
+});
+
+test("the recorded example is labelled, live-origin, and parseable without a provider", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { parseQueryResponse } = await import("@cultural-elasticity/shared");
+  const artifact = JSON.parse(readFileSync(new URL("../../demo/recorded-example.json", import.meta.url), "utf8")) as {
+    kind: string;
+    recordedAt: string;
+    note: string;
+    responses: QueryResponse[];
+  };
+  assert.equal(artifact.kind, "RECORDED_EXAMPLE");
+  assert.match(artifact.recordedAt, /^2026-10-22T/u);
+  assert.match(artifact.note, /does not call a provider/iu);
+  assert.ok(artifact.responses.length >= 1);
+  for (const item of artifact.responses) {
+    const parsed = parseQueryResponse(item);
+    assert.equal(parsed.ok, true, parsed.ok ? "" : JSON.stringify(parsed.issues));
+    assert.ok(item.interpretation?.interpretationWarnings.includes("RECORDED_EXAMPLE"));
+    const result = item.investigation?.result;
+    assert.ok(result && result.status !== "NEEDS_INPUT");
+    assert.equal(result.evidenceOrigin, "live");
+  }
+});
+
 test("silhouettes are stable decoration and competitor copy stays non-equivalent", () => {
   assert.equal(decorativeRadii("ceramics"), decorativeRadii("ceramics"));
   assert.notEqual(decorativeRadii("ceramics"), decorativeRadii("hospitality"));

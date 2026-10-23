@@ -2,6 +2,8 @@
 
 The product surface for Cultural Elasticity. The agent, the query gate, and the methodology are unchanged. This sprint adds the investigation a person can actually walk through.
 
+Sprint 5B.3 continues this surface: [LIVING_ATLAS_PRODUCT_EXCELLENCE.md](../sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md). The design skill is now version 2.
+
 ## 1. Architecture decision
 
 ```

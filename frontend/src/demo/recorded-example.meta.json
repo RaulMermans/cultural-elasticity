@@ -1,0 +1,17 @@
+{
+  "kind": "RECORDED_EXAMPLE",
+  "recordedAt": "2026-10-22T17:17:09.352Z",
+  "evidenceOrigin": "live",
+  "model": "claude-haiku-5-5",
+  "qlooCalls": {
+    "parent": 30,
+    "child": 5
+  },
+  "sourceSha256": "ab023fe8b8746d9359cf8bfedb2d2c829de01ffc39d5c1a5eeba37d1c040662c",
+  "note": "Recorded from a verified live investigation. Partial evidence stays partial. This file does not call a provider.",
+  "responseCount": 2,
+  "runIds": [
+    "8813537d-3e73-4411-b7c0-d42d3cfc26e0",
+    "d083c0aa-c4bf-4e08-a7c0-007bc28eb3e6"
+  ]
+}

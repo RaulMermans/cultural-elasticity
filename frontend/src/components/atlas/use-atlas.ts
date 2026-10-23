@@ -55,6 +55,7 @@ export function useAtlas() {
   const [notice, setNotice] = useState<string | null>(null);
   const [recovery, setRecovery] = useState<string | null>(null);
   const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
+  const [focusRequest, setFocusRequest] = useState<{ runId: string; territoryKey: string | null; queryId: string } | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [narrow, setNarrow] = useState(false);
   const [ready, setReady] = useState(false);
@@ -74,11 +75,17 @@ export function useAtlas() {
       }
       setResponses((current) => {
         const index = current.findIndex((item) => item.queryId === parsed.response.queryId);
-        if (index < 0) return [...current, parsed.response];
-        const copy = current.slice();
-        copy[index] = parsed.response;
-        return copy;
+        const next = index < 0 ? [...current, parsed.response] : current.slice();
+        if (index >= 0) next[index] = parsed.response;
+        return next;
       });
+      if (parsed.response.state === "RETURNED_TO_INVESTIGATION" && parsed.response.investigation) {
+        setFocusRequest({
+          runId: parsed.response.investigation.runId,
+          territoryKey: parsed.response.interpretation?.references.selectedTerritoryKey ?? null,
+          queryId: parsed.response.queryId,
+        });
+      }
     }
     if (view.status === "expired") setRecovery("This investigation is no longer held. You can start a new one.");
     if (view.status === "failed" && view.error) setNotice(view.error.message);
@@ -165,6 +172,15 @@ export function useAtlas() {
   useEffect(() => {
     setPositions((current) => layoutAtlas(drafts, current));
   }, [drafts]);
+  useEffect(() => {
+    if (!focusRequest) return;
+    const match = drafts.find((node) => node.runId === focusRequest.runId && focusRequest.territoryKey && node.territoryKey === focusRequest.territoryKey)
+      ?? drafts.find((node) => node.runId === focusRequest.runId && node.kind === "territory")
+      ?? drafts.find((node) => node.runId === focusRequest.runId);
+    if (!match) return;
+    setSelectedId(match.id);
+    setFocusRequest(null);
+  }, [focusRequest, drafts]);
 
   const nodes = drafts.map((draft) => ({ ...draft, ...(positions.get(draft.id) ?? { x: 48, y: 48 }) }));
   const selected = nodes.find((node) => node.id === selectedId) ?? null;
@@ -192,6 +208,7 @@ export function useAtlas() {
     notice,
     recovery,
     clearNotice: () => setNotice(null),
+    fail: (message: string) => setNotice(message),
     dismissRecovery: () => {
       setRecovery(null);
       setResponses([]);
@@ -203,6 +220,19 @@ export function useAtlas() {
     narrow,
     submit,
     cancel,
+    focusRun: (runId: string, territoryKey: string | null) => setFocusRequest({ runId, territoryKey, queryId: `focus:${runId}:${territoryKey ?? ""}` }),
+    showRecorded: (incoming: QueryResponse[]) => {
+      setNotice(null);
+      setRecovery(null);
+      setCompareIds([]);
+      setInspectorOpen(false);
+      setResponses(incoming);
+      const first = incoming.find((item) => item.investigation && !item.investigation.reused) ?? incoming[0];
+      const territory = first?.territories.find((item) => item.investigationState === "INVESTIGATED");
+      if (first?.investigation?.runId) {
+        setFocusRequest({ runId: first.investigation.runId, territoryKey: territory?.territoryKey ?? null, queryId: first.queryId });
+      }
+    },
     responseFor: (draft: AtlasDraft | null) => responses.find((item) => item.queryId === draft?.queryId) ?? null,
   };
 }
