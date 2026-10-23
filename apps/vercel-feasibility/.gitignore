@@ -3,3 +3,4 @@ node_modules
 out
 /.swc
 app/.well-known/workflow
+.vercel

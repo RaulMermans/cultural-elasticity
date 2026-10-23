@@ -53,7 +53,13 @@ export type PerfReport = {
     partial: number;
     descriptive: number;
     insufficient: number;
+    /** Territories whose evidenceStatus is UNSUPPORTED. Not a second copy of INSUFFICIENT_EVIDENCE. */
     unsupported: number;
+    /**
+     * Unique territories that are evidence-unsupported or routed INSUFFICIENT_EVIDENCE.
+     * Labelled family — not a fifth mutually exclusive analysis route.
+     */
+    unsupportedOrInsufficientFamily: number;
     validFullPerMinute: number | null;
     partialPerMinute: number | null;
     validFullPerQlooCall: number | null;
@@ -105,9 +111,18 @@ export function routeCounts(result: AgentRunResponse): {
   descriptive: number;
   insufficient: number;
   unsupported: number;
+  unsupportedOrInsufficientFamily: number;
 } {
   if (!isAnalysis(result)) {
-    return { validFull: 0, invalidFull: 0, partial: 0, descriptive: 0, insufficient: 0, unsupported: 0 };
+    return {
+      validFull: 0,
+      invalidFull: null,
+      partial: 0,
+      descriptive: 0,
+      insufficient: 0,
+      unsupported: 0,
+      unsupportedOrInsufficientFamily: 0,
+    };
   }
   const territories = result.territories;
   const full = territories.filter((t) => t.analysisRoute === "FULL_RELATIVE_ANALYSIS");
@@ -135,8 +150,11 @@ export function routeCounts(result: AgentRunResponse): {
   const partial = territories.filter((t) => t.analysisRoute === "PARTIAL_CULTURAL_ANALYSIS").length;
   const descriptive = territories.filter((t) => t.analysisRoute === "DESCRIPTIVE_ANALYSIS").length;
   const insufficient = territories.filter((t) => t.analysisRoute === "INSUFFICIENT_EVIDENCE").length;
-  const unsupported = territories.filter((t) => t.evidenceStatus === "UNSUPPORTED" || t.analysisRoute === "INSUFFICIENT_EVIDENCE").length;
-  return { validFull, invalidFull, partial, descriptive, insufficient, unsupported };
+  const unsupported = territories.filter((t) => t.evidenceStatus === "UNSUPPORTED").length;
+  const family = new Set(
+    territories.filter((t) => t.evidenceStatus === "UNSUPPORTED" || t.analysisRoute === "INSUFFICIENT_EVIDENCE").map((t) => t.key),
+  );
+  return { validFull, invalidFull, partial, descriptive, insufficient, unsupported, unsupportedOrInsufficientFamily: family.size };
 }
 
 /** @deprecated Sprint 8B: FULL and PARTIAL are not one equivalent count. Prefer routeCounts(). */
@@ -219,6 +237,7 @@ export function buildPerfReport(result: AgentRunResponse): PerfReport {
       descriptive: counts.descriptive,
       insufficient: counts.insufficient,
       unsupported: counts.unsupported,
+      unsupportedOrInsufficientFamily: counts.unsupportedOrInsufficientFamily,
       validFullPerMinute: perMin(counts.validFull),
       partialPerMinute: perMin(counts.partial),
       validFullPerQlooCall: m.qloo_calls > 0 ? Math.round((counts.validFull / m.qloo_calls) * 1000) / 1000 : null,
@@ -232,10 +251,16 @@ export function formatPerfReport(report: PerfReport): string {
   const lines = [
     `run ${report.runId}`,
     `wall ${report.wallMs} ms  reconstructable=${report.reconstructable}`,
-    report.historicalNote ? report.historicalNote : `span coverage ${cov?.coverageRatio ?? "n/a"} covered ${cov?.coveredMs ?? 0} unattributed ${cov?.unattributedMs ?? 0} skew ${cov?.clockSkewMs ?? 0}`,
+    report.historicalNote
+      ? report.historicalNote
+      : `span coverage ${cov?.coverageRatio ?? "n/a"} covered ${cov?.coveredMs ?? 0} unattributed ${cov?.unattributedMs ?? 0} overlap ${cov?.overlapMs ?? 0} exclusiveSum ${cov?.exclusiveSumMs ?? 0} inclusiveSum ${cov?.inclusiveSumMs ?? 0} skew ${cov?.clockSkewMs ?? 0}`,
+    ...(cov?.exclusiveByPhase ?? []).slice(0, 8).map(
+      (p) =>
+        `phase ${p.phase} inclusive=${p.inclusiveMs} exclusive_of_children=${p.exclusiveMs} wall_union=${p.wallUnionMs} n=${p.count}`,
+    ),
     `naive stages model=${report.naiveStages.stages.modelMs} qloo=${report.naiveStages.stages.qlooMs} analysis=${report.naiveStages.stages.analysisMs} synthesis=${report.naiveStages.stages.synthesisMs} residual=${report.naiveStages.unattributedMs}`,
     `model tokens in=${report.model.inputTokens} out=${report.model.outputTokens} cost=${report.model.costUsd ?? "n/a"} effort=${report.model.effort ?? "n/a"}`,
-    `outcomes validFull=${report.outcomes.validFull} invalidFull=${report.outcomes.invalidFull ?? "unmeasured"} partial=${report.outcomes.partial} descriptive=${report.outcomes.descriptive} insufficient=${report.outcomes.insufficient} unsupported=${report.outcomes.unsupported}`,
+    `outcomes validFull=${report.outcomes.validFull} invalidFull=${report.outcomes.invalidFull ?? "unmeasured"} partial=${report.outcomes.partial} descriptive=${report.outcomes.descriptive} insufficient=${report.outcomes.insufficient} unsupportedEvidence=${report.outcomes.unsupported} family(unsupported_or_insufficient)=${report.outcomes.unsupportedOrInsufficientFamily}`,
     `validFull /min ${report.outcomes.validFullPerMinute ?? "n/a"} /qloo ${report.outcomes.validFullPerQlooCall ?? "n/a"} /$ ${report.outcomes.validOutcomesPerDollar ?? "n/a"}`,
     ...report.waste.map((w) => `waste ${w.classification} ${w.kind} ×${w.count}: ${w.detail}`),
   ];
