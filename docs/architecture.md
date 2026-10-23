@@ -31,6 +31,9 @@ Provider-specific shapes (harness envelopes, Qloo entity/tag records, `compare_a
 - Sprint 3: the agentic investigation runtime (`backend/src/agent`). See [sprint-3/AGENTIC_INVESTIGATION_RUNTIME.md](sprint-3/AGENTIC_INVESTIGATION_RUNTIME.md).
 - Sprint 4: runtime skills, just-in-time context, representation quality and recovery, concept deduplication, frontier construction, sufficiency v2, the live agent harness (`pnpm eval:agent:live`). Capture configs, feasibility pins and the synthetic world moved to `backend/scripts/`. See [sprint-4/AGENT_COMPETENCE_AND_SKILLS.md](sprint-4/AGENT_COMPETENCE_AND_SKILLS.md).
 - Sprint 0B: the hackathon host safety gate (`qloo/environment.ts`), the live Qloo → `EvidencePacket` adapter (`qloo/live-adapter.ts`, written from live output), the pinned live investigation (`feasibility/live.ts`, `live-config.ts`) and the live and recorded eval class (`pnpm eval:live`). The Sprint 1 engine ran on live data unchanged.
+- Sprint 5B.1: one query interpretation policy and a deterministic execution gate. See [sprint-5b1/QUERY_INTELLIGENCE.md](sprint-5b1/QUERY_INTELLIGENCE.md).
+- Sprint 5B.2: the Living Atlas product surface and in-process JobManager. See [sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md](sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md).
+- Sprint 5B.3: Atlas product quality — clarification continuity, return navigation, comparison integrity, evidence attribution, job expiry, public guards, intelligent narrowing, and a recorded live example. See [sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md](sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md).
 
 ## Cultural Evidence Core pipeline
 

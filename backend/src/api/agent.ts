@@ -1,8 +1,10 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+import { admit, globalJobLimit, jobCreateLimit } from "./admission.js";
+import { baselineAllowed, developmentRoutesOpen } from "./exposure.js";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../agent/errors.js";
 import { createAgentModel, createLiveToolProvider, createQueryInterpreter, type ModelChoice } from "../agent/factory.js";
-import { confirmBody, queryBody, type QueryBody } from "../agent/query/contracts.js";
+import { confirmBody, queryBody } from "../agent/query/contracts.js";
 import type { QueryInterpreter } from "../agent/query/interpreter.js";
 import { JobManager, JobRejectedError, type JobRequest } from "../agent/query/jobs.js";
 import { QueryAlreadyExecutedError, QueryService, QueryStore } from "../agent/query/service.js";
@@ -82,6 +84,23 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       runnerFor: (model) => service(model === "baseline" ? "baseline" : "auto", log),
       log: (event) => log(event),
     });
+    const modelChoice = (model: string | undefined) => (model === "baseline" ? "baseline" : "auto");
+    const rejectBaseline = (model: string | undefined, reply: FastifyReply) => {
+      if (model !== "baseline" || baselineAllowed()) return false;
+      void reply.code(403).send({ error: "baseline_disabled", message: "The reference policy is not available here." });
+      return true;
+    };
+    const admitCreate = (request: FastifyRequest, reply: FastifyReply) => {
+      const key = request.ip || "local";
+      if (admit(`create:${key}`, jobCreateLimit(), 10 * 60_000) && admit("create:global", globalJobLimit(), 10 * 60_000)) return true;
+      void reply.code(429).send({ error: "too_many_requests", message: "Too many investigations were requested. Wait a moment and try again." });
+      return false;
+    };
+    const closed = (reply: FastifyReply) => {
+      if (developmentRoutesOpen()) return false;
+      void reply.code(404).send({ error: "not_found", message: "This route is not available." });
+      return true;
+    };
     const handle = async (reply: { code: (n: number) => { send: (b: ErrorBody) => unknown } }, work: () => Promise<unknown>) => {
       try {
         return await work();
@@ -96,38 +115,52 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       }
     };
 
-    app.post<{ Body: unknown }>("/api/agent/analyze", async (request, reply) => {
+    app.post<{ Body: unknown }>("/api/agent/analyze", { bodyLimit: 32_768 }, async (request, reply) => {
+      if (closed(reply)) return;
       const body = analyzeBody.safeParse(request.body);
       if (!body.success) return reply.code(400).send({ error: "invalid_agent_request", issues: issues(body.error) });
+      if (rejectBaseline(body.data.model, reply) || !admitCreate(request, reply)) return;
       const { query, model, ...fields } = body.data;
-      return handle(reply, () => factory(model ?? "auto").run({ userQuery: query, ...fields }));
+      return handle(reply, () => factory(modelChoice(model)).run({ userQuery: query, ...fields }));
     });
 
-    const queryRoute = (mode: "interpret" | "query" | "follow-up") => async (request: { body: unknown }, reply: Parameters<typeof handle>[0]) => {
+    const queryRoute = (mode: "interpret" | "query" | "follow-up") => async (request: FastifyRequest<{ Body: unknown }>, reply: FastifyReply) => {
+      if (!admitCreate(request, reply)) return;
       const confirm = mode !== "interpret" ? confirmBody.safeParse(request.body) : null;
-      if (confirm?.success) return handle(reply, () => service(confirm.data.model ?? "auto", log).confirm(confirm.data.confirmQueryId));
+      if (confirm?.success) {
+        if (rejectBaseline(confirm.data.model, reply)) return;
+        return handle(reply, () => service(modelChoice(confirm.data.model), log).confirm(confirm.data.confirmQueryId));
+      }
       const body = queryBody.safeParse(request.body);
       if (!body.success) return reply.code(400).send({ error: "invalid_query_request", issues: issues(body.error) });
-      if (mode === "query" && body.data.context) return reply.code(400).send({ error: "invalid_query_request", message: "a query with an investigation context is a follow-up: use /api/agent/follow-up" });
-      if (mode === "follow-up" && !body.data.context) return reply.code(400).send({ error: "invalid_query_request", message: "a follow-up needs context.runId" });
-      const data: QueryBody = body.data;
-      const svc = service(data.model ?? "auto", log);
+      if (rejectBaseline(body.data.model, reply)) return;
+      if ("query" in body.data && mode === "query" && body.data.context) return reply.code(400).send({ error: "invalid_query_request", message: "a query with an investigation context is a follow-up: use /api/agent/follow-up" });
+      if ("query" in body.data && mode === "follow-up" && !body.data.context) return reply.code(400).send({ error: "invalid_query_request", message: "a follow-up needs context.runId" });
+      const data = body.data;
+      const svc = service(modelChoice(data.model), log);
       return handle(reply, () => (mode === "interpret" ? svc.interpret(data) : svc.execute(data)));
     };
-    app.post<{ Body: unknown }>("/api/agent/interpret", queryRoute("interpret"));
-    app.post<{ Body: unknown }>("/api/agent/query", queryRoute("query"));
-    app.post<{ Body: unknown }>("/api/agent/follow-up", queryRoute("follow-up"));
+    app.post<{ Body: unknown }>("/api/agent/interpret", { bodyLimit: 32_768 }, queryRoute("interpret"));
+    app.post<{ Body: unknown }>("/api/agent/query", { bodyLimit: 32_768 }, queryRoute("query"));
+    app.post<{ Body: unknown }>("/api/agent/follow-up", { bodyLimit: 32_768 }, queryRoute("follow-up"));
 
     const tokenOf = (header: unknown) => (typeof header === "string" ? header : "");
-    app.post<{ Body: unknown }>("/api/agent/jobs", async (request, reply) => {
+    app.post<{ Body: unknown }>("/api/agent/jobs", { bodyLimit: 16_384 }, async (request, reply) => {
+      if (!admitCreate(request, reply)) return;
       const confirm = confirmBody.safeParse(request.body);
       const continued = continueJobBody.safeParse(request.body);
       const query = queryBody.safeParse(request.body);
       let jobRequest: JobRequest;
-      if (confirm.success) jobRequest = { kind: "confirm", queryId: confirm.data.confirmQueryId, model: confirm.data.model ?? "auto" };
-      else if (continued.success) jobRequest = { kind: "continue", runId: continued.data.continueRunId, clarification: continued.data.clarification, model: continued.data.model ?? "auto" };
-      else if (query.success) jobRequest = { kind: "execute", body: query.data, model: query.data.model ?? "auto" };
-      else return reply.code(400).send({ error: "invalid_job_request", message: "The question could not be accepted." });
+      if (confirm.success) {
+        if (rejectBaseline(confirm.data.model, reply)) return;
+        jobRequest = { kind: "confirm", queryId: confirm.data.confirmQueryId, model: modelChoice(confirm.data.model) };
+      } else if (continued.success) {
+        if (rejectBaseline(continued.data.model, reply)) return;
+        jobRequest = { kind: "continue", runId: continued.data.continueRunId, clarification: continued.data.clarification, model: modelChoice(continued.data.model) };
+      } else if (query.success) {
+        if (rejectBaseline(query.data.model, reply)) return;
+        jobRequest = { kind: "execute", body: query.data, model: modelChoice(query.data.model) };
+      } else return reply.code(400).send({ error: "invalid_job_request", message: "The question could not be accepted." });
       return handle(reply, async () => {
         const created = jobs.create(jobRequest);
         reply.code(202);
@@ -140,15 +173,19 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       return view;
     });
     app.post<{ Params: { id: string } }>("/api/agent/jobs/:id/cancel", async (request, reply) => {
+      const key = request.ip || "local";
+      if (!admit(`cancel:${key}`, 60, 60_000)) return reply.code(429).send({ error: "too_many_requests", message: "Too many stop requests. Wait a moment and try again." });
       const view = jobs.cancel(request.params.id, tokenOf(request.headers["x-job-token"]));
       if (!view) return reply.code(404).send({ error: "job_not_found", message: "This investigation is not available. It may have expired, or the server may have restarted." });
       return view;
     });
 
-    app.post<{ Body: unknown }>("/api/agent/continue", async (request, reply) => {
+    app.post<{ Body: unknown }>("/api/agent/continue", { bodyLimit: 16_384 }, async (request, reply) => {
+      if (closed(reply)) return;
       const body = continueBody.safeParse(request.body);
       if (!body.success) return reply.code(400).send({ error: "invalid_agent_request", issues: issues(body.error) });
-      return handle(reply, () => factory(body.data.model ?? "auto").continue(body.data.runId, body.data.clarification));
+      if (rejectBaseline(body.data.model, reply) || !admitCreate(request, reply)) return;
+      return handle(reply, () => factory(modelChoice(body.data.model)).continue(body.data.runId, body.data.clarification));
     });
   };
 }

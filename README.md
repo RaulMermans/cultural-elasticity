@@ -4,7 +4,11 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 5B.2 — The Living Atlas
+## Current status: Sprint 5B.3 — Living Atlas product quality
+
+- **Sprint 5B.3** corrects clarification continuity, return navigation, comparison integrity, evidence attribution, job expiry, public execution guards, and vague narrowing. A recorded Qloo-backed example can be opened without a provider call. See [docs/sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md](docs/sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md). The agent stays **`AGENT_MODEL_NOT_READY`**.
+
+## Previous status: Sprint 5B.2 — The Living Atlas
 
 - **Sprint 5B.2** is the product surface on the unchanged agent and query layer. A natural-language question goes through Haiku, the execution gate, and an in-process job. The Living Atlas draws the investigation as a lineage, not a measured map. See [docs/sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md](docs/sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md) and the design skill [`.agents/skills/living-atlas-design/SKILL.md`](.agents/skills/living-atlas-design/SKILL.md).
 - Jobs live in the backend process. A restart drops them. This is not a serverless background worker.

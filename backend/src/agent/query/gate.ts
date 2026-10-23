@@ -10,7 +10,7 @@
  * It has no word lists, brand lists or category lists: it reads only the proposal's typed fields, the caller's
  * structured fields and the server's own run state. Matching is referential (keys and labels the context holds).
  */
-import { CONTEXTUAL_QUERY_INTENTS, DEFERRED_QUERY_INTENTS, EXECUTABLE_QUERY_INTENTS, QUERY_SCHEMA_VERSION, type InvestigationLink, type InvestigationOperation, type QueryDisposition, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode } from "@cultural-elasticity/shared";
+import { CONTEXTUAL_QUERY_INTENTS, DEFERRED_QUERY_INTENTS, EXECUTABLE_QUERY_INTENTS, QUERY_SCHEMA_VERSION, type InvestigationLink, type InvestigationOperation, type QueryDisposition, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type RefinementRecord } from "@cultural-elasticity/shared";
 import type { AgentIntent, AgentRequest, Interpretation } from "../contracts.js";
 import { interpretationSchema } from "../contracts.js";
 import { resolveInterpretation } from "../router.js";
@@ -18,6 +18,7 @@ import { slugify, type AgentRunState } from "../state.js";
 import { MAX_LINEAGE_DEPTH, type ResolvedContext } from "./context.js";
 import type { ExplicitFields, QueryProposal } from "./contracts.js";
 import type { InterpreterInfo } from "./interpreter.js";
+import { assessRefinement } from "./refinement.js";
 
 export type GateInput = {
   query: string;
@@ -54,6 +55,8 @@ export function runGate(input: GateInput): GateResult {
   const warnings: string[] = [];
   const unsupported: string[] = [];
   const reason = (code: string, detail: string) => reasons.push({ code, detail });
+  let activeRefinement: RefinementRecord | null = null;
+  let operationOverride: InvestigationOperation | null = null;
 
   const current = context?.nodes[0]?.state ?? null;
   const contextLabels = new Map<string, string>();
@@ -117,6 +120,7 @@ export function runGate(input: GateInput): GateResult {
       interpretationWarnings: [...new Set(warnings)],
       reasonCodes: reasons,
       interpreter: input.interpreter,
+      ...(activeRefinement ? { refinement: activeRefinement } : {}),
     },
     plan: extra.plan ?? null,
     alternative: extra.alternative ?? null,
@@ -176,34 +180,57 @@ export function runGate(input: GateInput): GateResult {
     return clarify(target.code, target.detail, modelQuestion ?? "Which earlier investigation should we return to?");
   }
 
-  // ---- 4. Map the operation onto an executable capability. ----
+  // ---- 4. A narrower territory must be a concept, not a request to go deeper. ----
+  if (p.primaryIntent === "refine_territory") {
+    const selectedKey = context?.selectedTerritoryKey ?? p.contextTerritoryKey;
+    const parentTerritory = current?.territories.find((territory) => territory.key === selectedKey) ?? null;
+    const decision = assessRefinement({
+      query: input.query,
+      proposal: p,
+      context,
+      territories,
+      ...(explicit.territories ? { explicitTerritories: explicit.territories } : {}),
+      parentRunId: current?.runId ?? null,
+      parentTerritoryKey: parentTerritory?.key ?? selectedKey,
+      parentLabel: parentTerritory?.label ?? null,
+    });
+    if (!decision.ok) return clarify("REFINEMENT_NOT_A_CONCEPT", decision.detail, decision.question);
+    territories = decision.territories;
+    operationOverride = decision.operation;
+    activeRefinement = decision.record;
+    warnings.push(...decision.warnings);
+  }
+
+  // ---- 5. Map the operation onto an executable capability. ----
   const capability = capabilityFor(p.primaryIntent, territories.length);
   if (!capability.ok) return clarify(capability.code, capability.detail, modelQuestion ?? capability.question);
   if (explicit.intent && explicit.intent !== capability.intent) return clarify("EXPLICIT_FIELD_CONFLICT", `the intent field fixes ${explicit.intent} but the message asks for ${p.primaryIntent}`, `The intent field says ${explicit.intent}, but the message reads as ${p.primaryIntent}. Which should be investigated?`);
 
-  // ---- 5. Brand. ----
+  // ---- 6. Brand. ----
   if (brandsNamed.length > 1) return clarify("BRAND_AMBIGUOUS", `the message names several brands (${brandsNamed.join(", ")}) for a single-brand operation`, modelQuestion ?? `Which brand should be investigated: ${brandsNamed.join(" or ")}?`);
   if (brand.source === "UNRESOLVED") return clarify("BRAND_MISSING", current ? "the context run has no resolved brand to inherit and the message names none" : "no brand is named", modelQuestion ?? "Which brand should be investigated?");
 
-  // ---- 6. Open references and low confidence (before any Qloo call). ----
+  // ---- 7. Open references and low confidence (before any Qloo call). ----
   if (p.unresolvedReferences.length > 0) return clarify("CLARIFICATION_REQUIRED", `unresolved: ${p.unresolvedReferences.join("; ")}`, modelQuestion ?? `What do you mean by ${p.unresolvedReferences.map((r) => `"${r}"`).join(", ")}?`);
   if (p.confidence === "LOW") return clarify("LOW_CONFIDENCE", "the interpreter could not identify the operation with confidence", modelQuestion ?? "Could you rephrase what you want investigated?");
 
-  // ---- 7. Lineage bound. ----
+  // ---- 8. Lineage bound. ----
   if (context && context.nodes.length >= MAX_LINEAGE_DEPTH) {
     reason("LINEAGE_LIMIT", `follow-up chains are limited to ${MAX_LINEAGE_DEPTH} investigations; start a new investigation`);
     return finish("UNSUPPORTED");
   }
 
-  // ---- 8. The plan (cardinality, schema and explicit fields re-checked by the router itself). ----
-  const operation = operationFor(p.primaryIntent, context, brand);
+  // ---- 9. The plan (cardinality, schema and explicit fields re-checked by the router itself). ----
+  const operation = operationOverride ?? operationFor(p.primaryIntent, context, brand);
   const selected = selectedTerritory(p, context, warnings);
   const built = plan(capability.intent, brand, territories, selected, operation, input, current);
   if (!built.ok) return clarify(built.code, built.detail, built.question);
   if (p.constraints.length > 0) warnings.push("CONSTRAINTS_NOT_ENFORCED_BY_METHODOLOGY: the constraints are passed to the investigation with the query and recorded; the methodology does not filter evidence by them");
   if (input.interpreter.kind === "structural") warnings.push("TEXT_NOT_INTERPRETED: no model is configured; only the structured fields and context were read");
 
-  // ---- 9. Directives and secondary objectives: a single supported core is never reported as the whole request. ----
+  if (activeRefinement) built.plan.link.reason = `${built.plan.link.reason}; ${activeRefinement.refinementRelationship} (${activeRefinement.relationBasis})`;
+
+  // ---- 10. Directives and secondary objectives: a single supported core is never reported as the whole request. ----
   for (const s of secondaries) {
     if (DEFERRED.has(s)) reason("UNSUPPORTED_SECONDARY_OBJECTIVE", `${s} is recognized but not implemented`);
     else if (s === "out_of_scope") reason("UNSUPPORTED_SECONDARY_OBJECTIVE", "part of the message is outside this system's scope");

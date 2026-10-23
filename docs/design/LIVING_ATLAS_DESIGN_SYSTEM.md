@@ -1,6 +1,6 @@
 # Living Atlas design system
 
-The authority is [`.agents/skills/living-atlas-design/SKILL.md`](../../.agents/skills/living-atlas-design/SKILL.md), version 1. This page records the same tokens for people reading the docs. If the two disagree, the skill and `frontend/src/app/globals.css` are corrected together. Do not invent a third palette.
+The authority is [`.agents/skills/living-atlas-design/SKILL.md`](../../.agents/skills/living-atlas-design/SKILL.md), version 2. This page records the same tokens for people reading the docs. If the two disagree, the skill and `frontend/src/app/globals.css` are corrected together. Do not invent a third palette.
 
 ## Tokens
 

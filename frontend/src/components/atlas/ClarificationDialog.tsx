@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function ClarificationDialog({ question, options, onAnswer, onDismiss }: { question: string; options: { id: string; label: string }[]; onAnswer: (answer: string) => void; onDismiss: () => void }) {
+export function ClarificationDialog({ question, original, options, onAnswer, onDismiss }: { question: string; original?: string | null; options: { id: string; label: string }[]; onAnswer: (answer: string) => void; onDismiss: () => void }) {
   const [value, setValue] = useState("");
   const field = useRef<HTMLInputElement>(null);
   useEffect(() => { field.current?.focus(); }, []);
@@ -10,6 +10,7 @@ export function ClarificationDialog({ question, options, onAnswer, onDismiss }: 
     <div className="dialog-back">
       <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="clarify-title" data-testid="clarification-dialog">
         <h2 id="clarify-title">One detail first</h2>
+        {original ? <p className="quiet">Continuing: {original}</p> : null}
         <p>{question}</p>
         <div className="actions">
           {options.map((option) => (

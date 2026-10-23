@@ -1,3 +1,4 @@
+import { developmentRoutesOpen } from "./exposure.js";
 import type { CulturalElasticityResult } from "@cultural-elasticity/shared";
 import type { FastifyInstance } from "fastify";
 import type { EvidenceIssue } from "../evidence/schema.js";
@@ -7,7 +8,8 @@ import { ElasticityInvariantError } from "../methodology/validate.js";
 
 type MethodologyErrorResponse =
   | { error: "invalid_methodology_input"; issues: EvidenceIssue[] }
-  | { error: "methodology_invariant_violation"; message: string };
+  | { error: "methodology_invariant_violation"; message: string }
+  | { error: "not_found"; message: string };
 
 /**
  * Development endpoint: fully assembled methodology input in, CulturalElasticityResult out.
@@ -15,6 +17,7 @@ type MethodologyErrorResponse =
  */
 export async function methodologyRoutes(app: FastifyInstance): Promise<void> {
   app.post<{ Body: unknown; Reply: CulturalElasticityResult | MethodologyErrorResponse }>("/api/methodology/analyze", { bodyLimit: 5 * 1024 * 1024 }, async (request, reply) => {
+    if (!developmentRoutesOpen()) return reply.code(404).send({ error: "not_found", message: "This route is not available." });
     try {
       return analyzeElasticity(request.body);
     } catch (error) {

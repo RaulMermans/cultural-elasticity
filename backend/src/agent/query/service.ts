@@ -14,7 +14,8 @@ import { QUERY_SCHEMA_VERSION, type AgentRunResponse, type InvestigationLink, ty
 import { priceUsd } from "../finalizer.js";
 import type { AgentRuntime } from "../runtime.js";
 import { resolveContext, interpreterContextView, type ResolvedContext } from "./context.js";
-import type { ExplicitFields, QueryBody } from "./contracts.js";
+import { comparisonFromSources } from "./comparison.js";
+import type { ExplicitFields, InvestigationBody, QueryBody } from "./contracts.js";
 import { runGate, type ExecutionPlan, type GateResult } from "./gate.js";
 import type { InterpretOutcome, QueryInterpreter } from "./interpreter.js";
 
@@ -60,11 +61,17 @@ export class QueryService {
 
   /** Dry run: interpretation and validation only. No Qloo call, no run. */
   interpret(body: QueryBody, hooks?: QueryHooks): Promise<QueryResponse> {
+    if (!isInvestigation(body)) {
+      const telemetry = blankTelemetry(randomUUID(), "", []);
+      return Promise.resolve(this.respond({ telemetry, state: "UNSUPPORTED_OPERATION", interpretation: null, errors: [{ code: "NOT_AN_INVESTIGATION", detail: "only a question can be interpreted" }] }));
+    }
     return this.handle(body, false, hooks);
   }
 
   /** Interprets and, if the gate approves, runs one investigation (new, or a follow-up of body.context). */
   execute(body: QueryBody, hooks?: QueryHooks): Promise<QueryResponse> {
+    if ("navigateToRunId" in body) return Promise.resolve(this.navigate(body.navigateToRunId, body.territoryKey ?? null, hooks));
+    if ("clarifyQueryId" in body) return this.answerClarification(body.clarifyQueryId, body.clarification, hooks);
     return this.handle(body, true, hooks);
   }
 
@@ -105,7 +112,14 @@ export class QueryService {
     return this.run(queryId, plan, record.interpretation, confirmed, record.alternative === plan, null, undefined, hooks);
   }
 
-  private async handle(body: QueryBody, execute: boolean, hooks?: QueryHooks): Promise<QueryResponse> {
+  private async handle(body: InvestigationBody, execute: boolean, hooks?: QueryHooks): Promise<QueryResponse> {
+    if (body.comparisonSources) {
+      const verdict = comparisonFromSources(this.deps.runtime.store, body.comparisonSources);
+      const telemetry = blankTelemetry(randomUUID(), body.query, ["comparisonSources"]);
+      if (!verdict.ok) return this.respond({ telemetry, state: verdict.state, interpretation: null, errors: [{ code: verdict.code, detail: verdict.detail }] });
+      const fresh: InvestigationBody = { query: body.query, brand: verdict.brandLabel, intent: "compare_territories", territories: verdict.labels, ...(body.model ? { model: body.model } : {}) };
+      return this.handle(fresh, execute, hooks);
+    }
     const queryId = randomUUID();
     const explicit: ExplicitFields = { ...(body.brand && { brand: body.brand }), ...(body.intent && { intent: body.intent }), ...(body.territories && { territories: body.territories }) };
     const telemetry = blankTelemetry(queryId, body.query, Object.keys(explicit));
@@ -201,6 +215,72 @@ export class QueryService {
     });
   }
 
+  /** Applies an answer to a stored clarification. The original question is sent with the answer; it is not replaced. */
+  private answerClarification(queryId: string, answer: string, hooks?: QueryHooks): Promise<QueryResponse> {
+    const record = this.queries.get(queryId);
+    if (!record || record.interpretation.disposition !== "NEEDS_CLARIFICATION") {
+      const telemetry = blankTelemetry(randomUUID(), answer, ["clarification"]);
+      return Promise.resolve(this.respond({
+        telemetry,
+        state: "CONTEXT_UNAVAILABLE",
+        interpretation: record?.interpretation ?? null,
+        errors: [{ code: record ? "CLARIFICATION_NOT_PENDING" : "QUERY_NOT_FOUND", detail: record ? "that question is not waiting for an answer" : `query ${queryId} is not held by this process` }],
+      }));
+    }
+    const prior = record.interpretation;
+    const composed = [prior.rawQuery, prior.clarificationQuestion ? `Clarification: ${prior.clarificationQuestion}` : null, `Answer: ${answer}`].filter((line): line is string => Boolean(line)).join("\n");
+    const next: InvestigationBody = {
+      query: composed,
+      ...(prior.brand.source === "EXPLICIT" && prior.brand.name ? { brand: prior.brand.name } : {}),
+      ...(prior.references.parentRunId ? { context: { runId: prior.references.parentRunId, ...(prior.references.selectedTerritoryKey ? { selectedTerritoryKey: prior.references.selectedTerritoryKey } : {}) } } : {}),
+    };
+    return this.handle(next, true, hooks);
+  }
+
+  /** Reads a run this process still holds and returns it. No interpreter call and no new investigation. */
+  private navigate(runId: string, territoryKey: string | null, hooks?: QueryHooks): QueryResponse {
+    const telemetry = blankTelemetry(randomUUID(), "", ["navigateToRunId"]);
+    telemetry.parentRunId = runId;
+    if (hooks?.signal?.aborted) return this.cancelledResponse(telemetry, null, "Cancelled before the investigation was opened.");
+    const state = this.deps.runtime.store.get(runId);
+    if (!state?.final) {
+      const code = state?.status === "NEEDS_INPUT" ? "PARENT_AWAITING_INPUT" : "ANCESTOR_UNAVAILABLE";
+      const detail = state?.status === "NEEDS_INPUT" ? `run ${runId} is waiting for an answer` : `run ${runId} is no longer held by this process`;
+      return this.respond({ telemetry, state: "CONTEXT_UNAVAILABLE", interpretation: null, errors: [{ code, detail }] });
+    }
+    if (territoryKey && !state.territories.some((territory) => territory.key === territoryKey) && !state.final.territories.some((territory) => territory.key === territoryKey)) {
+      return this.respond({ telemetry, state: "CONTEXT_UNAVAILABLE", interpretation: null, errors: [{ code: "SELECTED_TERRITORY_UNKNOWN", detail: `run ${runId} has no territory ${territoryKey}` }] });
+    }
+    const brand = state.brand.entity;
+    const interpretation: QueryInterpretation = {
+      schemaVersion: QUERY_SCHEMA_VERSION,
+      rawQuery: state.final.userQuery,
+      primaryIntent: "return_to_parent",
+      secondaryIntents: [],
+      brand: brand ? { name: brand.label, source: "INHERITED", inheritedId: brand.id } : { name: null, source: "UNRESOLVED" },
+      brandsNamed: [],
+      territories: [],
+      references: { returnToRunId: runId, ...(territoryKey ? { selectedTerritoryKey: territoryKey } : {}) },
+      constraints: [],
+      unresolvedReferences: [],
+      systemDirectives: [],
+      confidence: "HIGH",
+      disposition: "NAVIGATION",
+      unsupportedCapabilities: [],
+      interpretationWarnings: [],
+      reasonCodes: [],
+      interpreter: this.deps.interpreter.info,
+    };
+    telemetry.intent = "return_to_parent";
+    telemetry.validationOutcome = "NAVIGATION";
+    return this.respond({
+      telemetry,
+      state: "RETURNED_TO_INVESTIGATION",
+      interpretation,
+      investigation: { runId: state.runId, reused: true, link: state.link, result: state.final },
+    });
+  }
+
   private cancelledResponse(telemetry: QueryTelemetry, interpretation: QueryInterpretation | null, detail: string): QueryResponse {
     return this.respond({ telemetry, state: "INVESTIGATION_FAILED", interpretation, errors: [{ code: "INVESTIGATION_CANCELLED", detail }] });
   }
@@ -290,6 +370,10 @@ function stateFor(disposition: QueryInterpretation["disposition"]): QueryState {
     case "NAVIGATION":
       return "RETURNED_TO_INVESTIGATION";
   }
+}
+
+function isInvestigation(body: QueryBody): body is InvestigationBody {
+  return "query" in body;
 }
 
 function investigationState(result: AgentRunResponse): QueryState {

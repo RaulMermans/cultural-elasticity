@@ -21,6 +21,7 @@ export type AtlasDraft = {
   tone: AtlasTone;
   fromOperation: InvestigationOperation | null;
   mismatchedBrand: boolean;
+  recorded: boolean;
 };
 
 const norm = (value: string | null | undefined) => (value ?? "").normalize("NFKC").trim().replace(/\s+/gu, " ").toLowerCase();
@@ -38,6 +39,7 @@ export function buildAtlas(responses: readonly QueryResponse[]): AtlasDraft[] {
   const brandByRun = new Map<string, string>();
   const territoryByRunKey = new Map<string, string>();
   const index = new Map<string, AtlasDraft>();
+  const represented = new Set<string>();
 
   const place = (node: AtlasDraft) => {
     if (index.has(node.id)) return;
@@ -48,8 +50,8 @@ export function buildAtlas(responses: readonly QueryResponse[]): AtlasDraft[] {
   };
 
   for (const response of responses) {
-    if (response.investigation?.reused) continue;
     const runId = response.investigation?.runId ?? null;
+    if (response.investigation?.reused && runId && represented.has(runId)) continue;
     const link = response.investigation?.link ?? null;
     const operation = link?.operation ?? response.handoff?.operation ?? null;
     const parentRunId = link?.parentRunId ?? null;
@@ -69,12 +71,13 @@ export function buildAtlas(responses: readonly QueryResponse[]): AtlasDraft[] {
         ...runCopy(response),
         fromOperation: operation === "CHANGE_BRAND" ? "CHANGE_BRAND" : null,
         mismatchedBrand,
+        recorded: isRecorded(response),
       });
     }
-    for (const territory of response.territories) {
+    response.territories.forEach((territory, territoryIndex) => {
       const copy = territoryCopy(response, territory);
       place({
-        id: `territory:${response.queryId}:${norm(territory.name)}`,
+        id: runId && territory.territoryKey ? `territory:${runId}:${territory.territoryKey}` : `territory:${response.queryId}:${territoryIndex}:${norm(territory.name)}`,
         parentId: rooted ? brandId : anchor,
         queryId: response.queryId,
         runId,
@@ -86,8 +89,10 @@ export function buildAtlas(responses: readonly QueryResponse[]): AtlasDraft[] {
         tone: copy.tone,
         fromOperation: rooted ? null : operation,
         mismatchedBrand: false,
+        recorded: isRecorded(response),
       });
-    }
+    });
+    if (runId) represented.add(runId);
   }
   return nodes;
 }
@@ -159,30 +164,75 @@ export type EvidenceSections = {
   calculated: string[];
   interpreted: string[];
   unavailable: string[];
+  /** Investigation-wide notes. Never presented as support for one territory. */
+  aggregate: string[];
   provenance: string[];
   synthetic: boolean;
+  recorded: boolean;
   caution: string;
+  scopeLabel: string;
+  territorySpecific: boolean;
 };
 
-export function evidenceSections(response: QueryResponse, territoryName: string | null): EvidenceSections {
+export type EvidenceScope = { territoryKey: string | null; territoryName: string | null; runId: string | null };
+
+const TERRITORY_EVIDENCE_UNAVAILABLE = "Territory-specific evidence is unavailable.";
+
+export function isRecorded(response: QueryResponse | null | undefined): boolean {
+  return response?.interpretation?.interpretationWarnings.includes("RECORDED_EXAMPLE") ?? false;
+}
+
+export function evidenceSections(response: QueryResponse, scope: EvidenceScope): EvidenceSections {
   const result = response.investigation?.result;
   const analysis = result && result.status !== "NEEDS_INPUT" ? result : null;
-  const territory = analysis?.territories.find((item) => norm(item.label) === norm(territoryName ?? "")) ?? null;
+  const recorded = isRecorded(response);
+  const base = {
+    synthetic: analysis?.evidenceOrigin === "synthetic",
+    recorded,
+    caution: recorded
+      ? "This is a recorded example of an earlier investigation. It is not a new live result, and it is not a prediction of commercial success."
+      : "Supported evidence is not a prediction of commercial success.",
+  };
+  const empty = (scopeLabel: string, observed: string[], aggregate: string[] = []): EvidenceSections => ({
+    observed,
+    calculated: [],
+    interpreted: [],
+    unavailable: observed,
+    aggregate,
+    provenance: [],
+    territorySpecific: false,
+    scopeLabel,
+    ...base,
+  });
+  if (!analysis) return empty("This investigation has no evidence record.", ["No evidence record is available for this investigation."]);
+  if (scope.runId && response.investigation?.runId && scope.runId !== response.investigation.runId) {
+    return empty(TERRITORY_EVIDENCE_UNAVAILABLE, [TERRITORY_EVIDENCE_UNAVAILABLE], analysis.limitations.map((limitation) => limitation.detail));
+  }
+  const askedForTerritory = Boolean(scope.territoryKey || scope.territoryName);
+  const matches = analysis.territories.filter((item) => {
+    if (scope.territoryKey) return item.key === scope.territoryKey;
+    return scope.territoryName ? norm(item.label) === norm(scope.territoryName) : false;
+  });
+  if (askedForTerritory && matches.length !== 1) {
+    return empty(TERRITORY_EVIDENCE_UNAVAILABLE, [TERRITORY_EVIDENCE_UNAVAILABLE], analysis.limitations.map((limitation) => limitation.detail));
+  }
+  const territory = matches[0] ?? null;
   const observed: string[] = [];
   const calculated: string[] = [];
   const interpreted: string[] = [];
   const unavailable: string[] = [];
   const provenance: string[] = [];
-  if (analysis?.layers) {
-    const observedLayer = observedLayerOf(analysis.layers);
-    const concepts = (observedLayer?.concepts ?? []).filter((concept) => !territory || concept.territoryKey === territory.key);
-    const exemplars = (observedLayer?.exemplars ?? []).filter((exemplar) => !territory || exemplar.territoryKey === territory.key);
-    if (concepts.length > 0) observed.push(`Concepts observed: ${concepts.map((concept) => concept.label).join(", ")}.`);
-    if (exemplars.length > 0) observed.push(`Examples connected: ${exemplars.slice(0, 6).map((exemplar) => exemplar.label).join(", ")}.`);
-    const recordedCalls = observedLayer ? Object.values(observedLayer).find((value) => typeof value === "number") : undefined;
-    if (typeof recordedCalls === "number") observed.push(`Evidence requests recorded for this investigation: ${recordedCalls}.`);
-    for (const concept of concepts) provenance.push(...concept.correlationIds);
-    const route = analysis.layers.systemAnalysis.routes.find((item) => !territory || item.territoryKey === territory.key);
+  const observedLayer = analysis.layers ? observedLayerOf(analysis.layers) : null;
+  const concepts = (observedLayer?.concepts ?? []).filter((concept) => (territory ? concept.territoryKey === territory.key : true));
+  const exemplars = (observedLayer?.exemplars ?? []).filter((exemplar) => (territory ? exemplar.territoryKey === territory.key : true));
+  if (concepts.length > 0) observed.push(`Concepts observed: ${concepts.map((concept) => concept.label).join(", ")}.`);
+  if (exemplars.length > 0) observed.push(`Examples connected: ${exemplars.slice(0, 6).map((exemplar) => exemplar.label).join(", ")}.`);
+  for (const concept of concepts) provenance.push(...concept.correlationIds);
+  if (analysis.layers) {
+    const route = analysis.layers.systemAnalysis.routes.find((item) => (territory ? item.territoryKey === territory.key : false));
+    if (!territory && analysis.layers.systemAnalysis.routes.length > 0) {
+      calculated.push("Routes were calculated for the investigation. Open a territory to see its own route.");
+    }
     if (route) calculated.push(`Analysis route: ${routeLabel(route.route)}.`);
     if (route?.classification) calculated.push(`Provisional class: ${route.classification}. This is not a recommendation.`);
     if (route?.robustness) calculated.push(`Representation robustness: ${route.robustness}.`);
@@ -192,23 +242,28 @@ export function evidenceSections(response: QueryResponse, territoryName: string 
     for (const line of territory.keyEvidence) calculated.push(line);
     for (const limitation of territory.limitations) unavailable.push(limitation.detail);
     provenance.push(...(territory.provenance?.correlationIds ?? []));
+  } else if (analysis.summary.text) interpreted.push(analysis.summary.text);
+  if (analysis.summary.text && territory) {
+    interpreted.push("The investigation summary covers every territory in this run. It is not a separate finding for this one.");
+  } else if (analysis) {
+    interpreted.push(analysis.summary.source === "model" ? "This wording was written by the agent and checked against the calculated result." : "This wording was written from the calculated result.");
   }
-  for (const limitation of analysis?.limitations ?? []) unavailable.push(limitation.detail);
-  if (analysis?.summary.text) interpreted.push(analysis.summary.text);
-  if (analysis) interpreted.push(analysis.summary.source === "model" ? "This wording was written by the agent and checked against the calculated result." : "This wording was written from the calculated result.");
-  if (observed.length === 0) observed.push("No separate record of observed cultural evidence was included for this territory.");
+  if (observed.length === 0) observed.push(territory ? "No separate record of observed cultural evidence was included for this territory." : "No separate record of observed cultural evidence was included.");
   if (calculated.length === 0) calculated.push("No calculated finding was recorded.");
   if (interpreted.length === 0) interpreted.push("No interpretation was recorded.");
   const uniqueUnavailable = [...new Set(unavailable)];
   if (uniqueUnavailable.length === 0) uniqueUnavailable.push("No further limitation was recorded.");
+  const whole = [...(territory && analysis.summary.text ? [analysis.summary.text] : []), ...analysis.limitations.map((limitation) => limitation.detail)].filter((line) => !uniqueUnavailable.includes(line));
   return {
     observed,
     calculated,
     interpreted,
     unavailable: uniqueUnavailable,
+    aggregate: territory ? whole : analysis.limitations.map((limitation) => limitation.detail),
     provenance: [...new Set(provenance.filter(Boolean))],
-    synthetic: analysis?.evidenceOrigin === "synthetic",
-    caution: "Supported evidence is not a prediction of commercial success.",
+    territorySpecific: Boolean(territory),
+    scopeLabel: territory ? `Evidence for ${territory.label}.` : "These observations are for the whole investigation, not one territory.",
+    ...base,
   };
 }
 
@@ -231,6 +286,8 @@ export function reasonCopy(code: string, capability: string | null): string {
     QUERY_NOT_FOUND: "That confirmation has expired. You can ask the question again.",
     CONTEXT_UNAVAILABLE: "The earlier investigation is no longer available.",
     ANCESTOR_UNAVAILABLE: "That earlier step is no longer held.",
+    CROSS_RUN_BRAND: "These territories come from different brands. Their earlier results are not one comparison.",
+    REFINEMENT_NOT_A_CONCEPT: "That asks to look closer without naming a cultural concept.",
     CLARIFICATION_REQUIRED: "One detail is still missing.",
     LOW_CONFIDENCE: "The question needs to be a little more specific.",
     COMPOUND_NOT_EXECUTED: "Only one investigation can run from a single question.",

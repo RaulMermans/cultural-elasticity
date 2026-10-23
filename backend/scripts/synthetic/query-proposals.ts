@@ -18,6 +18,7 @@ export function proposal(overrides: Partial<QueryProposal> = {}): QueryProposal 
     systemDirectives: [],
     confidence: "HIGH",
     clarificationQuestion: null,
+    refinement: null,
     ...overrides,
   };
 }

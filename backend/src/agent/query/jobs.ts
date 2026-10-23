@@ -109,6 +109,10 @@ export class JobManager {
     this.ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
     this.maxRunMs = options.maxRunMs ?? DEFAULT_MAX_RUN_MS;
     this.now = options.now ?? Date.now;
+    if (!options.now) {
+      const timer = setInterval(() => this.sweep(), 60_000);
+      timer.unref?.();
+    }
   }
 
   create(request: JobRequest): JobCreated {
@@ -148,15 +152,17 @@ export class JobManager {
 
   /** Returns null when the id is unknown or the token does not match. The two cases are not distinguished. */
   get(id: string, token: string): JobView | null {
-    this.sweep();
     const job = this.jobs.get(id);
-    if (!job || !tokenMatches(job.tokenHash, token)) return null;
-    if (job.finishedAt !== null && this.now() > job.expiresAt) {
+    if (job && tokenMatches(job.tokenHash, token) && job.finishedAt !== null && this.now() > job.expiresAt) {
       const expired = this.expire(job);
       this.jobs.delete(job.id);
+      this.sweep();
       return expired;
     }
-    return this.view(job);
+    this.sweep();
+    const current = this.jobs.get(id);
+    if (!current || !tokenMatches(current.tokenHash, token)) return null;
+    return this.view(current);
   }
 
   cancel(id: string, token: string): JobView | null {
@@ -213,8 +219,12 @@ export class JobManager {
         this.finish(job, "completed", response, null);
       }
     } catch (error) {
-      this.options.log?.({ jobId: job.id, status: "failed", code: error instanceof Error ? error.name : "Error" });
-      this.finish(job, "failed", null, publicError(error));
+      if (job.controller.signal.aborted || job.stopping) {
+        this.finish(job, "cancelled", null, { code: "INVESTIGATION_CANCELLED", message: "The investigation was stopped. Partial observations were not recorded as findings." });
+      } else {
+        this.options.log?.({ jobId: job.id, status: "failed", code: error instanceof Error ? error.name : "Error" });
+        this.finish(job, "failed", null, publicError(error));
+      }
     }
   }
 
@@ -227,6 +237,13 @@ export class JobManager {
 
   private finish(job: Job, status: JobStatus, response: QueryResponse | null, error: { code: string; message: string } | null): void {
     if (job.finishedAt !== null) return;
+    const aborted = job.stopping || job.controller.signal.aborted;
+    if (aborted && status !== "cancelled" && status !== "expired") {
+      const alreadyCancelled = response?.reasons.some((reason) => reason.code === "INVESTIGATION_CANCELLED") ?? false;
+      status = "cancelled";
+      error = { code: "INVESTIGATION_CANCELLED", message: "The investigation was stopped. Partial observations were not recorded as findings." };
+      if (!alreadyCancelled) response = null;
+    }
     const now = this.now();
     job.status = status;
     job.stage = "done";
@@ -256,11 +273,20 @@ export class JobManager {
 
   private sweep(): void {
     const now = this.now();
-    for (const job of this.jobs.values()) {
+    for (const job of [...this.jobs.values()]) {
+      if (job.status === "running") continue;
       if (job.status === "queued" && now - job.createdAt > this.ttlMs) {
         job.controller.abort();
         this.finish(job, "expired", null, { code: "JOB_EXPIRED", message: "This investigation waited too long and was not started." });
       }
+      if (job.finishedAt !== null && now > job.expiresAt) {
+        job.response = null;
+        if (job.status !== "expired") {
+          job.status = "expired";
+          job.error = { code: "JOB_EXPIRED", message: "This investigation is no longer held. You can start a new one." };
+        }
+      }
+      if (job.finishedAt !== null && now > job.expiresAt + this.ttlMs) this.jobs.delete(job.id);
     }
   }
 

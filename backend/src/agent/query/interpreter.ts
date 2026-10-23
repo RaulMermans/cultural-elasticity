@@ -41,7 +41,7 @@ Operations (primaryIntent):
 - explore_frontier: open discovery for one brand; the user names no target territory. A message that names a target territory is never explore_frontier, whatever verb it uses.
 - analyze_move: one brand, one specific target territory.
 - compare_territories: one brand, two or more territories to weigh against each other.
-- refine_territory: narrow or specialise a territory of the context (the narrower concept goes in territories).
+- refine_territory: narrow a territory of the context. The child concept must be a real cultural concept the user named, or one already listed in the context. Put that concept in territories and in refinement.proposedChildConcept.
 - switch_territory: move from the context to a different territory (also a correction like "actually, X instead").
 - return_to_parent: go back to an earlier investigation of the context (set contextRef or contextTerritoryKey).
 - clarify_reference: the message depends on a referent you cannot identify.
@@ -61,6 +61,9 @@ Fields:
 - unresolvedReferences: words whose referent is unclear even with the context (e.g. "it" with several candidates, "something more exclusive" with no concrete concept).
 - confidence: LOW when the operation itself is unclear.
 - clarificationQuestion: one short question, in the user's language, only when something material is unresolved; else null.
+- refinement: null unless the user is narrowing, replacing, or sitting beside a context territory.
+  A request to go deeper, be more specific, or explore further is an intent, not a territory. Do not append those words to the parent name, and do not invent a subcategory. Set refinementRelationship to UNCLEAR, proposedChildConcept to null, requiresClarification to true, and ask what part of the territory to explore.
+  When the user names a concrete concept, set proposedChildConcept to that concept, requiresClarification to false, relationBasis to USER_EXPLICIT, and refinementRelationship to NARROWER, ALTERNATIVE, or RELATED. Use OBSERVED_EVIDENCE only when that concept is already in the context. Use AGENT_HYPOTHESIS only for a specific concept you are not treating as verified. Never claim a Qloo subcategory you were not shown.
 
 Explicit fields were set by the caller; if the message contradicts them, describe what the message says; the system resolves the conflict.`;
 
@@ -168,7 +171,7 @@ export class StructuralQueryInterpreter implements QueryInterpreter {
 
   async interpret({ explicit, context }: InterpretInput): Promise<InterpretOutcome> {
     const territories = (explicit.territories ?? []).map((name) => ({ name, fromContext: false }));
-    const base = { secondaryIntents: [], constraints: [], unresolvedReferences: [], systemDirectives: [], contextTerritoryKey: context?.selectedTerritoryKey ?? null, confidence: "HIGH" as const, clarificationQuestion: null };
+    const base = { secondaryIntents: [], constraints: [], unresolvedReferences: [], systemDirectives: [], contextTerritoryKey: context?.selectedTerritoryKey ?? null, confidence: "HIGH" as const, clarificationQuestion: null, refinement: null };
     const brandsNamed = explicit.brand ? [explicit.brand] : [];
     const count = explicit.territories?.length;
     let primaryIntent: QueryProposal["primaryIntent"];
