@@ -56,6 +56,8 @@ export class QlooToolProvider implements AgentToolProvider {
   private queue: Promise<void> = Promise.resolve();
   /** Sprint 5A latency telemetry: time spent waiting on call spacing and on rate-limit back-off. */
   readonly waits = { spacingMs: 0, rateLimitMs: 0 };
+  /** Sprint 8A: waits and subprocess startup for the most recent exclusive call only. */
+  lastCallMeta = { spacingMs: 0, rateLimitMs: 0, startupMs: 0 };
 
   constructor(
     private readonly transport: QlooTransport,
@@ -86,10 +88,12 @@ export class QlooToolProvider implements AgentToolProvider {
 
   private async callExclusive<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], callOptions: { maxRetries?: number } = {}): Promise<QlooCallResult> {
     const maxRetries = Math.min(this.options.maxRetries ?? 1, callOptions.maxRetries ?? 1);
+    this.lastCallMeta = { spacingMs: 0, rateLimitMs: 0, startupMs: 0 };
     for (let attempt = 1; ; attempt += 1) {
       const wait = this.lastCall + this.options.spacingMs - Date.now();
       if (wait > 0) {
         this.waits.spacingMs += wait;
+        this.lastCallMeta.spacingMs += wait;
         await this.sleep(wait);
       }
       this.lastCall = Date.now();
@@ -98,6 +102,8 @@ export class QlooToolProvider implements AgentToolProvider {
       let failure: { code: string; retryable: boolean; detail: string; correlationId?: string } | undefined;
       try {
         const result = await this.transport.execute(operation, input);
+        const startup = (this.transport as { lastStartupMs?: number }).lastStartupMs;
+        if (typeof startup === "number" && startup > 0) this.lastCallMeta.startupMs += startup;
         if (result.kind === "failure") {
           failure = { code: result.failure.code, retryable: result.failure.retryable, detail: result.failure.recovery, ...(result.failure.correlationId && { correlationId: result.failure.correlationId }) };
         } else {
@@ -114,8 +120,10 @@ export class QlooToolProvider implements AgentToolProvider {
       if (failure) {
         if (failure.code !== "QLOO_AUTH" && failure.retryable && attempt <= maxRetries) {
           if (failure.code === "QLOO_RATE_LIMIT") {
-            this.waits.rateLimitMs += this.options.rateLimitWaitMs ?? 60_000;
-            await this.sleep(this.options.rateLimitWaitMs ?? 60_000);
+            const pause = this.options.rateLimitWaitMs ?? 60_000;
+            this.waits.rateLimitMs += pause;
+            this.lastCallMeta.rateLimitMs += pause;
+            await this.sleep(pause);
           }
           continue;
         }

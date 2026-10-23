@@ -10,6 +10,7 @@
  */
 import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type Limitation } from "@cultural-elasticity/shared";
 import { reconcileLatency } from "../ops/latency.js";
+import { recorderOf, reconcileSpanCoverage } from "../ops/spans.js";
 import { priceUsd } from "../ops/pricing.js";
 import { unanalyzedResult } from "./analysis-runner.js";
 import { classifyRunFailure } from "./failure-taxonomy.js";
@@ -115,6 +116,10 @@ export function computeMetrics(state: AgentRunState, results: AgentTerritoryResu
   const count = (route: string) => results.filter((r) => r.analysisRoute === route).length;
   const latencyMs = Date.now() - state.startedAt;
   const modelLatencyMs = turns.reduce((n, t) => n + t.latencyMs, 0);
+  const rec = recorderOf(state);
+  const spans = state.trace.spans ?? rec?.snapshot() ?? [];
+  const monoElapsed = rec?.monotonicElapsedMs() ?? (spans.length ? Math.max(...spans.map((s) => s.startOffsetMs + s.durationMs)) : 0);
+  const coverage = spans.length > 0 ? reconcileSpanCoverage(spans, latencyMs, monoElapsed) : null;
   return {
     agent_iterations: state.usage.iterations,
     qloo_calls: state.usage.qlooCalls,
@@ -165,6 +170,11 @@ export function computeMetrics(state: AgentRunState, results: AgentTerritoryResu
       analysisLatencyMs: state.timing.analysisMs,
       synthesisLatencyMs: state.timing.synthesisMs,
     }).unattributedMs,
+    span_covered_ms: coverage?.coveredMs,
+    span_unattributed_ms: coverage?.unattributedMs,
+    span_coverage_ratio: coverage?.coverageRatio ?? null,
+    monotonic_elapsed_ms: coverage?.monotonicElapsedMs,
+    wall_clock_skew_ms: coverage?.clockSkewMs,
     synthesis_first_attempt_valid: state.trace.synthesis?.attemptDetails?.length ? state.trace.synthesis.attemptDetails[0]!.accepted : null,
     synthesis_valid_after_repair: state.trace.synthesis?.attemptDetails?.length ? state.trace.synthesis.attemptDetails.some((a) => a.accepted) : null,
     synthesis_fallback: state.trace.synthesis?.source === "deterministic_template",
@@ -255,7 +265,8 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
   let attempts = 0;
   const attemptDetails: NonNullable<NonNullable<AgentRunState["trace"]["synthesis"]>["attemptDetails"]> = [];
   const extraLabels = brandLabel ? [brandLabel] : [];
-  const synthesisStarted = Date.now();
+  const synthesisStarted = performance.now();
+  const synthesisSpan = recorderOf(state)?.start({ runId: state.runId, turnIndex: state.usage.iterations, phase: "SYNTHESIS", operation: options.skipSynthesis ? "skipped" : "synthesize" });
   if (results.length > 0 && state.status !== "FAILED" && model.synthesize && !options.skipSynthesis) {
     for (attempts = 1; attempts <= 2; attempts += 1) {
       state.usage.synthesisAttempts += 1;
@@ -290,7 +301,8 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
     }
     attempts = Math.min(attempts, 2);
   }
-  state.timing.synthesisMs += Date.now() - synthesisStarted;
+  synthesisSpan?.end(options.skipSynthesis ? "ok" : synthesis ? "ok" : "ok");
+  state.timing.synthesisMs += Math.round(performance.now() - synthesisStarted);
   const source = synthesis ? ("model" as const) : ("deterministic_template" as const);
   const final = synthesis ?? templateSynthesis(brandLabel, results);
   const finalViolations = validateClaims(final, results, extraLabels);
@@ -328,9 +340,19 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
   return result;
 }
 
+export function sealSpans(state: AgentRunState): void {
+  const rec = recorderOf(state);
+  if (!rec) return;
+  if (!state.trace.spans?.some((s) => s.phase === "RUN_END")) {
+    rec.record({ runId: state.runId, phase: "RUN_END", operation: "run", startOffsetMs: rec.offsetMs(), durationMs: 0 });
+  }
+  state.trace.spans = rec.snapshot().map((s) => ({ ...s, operation: s.operation.slice(0, 80) }));
+}
+
 export function needsInputResponse(state: AgentRunState): AgentNeedsInputResponse {
   const question = state.pendingQuestion!;
   state.trace.skillUsage = [...state.skillUsage.values()].map(({ skill, turns, qlooCalls, toolCalls }) => ({ skill, turns, qlooCalls, toolCalls }));
+  sealSpans(state);
   return {
     schemaVersion: AGENT_RESULT_SCHEMA_VERSION,
     runId: state.runId,

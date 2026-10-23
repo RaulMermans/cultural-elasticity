@@ -29,7 +29,8 @@
     "eval:query": "pnpm --filter backend eval:query",
     "test:e2e": "pnpm --filter frontend test:e2e",
     "smoke:offline": "node scripts/smoke-offline.mjs",
-    "smoke:docker": "bash scripts/smoke-docker.sh"
+    "smoke:docker": "bash scripts/smoke-docker.sh",
+    "perf:agent": "pnpm --filter backend perf:agent"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

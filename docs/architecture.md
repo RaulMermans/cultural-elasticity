@@ -36,6 +36,7 @@ Provider-specific shapes (harness envelopes, Qloo entity/tag records, `compare_a
 - Sprint 5B.3: Atlas product quality — clarification continuity, return navigation, comparison integrity, evidence attribution, job expiry, public guards, intelligent narrowing, and a recorded live example. See [sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md](sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md).
 - Sprint 7A: deployment foundation — persistent backend host, server-to-server auth, visitor admission, reservation-based spend control, health/readiness, and a verified recorded example. See [sprint-7a/DEPLOYMENT_FOUNDATION.md](sprint-7a/DEPLOYMENT_FOUNDATION.md). Jobs remain in-process. A freeze-after-response host is still incompatible.
 - Sprint 7B: controlled public launch — observed spend is never truncated, one visitor identity per request, readiness is admission not provider proof, operator-triggered provider probes, runtime pre-call spend bounds. See [sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md](sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md). Public Railway/Vercel publication still needs owner approval.
+- Sprint 8A: monotonic runtime spans and latency coverage; eval-only effort/token experiment config; C9 still blocks readiness pending a live gate. Vercel-only is **not** proven. Recommended hosting remains Vercel frontend plus a persistent backend. See [sprint-8a/AGENT_PERFORMANCE_AND_VERCEL_FEASIBILITY.md](sprint-8a/AGENT_PERFORMANCE_AND_VERCEL_FEASIBILITY.md). Do not treat the Workflow/MCP local proofs as hosted compatibility.
 
 ## Cultural Evidence Core pipeline
 
@@ -91,7 +92,7 @@ Hackathon keys work only on `https://hackathon.api.qloo.com`. The harness would 
 | frontend | Vercel | Next.js Living Atlas. Server-only `BACKEND_URL` and `CE_INTERNAL_API_SECRET`. No `NEXT_PUBLIC_` secrets. Root directory `frontend/`. |
 | backend | Railway (primary), Render fallback | Persistent Docker from `backend/Dockerfile`, one replica. `railway.json` and `deploy/render.yaml`. Jobs and spend are in-memory. |
 
-The two deploy independently. Do not host `JobManager` on freeze-after-response functions. Canonical runbook: [sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md](sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md). Owner actions (create projects, set secrets, publish URLs) are unexecuted until approved.
+The two deploy independently. Do not host `JobManager` on freeze-after-response functions. Sprint 8A re-evaluated Vercel Functions and Workflows against official 2026 limits and local MCP/workflow proofs: hosted MCP and durable spend are unverified, so Vercel-only is not a production requirement. Canonical runbook: [sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md](sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md). Feasibility record: [sprint-8a/AGENT_PERFORMANCE_AND_VERCEL_FEASIBILITY.md](sprint-8a/AGENT_PERFORMANCE_AND_VERCEL_FEASIBILITY.md). Owner actions (create projects, set secrets, publish URLs) are unexecuted until approved.
 
 ## Validation categories
 

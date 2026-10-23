@@ -1,6 +1,9 @@
 /**
  * Wall-clock reconciliation for an investigation. Stage clocks may overlap; they are never summed
  * as independent components of elapsed time.
+ *
+ * Sprint 8A: prefer `reconcileSpanCoverage` in `spans.ts` when `trace.spans` exists. This naive
+ * stage-sum remains for historical traces and for the frozen 810 s parent (HISTORICAL_LATENCY_NOT_FULLY_RECONSTRUCTABLE).
  */
 export type LatencyStages = {
   latencyMs: number;
@@ -48,7 +51,7 @@ export function reconcileLatency(stages: LatencyStages): LatencyBreakdown {
     overlapMs > 0
       ? "Stage clocks overlap; do not add them as independent parts of wall time."
       : unattributedMs > 0
-        ? "Unattributed time includes turn overhead, context assembly, retries, queue wait outside the agent, and waits between decisions."
+        ? "HISTORICAL_LATENCY_NOT_FULLY_RECONSTRUCTABLE: unattributed time is the residual of sequential stage clocks (model + Qloo + analysis + synthesis). It is not proof that one operation consumed the remainder. Fresh runs with trace.spans use interval-union coverage."
         : "Attributed stages cover wall time without a remainder.";
   return {
     wallMs,

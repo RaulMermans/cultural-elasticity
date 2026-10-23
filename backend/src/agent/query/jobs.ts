@@ -215,7 +215,7 @@ export class JobManager {
     job.status = "running";
     job.updatedAt = this.now();
     this.running += 1;
-    this.options.log?.({ jobId: job.id, status: job.status, event: "job_started" });
+    this.options.log?.({ jobId: job.id, status: job.status, event: "job_started", queueWaitMs: job.updatedAt - job.createdAt });
     const timer = setTimeout(() => {
       job.abortReason = "timeout";
       job.controller.abort();
@@ -239,6 +239,7 @@ export class JobManager {
         job.response = structuredClone(response);
         job.updatedAt = this.now();
       },
+      queueWaitMs: Math.max(0, job.updatedAt - job.createdAt),
       ...(job.spend ? { spend: job.spend } : {}),
     };
     try {

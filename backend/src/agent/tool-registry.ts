@@ -480,7 +480,13 @@ export class ToolRegistry {
   }
 }
 
-/** JSON schema of a tool input, for model providers. */
+const jsonSchemaCache = new WeakMap<AgentTool<never>, Record<string, unknown>>();
+
+/** JSON schema of a tool input, for model providers. Cached: tool objects in the registry are immutable. */
 export function toolJsonSchema(tool: AgentTool<never>): Record<string, unknown> {
-  return z.toJSONSchema(tool.inputSchema as z.ZodType, { io: "input" }) as Record<string, unknown>;
+  const cached = jsonSchemaCache.get(tool);
+  if (cached) return cached;
+  const schema = z.toJSONSchema(tool.inputSchema as z.ZodType, { io: "input" }) as Record<string, unknown>;
+  jsonSchemaCache.set(tool, schema);
+  return schema;
 }
