@@ -25,6 +25,7 @@ export function AtlasNode({
       type="button"
       className="atlas-node"
       data-testid={`node-${node.id}`}
+      data-node-id={node.id}
       data-tone={node.tone}
       data-kind={node.kind}
       data-compared={compared ? "true" : "false"}

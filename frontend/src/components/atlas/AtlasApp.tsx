@@ -1,7 +1,7 @@
 "use client";
 
 import { parseQueryResponse, type QueryResponse } from "@cultural-elasticity/shared";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { liveQuestionsEnabled } from "@/lib/admissions";
 import { AlternativeConfirmation } from "./AlternativeConfirmation";
 import { AtlasNavigation } from "./AtlasNavigation";
@@ -23,6 +23,7 @@ export function AtlasApp() {
   const atlas = useAtlas();
   const [dismissed, setDismissed] = useState<string | null>(null);
   const [how, setHow] = useState(false);
+  const inspectRef = useRef<HTMLButtonElement>(null);
   const latest = atlas.latest;
   const dialogId = latest?.queryId ?? null;
   const showDialogs = dialogId !== null && dialogId !== dismissed && !atlas.active;
@@ -106,7 +107,20 @@ export function AtlasApp() {
               onSelect={atlas.select}
             />
           </div>
-          {atlas.selected ? (
+          {atlas.inspectorOpen && response ? (
+            <EvidenceInspector
+              response={response}
+              scope={{
+                territoryKey: atlas.selected?.kind === "territory" ? atlas.selected.territoryKey : null,
+                territoryName: atlas.selected?.kind === "territory" ? atlas.selected.label : null,
+                runId: atlas.selected?.runId ?? null,
+              }}
+              onClose={() => {
+                atlas.closeInspector();
+                queueMicrotask(() => inspectRef.current?.focus());
+              }}
+            />
+          ) : atlas.selected ? (
             <TerritoryDetail
               node={atlas.selected}
               response={response}
@@ -114,6 +128,7 @@ export function AtlasApp() {
               canCompare={comparison.ok}
               comparisonNote={comparison.ok ? null : comparison.reason}
               liveEnabled={liveEnabled}
+              inspectRef={inspectRef}
               onInspect={atlas.openInspector}
               onCompare={() => atlas.toggleCompare(atlas.selected!.id)}
               onFollow={(query) => {
@@ -155,17 +170,6 @@ export function AtlasApp() {
           ) : <p className="quiet finding">Select a territory to read what the evidence supports.</p>}
         </div>
       )}
-      {atlas.inspectorOpen && response ? (
-        <EvidenceInspector
-          response={response}
-          scope={{
-            territoryKey: atlas.selected?.kind === "territory" ? atlas.selected.territoryKey : null,
-            territoryName: atlas.selected?.kind === "territory" ? atlas.selected.label : null,
-            runId: atlas.selected?.runId ?? null,
-          }}
-          onClose={atlas.closeInspector}
-        />
-      ) : null}
       {how ? <HowItWorks onClose={() => setHow(false)} /> : null}
       {clarify ? (
         <ClarificationDialog

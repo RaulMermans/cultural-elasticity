@@ -1,14 +1,14 @@
 ---
 name: living-atlas-design
 description: Design and experience rules for the Cultural Elasticity Living Atlas. Use when changing the product UI, visual language, atlas layout, evidence presentation, or motion. This is a development skill, not a runtime investigation skill.
-version: "3"
+version: "4"
 ---
 
 # Living Atlas design and experience
 
-Version 3. This file is the authority for product UI decisions. Tokens are implemented in `frontend/src/app/globals.css` and must match the values here. `docs/design/LIVING_ATLAS_DESIGN_SYSTEM.md` points here; it does not override it.
+Version 4. This file is the authority for product UI decisions. Tokens are implemented in `frontend/src/app/globals.css` and must match the values here. `docs/design/LIVING_ATLAS_DESIGN_SYSTEM.md` points here; it does not override it.
 
-Version 3 keeps the analytical rules from versions 1–2 (evidence provenance, lineage geometry, accessibility, recorded-example honesty). It replaces the organic-ellipse art direction with **Cultural Observatory**: editorial research, museum-quality information, a refined scientific instrument.
+Version 4 keeps Cultural Observatory and the analytical rules from versions 1–3. It adds stage-aligned lineage edges, a docked evidence dossier, human-readable methodology presentation, and distinct connected-paused versus disconnected labels.
 
 This skill is not one of the seven runtime agent skills. Do not register it in `backend/src/agent/skills/`.
 
@@ -89,13 +89,24 @@ The atlas is a **deterministic investigation tree**.
 - Position encodes only tree depth and sibling order. It never encodes affinity, distance, rank, or fit.
 - Do not use organic silhouettes, force-directed graphs, or geographic maps.
 
-Desktop shows the tree on the observatory field. Mobile does not shrink that tree: it uses a guided branch list (parent, selection, children).
+Desktop shows the tree on the observatory field. Edges are drawn in the same coordinate space as the plates (a sized stage, not a stretched overlay). Anchor points use rendered plate geometry. Mobile does not shrink that tree: it uses a guided branch list (parent, selection, children).
 
 ## Interaction hierarchy
 
 The opening screen answers three questions above the fold: what this is, how to start, and that a recorded investigation can be opened without waiting.
 
 When live investigations are paused or disconnected, the primary action is **Explore the Jacquemus investigation**. Do not present an enabled Ask that can only return `ADMISSIONS_PAUSED`.
+
+Admission labels:
+
+| State | Short label |
+| --- | --- |
+| Checking | Checking the research service. |
+| Connected and accepting | Live research available. |
+| Connected and paused | Live research temporarily unavailable. |
+| Unreachable | Service connection unavailable. |
+
+Never label a reachable paused backend as disconnected.
 
 When live investigations are accepting, expose them as a clearly labelled **Ask a cultural question** entry. The recorded example remains available and labelled as recorded.
 
@@ -112,6 +123,10 @@ Do not show several competing navigations. Desktop: context rail, atlas, selecte
 ## Evidence
 
 Say what was observed, what was calculated, what the agent inferred, and what could not be established. Lead with the key finding. Provenance stays behind a disclosure. Synthetic results say they are synthetic. Recorded results say they are recorded.
+
+Ordinary explanations use the presentation mapping in `frontend/src/lib/evidence-presentation.ts`. Canonical methodology codes stay in a technical-details disclosure. Unknown codes receive a generic fallback and are never given a fabricated meaning. Do not mutate backend evidence.
+
+The selected-finding column leads with territory, evidence status, the most relevant grounded observation, why that observation matters, then limitations. If there is no meaningful observation, say so.
 
 Match evidence by territory key and source run. Investigation-wide findings stay in a separate, labelled aggregate. Do not present that aggregate as the selected territory's evidence.
 
@@ -134,7 +149,7 @@ Use motion to change selection, highlight the active edge, open the inspector, a
 
 ## Focus
 
-Opening a clarification, a confirmation, or the inspector moves focus into that surface and returns it on dismiss. The selected node is the thing `scrollIntoView` follows. Arrow keys move between parent, children, and siblings. Essential actions are available without hover.
+Opening a clarification, a confirmation, or the inspector moves focus into that surface and returns it on dismiss. The inspector occupies the finding column; it does not overlay nested plates. Escape closes it. The selected node is the thing `scrollIntoView` follows. Arrow keys move between parent, children, and siblings. Essential actions are available without hover.
 
 ## Accessibility
 
@@ -155,7 +170,7 @@ Dense dashboards, consoles, card grids, chatbot transcripts, neon, heavy gradien
 
 ## Regression
 
-A UI change needs the atlas model tests and the synthetic browser suite (`pnpm test:e2e`). A change to tokens, type, or evidence language needs a look at the rendered opening screen, the recorded example, a selected territory, the inspector, a paused live entry, a failure, and 320 / 390 / 768 / 1440 viewports. Check keyboard access and `prefers-reduced-motion`. Do not treat a successful compile as visual acceptance. No overlap or clipped label is acceptable.
+A UI change needs the atlas model tests, evidence-presentation tests, admissions tests, and the synthetic browser suite (`pnpm test:e2e`). A change to tokens, type, or evidence language needs a look at the rendered opening screen, the recorded example, a selected territory, the inspector, a paused live entry, a failure, and 320 / 390 / 768 / 1440 viewports. Check keyboard access and `prefers-reduced-motion`. Do not treat a successful compile as visual acceptance. No overlap, clipped label, or dangling edge is acceptable.
 
 ## Review
 

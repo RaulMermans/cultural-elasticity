@@ -71,11 +71,13 @@ test("a territory opens and closes the evidence inspector", async ({ page }) => 
   await expect(page.getByRole("heading", { name: "Coastal cooking" })).toBeVisible();
   await page.getByTestId("evidence-open").click();
   await expect(page.getByTestId("evidence-inspector")).toBeVisible();
-  await expect(page.getByText("Observed evidence")).toBeVisible();
+  await expect(page.getByTestId("evidence-close")).toBeFocused();
+  await expect(page.getByText("Supporting observations")).toBeVisible();
   await expect(page.getByText("Synthetic evidence")).toBeVisible();
   await expect(page.getByText("not a prediction of commercial success")).toBeVisible();
-  await page.getByTestId("evidence-close").click();
+  await page.keyboard.press("Escape");
   await expect(page.getByTestId("evidence-inspector")).toHaveCount(0);
+  await expect(page.getByTestId("evidence-open")).toBeFocused();
 });
 
 test("a narrower question becomes a child, and return restores the parent", async ({ page }) => {
@@ -144,11 +146,85 @@ test("paused admissions keep the recorded example as the primary action", async 
   await open(page);
   await expect(page.getByTestId("recorded-open")).toBeVisible();
   await expect(page.getByTestId("query-submit")).toHaveCount(0);
-  await expect(page.getByText("Live investigations are paused")).toBeVisible();
+  await expect(page.getByText("new investigations are paused")).toBeVisible();
+  await expect(page.getByText("Live research temporarily unavailable.")).toBeVisible();
+  await expect(page.getByText("Not connected")).toHaveCount(0);
+  await expect(page.getByText("Service connection unavailable.")).toHaveCount(0);
   await page.getByTestId("recorded-open").click();
   await expect(branch(page, /Bohemian lifestyle/).first()).toBeVisible();
   await expect(page.getByTestId("follow-up-submit")).toBeDisabled();
   expect(jobs).toEqual([]);
+});
+
+test("unavailable admissions stay distinct from paused and do not enable Ask", async ({ page }) => {
+  await page.route("**/api/agent/admissions", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ status: "unavailable" }) });
+  });
+  await open(page);
+  await expect(page.getByText("Service connection unavailable.")).toBeVisible();
+  await expect(page.getByText("Live research temporarily unavailable.")).toHaveCount(0);
+  await expect(page.getByTestId("query-submit")).toHaveCount(0);
+  await expect(page.getByTestId("recorded-open")).toBeVisible();
+});
+
+test("selected findings use grounded evidence and keep methodology codes in technical details", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await open(page);
+  await page.getByTestId("recorded-open").click();
+  await branch(page, /Bohemian lifestyle/).first().click();
+  const finding = page.locator(".finding");
+  await expect(finding.getByRole("heading", { name: "Bohemian lifestyle" })).toBeVisible();
+  await expect(finding).toContainText("Isabel Marant");
+  await expect(finding).not.toContainText("UNCERTAIN_REPRESENTATION_SENSITIVE");
+  await expect(finding).not.toContainText("Investigated as a cultural territory");
+  await page.getByTestId("evidence-open").click();
+  const inspector = page.getByTestId("evidence-inspector");
+  await expect(inspector).toBeVisible();
+  await expect(inspector.locator(".dossier-lead")).not.toContainText("UNCERTAIN_REPRESENTATION_SENSITIVE");
+  await expect(branch(page, /design-led boutique hospitality/).first()).toBeVisible();
+  await page.getByTestId("evidence-technical").locator("summary").click();
+  await expect(inspector).toContainText("UNCERTAIN_REPRESENTATION_SENSITIVE");
+  await expect(inspector).toContainText("Canonical identifier");
+});
+
+test("atlas edges share the stage coordinate space with territory plates", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await open(page);
+  await page.getByTestId("recorded-open").click();
+  const parent = branch(page, /Jacquemus/).first();
+  const child = branch(page, /Art and culture/).first();
+  await expect(parent).toBeVisible();
+  await expect(child).toBeVisible();
+  const geometry = await page.evaluate(() => {
+    const stage = document.querySelector<HTMLElement>("[data-testid='atlas-stage']");
+    const svg = document.querySelector<SVGSVGElement>("[data-testid='atlas-edges']");
+    const parentNode = document.querySelector<HTMLElement>("[data-testid='atlas-canvas'] .atlas-node[data-kind='brand']");
+    const childNode = [...document.querySelectorAll<HTMLElement>("[data-testid='atlas-canvas'] .atlas-node")].find((node) => node.textContent?.includes("Art and culture"));
+    if (!stage || !svg || !parentNode || !childNode) return { ok: false, reason: "missing" };
+    const stageBox = stage.getBoundingClientRect();
+    const svgBox = svg.getBoundingClientRect();
+    const parentBox = parentNode.getBoundingClientRect();
+    const childBox = childNode.getBoundingClientRect();
+    const path = svg.querySelector("path");
+    if (!path) return { ok: false, reason: "no-path" };
+    const length = path.getTotalLength();
+    const start = path.getPointAtLength(0);
+    const end = path.getPointAtLength(length);
+    const startScreenX = svgBox.left + start.x * (svgBox.width / svg.viewBox.baseVal.width);
+    const startScreenY = svgBox.top + start.y * (svgBox.height / svg.viewBox.baseVal.height);
+    const endScreenX = svgBox.left + end.x * (svgBox.width / svg.viewBox.baseVal.width);
+    const endScreenY = svgBox.top + end.y * (svgBox.height / svg.viewBox.baseVal.height);
+    const startError = Math.hypot(startScreenX - (parentBox.right), startScreenY - (parentBox.top + parentBox.height / 2));
+    const endError = Math.hypot(endScreenX - childBox.left, endScreenY - (childBox.top + childBox.height / 2));
+    return {
+      ok: Math.abs(svgBox.width - stageBox.width) < 2 && Math.abs(svgBox.height - stageBox.height) < 2 && startError < 6 && endError < 6,
+      startError,
+      endError,
+      svg: { w: svgBox.width, h: svgBox.height },
+      stage: { w: stageBox.width, h: stageBox.height },
+    };
+  });
+  expect(geometry.ok, JSON.stringify(geometry)).toBe(true);
 });
 
 test("a clarification can be answered", async ({ page }) => {

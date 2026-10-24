@@ -84,7 +84,7 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 
 1. **The product UI is the Living Atlas.** It presents validated query responses. It does not own scores, evidence, or lineage.
 2. **Geometry is investigation lineage.** An edge means investigated-from. Spacing is not cultural distance, affinity, confidence, elasticity, or a recommendation.
-3. **Visual decisions follow** `.agents/skills/living-atlas-design/SKILL.md` (version 3). That is a development skill, not a runtime investigation skill. Tokens live in `frontend/src/app/globals.css` and match the skill. The product art direction is Cultural Observatory.
+3. **Visual decisions follow** `.agents/skills/living-atlas-design/SKILL.md` (version 4). That is a development skill, not a runtime investigation skill. Tokens live in `frontend/src/app/globals.css` and match the skill. The product art direction is Cultural Observatory.
 4. **Jobs are in-process.** `POST /api/agent/jobs` detaches work from the HTTP request inside one Node process. Jobs are not durable across restarts and are not safe on a host that freezes after the response. The browser talks only to the Next.js routes.
 5. **A system directive cannot be confirmed.** A rejected directive does not become a confirmable alternative, and a second confirmation is refused.
 6. **Not investigated is not unsupported.** Incomplete or interrupted is not "no usable evidence." Evidence support is not an investment recommendation.
