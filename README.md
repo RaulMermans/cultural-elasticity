@@ -4,9 +4,13 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 8F — GitHub-connected deployments and release readiness
+## Current status: Sprint 8F.1 — Playwright GitHub deployment integration
 
-- **Sprint 8F** makes GitHub the intended source of truth for Vercel and Railway, sets Vercel Authentication to **All Deployments**, extends offline CI (query eval, path-filtered E2E and Docker, concurrency cancellation), and adds an operator-only Git SHA on `/ops/status`. The Railway GitHub App still cannot see this private repository, so the backend source remains the Sprint 8E CLI upload. Protected Vercel bootstrap and Git linking are waiting on explicit deploy authorization. Public hackathon release is **not** ready (private repo; no public demo). The agent stays **`AGENT_MODEL_NOT_READY`**. See [docs/sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md](docs/sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md).
+- **Sprint 8F.1** connects the existing GitHub repository `RaulMermans/cultural-elasticity` to the existing Railway and Vercel projects. The Railway GitHub App now has selected-repo access. The existing API service is GitHub-connected at the **staged** layer (`main@4c35a20`) and is **not** accept-deployed; live traffic is still the Sprint 8E CLI upload. The existing Vercel project is Git-linked, remains at **zero deployments**, keeps Authentication **All Deployments**, and skips Git production builds. Protected preview, hosted Vercel→Railway integration, and GitHub Actions (billing-blocked) are still open. Public hackathon release is **not** ready. The agent stays **`AGENT_MODEL_NOT_READY`**. See [docs/sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md](docs/sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md).
+
+## Previous status: Sprint 8F — GitHub-connected deployments and release readiness
+
+- **Sprint 8F** made GitHub the intended source of truth, set Vercel Authentication to **All Deployments**, extended offline CI, and added an operator-only Git SHA on `/ops/status`. At 8F close, Railway GitHub App access and Vercel Git linking were still blocked. See [docs/sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md](docs/sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md).
 
 ## Previous status: Sprint 8E — Live agent validation and Railway deployment
 
