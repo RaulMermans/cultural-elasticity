@@ -137,6 +137,22 @@ New coverage: paused vs disconnected labels, methodology mapping, unknown-code f
 - On 390×844 the landing preview still meets the fold; the primary CTA stays above it. Opening the recorded example uses the guided list.
 - Admissions stay paused until a later, separately authorised sprint.
 
-## 14. Release readiness
+## 14. Hosted preview
+
+Preview of this branch only. No `--prod`. SSO protection is All Deployments.
+
+| | |
+| --- | --- |
+| Implementation SHA | `f3163764336b5acafa6b086bdc4a7c9d583af6ff` |
+| Deployment | `dpl_AZ49K1m68csy4cvpr2nghT4GoZTp` (READY, `target: null`) |
+| Unique URL | `https://cultural-elasticity-e0ow1c3qf-raulmermans-projects.vercel.app` |
+| Branch alias | `https://cultural-elasticity-git-sprint-9a1-f4b5a0-raulmermans-projects.vercel.app` |
+| Project | `cultural-elasticity` (`prj_AHQcMcLFwGUOpRmepvwcc89LyOYo`) |
+| Hosted `/api/agent/admissions` | `{"status":"paused"}` — connected and paused, not disconnected |
+| Anonymous probe | **VERCEL_PROTECTION_PROBE_PASS** — both URLs HTTP 401, `servedApp=false` |
+
+GitHub Actions remains failing in ~2s on recent `main`/PR runs (billing/actions still blocked from earlier sprints). This branch was pushed without a pull request, so it did not consume PR CI credits. Local `pnpm test:e2e` is not hosted CI evidence.
+
+## 15. Release readiness
 
 **Not ready for public release.** Protected preview only. Admissions stay off. Do not start Sprint 9B from this work automatically.
