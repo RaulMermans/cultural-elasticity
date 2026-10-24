@@ -41,7 +41,8 @@ Provider-specific shapes (harness envelopes, Qloo entity/tag records, `compare_a
 - Sprint 8C: derived-view memo proven on a live parent (227 s, context assembly 1.4 s), browser E2E restored, hosted Vercel MCP still conditional. See [sprint-8c/VERIFIED_AGENT_PERFORMANCE_AND_VERCEL_RECOVERY.md](sprint-8c/VERIFIED_AGENT_PERFORMANCE_AND_VERCEL_RECOVERY.md).
 - Sprint 8D: evidence-first frontier exploration (Channel A before hypotheses; unsupported hypotheses no longer fill the candidate quota). See [sprint-8d/AGENT_RESEARCH_QUALITY_AND_COMPETENCE.md](sprint-8d/AGENT_RESEARCH_QUALITY_AND_COMPETENCE.md).
 - Sprint 8E: brand-scoped evidence-base gap, live-eval budget preflight and suite spend guard, live parent re-run (0 invalid actions, 3 PARTIAL), Railway backend deployed with admissions off. Vercel integration not verified. See [sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md](sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md).
-- Sprint 8F: GitHub as the intended release source; Vercel Authentication All Deployments; CI path-filtered E2E/Docker; operator Git SHA on `/ops/status`. Railway GitHub App still lacks private-repo access. See [sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md](sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md).
+- Sprint 8F: GitHub as the intended release source; Vercel Authentication All Deployments; CI path-filtered E2E/Docker; operator Git SHA on `/ops/status`. See [sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md](sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md).
+- Sprint 8F.1: existing Railway and Vercel projects GitHub-connected (`RaulMermans/cultural-elasticity`). Railway source is staged `main@4c35a20` (live still the 8E CLI upload until accept-deploy). Vercel Git-linked, zero deployments, All Deployments, Git production builds skipped. See [sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md](sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md).
 - Sprint 8D: single-agent research competence — Channel A evidence base before ungrounded hypothesis probes, unsupported hypotheses do not fill the frontier quota, unproductive empty re-probes refused. Frozen evaluators unchanged. Full live gate not run (`LIVE_GATE_BLOCKED_BY_APPROVAL`). See [sprint-8d/AGENT_RESEARCH_QUALITY_AND_COMPETENCE.md](sprint-8d/AGENT_RESEARCH_QUALITY_AND_COMPETENCE.md).
 
 ## Cultural Evidence Core pipeline
@@ -91,14 +92,14 @@ Hackathon keys work only on `https://hackathon.api.qloo.com`. The harness would 
 - Envelope → zod validation (`normalize.ts`) → internal contracts. Contract mismatches raise `QlooContractError` and are never retried.
 - The harness runs as a local child or stdio process. That is why the backend needs a container-capable runtime and why Qloo calls never run in the browser or in ordinary serverless functions.
 
-## Deployment (GitHub is the intended source; Railway Git still blocked)
+## Deployment (GitHub is the source; live Railway still the 8E upload)
 
 | Part | Target | Notes |
 | --- | --- | --- |
-| frontend | Vercel project `cultural-elasticity` | Next.js Living Atlas. Root directory `frontend/`. Server-only `BACKEND_URL` and `CE_INTERNAL_API_SECRET` on **preview** only. No `NEXT_PUBLIC_` secrets. Vercel Authentication is **All Deployments**. Git is not connected until a protected bootstrap exists. |
-| backend | Railway `cultural-elasticity-api` | Persistent Docker from `backend/Dockerfile` at the repository root (includes `packages/shared`). One replica, us-east4, 0.5 vCPU / 1 GB, sleep off, `CE_ACCEPT_INVESTIGATIONS=0`. `railway.json` watch paths cover backend/shared/lockfile only. Source is still the Sprint 8E CLI upload until the Railway GitHub App can see this private repo. |
+| frontend | Vercel project `cultural-elasticity` | Next.js Living Atlas. Root directory `frontend/`. Server-only `BACKEND_URL` and `CE_INTERNAL_API_SECRET` on **preview** only. No `NEXT_PUBLIC_` secrets. Vercel Authentication is **All Deployments**. Git is linked to `RaulMermans/cultural-elasticity`. Zero deployments. Git production builds are skipped until protection is proven on a real URL. |
+| backend | Railway `cultural-elasticity-api` | Persistent Docker from `backend/Dockerfile` at the repository root (includes `packages/shared`). One replica, us-east4, 0.5 vCPU / 1 GB, sleep off, `CE_ACCEPT_INVESTIGATIONS=0`. `railway.json` watch paths cover backend/shared/lockfile only. GitHub source is **staged** at `main@4c35a20`; live traffic is still the Sprint 8E CLI upload until the owner authorizes `accept-deploy`. |
 
-The two deploy independently. Do not host `JobManager` on freeze-after-response functions. Jobs, the run store and the spend ledger are in-memory: a Railway restart drops them. Canonical runbook: [sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md](sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md). Sprint 8E recovery: [sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md §24](sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md). Production domains and public paid investigations remain unexecuted.
+The two deploy independently. Do not host `JobManager` on freeze-after-response functions. Jobs, the run store and the spend ledger are in-memory: a Railway restart drops them. Canonical runbook: [sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md](sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md). Sprint 8E recovery: [sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md §24](sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md). Production domains and public paid investigations remain unexecuted.
 
 ## Validation categories
 

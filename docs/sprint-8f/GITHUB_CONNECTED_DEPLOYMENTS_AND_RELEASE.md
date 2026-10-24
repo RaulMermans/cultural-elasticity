@@ -1,5 +1,7 @@
 # Sprint 8F — GitHub-connected deployments and release readiness
 
+**Follow-up executed as Sprint 8F.1:** GitHub App access, staged Railway Git source, and Vercel Git linking are recorded in [docs/sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md](../sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md). Connection gates in §1 below describe 8F close, not current provider state.
+
 Execution sprint, 2026-10-24. No paid investigation. No public production publish. No repository-visibility change. Production model unchanged: `claude-haiku-5-5`.
 
 Owner authorizations used in this sprint (and nothing beyond them):
