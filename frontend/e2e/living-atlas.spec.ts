@@ -14,6 +14,9 @@ async function open(page: import("@playwright/test").Page) {
   if (!response || response.status() >= 500) {
     throw new Error(`Living Atlas GET / failed: status=${response?.status() ?? "none"}`);
   }
+  await expect(page.getByTestId("atlas-app")).toHaveAttribute("data-admissions", /accepting|paused|unavailable/, { timeout: 30_000 });
+  const admissions = await page.getByTestId("atlas-app").getAttribute("data-admissions");
+  if (admissions !== "accepting") return;
   const composer = page.locator("form.composer");
   await expect(composer, "composer markup should render before hydration").toBeVisible({ timeout: 30_000 });
   try {
@@ -40,8 +43,9 @@ async function investigate(page: import("@playwright/test").Page) {
 
 test("the opening page states the question", async ({ page }) => {
   await open(page);
-  await expect(page.getByRole("heading", { name: "Where could your brand go next?" })).toBeVisible();
-  await expect(page.getByText("cultural investigation environment")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "See where a brand can stretch." })).toBeVisible();
+  await expect(page.locator(".landing__lede")).toContainText("cultural observatory");
+  await expect(page.getByTestId("recorded-open")).toBeVisible();
   await expect(page.getByTestId("query-input")).toBeVisible();
   await expect(page.getByText("cultural distance")).toBeVisible();
 });
@@ -56,7 +60,7 @@ test("a question shows progress and then territories", async ({ page }) => {
   ]);
   await expect(branch(page, /Coastal cooking/)).toBeVisible({ timeout: 20_000 });
   await expect(branch(page, /Clay studios/)).toBeVisible();
-  await expect(branch(page, /No usable evidence/)).toBeVisible();
+  await expect(branch(page, /No evidence/)).toBeVisible();
   await expect(progress).toHaveCount(0);
 });
 
@@ -67,7 +71,7 @@ test("a territory opens and closes the evidence inspector", async ({ page }) => 
   await expect(page.getByRole("heading", { name: "Coastal cooking" })).toBeVisible();
   await page.getByTestId("evidence-open").click();
   await expect(page.getByTestId("evidence-inspector")).toBeVisible();
-  await expect(page.getByText("What was observed")).toBeVisible();
+  await expect(page.getByText("Observed evidence")).toBeVisible();
   await expect(page.getByText("Synthetic evidence")).toBeVisible();
   await expect(page.getByText("not a prediction of commercial success")).toBeVisible();
   await page.getByTestId("evidence-close").click();
@@ -107,7 +111,25 @@ test("a recorded example is labelled and does not start a job", async ({ page })
   await page.getByTestId("recorded-open").click();
   await expect(page.getByRole("note")).toContainText("Recorded example", { timeout: 15_000 });
   await expect(branch(page, /Bohemian lifestyle/).first()).toBeVisible();
-  await expect(page.getByText("Partial evidence").first()).toBeVisible();
+  await expect(branch(page, /Partial/).first()).toBeVisible();
+  expect(jobs).toEqual([]);
+});
+
+test("paused admissions keep the recorded example as the primary action", async ({ page }) => {
+  await page.route("**/api/agent/admissions", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ status: "paused" }) });
+  });
+  const jobs: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() === "POST" && request.url().includes("/api/agent/jobs")) jobs.push(request.url());
+  });
+  await open(page);
+  await expect(page.getByTestId("recorded-open")).toBeVisible();
+  await expect(page.getByTestId("query-submit")).toHaveCount(0);
+  await expect(page.getByText("Live investigations are paused")).toBeVisible();
+  await page.getByTestId("recorded-open").click();
+  await expect(branch(page, /Bohemian lifestyle/).first()).toBeVisible();
+  await expect(page.getByTestId("follow-up-submit")).toBeDisabled();
   expect(jobs).toEqual([]);
 });
 
@@ -130,7 +152,7 @@ test("an unsupported competitor request is explained and waits for confirmation"
   await expect(page.getByText("does not compare brands")).toBeVisible();
   await expect(branch(page, /Not yet investigated/).first()).toBeVisible();
   await page.getByTestId("alternative-confirm").click();
-  await expect(branch(page, /Partial evidence/).first()).toBeVisible();
+  await expect(branch(page, /Partial/).first()).toBeVisible();
 });
 
 test("competitor whitespace is explained without an investigation", async ({ page }) => {
@@ -176,7 +198,7 @@ test.describe("mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
   test("the branch stays usable without the desktop canvas", async ({ page }) => {
     await open(page);
-    await expect(page.getByRole("heading", { name: "Where could your brand go next?" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "See where a brand can stretch." })).toBeVisible();
     await investigate(page);
     await expect(page.locator(".canvas__edges")).toHaveCount(0);
     const territory = branch(page, /Coastal cooking/);
@@ -193,7 +215,7 @@ test("a missing investigation offers a new one", async ({ page }) => {
   await open(page);
   await expect(page.getByText("cannot be resumed")).toBeVisible();
   await page.getByRole("button", { name: "Start a new investigation" }).click();
-  await expect(page.getByRole("heading", { name: "Where could your brand go next?" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "See where a brand can stretch." })).toBeVisible();
 });
 
 test("stopping an investigation keeps an interrupted state", async ({ page }) => {

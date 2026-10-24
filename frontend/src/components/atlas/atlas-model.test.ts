@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildAtlas, decorativeRadii, layoutAtlas, reasonCopy } from "./atlas-model.ts";
+import { boxOf, buildAtlas, layoutAtlas, overlappingPairs, reasonCopy, shortStatus } from "./atlas-model.ts";
 import type { QueryResponse } from "@cultural-elasticity/shared";
 
 const id = "00000000-0000-4000-8000-0000000000aa";
@@ -227,9 +227,35 @@ test("the recorded example is labelled, live-origin, and parseable without a pro
   }
 });
 
-test("silhouettes are stable decoration and competitor copy stays non-equivalent", () => {
-  assert.equal(decorativeRadii("ceramics"), decorativeRadii("ceramics"));
-  assert.notEqual(decorativeRadii("ceramics"), decorativeRadii("hospitality"));
+test("competitor copy stays non-equivalent", () => {
   assert.match(reasonCopy("UNSUPPORTED_OPERATION", "compare_brands"), /not available yet/iu);
   assert.match(reasonCopy("UNSUPPORTED_OPERATION", "compare_brands"), /different question/iu);
+});
+
+test("layout keeps long labels inside collision-free boxes", () => {
+  const first = [
+    { id: "brand", parentId: null, label: "Jacquemus", kind: "brand" as const },
+    { id: "a", parentId: "brand", label: "Art and culture", kind: "territory" as const },
+    { id: "b", parentId: "brand", label: "Bohemian lifestyle", kind: "territory" as const },
+    { id: "c", parentId: "brand", label: "Avant-garde experimental fashion", kind: "territory" as const },
+    { id: "d", parentId: "brand", label: "Japanese drama", kind: "territory" as const },
+    { id: "e", parentId: "a", label: "design-led boutique hospitality", kind: "territory" as const },
+  ];
+  const placed = layoutAtlas(first, new Map());
+  const boxes = first.map((node) => boxOf(node, placed.get(node.id)!));
+  assert.equal(overlappingPairs(boxes).length, 0);
+  assert.ok((placed.get("c")?.y ?? 0) > (placed.get("b")?.y ?? 0));
+  const long = first.find((node) => node.id === "c")!;
+  assert.ok(boxOf(long, placed.get("c")!).height >= 76);
+  assert.equal(shortStatus("unsupported", "No usable evidence"), "No evidence");
+});
+
+test("the recorded example lays out without overlapping panels", async () => {
+  const { readFileSync } = await import("node:fs");
+  const artifact = JSON.parse(readFileSync(new URL("../../demo/recorded-example.json", import.meta.url), "utf8")) as { responses: QueryResponse[] };
+  const nodes = buildAtlas(artifact.responses);
+  const placed = layoutAtlas(nodes, new Map());
+  const boxes = nodes.map((node) => boxOf(node, placed.get(node.id)!));
+  assert.ok(boxes.length >= 5);
+  assert.equal(overlappingPairs(boxes).length, 0);
 });

@@ -2,13 +2,21 @@
 
 import { useEffect, useState } from "react";
 
-export function QueryComposer({ busy, onSubmit }: { busy: boolean; onSubmit: (query: string) => void }) {
+export function QueryComposer({
+  busy,
+  onSubmit,
+  compact = false,
+}: {
+  busy: boolean;
+  onSubmit: (query: string) => void;
+  compact?: boolean;
+}) {
   const [value, setValue] = useState("");
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   return (
     <form
-      className="composer"
+      className={compact ? "composer composer--compact" : "composer composer--landing"}
       data-hydrated={ready ? "true" : "false"}
       onSubmit={(event) => {
         event.preventDefault();
@@ -18,15 +26,17 @@ export function QueryComposer({ busy, onSubmit }: { busy: boolean; onSubmit: (qu
         setValue("");
       }}
     >
-      <label htmlFor="question">Your question</label>
-      <input
-        id="question"
-        data-testid="query-input"
-        value={value}
-        placeholder="Where could your brand go next?"
-        maxLength={2000}
-        onChange={(event) => setValue(event.target.value)}
-      />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <label htmlFor="question" className={compact ? undefined : "sr-only"}>Your question</label>
+        <input
+          id="question"
+          data-testid="query-input"
+          value={value}
+          placeholder="Where could your brand go next?"
+          maxLength={2000}
+          onChange={(event) => setValue(event.target.value)}
+        />
+      </div>
       <button className="ask" type="submit" data-testid="query-submit" disabled={busy || value.trim().length === 0}>
         {busy ? "Investigating" : "Ask"}
       </button>

@@ -1,5 +1,5 @@
-import { edgePath } from "./atlas-model";
+import { edgePath, type AtlasBox } from "./atlas-model";
 
-export function AtlasConnection({ from, to }: { from: { x: number; y: number }; to: { x: number; y: number } }) {
-  return <path d={edgePath(from, to)} />;
+export function AtlasConnection({ from, to, active = false }: { from: AtlasBox; to: AtlasBox; active?: boolean }) {
+  return <path d={edgePath(from, to)} className={active ? "is-active" : undefined} />;
 }

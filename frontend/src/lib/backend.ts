@@ -155,6 +155,25 @@ async function backendFetch(path: string, init: RequestInit, timeoutMs: number, 
   }
 }
 
+export type AdmissionProbe = { status: "accepting" | "paused" | "unavailable" };
+
+/**
+ * Admission only. Proxies `/ready` and returns a public view with no boot id,
+ * credential flags, or spend figures. This is not a paid provider call.
+ */
+export async function getAdmissionStatus(): Promise<AdmissionProbe> {
+  const result = await backendFetch("/ready", {}, 2000);
+  if (!result || !isRecord(result.body)) return { status: "unavailable" };
+  if (result.body.acceptingInvestigations === true) return { status: "accepting" };
+  const reasons = Array.isArray(result.body.reasons) ? result.body.reasons : [];
+  if (result.body.acceptingInvestigations === false || reasons.includes("ADMISSIONS_PAUSED")) return { status: "paused" };
+  return { status: "unavailable" };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 /** Product path. The browser never calls the investigation API directly. */
 export async function createJob(body: unknown, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
   return backendFetch("/api/agent/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }, 15_000, visitorId);

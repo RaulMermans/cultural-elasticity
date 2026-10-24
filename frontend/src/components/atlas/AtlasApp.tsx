@@ -2,14 +2,17 @@
 
 import { parseQueryResponse, type QueryResponse } from "@cultural-elasticity/shared";
 import { useState } from "react";
+import { liveQuestionsEnabled } from "@/lib/admissions";
 import { AlternativeConfirmation } from "./AlternativeConfirmation";
 import { AtlasNavigation } from "./AtlasNavigation";
 import { AtlasShell } from "./AtlasShell";
 import { ClarificationDialog } from "./ClarificationDialog";
 import { EvidenceInspector } from "./EvidenceInspector";
+import { HowItWorks } from "./HowItWorks";
 import { InvestigationCanvas } from "./InvestigationCanvas";
 import { InvestigationHistory } from "./InvestigationHistory";
 import { InvestigationProgress } from "./InvestigationProgress";
+import { Landing } from "./Landing";
 import { QueryComposer } from "./QueryComposer";
 import { TerritoryDetail } from "./TerritoryDetail";
 import { reasonCopy, isRecorded } from "./atlas-model";
@@ -19,6 +22,7 @@ import { useAtlas } from "./use-atlas";
 export function AtlasApp() {
   const atlas = useAtlas();
   const [dismissed, setDismissed] = useState<string | null>(null);
+  const [how, setHow] = useState(false);
   const latest = atlas.latest;
   const dialogId = latest?.queryId ?? null;
   const showDialogs = dialogId !== null && dialogId !== dismissed && !atlas.active;
@@ -29,91 +33,128 @@ export function AtlasApp() {
   const response = atlas.responseFor(atlas.selected);
   const comparison = assessComparison(atlas.nodes, atlas.responses, atlas.compareIds);
   const recorded = isRecorded(response) || atlas.nodes.some((node) => node.recorded);
+  const liveEnabled = liveQuestionsEnabled(atlas.admissions);
+  const question = response?.interpretation?.rawQuery ?? latest?.interpretation?.rawQuery ?? null;
 
   return (
-    <AtlasShell inspector={atlas.inspectorOpen}>
-      <div className={atlas.nodes.length === 0 ? "entrance" : "workspace"}>
-        {atlas.nodes.length === 0 ? <Hero onRecorded={() => void openRecorded(atlas.showRecorded, atlas.fail)} /> : null}
-        <QueryComposer busy={Boolean(atlas.active)} onSubmit={(query) => void atlas.submit({ query })} />
-        {atlas.active ? (
-          <InvestigationProgress label={atlas.active.stageLabel} stopping={atlas.active.stopping} onCancel={() => void atlas.cancel(atlas.active!)} />
-        ) : null}
-        {recorded ? <p className="recorded" role="note">Recorded example. These findings are from an earlier investigation. They are not a new live query.</p> : null}
-        {atlas.notice ? <p className="notice" role="alert">{atlas.notice}</p> : null}
-        {outcome ? (
-          <section className="recovery" role="status" data-testid="query-outcome">
-            <p>{outcome.interpretation?.clarificationQuestion ?? reasonCopy(outcome.reasons[0]?.code ?? outcome.state, outcome.interpretation?.unsupportedCapabilities[0] ?? null)}</p>
-          </section>
-        ) : null}
-        {atlas.recovery ? (
-          <div className="recovery" role="status">
-            <p>{atlas.recovery}</p>
-            <button className="ghost" type="button" onClick={atlas.dismissRecovery}>Start a new investigation</button>
+    <AtlasShell inspector={atlas.inspectorOpen} admissions={atlas.admissions} recorded={recorded}>
+      {atlas.nodes.length === 0 ? (
+        <>
+          <Landing
+            admissions={atlas.admissions}
+            busy={Boolean(atlas.active)}
+            onRecorded={(prepared) => void openRecorded(atlas.showRecorded, atlas.fail, prepared)}
+            onAsk={(query) => void atlas.submit({ query })}
+            onHow={() => setHow(true)}
+          />
+          <div className="landing-status">
+            {atlas.active ? (
+              <InvestigationProgress label={atlas.active.stageLabel} stopping={atlas.active.stopping} onCancel={() => void atlas.cancel(atlas.active!)} />
+            ) : null}
+            {atlas.notice ? <p className="notice" role="alert">{atlas.notice}</p> : null}
+            {outcome ? (
+              <section className="recovery" role="status" data-testid="query-outcome">
+                <p>{outcome.interpretation?.clarificationQuestion ?? reasonCopy(outcome.reasons[0]?.code ?? outcome.state, outcome.interpretation?.unsupportedCapabilities[0] ?? null)}</p>
+              </section>
+            ) : null}
+            {atlas.recovery ? (
+              <div className="recovery" role="status">
+                <p>{atlas.recovery}</p>
+                <button className="ghost" type="button" onClick={atlas.dismissRecovery}>Start a new investigation</button>
+              </div>
+            ) : null}
           </div>
-        ) : null}
-        {atlas.nodes.length > 0 ? (
-          <div className="stage">
-            <div>
-              <AtlasNavigation nodes={atlas.nodes} selectedId={atlas.selected?.id ?? null} onSelect={atlas.select} />
-              <InvestigationHistory nodes={atlas.nodes} onSelect={atlas.select} />
-              <InvestigationCanvas
-                nodes={atlas.nodes}
-                selectedId={atlas.selected?.id ?? null}
-                compareIds={atlas.compareIds}
-                reducedMotion={atlas.reducedMotion}
-                guided={atlas.narrow}
-                onSelect={atlas.select}
-              />
-            </div>
-            {atlas.selected ? (
-              <TerritoryDetail
-                node={atlas.selected}
-                response={response}
-                compared={atlas.compareIds.includes(atlas.selected.id)}
-                canCompare={comparison.ok}
-                comparisonNote={comparison.ok ? null : comparison.reason}
-                onInspect={atlas.openInspector}
-                onCompare={() => atlas.toggleCompare(atlas.selected!.id)}
-                onFollow={(query) => {
-                  if (isRecorded(response)) {
-                    const brand = response?.investigation?.result && response.investigation.result.status !== "NEEDS_INPUT" ? response.investigation.result.brand?.label : null;
-                    const territory = atlas.selected?.kind === "territory" ? atlas.selected.label : null;
-                    void atlas.submit({ query: [brand, territory, query].filter(Boolean).join(" — ") });
-                    return;
-                  }
-                  if (!atlas.selected?.runId) return;
-                  void atlas.submit({
-                    query,
-                    context: { runId: atlas.selected.runId, ...(atlas.selected.territoryKey ? { selectedTerritoryKey: atlas.selected.territoryKey } : {}) },
-                  });
-                }}
-                onReturn={() => {
-                  const parentRunId = response?.investigation?.link?.parentRunId ?? response?.context?.lineage[1]?.runId ?? null;
-                  const territoryKey = response?.investigation?.link?.selectedTerritoryKey ?? null;
-                  if (!parentRunId) return;
-                  if (isRecorded(response)) {
-                    const parent = atlas.nodes.find((node) => node.runId === parentRunId && (territoryKey ? node.territoryKey === territoryKey : node.kind === "brand"));
-                    if (!parent) return;
-                    atlas.focusRun(parentRunId, territoryKey);
-                    return;
-                  }
-                  void atlas.submit({ navigateToRunId: parentRunId, ...(territoryKey ? { territoryKey } : {}) });
-                }}
-                onCompareSelected={() => {
-                  if (!comparison.ok) return;
-                  void atlas.submit({
-                    query: `Compare ${comparison.sources.map((source) => source.label).join(", ")}.`,
-                    intent: "compare_territories",
-                    territories: comparison.sources.map((source) => source.label),
-                    comparisonSources: comparison.sources.map((source) => ({ runId: source.runId, territoryKey: source.territoryKey })),
-                  });
-                  atlas.clearCompare();
-                }}
-              />
-            ) : <p className="quiet">Select a territory to read what the evidence supports.</p>}
+        </>
+      ) : (
+        <div className="workspace">
+          <aside className="rail">
+            <p className="kicker">{recorded ? "Recorded investigation" : "Investigation"}</p>
+            <p className="badge" data-kind={recorded ? "recorded" : liveEnabled ? "live" : "paused"}>
+              {recorded ? "Recorded example" : liveEnabled ? "Live" : "Live paused"}
+            </p>
+            <h2>{atlas.nodes.find((node) => node.kind === "brand")?.label ?? "Investigation"}</h2>
+            {question ? <p className="quiet">{question}</p> : null}
+            <AtlasNavigation nodes={atlas.nodes} selectedId={atlas.selected?.id ?? null} onSelect={atlas.select} />
+            <InvestigationHistory nodes={atlas.nodes} onSelect={atlas.select} />
+            {liveEnabled ? <QueryComposer busy={Boolean(atlas.active)} compact onSubmit={(query) => void atlas.submit({ query })} /> : (
+              <p className="quiet">Live questions are not being accepted right now.</p>
+            )}
+            {atlas.active ? (
+              <InvestigationProgress label={atlas.active.stageLabel} stopping={atlas.active.stopping} onCancel={() => void atlas.cancel(atlas.active!)} />
+            ) : null}
+            {recorded ? <p className="recorded quiet" role="note">Recorded example. These findings are from an earlier investigation. They are not a new live query.</p> : null}
+            {atlas.notice ? <p className="notice" role="alert">{atlas.notice}</p> : null}
+            {outcome ? (
+              <section className="recovery" role="status" data-testid="query-outcome">
+                <p>{outcome.interpretation?.clarificationQuestion ?? reasonCopy(outcome.reasons[0]?.code ?? outcome.state, outcome.interpretation?.unsupportedCapabilities[0] ?? null)}</p>
+              </section>
+            ) : null}
+            {atlas.recovery ? (
+              <div className="recovery" role="status">
+                <p>{atlas.recovery}</p>
+                <button className="ghost" type="button" onClick={atlas.dismissRecovery}>Start a new investigation</button>
+              </div>
+            ) : null}
+          </aside>
+          <div className="observatory">
+            <InvestigationCanvas
+              nodes={atlas.nodes}
+              selectedId={atlas.selected?.id ?? null}
+              compareIds={atlas.compareIds}
+              reducedMotion={atlas.reducedMotion}
+              guided={atlas.narrow}
+              onSelect={atlas.select}
+            />
           </div>
-        ) : null}
-      </div>
+          {atlas.selected ? (
+            <TerritoryDetail
+              node={atlas.selected}
+              response={response}
+              compared={atlas.compareIds.includes(atlas.selected.id)}
+              canCompare={comparison.ok}
+              comparisonNote={comparison.ok ? null : comparison.reason}
+              liveEnabled={liveEnabled}
+              onInspect={atlas.openInspector}
+              onCompare={() => atlas.toggleCompare(atlas.selected!.id)}
+              onFollow={(query) => {
+                if (isRecorded(response)) {
+                  const brand = response?.investigation?.result && response.investigation.result.status !== "NEEDS_INPUT" ? response.investigation.result.brand?.label : null;
+                  const territory = atlas.selected?.kind === "territory" ? atlas.selected.label : null;
+                  void atlas.submit({ query: [brand, territory, query].filter(Boolean).join(" — ") });
+                  return;
+                }
+                if (!atlas.selected?.runId) return;
+                void atlas.submit({
+                  query,
+                  context: { runId: atlas.selected.runId, ...(atlas.selected.territoryKey ? { selectedTerritoryKey: atlas.selected.territoryKey } : {}) },
+                });
+              }}
+              onReturn={() => {
+                const parentRunId = response?.investigation?.link?.parentRunId ?? response?.context?.lineage[1]?.runId ?? null;
+                const territoryKey = response?.investigation?.link?.selectedTerritoryKey ?? null;
+                if (!parentRunId) return;
+                if (isRecorded(response)) {
+                  const parent = atlas.nodes.find((node) => node.runId === parentRunId && (territoryKey ? node.territoryKey === territoryKey : node.kind === "brand"));
+                  if (!parent) return;
+                  atlas.focusRun(parentRunId, territoryKey);
+                  return;
+                }
+                void atlas.submit({ navigateToRunId: parentRunId, ...(territoryKey ? { territoryKey } : {}) });
+              }}
+              onCompareSelected={() => {
+                if (!comparison.ok) return;
+                void atlas.submit({
+                  query: `Compare ${comparison.sources.map((source) => source.label).join(", ")}.`,
+                  intent: "compare_territories",
+                  territories: comparison.sources.map((source) => source.label),
+                  comparisonSources: comparison.sources.map((source) => ({ runId: source.runId, territoryKey: source.territoryKey })),
+                });
+                atlas.clearCompare();
+              }}
+            />
+          ) : <p className="quiet finding">Select a territory to read what the evidence supports.</p>}
+        </div>
+      )}
       {atlas.inspectorOpen && response ? (
         <EvidenceInspector
           response={response}
@@ -125,6 +166,7 @@ export function AtlasApp() {
           onClose={atlas.closeInspector}
         />
       ) : null}
+      {how ? <HowItWorks onClose={() => setHow(false)} /> : null}
       {clarify ? (
         <ClarificationDialog
           question={clarify.interpretation?.clarificationQuestion ?? "Which brand and territory should be investigated?"}
@@ -154,25 +196,15 @@ export function AtlasApp() {
   );
 }
 
-function Hero({ onRecorded }: { onRecorded: () => void }) {
-  return (
-    <section className="hero">
-      <p className="eyebrow">Cultural Elasticity</p>
-      <h1>Where could your brand go next?</h1>
-      <p className="hero__lede">A cultural investigation environment. Discover where a brand could expand, then investigate which directions deserve deeper research using observed cultural affinities and visible uncertainty.</p>
-      <p className="hero__note">Findings are grounded in observed cultural affinities, not model guesses. The map shows how an investigation grew. It does not measure cultural distance, and it does not promise success. Open a recorded investigation, inspect a territory, or ask a new question.</p>
-      <button className="ghost" type="button" data-testid="recorded-open" onClick={onRecorded}>Open a recorded investigation</button>
-      <svg className="sprig" width="180" height="72" viewBox="0 0 180 72" aria-hidden="true">
-        <path d="M8 58 C 40 58, 52 20, 92 24" fill="none" stroke="currentColor" strokeWidth="1.2" />
-        <path d="M92 24 C 120 8, 150 18, 168 14" fill="none" stroke="currentColor" strokeWidth="1.2" />
-        <ellipse cx="58" cy="34" rx="14" ry="7" transform="rotate(-28 58 34)" fill="none" stroke="currentColor" />
-        <ellipse cx="128" cy="16" rx="16" ry="7" transform="rotate(18 128 16)" fill="none" stroke="currentColor" />
-      </svg>
-    </section>
-  );
-}
-
-async function openRecorded(show: (responses: QueryResponse[]) => void, fail: (message: string) => void) {
+async function openRecorded(
+  show: (responses: QueryResponse[]) => void,
+  fail: (message: string) => void,
+  prepared?: QueryResponse[],
+) {
+  if (prepared && prepared.length > 0) {
+    show(prepared);
+    return;
+  }
   try {
     const response = await fetch("/api/demo/recorded", { cache: "no-store" });
     if (!response.ok) {

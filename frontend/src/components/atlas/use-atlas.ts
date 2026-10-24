@@ -2,6 +2,7 @@
 
 import { parseQueryResponse, type QueryResponse } from "@cultural-elasticity/shared";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { parseAdmission, type AdmissionStatus } from "@/lib/admissions";
 import { parseJobEnvelope, publicFailure, type JobEnvelope } from "@/lib/job-envelope";
 import { buildAtlas, layoutAtlas, type AtlasDraft } from "./atlas-model";
 
@@ -59,6 +60,7 @@ export function useAtlas() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [narrow, setNarrow] = useState(false);
   const [ready, setReady] = useState(false);
+  const [admissions, setAdmissions] = useState<AdmissionStatus>("unknown");
 
   const remember = useCallback((handle: Handle) => {
     const handles = [...loadHandles().filter((item) => item.jobId !== handle.jobId), handle];
@@ -113,6 +115,10 @@ export function useAtlas() {
     const handles = loadHandles();
     setJobs(handles.map((handle) => ({ ...handle, status: "running", stageLabel: "Checking the investigation", stopping: false })));
     setReady(true);
+    void fetch("/api/agent/admissions", { cache: "no-store" })
+      .then(async (response) => parseAdmission(await response.json()).status)
+      .then(setAdmissions)
+      .catch(() => setAdmissions("unavailable"));
     for (const handle of handles) void refresh(handle);
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const width = window.matchMedia("(max-width: 720px)");
@@ -218,6 +224,7 @@ export function useAtlas() {
     },
     reducedMotion,
     narrow,
+    admissions,
     submit,
     cancel,
     focusRun: (runId: string, territoryKey: string | null) => setFocusRequest({ runId, territoryKey, queryId: `focus:${runId}:${territoryKey ?? ""}` }),

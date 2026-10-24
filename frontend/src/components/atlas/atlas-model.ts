@@ -3,10 +3,21 @@
 
 import type { InvestigationOperation, QueryResponse, QueryTerritoryNode, TerritoryEvidenceStatus } from "@cultural-elasticity/shared";
 
-export const ATLAS_COLUMN = 248;
-export const ATLAS_ROW = 120;
+export const PANEL_WIDTH = 216;
+export const PANEL_MIN_HEIGHT = 76;
+export const COLUMN_GAP = 40;
+export const ROW_GAP = 20;
+export const TREE_GAP = 48;
+export const ATLAS_MARGIN = 24;
+/** @deprecated Use COLUMN_GAP. Kept so older layout notes still resolve. */
+export const ATLAS_COLUMN = PANEL_WIDTH + COLUMN_GAP;
+/** @deprecated Use measured node heights. */
+export const ATLAS_ROW = PANEL_MIN_HEIGHT + ROW_GAP;
 
 export type AtlasTone = "idle" | "running" | "supported" | "partial" | "unsupported" | "hypothesis" | "interrupted" | "failed" | "incomplete";
+export type Point = { x: number; y: number };
+export type AtlasBox = Point & { width: number; height: number };
+export type LayoutNode = { id: string; parentId: string | null; label?: string; kind?: "brand" | "territory" };
 
 export type AtlasDraft = {
   id: string;
@@ -26,12 +37,66 @@ export type AtlasDraft = {
 
 const norm = (value: string | null | undefined) => (value ?? "").normalize("NFKC").trim().replace(/\s+/gu, " ").toLowerCase();
 
-/** Decorative only. The same id always yields the same silhouette; the silhouette is not evidence. */
-export function decorativeRadii(seed: string): string {
-  let hash = 2166136261;
-  for (const char of seed) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
-  const part = (shift: number, min: number, span: number) => min + ((hash >>> shift) % span);
-  return `${part(0, 46, 16)}% ${part(5, 54, 14)}% ${part(9, 42, 16)}% ${part(13, 50, 12)}% / ${part(3, 48, 14)}% ${part(7, 52, 12)}% ${part(11, 44, 14)}% ${part(1, 56, 10)}%`;
+export function nodeSize(node: LayoutNode): { width: number; height: number } {
+  const width = node.kind === "brand" ? 188 : PANEL_WIDTH;
+  const title = (node.label ?? "Territory").trim();
+  const charsPerLine = node.kind === "brand" ? 16 : 22;
+  const titleLines = Math.max(1, Math.ceil(title.length / charsPerLine));
+  const height = Math.max(PANEL_MIN_HEIGHT, 14 + titleLines * 22 + 6 + 18 + 14);
+  return { width, height };
+}
+
+export function boxOf(node: LayoutNode, point: Point): AtlasBox {
+  return { ...point, ...nodeSize(node) };
+}
+
+export function boxesOverlap(a: AtlasBox, b: AtlasBox, gap = 12): boolean {
+  return !(a.x + a.width + gap <= b.x || b.x + b.width + gap <= a.x || a.y + a.height + gap <= b.y || b.y + b.height + gap <= a.y);
+}
+
+export function overlappingPairs(boxes: readonly AtlasBox[]): [number, number][] {
+  const pairs: [number, number][] = [];
+  for (let i = 0; i < boxes.length; i += 1) {
+    for (let j = i + 1; j < boxes.length; j += 1) {
+      if (boxesOverlap(boxes[i]!, boxes[j]!, 8)) pairs.push([i, j]);
+    }
+  }
+  return pairs;
+}
+
+export function shortStatus(tone: AtlasTone, statusLabel: string): string {
+  switch (tone) {
+    case "supported":
+      return "Supported";
+    case "partial":
+      return "Partial";
+    case "unsupported":
+      return "No evidence";
+    case "hypothesis":
+      return "Hypothesis";
+    case "incomplete":
+      return "Incomplete";
+    case "interrupted":
+      return "Interrupted";
+    case "failed":
+      return "Could not finish";
+    case "running":
+      return "Investigating";
+    default:
+      return statusLabel;
+  }
+}
+
+export function neighborId(nodes: readonly LayoutNode[], selectedId: string, direction: "parent" | "child" | "previous" | "next"): string | null {
+  const selected = nodes.find((node) => node.id === selectedId);
+  if (!selected) return null;
+  if (direction === "parent") return selected.parentId;
+  const siblings = nodes.filter((node) => node.parentId === selected.parentId);
+  const index = siblings.findIndex((node) => node.id === selectedId);
+  if (direction === "previous") return index > 0 ? siblings[index - 1]!.id : null;
+  if (direction === "next") return index >= 0 && index < siblings.length - 1 ? siblings[index + 1]!.id : null;
+  const child = nodes.find((node) => node.parentId === selectedId);
+  return child?.id ?? null;
 }
 
 export function buildAtlas(responses: readonly QueryResponse[]): AtlasDraft[] {
@@ -97,48 +162,127 @@ export function buildAtlas(responses: readonly QueryResponse[]): AtlasDraft[] {
   return nodes;
 }
 
-export function layoutAtlas(nodes: readonly { id: string; parentId: string | null }[], previous: ReadonlyMap<string, { x: number; y: number }>): Map<string, { x: number; y: number }> {
-  const positions = new Map<string, { x: number; y: number }>();
+export function layoutAtlas(nodes: readonly LayoutNode[], previous: ReadonlyMap<string, Point>): Map<string, Point> {
+  const positions = new Map<string, Point>();
   const live = new Set(nodes.map((node) => node.id));
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const children = new Map<string | null, string[]>();
+  for (const node of nodes) {
+    const list = children.get(node.parentId) ?? [];
+    list.push(node.id);
+    children.set(node.parentId, list);
+  }
   for (const node of nodes) {
     const prior = previous.get(node.id);
     if (prior) positions.set(node.id, { ...prior });
   }
-  const byParent = new Map<string | null, string[]>();
-  for (const node of nodes) {
-    const list = byParent.get(node.parentId) ?? [];
-    list.push(node.id);
-    byParent.set(node.parentId, list);
-  }
-  const pending = nodes.filter((node) => !positions.has(node.id));
-  let guard = pending.length * Math.max(pending.length, 1) + 2;
-  while (pending.length > 0 && guard > 0) {
-    guard -= 1;
-    const next = pending[0]!;
-    if (next.parentId && !positions.has(next.parentId) && live.has(next.parentId)) {
-      pending.push(pending.shift()!);
-      continue;
+
+  const subtreeHeight = (id: string, seen: Set<string>): number => {
+    if (seen.has(id)) return nodeSize(byId.get(id) ?? { id, parentId: null }).height;
+    seen.add(id);
+    const size = nodeSize(byId.get(id) ?? { id, parentId: null });
+    const kids = (children.get(id) ?? []).filter((kid) => live.has(kid));
+    if (kids.length === 0) return size.height;
+    return Math.max(size.height, kids.reduce((sum, kid, index) => sum + subtreeHeight(kid, seen) + (index > 0 ? ROW_GAP : 0), 0));
+  };
+
+  const placeSubtree = (id: string, x: number, y: number, locked: boolean): number => {
+    const node = byId.get(id) ?? { id, parentId: null };
+    const size = nodeSize(node);
+    const kids = (children.get(id) ?? []).filter((kid) => live.has(kid));
+    const keep = locked && positions.has(id);
+    if (kids.length === 0) {
+      if (!keep) positions.set(id, { x, y });
+      const point = positions.get(id)!;
+      return point.y + size.height;
     }
-    pending.shift();
-    const parent = next.parentId ? positions.get(next.parentId) : undefined;
-    const depth = depthOf(next.id, nodes, new Set());
-    const x = 48 + depth * ATLAS_COLUMN;
-    const placedSiblings = (byParent.get(next.parentId) ?? []).filter((id) => positions.has(id));
-    let y = parent ? parent.y : 48;
-    if (placedSiblings.length > 0) y = Math.max(...placedSiblings.map((id) => positions.get(id)!.y)) + ATLAS_ROW;
-    while ([...positions.entries()].some(([id, point]) => live.has(id) && Math.abs(point.x - x) < 8 && Math.abs(point.y - y) < ATLAS_ROW - 12)) y += ATLAS_ROW;
-    positions.set(next.id, { x, y });
+    const childX = (keep ? positions.get(id)!.x : x) + size.width + COLUMN_GAP;
+    let childY = keep ? positions.get(id)!.y : y;
+    const placedKids = kids.filter((kid) => positions.has(kid) && previous.has(kid));
+    if (keep && placedKids.length > 0) {
+      childY = Math.max(...placedKids.map((kid) => {
+        const kidSize = nodeSize(byId.get(kid) ?? { id: kid, parentId: id });
+        return positions.get(kid)!.y + kidSize.height;
+      })) + ROW_GAP;
+    }
+    const start = childY;
+    for (const kid of kids) {
+      const kidLocked = previous.has(kid);
+      if (kidLocked && positions.has(kid)) {
+        childY = Math.max(childY, placeSubtree(kid, childX, positions.get(kid)!.y, true));
+        continue;
+      }
+      childY = placeSubtree(kid, childX, childY, false) + ROW_GAP;
+    }
+    const childrenBottom = kids.length > 0 ? childY - (placedKids.length === kids.length ? 0 : ROW_GAP) : start;
+    const childrenHeight = Math.max(size.height, childrenBottom - start);
+    if (!keep) {
+      const parentY = y + Math.max(0, (childrenHeight - size.height) / 2);
+      positions.set(id, { x, y: parentY });
+    }
+    const point = positions.get(id)!;
+    return Math.max(point.y + size.height, childrenBottom);
+  };
+
+  const roots = nodes.filter((node) => !node.parentId || !live.has(node.parentId));
+  let cursorY = ATLAS_MARGIN;
+  for (const root of roots) {
+    const locked = previous.has(root.id);
+    const height = subtreeHeight(root.id, new Set());
+    const origin = positions.get(root.id);
+    placeSubtree(root.id, origin?.x ?? ATLAS_MARGIN, origin?.y ?? cursorY, locked);
+    if (!locked) cursorY += height + TREE_GAP;
   }
+  for (const node of nodes) {
+    if (!positions.has(node.id)) {
+      const size = nodeSize(node);
+      positions.set(node.id, { x: ATLAS_MARGIN, y: cursorY });
+      cursorY += size.height + ROW_GAP;
+    }
+  }
+  resolveCollisions(nodes, positions);
   return positions;
 }
 
-export function edgePath(from: { x: number; y: number }, to: { x: number; y: number }): string {
-  const startX = from.x + 168;
-  const startY = from.y + 36;
+function resolveCollisions(nodes: readonly LayoutNode[], positions: Map<string, Point>): void {
+  for (let pass = 0; pass < 48; pass += 1) {
+    let moved = false;
+    for (let i = 0; i < nodes.length; i += 1) {
+      for (let j = i + 1; j < nodes.length; j += 1) {
+        const a = nodes[i]!;
+        const b = nodes[j]!;
+        const boxA = boxOf(a, positions.get(a.id)!);
+        const boxB = boxOf(b, positions.get(b.id)!);
+        if (!boxesOverlap(boxA, boxB, 12)) continue;
+        const lower = boxA.y <= boxB.y ? b : a;
+        const top = boxA.y <= boxB.y ? boxA : boxB;
+        const current = positions.get(lower.id)!;
+        positions.set(lower.id, { x: current.x, y: top.y + top.height + ROW_GAP });
+        moved = true;
+      }
+    }
+    if (!moved) return;
+  }
+}
+
+export function edgePath(from: AtlasBox, to: AtlasBox): string {
+  const startX = from.x + from.width;
+  const startY = from.y + from.height / 2;
   const endX = to.x;
-  const endY = to.y + 36;
-  const bend = Math.max(36, (endX - startX) / 2);
-  return `M ${startX} ${startY} C ${startX + bend} ${startY}, ${endX - bend} ${endY}, ${endX} ${endY}`;
+  const endY = to.y + to.height / 2;
+  const midX = startX + Math.max(28, (endX - startX) / 2);
+  return `M ${startX} ${startY} H ${midX} V ${endY} H ${endX}`;
+}
+
+export function atlasExtent(nodes: readonly (LayoutNode & Point)[]): { width: number; height: number } {
+  let width = 640;
+  let height = 420;
+  for (const node of nodes) {
+    const size = nodeSize(node);
+    width = Math.max(width, node.x + size.width + ATLAS_MARGIN);
+    height = Math.max(height, node.y + size.height + ATLAS_MARGIN);
+  }
+  return { width, height };
 }
 
 type ObservedLayer = {
@@ -385,10 +529,3 @@ function anchorFor(
   return territory ?? brand ?? nodes.find((node) => node.runId === parentRunId)?.id ?? null;
 }
 
-function depthOf(id: string, nodes: readonly { id: string; parentId: string | null }[], seen: Set<string>): number {
-  if (seen.has(id)) return 0;
-  seen.add(id);
-  const node = nodes.find((item) => item.id === id);
-  if (!node?.parentId) return 0;
-  return depthOf(node.parentId, nodes, seen) + 1;
-}
