@@ -42,10 +42,12 @@ export function EvidenceInspector({
       ref={panelRef}
     >
       <div className="inspector__head">
-        <button className="ghost" type="button" ref={closeRef} data-testid="evidence-close" onClick={onClose}>
-          Close
-        </button>
-        <h2 id="evidence-title">Evidence dossier</h2>
+        <div className="inspector__title-row">
+          <h2 id="evidence-title">Evidence dossier</h2>
+          <button className="ghost" type="button" ref={closeRef} data-testid="evidence-close" onClick={onClose}>
+            Close dossier
+          </button>
+        </div>
         <p className="quiet">{sections.scopeLabel}</p>
         {sections.recorded ? <p className="quiet">Recorded example. Not a new live investigation.</p> : null}
         {sections.synthetic ? <p className="quiet">Synthetic evidence. This is not a live investigation.</p> : null}
@@ -57,7 +59,7 @@ export function EvidenceInspector({
       <Section title="Contradictory or missing evidence" items={unavailable} />
       {aggregate.some((item) => !isPlaceholderLine(item.display)) ? (
         <details>
-          <summary>This run, not this territory alone</summary>
+          <summary>Whole investigation, not this territory alone</summary>
           <Section title="Whole investigation" items={aggregate} />
         </details>
       ) : null}

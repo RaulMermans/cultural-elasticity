@@ -69,21 +69,30 @@ export function AtlasApp() {
       ) : (
         <div className="workspace">
           <aside className="rail">
-            <p className="kicker">{recorded ? "Recorded investigation" : "Investigation"}</p>
-            <p className="badge" data-kind={recorded ? "recorded" : liveEnabled ? "live" : "paused"}>
-              {recorded ? "Recorded example" : liveEnabled ? "Live" : "Live paused"}
-            </p>
-            <h2>{atlas.nodes.find((node) => node.kind === "brand")?.label ?? "Investigation"}</h2>
-            {question ? <p className="quiet">{question}</p> : null}
-            <AtlasNavigation nodes={atlas.nodes} selectedId={atlas.selected?.id ?? null} onSelect={atlas.select} />
-            <InvestigationHistory nodes={atlas.nodes} onSelect={atlas.select} />
-            {liveEnabled ? <QueryComposer busy={Boolean(atlas.active)} compact onSubmit={(query) => void atlas.submit({ query })} /> : (
-              <p className="quiet">Live questions are not being accepted right now.</p>
+            <div className="rail__identity">
+              <p className="kicker">{recorded ? "Recorded investigation" : "Investigation"}</p>
+              <p className="badge" data-kind={recorded ? "recorded" : liveEnabled ? "live" : "paused"}>
+                {recorded ? "Recorded example" : liveEnabled ? "Live" : "Live paused"}
+              </p>
+              <h2>{atlas.nodes.find((node) => node.kind === "brand")?.label ?? "Investigation"}</h2>
+              {question ? <p className="quiet">{question}</p> : null}
+            </div>
+            <div className="rail__path">
+              <AtlasNavigation nodes={atlas.nodes} selectedId={atlas.selected?.id ?? null} onSelect={atlas.select} />
+              <InvestigationHistory nodes={atlas.nodes} onSelect={atlas.select} />
+            </div>
+            {liveEnabled ? (
+              <div className="rail__ask">
+                <p className="kicker">New question</p>
+                <QueryComposer busy={Boolean(atlas.active)} compact onSubmit={(query) => void atlas.submit({ query })} />
+              </div>
+            ) : (
+              <p className="quiet rail__ask">Live questions are not being accepted right now.</p>
             )}
             {atlas.active ? (
               <InvestigationProgress label={atlas.active.stageLabel} stopping={atlas.active.stopping} onCancel={() => void atlas.cancel(atlas.active!)} />
             ) : null}
-            {recorded ? <p className="recorded quiet" role="note">Recorded example. These findings are from an earlier investigation. They are not a new live query.</p> : null}
+            {recorded ? <p className="recorded quiet rail__note" role="note">Recorded example. These findings are from an earlier investigation. They are not a new live query.</p> : null}
             {atlas.notice ? <p className="notice" role="alert">{atlas.notice}</p> : null}
             {outcome ? (
               <section className="recovery" role="status" data-testid="query-outcome">

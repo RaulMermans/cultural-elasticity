@@ -69,7 +69,7 @@ test("a supported territory finding prefers a grounded observation over boilerpl
   assert.match(finding.whyItMatters, /representation-sensitive/iu);
   assert.match(finding.whyItMatters, /not a recommendation/iu);
   assert.equal(finding.empty, false);
-  assert.equal(finding.limitations.some((line) => line.includes("32")), true);
+  assert.match(finding.limitations.join(" "), /evidence-call budget \(32\)/u);
 });
 
 test("an unsupported territory states the absence without inventing a connection", () => {

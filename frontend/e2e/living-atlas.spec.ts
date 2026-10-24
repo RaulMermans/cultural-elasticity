@@ -301,6 +301,57 @@ test.describe("tablet", () => {
     expect(box!.x).toBeGreaterThanOrEqual(-2);
     expect(box!.x + box!.width).toBeLessThanOrEqual(770);
   });
+
+  test("opening the dossier stacks under the atlas instead of clipping it", async ({ page }) => {
+    await open(page);
+    await page.getByTestId("recorded-open").click();
+    await branch(page, /Art and culture/).first().click();
+    await page.getByTestId("evidence-open").click();
+    await expect(page.getByTestId("evidence-inspector")).toBeVisible();
+    const layout = await page.evaluate(() => {
+      const workspace = document.querySelector(".workspace")?.getBoundingClientRect();
+      const rail = document.querySelector(".rail")?.getBoundingClientRect();
+      const observatory = document.querySelector(".observatory")?.getBoundingClientRect();
+      const inspector = document.querySelector(".inspector")?.getBoundingClientRect();
+      if (!workspace || !rail || !observatory || !inspector) return { ok: false };
+      return {
+        ok: true,
+        stacked: observatory.top >= rail.bottom - 2 && inspector.top >= observatory.bottom - 2,
+        observatoryShare: observatory.width / workspace.width,
+        inspectorShare: inspector.width / workspace.width,
+        observatoryWidth: observatory.width,
+      };
+    });
+    expect(layout.ok).toBe(true);
+    expect(layout.stacked).toBe(true);
+    expect(layout.observatoryShare).toBeGreaterThan(0.9);
+    expect(layout.inspectorShare).toBeGreaterThan(0.9);
+    expect(layout.observatoryWidth).toBeGreaterThan(500);
+  });
+});
+
+test.describe("narrow desktop inspector", () => {
+  test.use({ viewport: { width: 830, height: 970 } });
+  test("the atlas is not squeezed beside the dossier", async ({ page }) => {
+    await open(page);
+    await page.getByTestId("recorded-open").click();
+    await branch(page, /Art and culture/).first().click();
+    await page.getByTestId("evidence-open").click();
+    await expect(page.getByTestId("evidence-inspector")).toBeVisible();
+    const layout = await page.evaluate(() => {
+      const observatory = document.querySelector(".observatory")?.getBoundingClientRect();
+      const inspector = document.querySelector(".inspector")?.getBoundingClientRect();
+      if (!observatory || !inspector) return { ok: false };
+      return {
+        ok: true,
+        observatoryWidth: observatory.width,
+        stacked: inspector.top >= observatory.bottom - 2,
+      };
+    });
+    expect(layout.ok).toBe(true);
+    expect(layout.stacked).toBe(true);
+    expect(layout.observatoryWidth).toBeGreaterThan(700);
+  });
 });
 
 test.describe("mobile", () => {

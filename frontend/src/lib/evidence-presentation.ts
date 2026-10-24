@@ -151,6 +151,8 @@ export function presentEvidenceText(raw: string): PresentedEvidence {
   text = text.replace(LEVEL, (match) => LEVELS[match] ?? match.toLowerCase());
   text = text.replace(/\burn:[a-z0-9][a-z0-9:_-]*/giu, "A recorded cultural tag:");
   text = text.replace(/\bexemplars\b/gu, "examples").replace(/\bexemplar\b/gu, "example");
+  text = text.replace(/\bto the extent its \w+ evidence supports\b/gu, "to the extent its observed cultural evidence supports");
+  text = text.replace(/\b\w+ call budget\b/gu, "evidence-call budget");
   text = text.replace(/\s+/gu, " ").replace(/\s+([,.;:])/gu, "$1").trim();
   return { display: text, codes: unique(codes), unknownCodes: unique(unknownCodes) };
 }
@@ -188,6 +190,11 @@ function rewriteKnownLine(line: string, codes: string[], unknownCodes: string[])
   }
   const route = line.match(/^Analysis route: (.+)\.?$/u);
   if (route) return `How the evidence was read: ${route[1]}.`;
+  const budget = line.match(/call budget \((\d+)\) spent\.?$/iu);
+  if (budget) {
+    codes.push("NOT_COLLECTED_BUDGET");
+    return `Optional evidence was not collected: the evidence-call budget (${budget[1]}) was spent.`;
+  }
   return line;
 }
 
