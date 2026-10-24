@@ -89,6 +89,15 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 5. **A system directive cannot be confirmed.** A rejected directive does not become a confirmable alternative, and a second confirmation is refused.
 6. **Not investigated is not unsupported.** Incomplete or interrupted is not "no usable evidence." Evidence support is not an investment recommendation.
 
+## Deployment provenance (permanent, from Sprint 8F)
+
+1. **GitHub is the canonical source.** `RaulMermans/cultural-elasticity` is the only release repository. Do not deploy from copied archives as the ordinary process.
+2. **`main` is the release branch.** `sprint/*` is for development. Do not merge to `main` or connect production auto-deploy without explicit release authorization.
+3. **Vercel Authentication is All Deployments** before any new frontend deployment. `all_except_custom_domains` left the production alias public in Sprint 8E. If a supposedly protected URL returns the app anonymously, stop automation and report `VERCEL_PROTECTION_GATE_FAILED`.
+4. **PRs never consume Anthropic or Qloo credits.** `.github/workflows/ci.yml` has `contents: read` and empty provider keys. Do not add `pull_request_target`, deploy tokens, or `eval:agent:live` to pull-request CI.
+5. **Railway stays one replica, admissions off, until a live run is separately approved.** Connecting GitHub must not enable PR environments or unreviewed auto-deploys.
+6. **Operator `/ops/status` may expose Git SHA and branch.** It must never expose secrets, commit messages, or provider keys.
+
 ## Engineering
 
 - Keep **frontend/backend boundaries clean.** The frontend talks only to the backend. Only the backend talks to Qloo, through `QlooClient` (`backend/src/qloo`).
@@ -119,6 +128,10 @@ pnpm eval:query -- --live
 pnpm test:e2e           # browser tests against a SYNTHETIC job API; never live Qloo or Haiku
                         # real Haiku interpretation, dry run (no Qloo): LIVE_HAIKU_INTERPRETATION
 pnpm feasibility:qloo   # live; report its result separately
+pnpm smoke:offline
+pnpm smoke:docker       # local image; no provider network for the MCP handshake
 pnpm smoke:remote -- https://<backend-origin>
                         # deployed backend, admissions paused only; no paid call (secrets from env)
+node scripts/vercel-protection-probe.mjs https://<vercel-url>
+                        # anonymous fetch; HTTP 200 of the app is VERCEL_PROTECTION_GATE_FAILED
 ```

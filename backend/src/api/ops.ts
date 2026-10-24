@@ -6,6 +6,7 @@ import { lifecycle } from "../ops/lifecycle.js";
 import { opsMetrics } from "../ops/metrics.js";
 import { probeProviders, providerConnectivity, type ProviderName } from "../ops/providers.js";
 import { registeredJobs } from "../ops/server.js";
+import { deploymentRevision } from "../ops/revision.js";
 import { spendLedger } from "../ops/spend.js";
 import { readiness } from "./health.js";
 
@@ -27,6 +28,7 @@ export async function opsRoutes(app: FastifyInstance): Promise<void> {
       bootId: lifecycle().bootId,
       startedAt: lifecycle().startedAt,
       shuttingDown: lifecycle().shuttingDown,
+      revision: deploymentRevision(),
       readiness: readiness(),
       providerConnectivity: providerConnectivity(),
       spend: spendLedger().snapshot(),
