@@ -143,8 +143,9 @@ Target WCAG 2.2 AA. Visible focus, labels on fields, dialogs with names, status 
 ## Responsive
 
 - ≥1100px: context rail, atlas, selected finding.
-- 721–1099px: atlas and finding; context as a compact header.
+- 721–1099px: compact context header, full-width atlas, finding beneath. Do not place a side finding that clips the tree.
 - ≤720px: guided branch list. No desktop graph. No horizontal overflow.
+- The landing preview scales the recorded tree to fit its pane. It is a complete peek, not a clipped fragment.
 
 Primary CTA remains above the fold at 1440×900 and 390×844.
 

@@ -115,6 +115,24 @@ test("a recorded example is labelled and does not start a job", async ({ page })
   expect(jobs).toEqual([]);
 });
 
+test("the landing preview keeps nested territories inside the pane", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await open(page);
+  const hospitality = page.locator("[data-preview='true']").getByRole("button", { name: /design-led boutique hospitality/i });
+  await expect(hospitality).toBeVisible({ timeout: 20_000 });
+  await expect.poll(async () => {
+    const preview = await page.locator(".landing__preview").boundingBox();
+    const node = await hospitality.boundingBox();
+    if (!preview || !node) return false;
+    return (
+      node.x >= preview.x - 2 &&
+      node.y >= preview.y - 2 &&
+      node.x + node.width <= preview.x + preview.width + 2 &&
+      node.y + node.height <= preview.y + preview.height + 2
+    );
+  }).toBe(true);
+});
+
 test("paused admissions keep the recorded example as the primary action", async ({ page }) => {
   await page.route("**/api/agent/admissions", async (route) => {
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ status: "paused" }) });
@@ -191,6 +209,21 @@ test.describe("reduced motion", () => {
     await open(page);
     await investigate(page);
     await expect(branch(page, /Coastal cooking/)).toHaveAttribute("data-reduced", "true");
+  });
+});
+
+test.describe("tablet", () => {
+  test.use({ viewport: { width: 768, height: 1024 } });
+  test("the recorded tree keeps nested territories in view", async ({ page }) => {
+    await open(page);
+    await page.getByTestId("recorded-open").click();
+    const hospitality = branch(page, /design-led boutique hospitality/);
+    await expect(hospitality).toBeVisible({ timeout: 15_000 });
+    await expect(hospitality).toBeInViewport();
+    const box = await hospitality.boundingBox();
+    expect(box).toBeTruthy();
+    expect(box!.x).toBeGreaterThanOrEqual(-2);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(770);
   });
 });
 

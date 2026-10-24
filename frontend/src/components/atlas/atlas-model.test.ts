@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { boxOf, buildAtlas, layoutAtlas, overlappingPairs, reasonCopy, shortStatus } from "./atlas-model.ts";
+import { atlasExtent, boxOf, buildAtlas, layoutAtlas, overlappingPairs, reasonCopy, shortStatus } from "./atlas-model.ts";
 import type { QueryResponse } from "@cultural-elasticity/shared";
 
 const id = "00000000-0000-4000-8000-0000000000aa";
@@ -248,6 +248,11 @@ test("layout keeps long labels inside collision-free boxes", () => {
   const long = first.find((node) => node.id === "c")!;
   assert.ok(boxOf(long, placed.get("c")!).height >= 76);
   assert.equal(shortStatus("unsupported", "No usable evidence"), "No evidence");
+  const extent = atlasExtent(first.map((node) => ({ ...node, ...(placed.get(node.id) ?? { x: 0, y: 0 }) })));
+  for (const box of boxes) {
+    assert.ok(box.x + box.width <= extent.width, "panel must sit inside the atlas extent");
+    assert.ok(box.y + box.height <= extent.height, "panel must sit inside the atlas extent");
+  }
 });
 
 test("the recorded example lays out without overlapping panels", async () => {

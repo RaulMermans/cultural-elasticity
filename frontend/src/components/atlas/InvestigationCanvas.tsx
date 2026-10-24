@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AtlasConnection } from "./AtlasConnection";
 import { AtlasNode } from "./AtlasNode";
 import { atlasExtent, boxOf, neighborId, type AtlasDraft } from "./atlas-model";
@@ -25,15 +25,33 @@ export function InvestigationCanvas({
   onSelect: (id: string) => void;
 }) {
   const scroller = useRef<HTMLDivElement>(null);
+  const [fit, setFit] = useState(1);
   const visible = useMemo(() => (guided ? guidedNodes(nodes, selectedId) : nodes), [guided, nodes, selectedId]);
   const extent = atlasExtent(nodes);
   useEffect(() => {
+    if (preview) return;
     const selected = scroller.current?.querySelector<HTMLElement>("[aria-pressed='true']");
     selected?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: reducedMotion ? "auto" : "smooth" });
-  }, [selectedId, reducedMotion, guided]);
+  }, [selectedId, reducedMotion, guided, preview]);
+  useEffect(() => {
+    if (!preview) return;
+    const el = scroller.current;
+    if (!el) return;
+    const measure = () => {
+      const pad = 28;
+      const sx = (el.clientWidth - pad) / extent.width;
+      const sy = (el.clientHeight - pad) / extent.height;
+      if (!Number.isFinite(sx) || !Number.isFinite(sy) || sx <= 0 || sy <= 0) return;
+      setFit(Math.min(1, sx, sy) * 0.94);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [preview, extent.width, extent.height]);
 
-  return (
-    <div className="canvas" ref={scroller} data-testid="atlas-canvas" role="group" aria-label="Investigation">
+  const tree = (
+    <>
       {guided ? null : (
         <svg className="canvas__edges" aria-hidden="true" viewBox={`0 0 ${extent.width} ${extent.height}`} width={extent.width} height={extent.height}>
           {nodes.map((node) => {
@@ -62,6 +80,24 @@ export function InvestigationCanvas({
           </div>
         ))}
       </div>
+    </>
+  );
+
+  return (
+    <div className="canvas" ref={scroller} data-testid="atlas-canvas" data-preview={preview ? "true" : "false"} role="group" aria-label="Investigation">
+      {preview && !guided ? (
+        <div
+          className="canvas__stage"
+          style={{
+            width: extent.width,
+            height: extent.height,
+            transform: `scale(${fit})`,
+            transformOrigin: "0 0",
+          }}
+        >
+          {tree}
+        </div>
+      ) : tree}
     </div>
   );
 }
