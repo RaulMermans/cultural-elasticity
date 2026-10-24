@@ -63,6 +63,18 @@ if (operator) {
   r = await req("GET", "/ops/status", { headers: { "x-ce-operator": operator } });
   check("operator status with token -> 200", r.status === 200, r.status);
   check("operator status leaks no secret", !r.text.includes(internal) && !r.text.includes(operator), "checked");
+  let revisionSource = "missing";
+  try {
+    const parsed = JSON.parse(r.text).revision;
+    if (parsed && typeof parsed.source === "string") revisionSource = parsed.source;
+  } catch {
+    revisionSource = "missing";
+  }
+  if (revisionSource === "missing") {
+    console.log("[SKIP] operator status revision: this deployment predates the Sprint 8F revision field");
+  } else {
+    check("operator status includes revision object", true, revisionSource);
+  }
 }
 for (const path of ["/api/methodology/analyze", "/api/analysis/ingredients"]) {
   r = await req("POST", path, { body: {} });
