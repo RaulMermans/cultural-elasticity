@@ -94,7 +94,8 @@ Preview of this branch only. Authentication must remain **All Deployments**. No 
 
 ## 10. Git
 
-Branch: `sprint/9a-product-experience-reinvention` (from `sprint/8f2-deployment-activation`). SHA filled after commit.
+Branch: `sprint/9a-product-experience-reinvention` (from `sprint/8f2-deployment-activation`).  
+Commit: `ab77f81e8316ff6648d43757c167dc9e2935ba2b` — *Sprint 9A: reinvent the Living Atlas as a Cultural Observatory.*
 
 ## 11. Remaining visual defects
 
