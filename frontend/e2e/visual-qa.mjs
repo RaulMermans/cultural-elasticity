@@ -15,7 +15,7 @@ await page.goto("http://127.0.0.1:3100/", { waitUntil: "domcontentloaded", timeo
 await page.getByTestId("atlas-app").waitFor();
 await page.screenshot({ path: shot("01-opening.png"), fullPage: true });
 
-await page.getByTestId("recorded-open").click();
+await page.goto("http://127.0.0.1:3100/?recorded=1", { waitUntil: "domcontentloaded", timeout: 120_000 });
 await page.getByRole("note").waitFor();
 await page.screenshot({ path: shot("02-recorded.png"), fullPage: true });
 

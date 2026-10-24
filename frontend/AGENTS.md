@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Living Atlas
 
-The product page is the Living Atlas. Follow `.agents/skills/living-atlas-design/SKILL.md` (version 4). Tokens live in `src/app/globals.css`. A recorded example is served from `src/app/api/demo/recorded` and is labelled `RECORDED_EXAMPLE`. It is not a live investigation. When live admissions are paused, the primary action is the recorded Jacquemus investigation — never an enabled Ask that can only return ADMISSIONS_PAUSED.
+The product page is the Living Atlas. Follow `.agents/skills/living-atlas-design/SKILL.md` (version 5). Tokens live in `src/app/globals.css`. The opening screen is an empty observatory. Do not hardcode a brand, territory tree, or recorded investigation into the product UI. A recorded artifact may be served from `src/app/api/demo/recorded` and is labelled `RECORDED_EXAMPLE`; it is not a live investigation and is not the landing. When live admissions are paused, never present an enabled Ask that can only return ADMISSIONS_PAUSED.
 
 The browser calls only the Next.js routes under `src/app/api/agent/jobs`. Those routes call the backend. Do not put `QLOO_API_KEY` or `ANTHROPIC_API_KEY` in client code, and do not give the client a backend URL.
 

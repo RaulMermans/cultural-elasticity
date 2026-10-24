@@ -24,14 +24,14 @@ await pausedLanding();
 await page.setViewportSize({ width: 1440, height: 900 });
 await page.goto("http://127.0.0.1:3100/", { waitUntil: "domcontentloaded", timeout: 120_000 });
 await page.getByTestId("atlas-app").waitFor();
-await page.locator(".landing__preview .atlas-node").first().waitFor({ timeout: 20_000 });
+await page.getByTestId("landing-empty").waitFor({ timeout: 20_000 });
 await page.screenshot({ path: shot("01-homepage-1440x900.png") });
 
 await page.setViewportSize({ width: 390, height: 844 });
 await page.screenshot({ path: shot("02-homepage-390x844.png") });
 
 await page.setViewportSize({ width: 1440, height: 900 });
-await page.getByTestId("recorded-open").click();
+await page.goto("http://127.0.0.1:3100/?recorded=1", { waitUntil: "domcontentloaded", timeout: 120_000 });
 await page.getByRole("note").waitFor();
 await page.getByTestId("atlas-stage").waitFor();
 await page.screenshot({ path: shot("03-desktop-atlas-1440x900.png") });

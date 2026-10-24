@@ -41,7 +41,7 @@ export function admissionCopy(status: AdmissionStatus): AdmissionCopy {
       return {
         status,
         shortLabel: "Service connection unavailable.",
-        sentence: "The research service could not be reached. You can still explore the recorded example.",
+        sentence: "The research service could not be reached.",
         liveEnabled: false,
       };
     default:

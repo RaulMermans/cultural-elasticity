@@ -36,6 +36,11 @@ async function ask(page: import("@playwright/test").Page, query: string) {
   await page.getByTestId("query-submit").click();
 }
 
+async function openRecorded(page: import("@playwright/test").Page) {
+  await page.goto("/?recorded=1", { waitUntil: "domcontentloaded", timeout: 120_000 });
+  await expect(page.getByTestId("atlas-app")).toBeVisible();
+}
+
 async function investigate(page: import("@playwright/test").Page) {
   await ask(page, "Where could Paper Lantern expand?");
   await expect(branch(page, /Coastal cooking/)).toBeVisible({ timeout: 20_000 });
@@ -45,9 +50,10 @@ test("the opening page states the question", async ({ page }) => {
   await open(page);
   await expect(page.getByRole("heading", { name: "See where a brand can stretch." })).toBeVisible();
   await expect(page.locator(".landing__lede")).toContainText("cultural observatory");
-  await expect(page.getByTestId("recorded-open")).toBeVisible();
   await expect(page.getByTestId("query-input")).toBeVisible();
-  await expect(page.getByText("cultural distance")).toBeVisible();
+  await expect(page.getByTestId("landing-empty")).toContainText("empty until a brand is investigated");
+  await expect(page.getByText("Jacquemus")).toHaveCount(0);
+  await expect(page.locator(".landing__lede")).toContainText("cultural distance");
 });
 
 test("a question shows progress and then territories", async ({ page }) => {
@@ -110,32 +116,22 @@ test("a recorded example is labelled and does not start a job", async ({ page })
     if (request.method() === "POST" && request.url().includes("/api/agent/jobs")) jobs.push(request.url());
   });
   await open(page);
-  await page.getByTestId("recorded-open").click();
+  await openRecorded(page);
   await expect(page.getByRole("note")).toContainText("Recorded example", { timeout: 15_000 });
   await expect(branch(page, /Bohemian lifestyle/).first()).toBeVisible();
   await expect(branch(page, /Partial/).first()).toBeVisible();
   expect(jobs).toEqual([]);
 });
 
-test("the landing preview keeps nested territories inside the pane", async ({ page }) => {
+test("the landing observatory starts empty", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await open(page);
-  const hospitality = page.locator("[data-preview='true']").getByRole("button", { name: /design-led boutique hospitality/i });
-  await expect(hospitality).toBeVisible({ timeout: 20_000 });
-  await expect.poll(async () => {
-    const preview = await page.locator(".landing__preview").boundingBox();
-    const node = await hospitality.boundingBox();
-    if (!preview || !node) return false;
-    return (
-      node.x >= preview.x - 2 &&
-      node.y >= preview.y - 2 &&
-      node.x + node.width <= preview.x + preview.width + 2 &&
-      node.y + node.height <= preview.y + preview.height + 2
-    );
-  }).toBe(true);
+  await expect(page.getByTestId("landing-empty")).toBeVisible();
+  await expect(page.locator(".landing__preview .atlas-node")).toHaveCount(0);
+  await expect(page.getByText("Jacquemus")).toHaveCount(0);
 });
 
-test("paused admissions keep the recorded example as the primary action", async ({ page }) => {
+test("paused admissions do not enable Ask and do not preload a brand", async ({ page }) => {
   await page.route("**/api/agent/admissions", async (route) => {
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ status: "paused" }) });
   });
@@ -144,15 +140,14 @@ test("paused admissions keep the recorded example as the primary action", async 
     if (request.method() === "POST" && request.url().includes("/api/agent/jobs")) jobs.push(request.url());
   });
   await open(page);
-  await expect(page.getByTestId("recorded-open")).toBeVisible();
   await expect(page.getByTestId("query-submit")).toHaveCount(0);
+  await expect(page.getByTestId("recorded-open")).toHaveCount(0);
+  await expect(page.getByTestId("landing-empty")).toBeVisible();
   await expect(page.getByText("new investigations are paused")).toBeVisible();
   await expect(page.getByText("Live research temporarily unavailable.")).toBeVisible();
   await expect(page.getByText("Not connected")).toHaveCount(0);
   await expect(page.getByText("Service connection unavailable.")).toHaveCount(0);
-  await page.getByTestId("recorded-open").click();
-  await expect(branch(page, /Bohemian lifestyle/).first()).toBeVisible();
-  await expect(page.getByTestId("follow-up-submit")).toBeDisabled();
+  await expect(page.getByText("Jacquemus")).toHaveCount(0);
   expect(jobs).toEqual([]);
 });
 
@@ -164,13 +159,14 @@ test("unavailable admissions stay distinct from paused and do not enable Ask", a
   await expect(page.getByText("Service connection unavailable.")).toBeVisible();
   await expect(page.getByText("Live research temporarily unavailable.")).toHaveCount(0);
   await expect(page.getByTestId("query-submit")).toHaveCount(0);
-  await expect(page.getByTestId("recorded-open")).toBeVisible();
+  await expect(page.getByTestId("recorded-open")).toHaveCount(0);
+  await expect(page.getByText("Jacquemus")).toHaveCount(0);
 });
 
 test("selected findings use grounded evidence and keep methodology codes in technical details", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await open(page);
-  await page.getByTestId("recorded-open").click();
+  await openRecorded(page);
   await branch(page, /Bohemian lifestyle/).first().click();
   const finding = page.locator(".finding");
   await expect(finding.getByRole("heading", { name: "Bohemian lifestyle" })).toBeVisible();
@@ -190,7 +186,7 @@ test("selected findings use grounded evidence and keep methodology codes in tech
 test("atlas edges share the stage coordinate space with territory plates", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await open(page);
-  await page.getByTestId("recorded-open").click();
+  await openRecorded(page);
   const parent = branch(page, /Jacquemus/).first();
   const child = branch(page, /Art and culture/).first();
   await expect(parent).toBeVisible();
@@ -292,7 +288,7 @@ test.describe("tablet", () => {
   test.use({ viewport: { width: 768, height: 1024 } });
   test("the recorded tree keeps nested territories in view", async ({ page }) => {
     await open(page);
-    await page.getByTestId("recorded-open").click();
+    await openRecorded(page);
     const hospitality = branch(page, /design-led boutique hospitality/);
     await expect(hospitality).toBeVisible({ timeout: 15_000 });
     await expect(hospitality).toBeInViewport();
@@ -304,7 +300,7 @@ test.describe("tablet", () => {
 
   test("opening the dossier stacks under the atlas instead of clipping it", async ({ page }) => {
     await open(page);
-    await page.getByTestId("recorded-open").click();
+    await openRecorded(page);
     await branch(page, /Art and culture/).first().click();
     await page.getByTestId("evidence-open").click();
     await expect(page.getByTestId("evidence-inspector")).toBeVisible();
@@ -334,7 +330,7 @@ test.describe("narrow desktop inspector", () => {
   test.use({ viewport: { width: 830, height: 970 } });
   test("the atlas is not squeezed beside the dossier", async ({ page }) => {
     await open(page);
-    await page.getByTestId("recorded-open").click();
+    await openRecorded(page);
     await branch(page, /Art and culture/).first().click();
     await page.getByTestId("evidence-open").click();
     await expect(page.getByTestId("evidence-inspector")).toBeVisible();

@@ -1,14 +1,14 @@
 ---
 name: living-atlas-design
 description: Design and experience rules for the Cultural Elasticity Living Atlas. Use when changing the product UI, visual language, atlas layout, evidence presentation, or motion. This is a development skill, not a runtime investigation skill.
-version: "4"
+version: "5"
 ---
 
 # Living Atlas design and experience
 
-Version 4. This file is the authority for product UI decisions. Tokens are implemented in `frontend/src/app/globals.css` and must match the values here. `docs/design/LIVING_ATLAS_DESIGN_SYSTEM.md` points here; it does not override it.
+Version 5. This file is the authority for product UI decisions. Tokens are implemented in `frontend/src/app/globals.css` and must match the values here. `docs/design/LIVING_ATLAS_DESIGN_SYSTEM.md` points here; it does not override it.
 
-Version 4 keeps Cultural Observatory and the analytical rules from versions 1–3. It adds stage-aligned lineage edges, a docked evidence dossier, human-readable methodology presentation, and distinct connected-paused versus disconnected labels.
+Version 5 keeps Cultural Observatory and the analytical rules from versions 1–4. The opening screen is an empty observatory. It does not preload a brand, a territory tree, or a recorded investigation.
 
 This skill is not one of the seven runtime agent skills. Do not register it in `backend/src/agent/skills/`.
 
@@ -93,9 +93,11 @@ Desktop shows the tree on the observatory field. Edges are drawn in the same coo
 
 ## Interaction hierarchy
 
-The opening screen answers three questions above the fold: what this is, how to start, and that a recorded investigation can be opened without waiting.
+The opening screen answers three questions above the fold: what this is, how to start, and that the atlas is empty until a brand is investigated.
 
-When live investigations are paused or disconnected, the primary action is **Explore the Jacquemus investigation**. Do not present an enabled Ask that can only return `ADMISSIONS_PAUSED`.
+When live investigations are accepting, the primary action is **Ask a cultural question**. Do not preload a brand, territory tree, or recorded investigation on the landing.
+
+When live investigations are paused or disconnected, the observatory stays empty. Do not offer a hardcoded investigation, brand, or territory tree. Do not present an enabled Ask that can only return `ADMISSIONS_PAUSED`.
 
 Admission labels:
 
@@ -108,7 +110,7 @@ Admission labels:
 
 Never label a reachable paused backend as disconnected.
 
-When live investigations are accepting, expose them as a clearly labelled **Ask a cultural question** entry. The recorded example remains available and labelled as recorded.
+When live investigations are accepting, expose them as a clearly labelled **Ask a cultural question** entry. Do not preview an investigation until one has been asked.
 
 Territory actions (inspect, narrow, compare, return) appear after a territory is selected. One selected territory is the active context. Status is written in words, not carried by color alone.
 
@@ -160,7 +162,7 @@ Target WCAG 2.2 AA. Visible focus, labels on fields, dialogs with names, status 
 - ≥1100px: context rail, atlas, selected finding. The dossier occupies the finding column. Below 1440px it stays the finding-column width so the atlas does not shrink further.
 - 721–1099px: compact context header, full-width atlas, finding or dossier beneath. Do not force a third column that clips the tree.
 - ≤720px: guided branch list. No desktop graph. No horizontal overflow.
-- The landing preview scales the recorded tree to fit its pane. It is a complete peek, not a clipped fragment.
+- The landing observatory is an empty field. It is not a recorded tree peek.
 
 Primary CTA remains above the fold at 1440×900 and 390×844.
 

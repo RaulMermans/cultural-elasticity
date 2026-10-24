@@ -234,13 +234,38 @@ summary:focus-visible {
   background: transparent;
 }
 
+.landing__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  min-height: 22rem;
+  padding: 1.5rem 1.25rem 1.35rem;
+  color: #c9c0b3;
+}
+
+.landing__empty p {
+  margin: 0;
+  max-width: 22rem;
+  font-family: var(--ce-serif);
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.landing__empty .quiet {
+  color: #8a8174;
+  font-family: var(--ce-sans);
+  font-size: 0.9rem;
+}
+
 .composer {
   display: flex;
   gap: var(--ce-space-3);
   align-items: flex-end;
 }
 
-.composer--landing { margin-top: var(--ce-space-5); max-width: 36rem; }
+.composer--landing { margin-top: var(--ce-space-2); max-width: 36rem; }
 
 .composer--compact {
   margin-top: var(--ce-space-2);

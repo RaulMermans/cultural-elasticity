@@ -17,7 +17,7 @@ export function HowItWorks({ onClose }: { onClose: () => void }) {
       <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="how-title" data-testid="how-it-works">
         <h2 id="how-title">How the observatory works</h2>
         <ol className="how-list">
-          <li>Open a recorded investigation, or ask where a brand could expand.</li>
+          <li>Ask where a brand could expand. The atlas starts empty until that investigation returns territories.</li>
           <li>Territories appear as a lineage of research objects. An edge means investigated-from, not cultural distance.</li>
           <li>Select a territory to read the finding, remaining uncertainty, and the next useful action.</li>
           <li>Inspect evidence in layers: observed, calculated, inferred, and missing. Support is not a prediction of commercial success.</li>
