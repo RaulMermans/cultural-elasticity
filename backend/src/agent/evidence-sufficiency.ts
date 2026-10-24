@@ -33,6 +33,7 @@ import type { EvidenceSufficiencyVerdict, NextActionValue } from "@cultural-elas
 import { exemplarCandidates, frontierConcepts } from "./candidate-discovery.js";
 import { analysisReserve } from "./analysis-runner.js";
 import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
+import { frontierEvidenceBaseGap, viableFrontierCandidates } from "./frontier.js";
 import { barrenTypes, isReady, recoverable, recoveryOptions, territoryReadiness, typePreference } from "./readiness.js";
 import { comparisonSetSize, referenceEntityType, referencePlan } from "./reference-strategy.js";
 import { MIN_COMPARISON_SET } from "./router.js";
@@ -103,11 +104,16 @@ export function nextActionValues(state: AgentRunState): NextActionValue[] {
     else if (!room) add("add_references", null, "NONE", "no room left in the candidate or call budget; analysis stays partial");
   }
   if (intent === "explore_frontier") {
-    const viable = activeTerritories(state).filter((t) => t.role === "frontier_candidate" && state.results.get(t.key)?.analysisRoute !== "INSUFFICIENT_EVIDENCE").length;
-    if (viable >= MIN_FRONTIER_SUPPORTED + 1) add("propose_frontier", null, "NONE", `${viable} viable candidates`);
+    const viable = viableFrontierCandidates(state);
+    const gap = frontierEvidenceBaseGap(state);
+    const frontierTarget = MIN_FRONTIER_SUPPORTED + 1;
+    // Channel A is a discovery priority, not a territory-level finish blocker (runtime finish refuses HIGH
+    // actions with a target). Keep the entity id in the reason; outstanding still names the exact call.
+    if (gap) add(gap.action, null, viable < frontierTarget ? "HIGH" : "MEDIUM", `${gap.reason} (${gap.action} ${gap.target})`);
+    if (viable >= frontierTarget) add("propose_frontier", null, "NONE", `${viable} viable Qloo-grounded candidates`);
     else if (!room) add("propose_frontier", null, "NONE", "no room left in the candidate or call budget");
     else if (state.skillUsage.get("explore_candidate_territories")?.exhausted || state.skillUsage.get("explore_candidate_territories")?.qlooSpent) add("propose_frontier", null, "NONE", "the frontier skill budget is spent");
-    else add("propose_frontier", null, state.related.length === 0 || frontierConcepts(state, 1).length > 0 ? "HIGH" : "MEDIUM", `${viable} viable frontier candidate(s); fewer than ${MIN_FRONTIER_SUPPORTED + 1}`);
+    else add("propose_frontier", null, gap ? "MEDIUM" : frontierConcepts(state, 1).length > 0 ? "HIGH" : "MEDIUM", `${viable} viable Qloo-grounded candidate(s); fewer than ${frontierTarget}`);
   }
 
   const ready = open.filter((t) => isReady(territoryReadiness(state, t)));

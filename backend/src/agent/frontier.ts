@@ -21,7 +21,7 @@ import { setOverlap } from "../analysis/overlap.js";
 import { matchOperationalRule } from "../methodology/operational-tags.js";
 import { frontierConcepts, labelTokens } from "./candidate-discovery.js";
 import { canonicalConceptKey, canonicalRelation, canonicalTagName } from "./concept-dedup.js";
-import { conceptPools, eligibleMembers, territoryQueryTags } from "./probe-policy.js";
+import { conceptPools, eligibleMembers, territoryConcepts, territoryProbeState, territoryQueryTags } from "./probe-policy.js";
 import { memoRun } from "./derived-cache.js";
 import { preferredTypeFor } from "./representation-alignment.js";
 import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
@@ -147,6 +147,113 @@ export function outsideFrontierEvidenceBase(state: AgentRunState, entityId: stri
   const base = frontierEvidenceBase(state);
   if (base.includes(entityId)) return null;
   return `the frontier evidence base is the first ${base.length} related entities in Qloo's order (fixed, so repeated runs see the same evidence); this entity is outside it. Choose candidates from frontierConcepts`;
+}
+
+export type FrontierEvidenceBaseGap = {
+  action: "qloo_related_entities" | "qloo_get_entity_tags";
+  target: string;
+  remaining: number;
+  reason: string;
+};
+
+/**
+ * Sprint 8D: Channel A is incomplete when related entities have not been fetched, or a member of the fixed
+ * evidence base still has no tag profile. Derived from this run's Qloo answers only.
+ */
+export function frontierEvidenceBaseGap(state: AgentRunState): FrontierEvidenceBaseGap | null {
+  if (state.interpretation?.intent !== "explore_frontier") return null;
+  const brandId = state.brand.entity?.id;
+  if (!brandId) return null;
+  if (state.related.length === 0) {
+    return {
+      action: "qloo_related_entities",
+      target: brandId,
+      remaining: 1,
+      reason: "the frontier evidence base starts with the brand's related entities (qloo_related_entities)",
+    };
+  }
+  const base = frontierEvidenceBase(state);
+  const unprofiled = base.filter((id) => !state.profiles.has(id));
+  if (unprofiled.length === 0) return null;
+  return {
+    action: "qloo_get_entity_tags",
+    target: unprofiled[0]!,
+    remaining: unprofiled.length,
+    reason: `profile the remaining ${unprofiled.length} related entit${unprofiled.length === 1 ? "y" : "ies"} in the fixed evidence base before ungrounded probes`,
+  };
+}
+
+function inFlightCandidateTags(state: AgentRunState): Set<string> {
+  const ids = new Set<string>();
+  const open = activeTerritories(state).filter((x) => x.role === "frontier_candidate" && x.status !== "analyzed");
+  const labelKeys = new Set(open.map((t) => canonicalConceptKey(t.label)));
+  for (const t of open) {
+    for (const id of territoryConcepts(state, t)) ids.add(id);
+  }
+  // A proposed candidate may be probed on an observed tag that is the same concept as its label, even before
+  // the tag is attached as sourceTagId (scripted and live hypothesis investigation).
+  for (const [id] of state.tags) {
+    if (labelKeys.has(canonicalConceptKey(id))) ids.add(id);
+  }
+  return ids;
+}
+
+/**
+ * Sprint 8D: refuse brand-independent probes of hypothesized tags while Channel A is incomplete.
+ * Related entities must be fetched first. After that, tags already in frontierConcepts (from collected related
+ * profiles) and in-flight candidate concepts stay legal so a partial evidence base can still be investigated.
+ * Hypothesized tags that are not in that pool wait until the remaining related profiles are collected.
+ */
+export function ungroundedFrontierProbeReason(state: AgentRunState, tagIds: readonly string[]): string | null {
+  const gap = frontierEvidenceBaseGap(state);
+  if (!gap) return null;
+  const allowed = inFlightCandidateTags(state);
+  if (tagIds.some((id) => allowed.has(id))) return null;
+  if (gap.action === "qloo_get_entity_tags") {
+    const poolIds = new Set(frontierCandidatePool(state).map((entry) => entry.tagId));
+    if (tagIds.length > 0 && tagIds.every((id) => poolIds.has(id))) return null;
+  }
+  return `${gap.reason}; do not probe hypothesized concepts until they appear in frontierConcepts or are proposed as candidates`;
+}
+
+/** Pool members not yet used as a territory's grounding tag, concept, or proposal evidence. */
+export function unusedFrontierPoolEntries(state: AgentRunState): FrontierPoolEntry[] {
+  return frontierCandidatePool(state).filter(
+    (entry) =>
+      !state.territories.some(
+        (t) => t.sourceTagId === entry.tagId || t.concept?.id === entry.tagId || t.evidenceTagIds.includes(entry.tagId),
+      ),
+  );
+}
+
+/**
+ * Frontier candidates that still count toward the exploration target.
+ * Sprint 8D: unsupported agent hypotheses and probe-exhausted shells do not fill the quota.
+ */
+export function viableFrontierCandidates(state: AgentRunState): number {
+  return activeTerritories(state).filter((t) => {
+    if (t.role !== "frontier_candidate") return false;
+    if (state.results.get(t.key)?.analysisRoute === "INSUFFICIENT_EVIDENCE") return false;
+    if (qlooSupport(state, t)) return true;
+    return t.origin === "qloo_evidence" && !territoryProbeState(state, t).exhausted;
+  }).length;
+}
+
+/**
+ * Sprint 8D: an agent hypothesis that already returned no members must not consume further empty probes while unused
+ * Qloo-grounded pool concepts remain. The first empty probe is exploration; a second is unproductive.
+ */
+export function unproductiveHypothesisProbeReason(state: AgentRunState, tagIds: readonly string[]): string | null {
+  if (state.interpretation?.intent !== "explore_frontier") return null;
+  if (unusedFrontierPoolEntries(state).length === 0) return null;
+  for (const t of activeTerritories(state).filter((x) => x.role === "frontier_candidate" && x.origin === "agent_hypothesis")) {
+    if (!tagIds.some((id) => territoryConcepts(state, t).includes(id))) continue;
+    const probe = territoryProbeState(state, t);
+    if (!probe.anySuccessful && probe.totalEmpty >= 1) {
+      return `${t.label} is an agent hypothesis whose probes returned no members; unused Qloo-grounded frontierConcepts remain. Propose one of those instead of another empty probe`;
+    }
+  }
+  return null;
 }
 
 export type FrontierPoolEntry = { tagId: string; label: string; canonicalConceptKey: string; support: number; probes: { type: string; members: number }[] };

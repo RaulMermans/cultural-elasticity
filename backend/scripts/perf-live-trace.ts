@@ -12,6 +12,7 @@ import { AgentRuntime } from "../src/agent/runtime.js";
 import { loadLocalEnvFile } from "../src/config/env.js";
 import { buildPerfReport, formatPerfReport } from "../src/ops/perf-report.js";
 import { scrubSecrets } from "../src/qloo/transport.js";
+import type { AgentRunResponse } from "@cultural-elasticity/shared";
 
 const backendRoot = fileURLToPath(new URL("..", import.meta.url));
 const REQUEST = {
@@ -54,7 +55,7 @@ async function main(): Promise<number> {
   const result = await runtime.run(REQUEST);
   const wall = Date.now() - started;
   const report = buildPerfReport(result);
-  const outDir = join(backendRoot, "feasibility-output", "sprint8c-live-trace");
+  const outDir = join(backendRoot, "feasibility-output", "sprint8d-live-trace");
   mkdirSync(outDir, { recursive: true });
   const payload = {
     notice: "LIVE Haiku + LIVE Qloo. One run. Not a full readiness gate.",
@@ -65,6 +66,7 @@ async function main(): Promise<number> {
     report,
     metrics: result.metrics,
     spanCount: result.trace.spans?.length ?? 0,
+    investigation: investigationSummary(result),
   };
   const text = JSON.stringify(payload, null, 2);
   if (scrubSecrets(text) !== text) throw new Error("credential material detected; not written");
@@ -73,6 +75,29 @@ async function main(): Promise<number> {
   console.log(`wrote ${join(outDir, "report.json")}`);
   provider.close?.();
   return result.status === "FAILED" ? 1 : 0;
+}
+
+function investigationSummary(result: AgentRunResponse) {
+  if (result.status === "NEEDS_INPUT") {
+    return { intent: null, territories: [], invalidActionCodes: [], earlyStops: [] };
+  }
+  return {
+    intent: result.intent,
+    territories: result.territories.map((t) => ({
+      key: t.key,
+      label: t.label,
+      role: t.role,
+      origin: t.origin,
+      evidenceStatus: t.evidenceStatus ?? null,
+      analysisRoute: t.analysisRoute,
+      resolvedConcept: t.resolvedConcept ? { id: t.resolvedConcept.id, label: t.resolvedConcept.label } : null,
+      representation: t.representation.summary,
+    })),
+    invalidActionCodes: result.trace.turns.flatMap((t) =>
+      t.decisions.flatMap((d) => (d.rejection ? [d.rejection.split(":")[0]!] : [])),
+    ),
+    earlyStops: result.trace.earlyStops.map((e) => ({ tool: e.tool, code: e.code, reason: e.reason.slice(0, 220) })),
+  };
 }
 
 process.exit(await main());

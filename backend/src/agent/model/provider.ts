@@ -78,6 +78,8 @@ export type AgentDecisionContext = {
     referencePlan?: { entityType: string | null; required: number; valid: number; needed: number; pending: string[]; feasible: boolean; reason: string; rejectedCandidates: { label: string; status: string; reasonCode: string }[]; turnsNeeded?: number; turnsLeft?: number };
     conceptDedup?: string[];
     analysisResults?: { key: string; route: string; classification: string | null; robustness: string | null }[];
+    /** Sprint 8D: ids and queries that cannot change the result if requested again. */
+    alreadyCollected?: { profiledEntityIds: string[]; searchedQueries: string[] };
   };
   /** Sprint 5A: nextSteps and the open plan moved into `focus` (one authoritative statement of what remains). */
   sufficiency: { verdict: EvidenceSufficiencyVerdict; reasons: string[]; nextActions: NextActionValue[]; materialGap: boolean };

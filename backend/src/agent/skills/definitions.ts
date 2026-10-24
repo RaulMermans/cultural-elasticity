@@ -17,6 +17,7 @@
 import type { AnalysisRoute } from "@cultural-elasticity/shared";
 import { z } from "zod";
 import { MIN_FRONTIER_SUPPORTED } from "../contracts.js";
+import { viableFrontierCandidates } from "../frontier.js";
 import { isReady, recoverable, territoryReadiness } from "../readiness.js";
 import { comparisonSetSize, referenceEntityType, referencePlan } from "../reference-strategy.js";
 import { MIN_COMPARISON_SET } from "../router.js";
@@ -30,10 +31,7 @@ const discoverySpent = (state: AgentRunState, id: string) => spent(state, id) ||
 const open = (state: AgentRunState) => activeTerritories(state).filter((t) => t.status !== "analyzed");
 const keys = z.array(z.string());
 
-/** Frontier candidates still viable: not dropped, and not analyzed as INSUFFICIENT_EVIDENCE. */
-export function viableFrontierCandidates(state: AgentRunState): number {
-  return activeTerritories(state).filter((t) => t.role === "frontier_candidate" && state.results.get(t.key)?.analysisRoute !== "INSUFFICIENT_EVIDENCE").length;
-}
+export { viableFrontierCandidates } from "../frontier.js";
 /** Frontier exploration aims for one candidate more than the minimum, so one weak candidate does not end the set. */
 export const FRONTIER_TARGET = MIN_FRONTIER_SUPPORTED + 1;
 
@@ -194,7 +192,9 @@ export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: n
   // v4 (Sprint 5A.2, live L-E1/L-E2): a candidate whose grounding tag returns members is anchored to it by the runtime;
   // an alternate anchor must be the same concept (same canonical name or alias) with observed members while the
   // grounding tag has none; in the last two turns, candidates with members are represented and analyzed first.
-  version: 4,
+  // v5 (Sprint 8D): Channel A evidence base before ungrounded probes; agent hypotheses with empty probes do not fill
+  // the viable-candidate target while unused frontierConcepts remain.
+  version: 5,
   purpose: "Generate distinct frontier candidates from two channels (Qloo-grounded concepts and agent hypotheses), each of which must still pass Qloo validation.",
   intents: ["explore_frontier"],
   preconditions: ["explore_frontier", "brand resolved", `fewer than ${FRONTIER_TARGET} viable candidates`, "room in the candidate and call budgets"],
@@ -218,7 +218,7 @@ export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: n
   failureModes: ["CONCEPT_DUPLICATION_ERROR", "TERRITORY_RESOLUTION_ERROR", "QLOO_DATA_LIMIT"],
   evalIds: ["ir-frontier", "dtd-unsupported-hypothesis", "dtd-near-duplicate", "sk-frontier-two-channels", "sk-frontier-morph-duplicate", "sk-dedup-model-distinct", "s5-frontier-incidental-excluded", "s51-frontier-evidence-base", "s51-frontier-canonical-anchor", "s52-frontier-namespace-type-evidence"],
   procedure:
-    "Channel A (Qloo-grounded): fetch the brand profile, the Qloo-related brands, and the tag profiles of the first 6 related brands in Qloo's order (the fixed evidence base); frontierConcepts is the resulting candidate pool (canonical, deduplicated, ordered by support). Propose candidates from it with origin qloo_evidence and their tag in evidenceTagIds; test each on that tag first with the entity type its nextProbe recommends (Qloo evidence, not a fixed place/brand order). A grounding tag that returns members anchors its candidate automatically; validate its representation next. Anchor another tag only when the grounding tag returned no members and the other tag is the same concept (same canonical name) with observed members; a different concept is proposed as its own candidate. Prefer candidates that can share one entity type (focus type alignment). In the last two turns, represent and analyze the candidates that have members instead of probing new ones. Channel B (agent hypothesis): you may propose a non-obvious lateral territory (origin agent_hypothesis); it must then be found in Qloo tags, anchored, and shown to have Qloo members, or it is dropped. Aim for candidates that are coherent cultural territories, distinct from each other (not venue amenities, decor or service options); give your semantic judgment when proposing; label likely duplicates with assess_concept_duplicates.",
+    "Channel A first: fetch the brand profile, the Qloo-related brands, and the tag profiles of the first 6 related brands in Qloo's order (the fixed evidence base). frontierConcepts is the resulting candidate pool (canonical, deduplicated, ordered by support). Probe tags already in frontierConcepts (or already proposed candidates) as soon as they appear; do not probe hypothesized concepts that are not in that pool until the remaining related profiles are collected. Propose candidates from the pool with origin qloo_evidence and their tag in evidenceTagIds; test each on that tag first with the entity type its nextProbe recommends (Qloo evidence, not a fixed place/brand order). A grounding tag that returns members anchors its candidate automatically; validate its representation next. Anchor another tag only when the grounding tag returned no members and the other tag is the same concept (same canonical name) with observed members; a different concept is proposed as its own candidate. Prefer candidates that can share one entity type (focus type alignment). An agent hypothesis that returned no members does not fill the candidate target: propose the next unused frontierConcepts entry instead of another empty probe. Do not retry a profile, tag query or probe the last turn refused (NO_VALUE_ACTION, DUPLICATE_ACTION, FRONTIER_EVIDENCE_PENDING). In the last two turns, represent and analyze the candidates that have members instead of probing new ones. Channel B (agent hypothesis): after the evidence base is collected you may propose a non-obvious lateral territory (origin agent_hypothesis); it must then be found in Qloo tags, anchored, and shown to have Qloo members, or it is dropped. Aim for candidates that are coherent cultural territories, distinct from each other (not venue amenities, decor or service options); give your semantic judgment when proposing; label likely duplicates with assess_concept_duplicates.",
 };
 
 export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { analyzed: string[] }> = {
