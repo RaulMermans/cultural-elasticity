@@ -27,6 +27,7 @@ import { AgentRuntime } from "../src/agent/runtime.js";
 import { AGENT_ALLOWED_PERMISSIONS } from "../src/agent/tool-executor.js";
 import { INTERNAL_TOOL_NAMES } from "../src/agent/tool-registry.js";
 import type { AgentToolProvider } from "../src/agent/tool-provider.js";
+import type { SpendBound } from "../src/ops/spend.js";
 import { benchmarkSchema, pairwiseAssertions, type Benchmark } from "./benchmark/benchmark.js";
 import { scrubSecrets } from "../src/qloo/transport.js";
 import { benchmarkNames, competenceMetrics, leakPatternFor, methodologyConsistent, splitRenderedSummary, type CompetenceMetrics, type EvaluatedRun } from "./agent-eval-harness.js";
@@ -104,17 +105,18 @@ export function checkLive(c: LiveCase, response: AgentRunResponse, askedUser: bo
   return f;
 }
 
-export async function runLiveCase(c: LiveCase, arm: Arm, model: AgentModel, provider: AgentToolProvider): Promise<LiveRun> {
+/** `spend` (Sprint 8E): optional per-run bound from the suite spend guard; the baseline arm makes no model calls. */
+export async function runLiveCase(c: LiveCase, arm: Arm, model: AgentModel, provider: AgentToolProvider, spend?: SpendBound): Promise<LiveRun> {
   const recording = new Recording(model);
   const runtime = new AgentRuntime({ model: recording, provider });
-  let response = await runtime.run(c.request, defaultLimits(c.intent as never));
+  let response = await runtime.run(c.request, defaultLimits(c.intent as never), spend ? { spend } : {});
   let askedUser = false;
   let continued = false;
   if (response.status === "NEEDS_INPUT") {
     askedUser = true;
     const option = response.options.find((o) => (o.type ?? "").includes("brand")) ?? response.options[0];
     if (c.answer === "first_brand_option" && option) {
-      response = await runtime.continue(response.runId, option.id);
+      response = await runtime.continue(response.runId, option.id, spend ? { spend } : {});
       continued = true;
     }
   }
