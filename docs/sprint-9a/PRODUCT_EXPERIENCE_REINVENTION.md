@@ -107,7 +107,8 @@ A later commit on this branch will create a new protected preview of the same Gi
 
 Branch: `sprint/9a-product-experience-reinvention` (from `sprint/8f2-deployment-activation`).  
 Implementation: `ab77f81e8316ff6648d43757c167dc9e2935ba2b` — *Sprint 9A: reinvent the Living Atlas as a Cultural Observatory.*  
-Report SHA (this file, first cut): `0237d521a8c392c35894bc4d0e37e4278cf60d45`.
+Layout follow-up: `d2a79fb563cbd8ef5bddfb465720dc06c4059032` — landing preview fit, tablet stack, recaptured after screenshots.  
+Report SHA (first cut): `0237d521a8c392c35894bc4d0e37e4278cf60d45`.
 
 ## 11. Remaining visual defects
 
