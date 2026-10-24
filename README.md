@@ -4,7 +4,11 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 8B — Live agent optimization and Vercel proof
+## Current status: Sprint 8E — Live agent validation and Railway deployment
+
+- **Sprint 8E** brand-scopes the frontier evidence base, gates every paid live eval on an owner-approved ceiling (`pnpm eval:agent:budget`; the full gate's reserved exposure is $28.08), and re-ran the live Jacquemus parent: 0 invalid actions, 3 PARTIAL, 0 FULL, 256 s, $0.017. The backend runs on Railway (one service, one replica, admissions **off**, remote smoke 22/22). Vercel integration is **not verified**. The agent stays **`AGENT_MODEL_NOT_READY`** (`LIVE_GATE_BLOCKED_BY_APPROVAL`). See [docs/sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md](docs/sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md).
+
+## Previous status: Sprint 8B — Live agent optimization and Vercel proof
 
 - **Sprint 8B** traces a live Haiku+Qloo parent investigation (95% span coverage), reserves Qloo budget at dispatch, memos duplicate derived views, and validates C9’s late-answer grader on live L-C2 and L-E1 (`TAG_TYPE_EVIDENCE_VALID:pass`). A protected Hobby preview proves Node 22 Functions and fake-MCP subprocesses. Official Workflow SDK compiles locally; hosted step registration failed. The agent stays **`AGENT_MODEL_NOT_READY`** (full 7-case gate not repeated). Vercel-only is **`VERCEL_ONLY_CONDITIONAL`**. See [docs/sprint-8b/LIVE_AGENT_OPTIMIZATION_AND_VERCEL_PROOF.md](docs/sprint-8b/LIVE_AGENT_OPTIMIZATION_AND_VERCEL_PROOF.md). No commit/push without owner approval.
 

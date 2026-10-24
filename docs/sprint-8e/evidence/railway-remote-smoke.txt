@@ -1,0 +1,24 @@
+[PASS] health 200: 200
+[PASS] ready 503 ADMISSIONS_PAUSED: 503
+[PASS] job without auth -> 401: 401
+[PASS] job with wrong secret -> 401: 401
+[PASS] authenticated job while paused -> 503 (no paid call): 503
+[PASS] baseline override refused (403, or 503 while paused): 503
+[PASS] client-supplied identity headers do not authenticate: 401
+[PASS] /api/agent/query without auth refused: 404
+[PASS] /api/agent/interpret without auth refused: 404
+[PASS] /api/agent/analyze without auth refused: 404
+[PASS] /api/agent/follow-up without auth refused: 404
+[PASS] /api/agent/continue without auth refused: 404
+[PASS] job poll without auth/token refused: 401
+[PASS] cancel without auth refused: 401
+[PASS] operator status without token -> 404: 404
+[PASS] provider probe without token -> 404: 404
+[PASS] operator status with token -> 200: 200
+[PASS] operator status leaks no secret: checked
+[PASS] /api/methodology/analyze closed in public mode: 404
+[PASS] /api/analysis/ingredients closed in public mode: 404
+[PASS] oversized body refused (413 or connection closed): 413
+[PASS] no /debug route: 404
+
+REMOTE_SMOKE PASS 22/22

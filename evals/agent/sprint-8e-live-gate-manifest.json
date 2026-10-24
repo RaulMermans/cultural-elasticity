@@ -1,0 +1,35 @@
+{
+  "fixtureType": "evaluation-criteria",
+  "notice": "Sprint 8E execution manifest for the frozen live readiness gate. Not a result. LIVE Haiku + LIVE Qloo if executed. Supersedes the 8D manifest's $2.50 reserve, which could not cover its own token maxima. Credentials on disk are not authorization; approval.approvedCeilingUsd stays null until the owner approves a figure.",
+  "version": "sprint-8e-live-gate-manifest-v1",
+  "supersedes": "sprint-8d-live-gate-manifest-v1",
+  "gate": "agent-readiness-gate-v3",
+  "evaluators": "run-evaluators-v2.1",
+  "stabilityMetrics": "frontier-stability-metrics-v3",
+  "stabilityCriteria": "frontier-stability-criteria-v1",
+  "model": { "id": "claude-haiku-5-5", "effort": "high", "decisionMaxTokens": 16000 },
+  "cases": {
+    "prescribedModel": ["L-M1", "L-M2", "L-M3", "L-C1", "L-C2", "L-E1", "L-E2"],
+    "prescribedBaseline": ["L-M1", "L-M2", "L-M3", "L-C1", "L-C2", "L-E1", "L-E2"],
+    "frontierStability": { "cases": ["L-E1", "L-E2"], "requiredRuns": 3 },
+    "controlled": "evals/agent/controlled-cases.json (outside prescribed denominator; runs in both arms)"
+  },
+  "budgetAssumptions": {
+    "perCallInputTokensCeiling": 100000,
+    "maxRepairsPerTurn": 1,
+    "maxSynthesisAttempts": 2,
+    "sdkMaxRetries": 2,
+    "observedRunUsd": 0.0184,
+    "expectedVarianceMultiplier": 1.5,
+    "controlledPreflightQlooCalls": 10,
+    "notes": "Prices from backend/src/ops/pricing.ts (as of 2026-10-07). Reservations use the conservative Haiku tier ($0.50/$2.50 per MTok). No hard decision-context cap exists; 100K input per call is an assumption (8C live mean ≈ 8.7K). Baseline arm makes no model calls. Qloo hackathon calls have no published USD rate."
+  },
+  "approval": {
+    "approvedCeilingUsd": null,
+    "providerWorkspaceLimitUsd": null,
+    "qlooQuotaCalls": null
+  },
+  "preflight": "pnpm eval:agent:budget -- --approved-usd <owner-approved USD> [--workspace-limit-usd N] [--qloo-quota N]",
+  "command": "pnpm eval:agent:live -- --arms baseline,model --stability 3 --approved-usd <owner-approved USD> --out backend/feasibility-output/sprint8e-live-gate",
+  "authorization": "The model arm refuses to start unless --approved-usd passes validateGateBudget (backend/scripts/live-gate-budget.ts). Do not treat a cherry-picked subset as the gate."
+}

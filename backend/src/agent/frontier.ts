@@ -120,7 +120,7 @@ export const FRONTIER_EVIDENCE_BASE = 6;
 /** Candidate-pool size shown to the agent. */
 export const FRONTIER_POOL_SIZE = 12;
 
-/** The brand's related entities in Qloo order (first related call for the brand). */
+/** The brand's related entities in Qloo order (first related call for the current canonical brand id). */
 function relatedOrder(state: AgentRunState): string[] {
   const brandId = state.brand.entity?.id;
   return state.related.find((r) => r.subjectId === brandId)?.memberIds ?? [];
@@ -164,7 +164,9 @@ export function frontierEvidenceBaseGap(state: AgentRunState): FrontierEvidenceB
   if (state.interpretation?.intent !== "explore_frontier") return null;
   const brandId = state.brand.entity?.id;
   if (!brandId) return null;
-  if (state.related.length === 0) {
+  // Sprint 8E: only a related call for THIS brand id starts the evidence base; a related call about another entity
+  // (or an earlier canonical brand id) is not evidence that the brand's related entities were collected.
+  if (!state.related.some((r) => r.subjectId === brandId)) {
     return {
       action: "qloo_related_entities",
       target: brandId,

@@ -8,6 +8,11 @@
  *   --benchmark [keys]      also run benchmark brands through the agent (comma-separated keys; default all)
  *   --baseline-from <file>  reuse the BASELINE runs' metrics of an earlier report.json (only with the case ids it covered)
  *   --out <dir>             output directory (default backend/feasibility-output/sprint5a2-live/<timestamp>)
+ *   --approved-usd N        Sprint 8E: owner-approved model spend ceiling. The model arm refuses to start (exit 4, no paid
+ *                           call, no Qloo call) unless it covers the reserved exposure of evals/agent/sprint-8e-live-gate-
+ *                           manifest.json (scripts/live-gate-budget.ts). Every model run then gets a per-run SpendBound and
+ *                           no run starts past APP_ENFORCED_STOP_THRESHOLD_USD.
+ *   --workspace-limit-usd N the Anthropic workspace limit the owner reports (optional; refused if below the ceiling)
  *
  * Sprint 5A.1: the controlled positive scenario(s) of evals/agent/controlled-cases.json run too (in both arms, after a live
  * preflight of their preconditions) whenever --cases is absent or names them; they are reported separately and never
@@ -17,7 +22,7 @@
  * claude-haiku-5-5 only). A case that throws counts as errored and stays in the denominator; nothing is dropped.
  *
  * Live runs make real Qloo calls (spaced; minutes per case). Results are written per run with traces.
- * Exit codes: 0 completed (whatever the readiness decision) · 3 not configured · 1 failure.
+ * Exit codes: 0 completed (whatever the readiness decision) · 3 not configured · 4 budget preflight refused · 1 failure.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -30,6 +35,7 @@ import { AgentRuntime } from "../src/agent/runtime.js";
 import { loadLocalEnvFile } from "../src/config/env.js";
 import { scrubSecrets } from "../src/qloo/transport.js";
 import { armMetrics, benchmarkTerritoryLabels, efficiency, evaluateBenchmarkRun, loadBenchmark, loadControlledCases, loadLiveManifest, preflightControlledCase, readinessGate, runLiveCase, stabilityReport, stageTiming, type Arm, type CaseError, type LiveRun, type PreflightResult, type StabilityReport } from "./agent-live-harness.js";
+import { computeGateExposure, loadGateManifest, SuiteSpendGuard, validateGateBudget } from "./live-gate-budget.js";
 import { evaluateRun } from "./run-evaluators.js";
 
 const args = process.argv.slice(2).filter((a) => a !== "--");
@@ -60,6 +66,27 @@ async function main(): Promise<number> {
   const controlledCases = controlledDoc.cases.filter((c) => !wanted || wanted.includes(c.id));
   const stamp = new Date().toISOString().replace(/[:.]/gu, "-");
   const out = resolve(process.env.INIT_CWD ?? process.cwd(), flag("--out") ?? join(backendRoot, "feasibility-output", "sprint5a2-live", stamp));
+
+  // Sprint 8E: no paid model run (and no Qloo call) before the budget preflight passes.
+  let guard: SuiteSpendGuard | null = null;
+  let budget: { manifest: string; exposure: ReturnType<typeof computeGateExposure>; verdict: ReturnType<typeof validateGateBudget> } | null = null;
+  if (arms.includes("LIVE_MODEL") && hasModelCredential()) {
+    const gateManifest = loadGateManifest();
+    const numberFlag = (name: string) => (flag(name) === undefined ? null : Number(flag(name)));
+    gateManifest.approval.approvedCeilingUsd = numberFlag("--approved-usd");
+    gateManifest.approval.providerWorkspaceLimitUsd = numberFlag("--workspace-limit-usd") ?? gateManifest.approval.providerWorkspaceLimitUsd;
+    const exposure = computeGateExposure(gateManifest);
+    const verdict = validateGateBudget(exposure, gateManifest.approval.approvedCeilingUsd);
+    budget = { manifest: gateManifest.version, exposure, verdict };
+    console.log(`Budget preflight (${gateManifest.version}): ${verdict.code} · expected $${exposure.EXPECTED_COST_USD} · reserved $${exposure.RESERVED_BUDGET_USD} · theoretical max $${exposure.MAX_THEORETICAL_EXPOSURE_USD} · stop threshold $${exposure.APP_ENFORCED_STOP_THRESHOLD_USD ?? "n/a"} · Qloo ≤ ${exposure.qloo.maxCalls} calls (${exposure.qloo.status})`);
+    for (const r of verdict.reasons) console.log(`  ✗ ${r}`);
+    for (const w of verdict.warnings) console.log(`  ! ${w}`);
+    if (!verdict.allowed) {
+      console.log(`${verdict.code}: the model arm was not started; no model or Qloo call was made.`);
+      return 4;
+    }
+    guard = new SuiteSpendGuard(gateManifest.approval.approvedCeilingUsd!, exposure.perRun.ceilingUsd);
+  }
   mkdirSync(out, { recursive: true });
 
   let provider;
@@ -77,6 +104,17 @@ async function main(): Promise<number> {
   const controlledRuns: Record<Arm, LiveRun[] | null> = { BASELINE: null, LIVE_MODEL: null };
   const preflight: PreflightResult[] = [];
   const errors: CaseError[] = [];
+  /** Every model-arm run goes through the suite guard; a run that throws is charged its full ceiling. */
+  const modelRun = async (c: Parameters<typeof runLiveCase>[0], model: AgentModel) => {
+    const bound = guard?.nextRun() ?? null;
+    if (!bound) throw new Error(`LIVE_GATE_STOPPED_BY_BUDGET: starting another model run could exceed the approved ceiling (spent $${guard?.spent() ?? "n/a"})`);
+    try {
+      return await runLiveCase(c, "LIVE_MODEL", model, provider, bound);
+    } catch (error) {
+      guard!.chargeErroredRun(bound);
+      throw error;
+    }
+  };
   try {
     // Sprint 5A.1: verify the controlled scenarios' Qloo preconditions first (live); a changed precondition is reported.
     for (const c of controlledCases) {
@@ -96,7 +134,7 @@ async function main(): Promise<number> {
       for (const c of cases) {
         const started = Date.now();
         try {
-          const run = await runLiveCase(c, arm, model, provider);
+          const run = arm === "LIVE_MODEL" ? await modelRun(c, model) : await runLiveCase(c, arm, model, provider);
           runs[arm]!.push(run);
           write(out, `${arm.toLowerCase()}-${c.id}.json`, run.response);
           const m = run.response.metrics;
@@ -111,7 +149,7 @@ async function main(): Promise<number> {
       controlledRuns[arm] = [];
       for (const c of controlledCases.filter((x) => preflight.find((p) => p.caseId === x.id)?.status === "PASS")) {
         try {
-          const run = await runLiveCase(c, arm, arm === "BASELINE" ? new BaselinePolicyModel() : createAgentModel("anthropic"), provider);
+          const run = arm === "BASELINE" ? await runLiveCase(c, arm, new BaselinePolicyModel(), provider) : await modelRun(c, createAgentModel("anthropic"));
           controlledRuns[arm]!.push(run);
           write(out, `${arm.toLowerCase()}-${c.id}.json`, run.response);
           console.log(`  [controlled] ${c.id} ${short(run)} · ${run.response.metrics.qloo_calls} Qloo · ${run.response.metrics.agent_iterations} it`);
@@ -136,7 +174,7 @@ async function main(): Promise<number> {
         const responses = first ? [first.response] : [];
         for (let i = responses.length; i < repeats; i += 1) {
           try {
-            const run = await runLiveCase(c, "LIVE_MODEL", createAgentModel("anthropic"), provider);
+            const run = await modelRun(c, createAgentModel("anthropic"));
             write(out, `live_model-${c.id}-stability-${i + 1}.json`, run.response);
             responses.push(run.response);
             console.log(`  [stability] ${c.id} run ${i + 1}: ${short(run)}`);
@@ -181,7 +219,12 @@ async function main(): Promise<number> {
           if (!brand) continue;
           // The request carries only the brand name and territory WORDS; labels stay in this script.
           const territories = b.territorySet.map((id) => labels[id] ?? id);
-          const response = await new AgentRuntime({ model, provider }).run({ userQuery: `For ${brand.label}, compare ${territories.join(", ")}.`, brand: brand.label, territories });
+          const bound = arm === "LIVE_MODEL" ? guard?.nextRun() : undefined;
+          if (arm === "LIVE_MODEL" && !bound) {
+            console.log(`  [benchmark ${arm}] ${key}: LIVE_GATE_STOPPED_BY_BUDGET (not run)`);
+            continue;
+          }
+          const response = await new AgentRuntime({ model, provider }).run({ userQuery: `For ${brand.label}, compare ${territories.join(", ")}.`, brand: brand.label, territories }, undefined, bound ? { spend: bound } : {});
           write(out, `benchmark-${arm.toLowerCase()}-${key}.json`, response);
           const evaluated = evaluateBenchmarkRun(b, key, response);
           benchmark.arms[arm]!.push(evaluated);
@@ -207,6 +250,7 @@ async function main(): Promise<number> {
       efficiency: { BASELINE: runs.BASELINE ? efficiency(runs.BASELINE) : null, LIVE_MODEL: runs.LIVE_MODEL ? efficiency(runs.LIVE_MODEL) : null },
       stability: stability ?? (runs.LIVE_MODEL ? "not requested" : LIVE_AGENT_MODEL_VALIDATION_NOT_RUN),
       benchmark,
+      budget: budget ? { ...budget, suiteSpentUsd: guard?.spent() ?? null, note: "suite spend = provider-reported usage + full ceilings for calls or runs with unknown usage; in-memory, not an invoice" } : null,
     };
     write(out, "report.json", report);
     console.log("\nMetrics (arms are reported separately; never merged)");

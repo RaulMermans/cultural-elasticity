@@ -72,4 +72,36 @@ await launch(["--help"]);
 await launch(["exec", "--help"]);
 process.stdout.write("HARNESS_STARTS\n");
 '
+
+# Sprint 8E: the MCP subprocess the agent uses (`qloo mcp`) must complete initialize + tools/list.
+# Runs with networking disabled, so it provably makes no Qloo call.
+docker run --rm -i -w /app --network none \
+  -e QLOO_API_KEY=smoke-not-a-real-key \
+  -e QLOO_API_BASE_URL=https://hackathon.api.qloo.com \
+  "$IMAGE" node --input-type=module - <<'MCP'
+import { spawn } from "node:child_process";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+const bin = join(dirname(fileURLToPath(import.meta.resolve("@qloo/qloo-harness"))), "bin.js");
+const child = spawn(process.execPath, [bin, "mcp"], { stdio: ["pipe", "pipe", "pipe"], env: { ...process.env } });
+let buf = ""; const started = Date.now();
+const send = (m) => child.stdin.write(JSON.stringify(m) + "\n");
+const timer = setTimeout(() => { console.error("MCP handshake timed out"); child.kill("SIGTERM"); process.exit(3); }, 15000);
+child.stdout.setEncoding("utf8").on("data", (c) => {
+  buf += c; let i;
+  while ((i = buf.indexOf("\n")) >= 0) {
+    const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
+    let msg; try { msg = JSON.parse(line); } catch { continue; }
+    if (msg.id === 1) { send({ jsonrpc: "2.0", method: "notifications/initialized" }); send({ jsonrpc: "2.0", id: 2, method: "tools/list", params: {} }); }
+    if (msg.id === 2) {
+      const tools = msg.result?.tools ?? [];
+      clearTimeout(timer); child.kill("SIGTERM");
+      if (tools.length === 0) { console.error("MCP tools/list returned no tools"); process.exit(4); }
+      process.stdout.write(`MCP_HANDSHAKE_OK tools=${tools.length} startup_ms=${Date.now() - started}\n`); process.exit(0);
+    }
+  }
+});
+send({ jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "ce-smoke", version: "0" } } });
+MCP
+
 echo "DOCKER_SMOKE_PASS"
