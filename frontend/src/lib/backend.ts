@@ -1,4 +1,5 @@
 import "server-only";
+import { interpretAdmissionProbe, type AdmissionView } from "./admissions";
 import { backendBaseUrl } from "./backend-url";
 import {
   isAgentRunResponse,
@@ -155,19 +156,20 @@ async function backendFetch(path: string, init: RequestInit, timeoutMs: number, 
   }
 }
 
-export type AdmissionProbe = { status: "accepting" | "paused" | "unavailable" };
+export type AdmissionProbe = AdmissionView;
 
 /**
- * Admission only. Proxies `/ready` and returns a public view with no boot id,
- * credential flags, or spend figures. This is not a paid provider call.
+ * Admission only. Proxies `/ready` (and `/health` if needed) and returns a public
+ * view with no boot id, credential flags, or spend figures. This is not a paid
+ * provider call. A reachable service that is not accepting is paused, never disconnected.
  */
 export async function getAdmissionStatus(): Promise<AdmissionProbe> {
-  const result = await backendFetch("/ready", {}, 2000);
-  if (!result || !isRecord(result.body)) return { status: "unavailable" };
-  if (result.body.acceptingInvestigations === true) return { status: "accepting" };
-  const reasons = Array.isArray(result.body.reasons) ? result.body.reasons : [];
-  if (result.body.acceptingInvestigations === false || reasons.includes("ADMISSIONS_PAUSED")) return { status: "paused" };
-  return { status: "unavailable" };
+  const ready = await backendFetch("/ready", {}, 2500);
+  const readyBody = ready && isRecord(ready.body) ? ready.body : null;
+  if (readyBody?.acceptingInvestigations === true) return { status: "accepting" };
+  if (readyBody?.acceptingInvestigations === false) return { status: "paused" };
+  const health = ready ? null : await backendFetch("/health", {}, 2000);
+  return interpretAdmissionProbe({ ready, health });
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

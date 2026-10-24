@@ -5,10 +5,10 @@ import type { InvestigationOperation, QueryResponse, QueryTerritoryNode, Territo
 
 export const PANEL_WIDTH = 216;
 export const PANEL_MIN_HEIGHT = 76;
-export const COLUMN_GAP = 40;
-export const ROW_GAP = 20;
+export const COLUMN_GAP = 48;
+export const ROW_GAP = 24;
 export const TREE_GAP = 48;
-export const ATLAS_MARGIN = 24;
+export const ATLAS_MARGIN = 28;
 /** @deprecated Use COLUMN_GAP. Kept so older layout notes still resolve. */
 export const ATLAS_COLUMN = PANEL_WIDTH + COLUMN_GAP;
 /** @deprecated Use measured node heights. */
@@ -40,9 +40,21 @@ const norm = (value: string | null | undefined) => (value ?? "").normalize("NFKC
 export function nodeSize(node: LayoutNode): { width: number; height: number } {
   const width = node.kind === "brand" ? 188 : PANEL_WIDTH;
   const title = (node.label ?? "Territory").trim();
-  const charsPerLine = node.kind === "brand" ? 16 : 22;
-  const titleLines = Math.max(1, Math.ceil(title.length / charsPerLine));
-  const height = Math.max(PANEL_MIN_HEIGHT, 14 + titleLines * 22 + 6 + 18 + 14);
+  const charsPerLine = node.kind === "brand" ? 16 : 20;
+  const words = title.split(/\s+/u);
+  const wrappedLines = Math.max(
+    1,
+    words.reduce((lines, word) => {
+      const current = lines[lines.length - 1] ?? "";
+      if (!current) return [word];
+      if (`${current} ${word}`.length <= charsPerLine) {
+        lines[lines.length - 1] = `${current} ${word}`;
+        return lines;
+      }
+      return [...lines, word];
+    }, [] as string[]).length,
+  );
+  const height = Math.max(PANEL_MIN_HEIGHT, 16 + wrappedLines * 24 + 8 + 20 + 16);
   return { width, height };
 }
 
@@ -265,12 +277,18 @@ function resolveCollisions(nodes: readonly LayoutNode[], positions: Map<string, 
   }
 }
 
-export function edgePath(from: AtlasBox, to: AtlasBox): string {
+export function edgeAnchors(from: AtlasBox, to: AtlasBox): { startX: number; startY: number; midX: number; endX: number; endY: number } {
   const startX = from.x + from.width;
   const startY = from.y + from.height / 2;
   const endX = to.x;
   const endY = to.y + to.height / 2;
-  const midX = startX + Math.max(28, (endX - startX) / 2);
+  const gap = endX - startX;
+  const midX = startX + Math.max(16, Math.min(gap / 2, 28));
+  return { startX, startY, midX, endX, endY };
+}
+
+export function edgePath(from: AtlasBox, to: AtlasBox): string {
+  const { startX, startY, midX, endX, endY } = edgeAnchors(from, to);
   return `M ${startX} ${startY} H ${midX} V ${endY} H ${endX}`;
 }
 
@@ -377,13 +395,20 @@ export function evidenceSections(response: QueryResponse, scope: EvidenceScope):
     if (!territory && analysis.layers.systemAnalysis.routes.length > 0) {
       calculated.push("Routes were calculated for the investigation. Open a territory to see its own route.");
     }
-    if (route) calculated.push(`Analysis route: ${routeLabel(route.route)}.`);
-    if (route?.classification) calculated.push(`Provisional class: ${route.classification}. This is not a recommendation.`);
-    if (route?.robustness) calculated.push(`Representation robustness: ${route.robustness}.`);
-    if (typeof route?.position === "number") calculated.push(`Position ${route.position} is only within this comparison, not an absolute score.`);
+    const keyEvidence = territory?.keyEvidence ?? [];
+    if (keyEvidence.length > 0) {
+      for (const line of keyEvidence) calculated.push(line);
+    } else {
+      if (route) calculated.push(`Analysis route: ${routeLabel(route.route)}.`);
+      if (route?.classification) calculated.push(`Provisional class: ${route.classification}. This is not a recommendation.`);
+      if (route?.robustness) calculated.push(`Representation robustness: ${route.robustness}.`);
+      if (typeof route?.position === "number") calculated.push(`Position ${route.position} is only within this comparison, not an absolute score.`);
+    }
   }
   if (territory) {
-    for (const line of territory.keyEvidence) calculated.push(line);
+    if (!analysis.layers && territory.keyEvidence) {
+      for (const line of territory.keyEvidence) calculated.push(line);
+    }
     for (const limitation of territory.limitations) unavailable.push(limitation.detail);
     provenance.push(...(territory.provenance?.correlationIds ?? []));
   } else if (analysis.summary.text) interpreted.push(analysis.summary.text);

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { QueryComposer } from "./QueryComposer";
 import { InvestigationCanvas } from "./InvestigationCanvas";
 import { buildAtlas, layoutAtlas, type AtlasDraft } from "./atlas-model";
-import { liveQuestionsEnabled, type AdmissionStatus } from "@/lib/admissions";
+import { admissionCopy, liveQuestionsEnabled, type AdmissionStatus } from "@/lib/admissions";
 
 export function Landing({
   admissions,
@@ -21,6 +21,7 @@ export function Landing({
   onHow: () => void;
 }) {
   const live = liveQuestionsEnabled(admissions);
+  const status = admissionCopy(admissions);
   const preview = useRecordedPreview();
   const nodes = useMemo(() => placed(preview.nodes), [preview.nodes]);
   return (
@@ -40,10 +41,13 @@ export function Landing({
           </button>
         </div>
         {admissions === "paused" ? (
-          <p className="landing__note">Live investigations are paused. The Jacquemus example is a recorded investigation, not a new query.</p>
+          <p className="landing__note">{status.sentence} The Jacquemus example is a recorded investigation, not a new query.</p>
         ) : null}
         {admissions === "unavailable" ? (
-          <p className="landing__note">Live investigations are not connected. You can still explore the recorded Jacquemus example.</p>
+          <p className="landing__note">{status.sentence}</p>
+        ) : null}
+        {admissions === "unknown" ? (
+          <p className="landing__note">{status.sentence}</p>
         ) : null}
         {live ? (
           <div>

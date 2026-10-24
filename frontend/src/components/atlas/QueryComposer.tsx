@@ -27,12 +27,12 @@ export function QueryComposer({
       }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
-        <label htmlFor="question" className={compact ? undefined : "sr-only"}>Your question</label>
+        <label htmlFor="question" className="sr-only">Your question</label>
         <input
           id="question"
           data-testid="query-input"
           value={value}
-          placeholder="Where could your brand go next?"
+          placeholder={compact ? "Ask a new cultural question" : "Where could your brand go next?"}
           maxLength={2000}
           onChange={(event) => setValue(event.target.value)}
         />

@@ -1,7 +1,7 @@
 "use client";
 
 import { parseQueryResponse, type QueryResponse } from "@cultural-elasticity/shared";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { liveQuestionsEnabled } from "@/lib/admissions";
 import { AlternativeConfirmation } from "./AlternativeConfirmation";
 import { AtlasNavigation } from "./AtlasNavigation";
@@ -23,6 +23,7 @@ export function AtlasApp() {
   const atlas = useAtlas();
   const [dismissed, setDismissed] = useState<string | null>(null);
   const [how, setHow] = useState(false);
+  const inspectRef = useRef<HTMLButtonElement>(null);
   const latest = atlas.latest;
   const dialogId = latest?.queryId ?? null;
   const showDialogs = dialogId !== null && dialogId !== dismissed && !atlas.active;
@@ -68,21 +69,30 @@ export function AtlasApp() {
       ) : (
         <div className="workspace">
           <aside className="rail">
-            <p className="kicker">{recorded ? "Recorded investigation" : "Investigation"}</p>
-            <p className="badge" data-kind={recorded ? "recorded" : liveEnabled ? "live" : "paused"}>
-              {recorded ? "Recorded example" : liveEnabled ? "Live" : "Live paused"}
-            </p>
-            <h2>{atlas.nodes.find((node) => node.kind === "brand")?.label ?? "Investigation"}</h2>
-            {question ? <p className="quiet">{question}</p> : null}
-            <AtlasNavigation nodes={atlas.nodes} selectedId={atlas.selected?.id ?? null} onSelect={atlas.select} />
-            <InvestigationHistory nodes={atlas.nodes} onSelect={atlas.select} />
-            {liveEnabled ? <QueryComposer busy={Boolean(atlas.active)} compact onSubmit={(query) => void atlas.submit({ query })} /> : (
-              <p className="quiet">Live questions are not being accepted right now.</p>
+            <div className="rail__identity">
+              <p className="kicker">{recorded ? "Recorded investigation" : "Investigation"}</p>
+              <p className="badge" data-kind={recorded ? "recorded" : liveEnabled ? "live" : "paused"}>
+                {recorded ? "Recorded example" : liveEnabled ? "Live" : "Live paused"}
+              </p>
+              <h2>{atlas.nodes.find((node) => node.kind === "brand")?.label ?? "Investigation"}</h2>
+              {question ? <p className="quiet">{question}</p> : null}
+            </div>
+            <div className="rail__path">
+              <AtlasNavigation nodes={atlas.nodes} selectedId={atlas.selected?.id ?? null} onSelect={atlas.select} />
+              <InvestigationHistory nodes={atlas.nodes} onSelect={atlas.select} />
+            </div>
+            {liveEnabled ? (
+              <div className="rail__ask">
+                <p className="kicker">New question</p>
+                <QueryComposer busy={Boolean(atlas.active)} compact onSubmit={(query) => void atlas.submit({ query })} />
+              </div>
+            ) : (
+              <p className="quiet rail__ask">Live questions are not being accepted right now.</p>
             )}
             {atlas.active ? (
               <InvestigationProgress label={atlas.active.stageLabel} stopping={atlas.active.stopping} onCancel={() => void atlas.cancel(atlas.active!)} />
             ) : null}
-            {recorded ? <p className="recorded quiet" role="note">Recorded example. These findings are from an earlier investigation. They are not a new live query.</p> : null}
+            {recorded ? <p className="recorded quiet rail__note" role="note">Recorded example. These findings are from an earlier investigation. They are not a new live query.</p> : null}
             {atlas.notice ? <p className="notice" role="alert">{atlas.notice}</p> : null}
             {outcome ? (
               <section className="recovery" role="status" data-testid="query-outcome">
@@ -106,7 +116,20 @@ export function AtlasApp() {
               onSelect={atlas.select}
             />
           </div>
-          {atlas.selected ? (
+          {atlas.inspectorOpen && response ? (
+            <EvidenceInspector
+              response={response}
+              scope={{
+                territoryKey: atlas.selected?.kind === "territory" ? atlas.selected.territoryKey : null,
+                territoryName: atlas.selected?.kind === "territory" ? atlas.selected.label : null,
+                runId: atlas.selected?.runId ?? null,
+              }}
+              onClose={() => {
+                atlas.closeInspector();
+                queueMicrotask(() => inspectRef.current?.focus());
+              }}
+            />
+          ) : atlas.selected ? (
             <TerritoryDetail
               node={atlas.selected}
               response={response}
@@ -114,6 +137,7 @@ export function AtlasApp() {
               canCompare={comparison.ok}
               comparisonNote={comparison.ok ? null : comparison.reason}
               liveEnabled={liveEnabled}
+              inspectRef={inspectRef}
               onInspect={atlas.openInspector}
               onCompare={() => atlas.toggleCompare(atlas.selected!.id)}
               onFollow={(query) => {
@@ -155,17 +179,6 @@ export function AtlasApp() {
           ) : <p className="quiet finding">Select a territory to read what the evidence supports.</p>}
         </div>
       )}
-      {atlas.inspectorOpen && response ? (
-        <EvidenceInspector
-          response={response}
-          scope={{
-            territoryKey: atlas.selected?.kind === "territory" ? atlas.selected.territoryKey : null,
-            territoryName: atlas.selected?.kind === "territory" ? atlas.selected.label : null,
-            runId: atlas.selected?.runId ?? null,
-          }}
-          onClose={atlas.closeInspector}
-        />
-      ) : null}
       {how ? <HowItWorks onClose={() => setHow(false)} /> : null}
       {clarify ? (
         <ClarificationDialog

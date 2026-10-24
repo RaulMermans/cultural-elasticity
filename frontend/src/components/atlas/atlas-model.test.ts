@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { atlasExtent, boxOf, buildAtlas, layoutAtlas, overlappingPairs, reasonCopy, shortStatus } from "./atlas-model.ts";
+import { atlasExtent, boxOf, buildAtlas, edgeAnchors, edgePath, layoutAtlas, overlappingPairs, reasonCopy, shortStatus } from "./atlas-model.ts";
 import type { QueryResponse } from "@cultural-elasticity/shared";
 
 const id = "00000000-0000-4000-8000-0000000000aa";
@@ -253,6 +253,41 @@ test("layout keeps long labels inside collision-free boxes", () => {
     assert.ok(box.x + box.width <= extent.width, "panel must sit inside the atlas extent");
     assert.ok(box.y + box.height <= extent.height, "panel must sit inside the atlas extent");
   }
+});
+
+test("edges start on the parent plate and end on the child plate", () => {
+  const from = { x: 10, y: 40, width: 188, height: 76 };
+  const to = { x: 246, y: 20, width: 216, height: 96 };
+  const anchors = edgeAnchors(from, to);
+  assert.equal(anchors.startX, from.x + from.width);
+  assert.equal(anchors.startY, from.y + from.height / 2);
+  assert.equal(anchors.endX, to.x);
+  assert.equal(anchors.endY, to.y + to.height / 2);
+  assert.ok(anchors.midX > anchors.startX && anchors.midX < anchors.endX);
+  const path = edgePath(from, to);
+  assert.match(path, new RegExp(`^M ${anchors.startX} ${anchors.startY}`));
+  assert.match(path, new RegExp(`H ${anchors.endX}$`));
+});
+
+test("layout is deterministic, keeps long names, and holds deep branches without overlap", () => {
+  const nodes = [
+    { id: "brand", parentId: null, label: "A brand with an unusually long displayed name", kind: "brand" as const },
+    { id: "a", parentId: "brand", label: "Art and culture", kind: "territory" as const },
+    { id: "b", parentId: "brand", label: "Bohemian lifestyle", kind: "territory" as const },
+    { id: "c", parentId: "brand", label: "Avant-garde experimental fashion", kind: "territory" as const },
+    { id: "d", parentId: "a", label: "design-led boutique hospitality", kind: "territory" as const },
+    { id: "e", parentId: "d", label: "Quiet members-only dining rooms", kind: "territory" as const },
+  ];
+  const first = layoutAtlas(nodes, new Map());
+  const second = layoutAtlas(nodes, new Map());
+  assert.deepEqual([...first.entries()], [...second.entries()]);
+  const boxes = nodes.map((node) => boxOf(node, first.get(node.id)!));
+  assert.equal(overlappingPairs(boxes).length, 0);
+  assert.ok((first.get("e")?.x ?? 0) > (first.get("d")?.x ?? 0));
+  assert.ok((first.get("d")?.x ?? 0) > (first.get("a")?.x ?? 0));
+  const kept = layoutAtlas(nodes, first);
+  assert.deepEqual(kept.get("a"), first.get("a"));
+  assert.ok(boxOf(nodes[2]!, first.get("c")!).height >= 76);
 });
 
 test("the recorded example lays out without overlapping panels", async () => {

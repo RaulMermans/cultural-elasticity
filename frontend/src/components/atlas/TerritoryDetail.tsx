@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type Ref } from "react";
 import type { QueryResponse } from "@cultural-elasticity/shared";
-import type { AtlasDraft } from "./atlas-model";
+import { findingCopy } from "@/lib/evidence-presentation";
+import { evidenceSections, type AtlasDraft } from "./atlas-model";
 
 export function TerritoryDetail({
   node,
@@ -16,6 +17,7 @@ export function TerritoryDetail({
   canCompare,
   comparisonNote,
   liveEnabled,
+  inspectRef,
 }: {
   node: AtlasDraft;
   response: QueryResponse | null;
@@ -28,31 +30,60 @@ export function TerritoryDetail({
   canCompare: boolean;
   comparisonNote: string | null;
   liveEnabled: boolean;
+  inspectRef?: Ref<HTMLButtonElement>;
 }) {
   const [narrower, setNarrower] = useState("");
   const canReturn = response?.nextOperations.includes("return_to_parent") ?? false;
   const canFollow = Boolean(node.runId) && node.kind === "territory";
-  const summary = response?.investigation?.result && response.investigation.result.status !== "NEEDS_INPUT" ? response.investigation.result.summary.text : null;
   const question = response?.interpretation?.rawQuery ?? null;
-  const relevance = node.kind === "territory"
-    ? node.detail
-    : summary ?? node.detail;
+  const sections = response
+    ? evidenceSections(response, {
+      territoryKey: node.kind === "territory" ? node.territoryKey : null,
+      territoryName: node.kind === "territory" ? node.label : null,
+      runId: node.runId,
+    })
+    : null;
+  const finding = sections
+    ? findingCopy({
+      kind: node.kind,
+      tone: node.tone,
+      statusLabel: node.statusLabel,
+      observed: sections.observed,
+      calculated: sections.calculated,
+      unavailable: sections.unavailable,
+    })
+    : {
+      statusLabel: node.statusLabel,
+      observation: node.detail,
+      whyItMatters: node.kind === "territory"
+        ? "Its place on the atlas is investigation lineage, not a score."
+        : "Open a territory to read what the evidence supports.",
+      limitations: [],
+      unresolved: [],
+      empty: false,
+    };
   return (
     <section className="detail finding" aria-labelledby="territory-title">
       <p className="kicker">{node.kind === "brand" ? "Investigation" : "Territory"}</p>
       <h2 id="territory-title">{node.label}</h2>
       <div className="finding__block">
         <h3>Evidence status</h3>
-        <p><strong>{node.statusLabel}.</strong></p>
+        <p><strong>{finding.statusLabel}.</strong></p>
       </div>
       <div className="finding__block">
-        <h3>Key finding</h3>
-        <p>{relevance}</p>
+        <h3>What the evidence shows</h3>
+        <p>{finding.observation}</p>
       </div>
-      {node.kind === "territory" ? (
+      <div className="finding__block">
+        <h3>Why it matters</h3>
+        <p>{finding.whyItMatters}</p>
+      </div>
+      {finding.limitations.length > 0 ? (
         <div className="finding__block">
-          <h3>Why it is here</h3>
-          <p>Investigated as a cultural territory in this run. Its place on the atlas is lineage, not a score.</p>
+          <h3>Limitations</h3>
+          <ul className="finding__list">
+            {finding.limitations.slice(0, 3).map((line) => <li key={line}>{line}</li>)}
+          </ul>
         </div>
       ) : null}
       {node.mismatchedBrand ? <p>The follow-up resolved a different brand, so it stands on its own.</p> : null}
@@ -60,7 +91,7 @@ export function TerritoryDetail({
       {response?.interpretation?.refinement && response.interpretation.refinement.refinementRelationship !== "NARROWER" ? <p>This follow-up is not a verified narrower category.</p> : null}
       {question && node.kind === "brand" ? <p className="quiet">{question}</p> : null}
       <div className="actions">
-        <button className="primary" type="button" data-testid="evidence-open" onClick={onInspect} disabled={!response?.investigation?.result}>
+        <button className="primary" type="button" ref={inspectRef} data-testid="evidence-open" onClick={onInspect} disabled={!response?.investigation?.result}>
           See the evidence
         </button>
         {node.kind === "territory" ? (
