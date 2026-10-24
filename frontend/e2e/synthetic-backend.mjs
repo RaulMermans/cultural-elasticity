@@ -444,6 +444,10 @@ const server = createServer((request, response) => {
       send(200, { status: "ok", fixtureType: "synthetic" });
       return;
     }
+    if (request.method === "GET" && url.pathname === "/ready") {
+      send(200, { status: "ready", acceptingInvestigations: true, reasons: [] });
+      return;
+    }
     send(404, { error: "not_found", message: "This investigation is no longer available. You can start a new one." });
   });
 });

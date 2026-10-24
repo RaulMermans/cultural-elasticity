@@ -7,6 +7,12 @@ import { evidenceSections, type EvidenceScope } from "./atlas-model";
 export function EvidenceInspector({ response, scope, onClose }: { response: QueryResponse; scope: EvidenceScope; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const sections = evidenceSections(response, scope);
+  const skipLead = /^(Analysis route|Representation robustness|Provisional class|Position |Relative position|Shared cultural|Evidence quality)/u;
+  const keyFinding = sections.observed.find((line) => /^(Concepts observed|Examples connected)/u.test(line))
+    ?? sections.calculated.find((line) => !skipLead.test(line))
+    ?? sections.observed.find((line) => !line.startsWith("No separate record"))
+    ?? sections.calculated[0]
+    ?? "No key finding was recorded for this territory.";
   useEffect(() => {
     closeRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
@@ -20,18 +26,24 @@ export function EvidenceInspector({ response, scope, onClose }: { response: Quer
       <button className="ghost" type="button" ref={closeRef} data-testid="evidence-close" onClick={onClose}>
         Close
       </button>
-      <h2 id="evidence-title">What supports this</h2>
+      <h2 id="evidence-title">Evidence dossier</h2>
       <p className="quiet">{sections.scopeLabel}</p>
-      <p>{sections.caution}</p>
       {sections.recorded ? <p className="quiet">Recorded example. Not a new live investigation.</p> : null}
       {sections.synthetic ? <p className="quiet">Synthetic evidence. This is not a live investigation.</p> : null}
-      <Section title="What was observed" items={sections.observed} />
-      <Section title="What was calculated" items={sections.calculated} />
-      <Section title="What the agent inferred" items={sections.interpreted} />
-      <Section title="What could not be established" items={sections.unavailable} />
-      {sections.aggregate.length > 0 ? <Section title="Whole investigation" items={sections.aggregate} /> : null}
+      <p className="dossier-lead">{keyFinding}</p>
+      <Section title="Observed evidence" items={sections.observed} />
+      <Section title="Calculated results" items={sections.calculated} />
+      <Section title="Agent interpretation" items={sections.interpreted} />
+      <Section title="Missing or insufficient evidence" items={sections.unavailable} />
+      {sections.aggregate.length > 0 ? (
+        <details>
+          <summary>This run, not this territory alone</summary>
+          <Section title="Whole investigation" items={sections.aggregate} />
+        </details>
+      ) : null}
+      <p className="quiet">{sections.caution}</p>
       <details>
-        <summary>Provenance</summary>
+        <summary>Source provenance</summary>
         {sections.provenance.length > 0 ? (
           <ul>
             {sections.provenance.map((id) => <li key={id}>{id}</li>)}

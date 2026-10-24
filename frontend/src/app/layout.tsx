@@ -8,7 +8,7 @@ const sans = Outfit({ subsets: ["latin"], display: "swap", variable: "--font-out
 
 export const metadata: Metadata = {
   title: "Cultural Elasticity",
-  description: "An investigation of where a brand can go next, grounded in cultural evidence.",
+  description: "A cultural observatory. Investigate where a brand can stretch, grounded in observed evidence.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
