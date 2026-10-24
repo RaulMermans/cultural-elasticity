@@ -27,6 +27,7 @@
  *   NAMESPACE_TYPE_BARREN        a probe type that returned nothing for 2 other concepts of the tag namespace (and never
  *                                members there) while the concept still has another option (probe-policy.ts)
  *   FRONTIER_COMPLETION_RESERVE  the last two turns belong to representing and analyzing frontier candidates with members
+ *   FRONTIER_EVIDENCE_PENDING    an ungrounded probe while the related-entity evidence base is still incomplete
  *   ALTERNATE_ANCHOR_REFUSED     (precondition) an alternate anchor for a grounded frontier candidate that is a different
  *                                concept, unsupported by Qloo members, or not needed (its grounding tag has members)
  * Refusals that save Qloo calls are recorded in trace.earlyStops with callsAvoided.
@@ -43,7 +44,7 @@ import { skillRef } from "./skills/contracts.js";
 import type { SkillRegistry } from "./skills/registry.js";
 import { analysisReserve } from "./analysis-runner.js";
 import type { RankableType } from "./contracts.js";
-import { frontierCompletionReserve, outsideFrontierEvidenceBase, recordAnchorDecision } from "./frontier.js";
+import { frontierCompletionReserve, outsideFrontierEvidenceBase, recordAnchorDecision, ungroundedFrontierProbeReason, unproductiveHypothesisProbeReason } from "./frontier.js";
 import { namespaceTypeBarren, probeRefusal } from "./probe-policy.js";
 import { isReady, territoryReadiness } from "./readiness.js";
 import { barrenReferenceNamespace } from "./reference-strategy.js";
@@ -137,6 +138,10 @@ export function valueOfToolCall(state: AgentRunState, tool: string, input: Recor
     // barren while the concept has better-evidenced options.
     const namespaceBarren = namespaceTypeBarren(state, tagId, input.targetType as RankableType);
     if (namespaceBarren) return { value: "NONE", reason: namespaceBarren, code: "NAMESPACE_TYPE_BARREN" };
+    const pending = ungroundedFrontierProbeReason(state, [tagId]);
+    if (pending) return { value: "NONE", reason: pending, code: "FRONTIER_EVIDENCE_PENDING" };
+    const unproductive = unproductiveHypothesisProbeReason(state, [tagId]);
+    if (unproductive) return { value: "NONE", reason: unproductive };
   }
   if (!assessment.materialGap) {
     const reserved = assessment.nextActions.find((a) => a.value === "NONE" && /reserved for the analysis/u.test(a.reason));

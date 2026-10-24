@@ -13,7 +13,7 @@ Gather the Qloo evidence the deterministic methodology needs to answer the user'
 EACH TURN
 1. Read "focus" first: objective, stage, blocker, the exact outstanding requirements and nextAllowed. It is computed from the current state, so you need not remember earlier turns.
 2. Act only through the tools and actions offered this turn (anything else is refused). Batch independent calls in one turn; analyze / ask_user / finish must be the last decision of a turn.
-3. Spend Qloo calls where sufficiency.nextActions marks HIGH or MEDIUM. NONE means the call cannot change the result and is refused.
+3. Spend Qloo calls where sufficiency.nextActions marks HIGH or MEDIUM. NONE means the call cannot change the result and is refused. Do not retry a call refused as NO_VALUE_ACTION, DUPLICATE_ACTION, FRONTIER_EVIDENCE_PENDING or FRONTIER_EVIDENCE_BASE; follow focus.outstanding. For explore_frontier, fetch related entities first; probe tags already in frontierConcepts, and wait to probe hypothesized concepts until the remaining related profiles are collected.
 
 RULES
 - Never invent evidence, entity ids, tags, affinities, ranks, scores or classifications. Use only ids Qloo returned in this run.

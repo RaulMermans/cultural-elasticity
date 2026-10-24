@@ -11,7 +11,7 @@
  * environment values, inactive skills, unexposed tools.
  */
 import { exemplarCandidates } from "./candidate-discovery.js";
-import { frontierCandidatePool } from "./frontier.js";
+import { frontierCandidatePool, frontierEvidenceBaseGap } from "./frontier.js";
 import { comparisonRepresentationPlan, preferredTypeFor } from "./representation-alignment.js";
 import { namespaceProbeEvidence, probeRecommendations, territoryQueryTags, type ProbeRecommendation } from "./probe-policy.js";
 import { conceptDuplicates } from "./concept-dedup.js";
@@ -145,6 +145,13 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
   if (needs.has("analysisResults")) {
     evidence.analysisResults = [...state.results.values()].map((r) => ({ key: r.key, route: r.analysisRoute, classification: r.classification?.label ?? null, robustness: r.robustness?.level ?? null }));
   }
+  if (needs.has("brandProfile") || needs.has("relatedEntities") || needs.has("observedTags")) {
+    const profiledEntityIds = [...state.profiles.keys()].slice(0, 20);
+    const searchedQueries = [...state.searchedQueries.keys()].slice(0, 12);
+    if (profiledEntityIds.length > 0 || searchedQueries.length > 0) {
+      evidence.alreadyCollected = { profiledEntityIds, searchedQueries };
+    }
+  }
 
   const sufficiency = options.sufficiency ?? assessEvidenceSufficiency(state);
   return {
@@ -223,6 +230,8 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
   const plan = referencePlan(state);
   if (plan.feasible && plan.outstanding) outstanding.push(plan.outstanding);
   else if (plan.applicable && plan.reason && plan.valid < plan.required) outstanding.push(`references: ${plan.reason}`);
+  const evidenceGap = frontierEvidenceBaseGap(state);
+  if (evidenceGap) outstanding.unshift(`${evidenceGap.action} (${evidenceGap.target}): ${evidenceGap.reason}`);
   if (sufficiency.verdict === "SUFFICIENT") outstanding.push("evidence is sufficient: finish");
   const rejected = [
     ...(lastTurn?.rejections ?? []).map((r) => `${r.action}: ${r.code} — ${r.reason}`.slice(0, 220)),
