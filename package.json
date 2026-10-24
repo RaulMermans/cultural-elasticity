@@ -31,6 +31,7 @@
     "test:e2e": "pnpm --filter frontend test:e2e",
     "smoke:offline": "node scripts/smoke-offline.mjs",
     "smoke:docker": "bash scripts/smoke-docker.sh",
+    "smoke:remote": "node scripts/smoke-remote.mjs",
     "perf:agent": "pnpm --filter backend perf:agent",
     "perf:live-trace": "pnpm --filter backend perf:live-trace",
     "effort:compare": "pnpm --filter backend effort:compare",

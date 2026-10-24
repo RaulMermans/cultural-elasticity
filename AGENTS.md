@@ -107,8 +107,11 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:secrets
 pnpm eval:methodology   # offline, synthetic; never report as Qloo validation
 pnpm eval:agent         # offline, synthetic world; never report as Qloo or live-model validation
-pnpm eval:agent:live -- --arms baseline,model --stability 3
+pnpm eval:agent:budget -- --approved-usd <N>
+                        # deterministic spend preflight (Sprint 8E); no provider call
+pnpm eval:agent:live -- --arms baseline,model --stability 3 --approved-usd <N>
                         # live Qloo + Haiku: all 7 cases, case-matched baseline, frontier stability (model arm needs ANTHROPIC_API_KEY)
+                        # refuses (exit 4, no call) unless the owner-approved ceiling covers the reserved exposure
 pnpm eval:agent:replay -- <dir>
                         # offline replay of current evaluators/stability metrics over stored live results
 pnpm eval:query         # offline gate/handoff replay over the query manifest (synthetic); never NLU evidence
@@ -116,4 +119,6 @@ pnpm eval:query -- --live
 pnpm test:e2e           # browser tests against a SYNTHETIC job API; never live Qloo or Haiku
                         # real Haiku interpretation, dry run (no Qloo): LIVE_HAIKU_INTERPRETATION
 pnpm feasibility:qloo   # live; report its result separately
+pnpm smoke:remote -- https://<backend-origin>
+                        # deployed backend, admissions paused only; no paid call (secrets from env)
 ```
