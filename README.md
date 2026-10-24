@@ -4,9 +4,13 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
-## Current status: Sprint 8F.1 — Playwright GitHub deployment integration
+## Current status: Sprint 8F.2 — Deployment activation and hosted E2E
 
-- **Sprint 8F.1** connects the existing GitHub repository `RaulMermans/cultural-elasticity` to the existing Railway and Vercel projects. The Railway GitHub App now has selected-repo access. The existing API service is GitHub-connected at the **staged** layer (`main@4c35a20`) and is **not** accept-deployed; live traffic is still the Sprint 8E CLI upload. The existing Vercel project is Git-linked, remains at **zero deployments**, keeps Authentication **All Deployments**, and skips Git production builds. Protected preview, hosted Vercel→Railway integration, and GitHub Actions (billing-blocked) are still open. Public hackathon release is **not** ready. The agent stays **`AGENT_MODEL_NOT_READY`**. See [docs/sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md](docs/sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md).
+- **Sprint 8F.2** applied the staged Railway GitHub source and created a protected Vercel preview. The existing API service now runs GitHub `main@47a20fd` (docs-only vs the 8F.1 pin `4c35a20`), one replica, admissions **off**, remote smoke 23/23. The existing Vercel project has a **preview** deployment of `deploy/8f2-protected-preview@47a20fd` with Authentication **All Deployments**; anonymous visitors are refused; the production alias remains `DEPLOYMENT_NOT_FOUND`. Hosted Vercel→Railway with the correct secret is admissions-paused (503, no paid call). GitHub Actions remains billing-blocked. Public hackathon release is **not** ready. The agent stays **`AGENT_MODEL_NOT_READY`**. See [docs/sprint-8f2/DEPLOYMENT_ACTIVATION_AND_HOSTED_E2E.md](docs/sprint-8f2/DEPLOYMENT_ACTIVATION_AND_HOSTED_E2E.md).
+
+## Previous status: Sprint 8F.1 — Playwright GitHub deployment integration
+
+- **Sprint 8F.1** connected the existing GitHub repository to the existing Railway and Vercel projects, staged Railway Git at `main@4c35a20`, and linked Vercel with All Deployments and pre-production-only Git builds. `accept-deploy` and the first preview were left for 8F.2. See [docs/sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md](docs/sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md).
 
 ## Previous status: Sprint 8F — GitHub-connected deployments and release readiness
 

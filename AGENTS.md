@@ -134,4 +134,5 @@ pnpm smoke:remote -- https://<backend-origin>
                         # deployed backend, admissions paused only; no paid call (secrets from env)
 node scripts/vercel-protection-probe.mjs https://<vercel-url>
                         # anonymous fetch; HTTP 200 of the app is VERCEL_PROTECTION_GATE_FAILED
+                        # HTTP 404 DEPLOYMENT_NOT_FOUND on an unassigned alias is a pass
 ```
