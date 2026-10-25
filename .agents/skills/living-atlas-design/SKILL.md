@@ -1,14 +1,28 @@
 ---
 name: living-atlas-design
-description: Design and experience rules for the Cultural Elasticity Living Atlas. Use when changing the product UI, visual language, atlas layout, evidence presentation, or motion. This is a development skill, not a runtime investigation skill.
-version: "4"
+description: Design and experience rules for the Cultural Elasticity product UI (brand research workspace and Living Atlas). Use when changing the product UI, visual language, atlas layout, evidence presentation, or motion. This is a development skill, not a runtime investigation skill.
+version: "5"
 ---
 
 # Living Atlas design and experience
 
-Version 4. This file is the authority for product UI decisions. Tokens are implemented in `frontend/src/app/globals.css` and must match the values here. `docs/design/LIVING_ATLAS_DESIGN_SYSTEM.md` points here; it does not override it.
+Version 5. This file is the authority for product UI decisions. Tokens are implemented in `frontend/src/app/globals.css` and must match the values here. `docs/design/LIVING_ATLAS_DESIGN_SYSTEM.md` points here; it does not override it.
 
-Version 4 keeps Cultural Observatory and the analytical rules from versions 1–3. It adds stage-aligned lineage edges, a docked evidence dossier, human-readable methodology presentation, and distinct connected-paused versus disconnected labels.
+Version 5 makes the **brand research workspace** the default product view and the Living Atlas an optional exploration view (`?mode=atlas`). It keeps Cultural Observatory and every rule from versions 1–4, which still govern the Atlas. Version 4 added stage-aligned lineage edges, a docked evidence dossier, human-readable methodology presentation, and distinct connected-paused versus disconnected labels.
+
+## Brand research workspace (version 5)
+
+The default journey is: select brand → cultural fingerprint → connections → directions to investigate → inspect evidence → next research step, with a research summary at any point. One workspace, four sections (Cultural fingerprint, Connections, Directions, Summary). Section and selection live in the URL (`?research=<key>&view=<section>&item=<id>`), so back/forward and reload are predictable. A URL never carries a scan token.
+
+- **Results before process.** Lead with the outcome sentence, then what Qloo shows, then uncertainty, then actions. Method, rule versions, audit counts and correlation IDs live only in "Source and method" and "Methodology details" disclosures.
+- **Connections are not directions.** A connection is something Qloo returned. A direction is a research question. They use different views and different words.
+- **Position classification is conservative** (`research-position/v1`, in `frontend/src/lib/research-view.ts`). The brand core comes only from Qloo's own category tags for the brand. Qloo evidence alone never makes a direction "adjacent". Without user context a direction is "Observed association, relation to the brand not established", or "Unresolved" when its source response was incomplete or it may duplicate another tag. A user may mark a direction "Already part of the brand" or "A new direction"; it is labelled "(your context)" everywhere, kept per tab, never sent to the server, and never changes evidence, strength or limitations.
+- **Evidence detail has four parts:** what was observed, what this might mean, what we cannot conclude, what to investigate next. Query-scoped entities say "Returned when researching related artists. Qloo did not confirm its type individually." Positions are "position N of M" within one Qloo call, where M counts everything that call returned, and are never called a ranking.
+- **Empty is useful.** Zero directions says "We found cultural connections, but not enough evidence for a new direction" and keeps the fingerprint. Insufficient evidence is missing evidence, not a finding.
+- **Copy is centralised** in `frontend/src/lib/research-copy.ts`. Components never print a backend code. Unknown codes get a neutral fallback.
+- **Recorded research** is bundled real evidence (`frontend/src/demo/recorded-baselines.json`, built by `backend/scripts/demo/build-recorded-baseline.ts`). It opens with no provider call and says it is recorded. Never list synthetic fixtures or benchmark profiles there.
+- **Paused research:** the brand field stays usable for finding recorded research ("Find recorded research"). No enabled control may start a scan or a deep investigation while the matching admission is paused or unreachable.
+- **Summary** is deterministic, built from the same view model as the screen, printable and downloadable as escaped HTML. It never adds a recommendation.
 
 This skill is not one of the seven runtime agent skills. Do not register it in `backend/src/agent/skills/`.
 
@@ -93,9 +107,9 @@ Desktop shows the tree on the observatory field. Edges are drawn in the same coo
 
 ## Interaction hierarchy
 
-The opening screen answers three questions above the fold: what this is, how to start, and that a recorded investigation can be opened without waiting.
+The opening screen (brand discovery) answers three questions above the fold: what this is, how to start, and that recorded research can be opened without waiting. When new brand research is paused or unreachable, the primary action opens the recorded brand research.
 
-When live investigations are paused or disconnected, the primary action is **Explore the Jacquemus investigation**. Do not present an enabled Ask that can only return `ADMISSIONS_PAUSED`.
+Inside the Atlas (`?mode=atlas`), when live investigations are paused or disconnected, the primary action is **Explore the Jacquemus investigation**. Do not present an enabled Ask that can only return `ADMISSIONS_PAUSED`.
 
 Admission labels:
 
@@ -170,7 +184,7 @@ Dense dashboards, consoles, card grids, chatbot transcripts, neon, heavy gradien
 
 ## Regression
 
-A UI change needs the atlas model tests, evidence-presentation tests, admissions tests, and the synthetic browser suite (`pnpm test:e2e`). A change to tokens, type, or evidence language needs a look at the rendered opening screen, the recorded example, a selected territory, the inspector, a paused live entry, a failure, and 320 / 390 / 768 / 1440 viewports. Check keyboard access and `prefers-reduced-motion`. Do not treat a successful compile as visual acceptance. No overlap, clipped label, or dangling edge is acceptable.
+A UI change needs the atlas model tests, evidence-presentation tests, research-view and research-route tests, admissions tests, and the synthetic browser suite (`pnpm test:e2e`). Workspace changes are checked at 320 / 390 / 768 / 1440 / 1920. A change to tokens, type, or evidence language needs a look at the rendered opening screen, the recorded example, a selected territory, the inspector, a paused live entry, a failure, and 320 / 390 / 768 / 1440 viewports. Check keyboard access and `prefers-reduced-motion`. Do not treat a successful compile as visual acceptance. No overlap, clipped label, or dangling edge is acceptable.
 
 ## Review
 

@@ -11,7 +11,7 @@ mkdirSync(dir, { recursive: true });
 const shot = (name) => join(dir, name);
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-await page.goto("http://127.0.0.1:3100/", { waitUntil: "domcontentloaded", timeout: 120_000 });
+await page.goto("http://127.0.0.1:3100/?mode=atlas", { waitUntil: "domcontentloaded", timeout: 120_000 });
 await page.getByTestId("atlas-app").waitFor();
 await page.screenshot({ path: shot("01-opening.png"), fullPage: true });
 

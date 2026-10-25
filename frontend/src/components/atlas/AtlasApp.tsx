@@ -1,11 +1,10 @@
 "use client";
 
 import { parseQueryResponse, type QueryResponse } from "@cultural-elasticity/shared";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { liveQuestionsEnabled } from "@/lib/admissions";
 import { AlternativeConfirmation } from "./AlternativeConfirmation";
 import { AtlasNavigation } from "./AtlasNavigation";
-import { BrandBaselinePanel } from "./BrandBaselinePanel";
 import { AtlasShell } from "./AtlasShell";
 import { ClarificationDialog } from "./ClarificationDialog";
 import { EvidenceInspector } from "./EvidenceInspector";
@@ -20,8 +19,16 @@ import { reasonCopy, isRecorded } from "./atlas-model";
 import { assessComparison } from "./atlas-comparison";
 import { useAtlas } from "./use-atlas";
 
-export function AtlasApp() {
+/** The optional Living Atlas exploration view. Brand research is the default product view (ResearchApp). */
+export function AtlasApp({ nav, autoOpenRecorded = false, initialQuery = null }: { nav?: ReactNode; autoOpenRecorded?: boolean; initialQuery?: string | null }) {
   const atlas = useAtlas();
+  const opened = useRef(false);
+  useEffect(() => {
+    // Opening the recorded investigation is local to the bundled artifact; it never starts a live job.
+    if (!autoOpenRecorded || opened.current) return;
+    opened.current = true;
+    void openRecorded(atlas.showRecorded, atlas.fail);
+  }, [autoOpenRecorded, atlas.showRecorded, atlas.fail]);
   const [dismissed, setDismissed] = useState<string | null>(null);
   const [how, setHow] = useState(false);
   const inspectRef = useRef<HTMLButtonElement>(null);
@@ -39,7 +46,7 @@ export function AtlasApp() {
   const question = response?.interpretation?.rawQuery ?? latest?.interpretation?.rawQuery ?? null;
 
   return (
-    <AtlasShell inspector={atlas.inspectorOpen} admissions={atlas.admissions} recorded={recorded}>
+    <AtlasShell inspector={atlas.inspectorOpen} admissions={atlas.admissions} recorded={recorded} nav={nav}>
       {atlas.nodes.length === 0 ? (
         <>
           <Landing
@@ -48,8 +55,8 @@ export function AtlasApp() {
             onRecorded={(prepared) => void openRecorded(atlas.showRecorded, atlas.fail, prepared)}
             onAsk={(query) => void atlas.submit({ query })}
             onHow={() => setHow(true)}
+            initialQuery={initialQuery ?? ""}
           />
-          <BrandBaselinePanel />
           <div className="landing-status">
             {atlas.active ? (
               <InvestigationProgress label={atlas.active.stageLabel} stopping={atlas.active.stopping} onCancel={() => void atlas.cancel(atlas.active!)} />
