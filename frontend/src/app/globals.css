@@ -54,6 +54,14 @@
 .brand-baseline__evidence dl { display: grid; grid-template-columns: minmax(7rem, auto) 1fr; gap: var(--ce-space-1) var(--ce-space-3); }
 .brand-baseline__evidence dt { color: var(--ce-muted); }
 .brand-baseline__evidence dd { margin: 0; }
+.brand-baseline__result section { margin-top: var(--ce-space-5); }
+.brand-baseline__result h5 { margin: var(--ce-space-4) 0 var(--ce-space-2); font-weight: 600; }
+.brand-baseline__chips { display: flex; flex-wrap: wrap; gap: var(--ce-space-2); padding: 0; list-style: none; }
+.brand-baseline__chips li { padding: var(--ce-space-1) var(--ce-space-3); border: 1px solid var(--ce-line); border-radius: var(--ce-radius); background: var(--ce-paper-raised); }
+.brand-baseline__chips small, .brand-baseline__list small { color: var(--ce-muted); }
+.brand-baseline__list { columns: 2 14rem; padding-left: var(--ce-space-5); }
+.brand-baseline__method { margin-top: var(--ce-space-5); padding-top: var(--ce-space-3); border-top: 1px solid var(--ce-line); overflow-wrap: anywhere; }
+.brand-baseline__method summary { cursor: pointer; font-weight: 600; }
 
 * { box-sizing: border-box; }
 

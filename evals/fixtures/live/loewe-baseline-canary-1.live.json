@@ -1,0 +1,337 @@
+{
+ "fixtureType": "live_qloo_canary_record",
+ "notice": "LIVE: normalized observation artifacts of the first approved Sprint 9B Loewe canary (scan INTERRUPTED, no result artifact), exported read-only from its isolated canary database on 2026-10-25. These 0.1 artifacts never recorded per-signal call correlation. Used only by offline replay; replay makes no Qloo call.",
+ "source": {
+  "database": "isolated local canary database (Sprint 9B)",
+  "scanId": "5b980e3c-1f1f-4178-bfb2-4fa9db40ce21",
+  "ledger": "docs/sprint-9b/evidence/live-canary.json"
+ },
+ "brand": {
+  "name": "Loewe",
+  "qlooId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+  "describeCorrelationId": "mcp-9bc93549-8cab-4a1e-a067-fd45b4aa9a77"
+ },
+ "templateVersion": "ce-brand-baseline/v1",
+ "observations": [
+  {
+   "stage": "tags",
+   "schemaVersion": "ce-brand-baseline-observation/0.1",
+   "payload": {
+    "kind": "ok",
+    "domain": "tags",
+    "signals": [
+     {
+      "id": "urn:tag:genre:person:model",
+      "kind": "tag",
+      "name": "Model"
+     },
+     {
+      "id": "urn:tag:cost_description:place:expensive",
+      "kind": "tag",
+      "name": "Expensive"
+     },
+     {
+      "id": "urn:tag:inclusivity:place:identifies_as_women_owned",
+      "kind": "tag",
+      "name": "Identifies as women-owned"
+     },
+     {
+      "id": "urn:tag:specialty_dish:place:postre",
+      "kind": "tag",
+      "name": "Postre"
+     },
+     {
+      "id": "urn:tag:credit_card:place:jcb",
+      "kind": "tag",
+      "name": "JCB"
+     },
+     {
+      "id": "urn:tag:hotel_rating:place:five_star",
+      "kind": "tag",
+      "name": "Five Star"
+     },
+     {
+      "id": "urn:tag:genre:place:restaurant:french",
+      "kind": "tag",
+      "name": "French"
+     },
+     {
+      "id": "urn:tag:keyword:media:japanese_drama",
+      "kind": "tag",
+      "name": "japanese drama"
+     },
+     {
+      "id": "urn:tag:genre:media:fashion",
+      "kind": "tag",
+      "name": "Fashion"
+     },
+     {
+      "id": "urn:tag:keyword:media:live_action_adaptation",
+      "kind": "tag",
+      "name": "live action adaptation"
+     }
+    ],
+    "operation": "entity_tags",
+    "capturedAt": "2026-10-25T06:45:37.163Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-9b1ee8ab-e7f6-43ec-99fb-dd70be16b0ef"
+   }
+  },
+  {
+   "stage": "artist",
+   "schemaVersion": "ce-brand-baseline-observation/0.1",
+   "payload": {
+    "kind": "ok",
+    "domain": "artist",
+    "signals": [
+     {
+      "id": "C4A44F65-1EDB-4141-8233-CC041B419E23",
+      "kind": "entity",
+      "name": "Red Velvet"
+     },
+     {
+      "id": "AFB6CA3D-9620-4D8B-9958-6727BA40AFA6",
+      "kind": "entity",
+      "name": "BLACKPINK"
+     },
+     {
+      "id": "401D2EE5-0FDC-44D4-9EF5-FBAD7D88BFC2",
+      "kind": "entity",
+      "name": "SUNMI"
+     },
+     {
+      "id": "E804E876-EA30-482C-9F49-E0E4A213A4A4",
+      "kind": "entity",
+      "name": "CHUNG HA"
+     },
+     {
+      "id": "E404DC51-323B-4DB4-ABD3-0A9F02C0429E",
+      "kind": "entity",
+      "name": "TWICE"
+     },
+     {
+      "id": "99BEA387-60EF-4532-9907-DD7995D8618B",
+      "kind": "entity",
+      "name": "Exo"
+     },
+     {
+      "id": "2E3125E5-15B0-4E86-8E91-879F5D453D5B",
+      "kind": "entity",
+      "name": "aespa"
+     },
+     {
+      "id": "8BD12F72-F767-4EC7-BC98-570556B21D98",
+      "kind": "entity",
+      "name": "f(x)"
+     },
+     {
+      "id": "9DF1C20B-5CCF-40EB-B924-2B868EA4B66D",
+      "kind": "entity",
+      "name": "CLC"
+     },
+     {
+      "id": "8132DE46-D09C-4386-9F6D-87A0A51D3CB2",
+      "kind": "entity",
+      "name": "CL"
+     }
+    ],
+    "operation": "recommend",
+    "capturedAt": "2026-10-25T06:45:47.028Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-7280abff-5b8a-43d3-ae65-ac8529b692f4"
+   }
+  },
+  {
+   "stage": "place",
+   "schemaVersion": "ce-brand-baseline-observation/0.1",
+   "payload": {
+    "kind": "ok",
+    "domain": "place",
+    "signals": [
+     {
+      "id": "19E6425A-184D-40BA-B865-2CEF39371176",
+      "kind": "entity",
+      "name": "Les Ombres"
+     },
+     {
+      "id": "9F818ACF-CAB4-44CC-8BF5-369C59AD8D15",
+      "kind": "entity",
+      "name": "Café de la Paix"
+     },
+     {
+      "id": "80AAAF4C-FD3F-45B0-9882-E5D892FC2398",
+      "kind": "entity",
+      "name": "Hermès"
+     },
+     {
+      "id": "77851888-2F29-4A50-A5F7-6ACE4855EDD5",
+      "kind": "entity",
+      "name": "Sofitel Paris le Faubourg"
+     },
+     {
+      "id": "D02877BE-6AF3-4347-B604-914E16A33BE6",
+      "kind": "entity",
+      "name": "Hôtel de Crillon, A Rosewood Hotel"
+     },
+     {
+      "id": "D40A899D-994D-4F98-891F-0754B2E1C055",
+      "kind": "entity",
+      "name": "Mandarin Oriental Lutetia, Paris"
+     },
+     {
+      "id": "B2630179-9260-4263-9572-1C48691B3D5B",
+      "kind": "entity",
+      "name": "Boucheron"
+     },
+     {
+      "id": "2351302F-E46B-4ADC-B6F6-EC80F89151C7",
+      "kind": "entity",
+      "name": "Four Seasons Hotel George V, Paris"
+     },
+     {
+      "id": "DCB6522D-5CB3-43A7-BF07-CDC7894AA30A",
+      "kind": "entity",
+      "name": "Madame Brasserie"
+     },
+     {
+      "id": "C29A4D24-455F-4DE0-B64B-0C2A515F7D68",
+      "kind": "entity",
+      "name": "Park Hyatt Paris-Vendôme"
+     }
+    ],
+    "operation": "recommend",
+    "capturedAt": "2026-10-25T06:45:51.704Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-c899470d-a48b-45b6-83ac-e7072feb2fd4"
+   }
+  },
+  {
+   "stage": "movie",
+   "schemaVersion": "ce-brand-baseline-observation/0.1",
+   "payload": {
+    "kind": "ok",
+    "domain": "movie",
+    "signals": [
+     {
+      "id": "33388BBB-6625-4EF5-9BA1-75A78331C77D",
+      "kind": "entity",
+      "name": "Call Me by Your Name"
+     },
+     {
+      "id": "C5931DB9-526D-47C4-8157-6D6E6FDFAD0B",
+      "kind": "entity",
+      "name": "Phantom Thread"
+     },
+     {
+      "id": "FB052F84-01CF-48BB-A30A-51C45F183777",
+      "kind": "entity",
+      "name": "Roma"
+     },
+     {
+      "id": "2955F3C4-36AB-49F3-A818-3597F35EF46C",
+      "kind": "entity",
+      "name": "Moonlight"
+     },
+     {
+      "id": "4BE414CF-375F-4566-AA66-9AC6150A6B7F",
+      "kind": "entity",
+      "name": "Lady Bird"
+     },
+     {
+      "id": "2E20280C-3E6F-4D69-89EA-DEF4BDBAFBB9",
+      "kind": "entity",
+      "name": "The Favourite"
+     },
+     {
+      "id": "B47E7D07-C346-4B0C-87FB-F36CE4551597",
+      "kind": "entity",
+      "name": "The Shape of Water"
+     },
+     {
+      "id": "A9991EB6-6D09-4215-8C17-5A82C9407DD8",
+      "kind": "entity",
+      "name": "I, Tonya"
+     },
+     {
+      "id": "A181E2D0-3712-4A22-A946-620B1ABA08BD",
+      "kind": "entity",
+      "name": "A Fantastic Woman"
+     },
+     {
+      "id": "DE02F90E-EF5E-4860-9D19-18BCFCD47F38",
+      "kind": "entity",
+      "name": "Pain and Glory"
+     }
+    ],
+    "operation": "recommend",
+    "capturedAt": "2026-10-25T06:45:59.114Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-a2828eaa-1223-4bee-a7f5-3bf4be34a749"
+   }
+  },
+  {
+   "stage": "book",
+   "schemaVersion": "ce-brand-baseline-observation/0.1",
+   "payload": {
+    "kind": "ok",
+    "domain": "book",
+    "signals": [
+     {
+      "id": "B0D607A8-5896-4D1A-B2D8-121A6ABB8068",
+      "kind": "entity",
+      "name": "More Than Enough: Claiming Space for Who You Are (No Matter What They Say)"
+     },
+     {
+      "id": "1D814395-41E2-4EC2-BE52-F211B02C81AC",
+      "kind": "entity",
+      "name": "The Meaning of Mariah Carey"
+     },
+     {
+      "id": "AC551F96-9E78-4FE7-A243-521BB64D6EC4",
+      "kind": "entity",
+      "name": "Big Friendship: How We Keep Each Other Close"
+     },
+     {
+      "id": "AAE57900-A03D-4512-A1A7-EB31553AD558",
+      "kind": "entity",
+      "name": "Both/And: A Memoir"
+     },
+     {
+      "id": "12084C7D-FB8F-41B9-8DD2-517D16F0BA6D",
+      "kind": "entity",
+      "name": "Becoming Beyoncé: The Untold Story"
+     },
+     {
+      "id": "69CDF7FF-BCB5-4186-85A3-BFB0EC8B3D73",
+      "kind": "entity",
+      "name": "You Got Anything Stronger?"
+     },
+     {
+      "id": "13229346-B6E8-4AA2-B957-B305E4240677",
+      "kind": "entity",
+      "name": "Dapper Dan: Made in Harlem"
+     },
+     {
+      "id": "3E9FAAFE-A962-4D4A-8696-94F72B87EC14",
+      "kind": "entity",
+      "name": "The Genius of Women: From Overlooked to Changing the World"
+     },
+     {
+      "id": "4E743BD5-9AE4-408A-83C9-5A5D6E7D0762",
+      "kind": "entity",
+      "name": "More Myself: A Journey"
+     },
+     {
+      "id": "0BCA26C0-358D-44BD-AA20-2439B113606A",
+      "kind": "entity",
+      "name": "Inside Out"
+     }
+    ],
+    "operation": "recommend",
+    "capturedAt": "2026-10-25T06:46:05.266Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-c3e062fb-d0ee-4298-8b4b-229f3c11a795"
+   }
+  }
+ ]
+}

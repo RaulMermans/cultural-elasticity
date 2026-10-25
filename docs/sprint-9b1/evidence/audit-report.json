@@ -1,0 +1,3999 @@
+{
+ "generatedBy": "backend/scripts/brand-baseline-eval/report.ts",
+ "providerCalls": 0,
+ "modelCalls": 0,
+ "liveRecordedReplays": [
+  {
+   "label": "evals/fixtures/live/loewe-baseline-canary-2.live.json",
+   "evidence": "LIVE_RECORDED_REPLAY (baseline scan)",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 10,
+    "operationalTags": 6,
+    "culturalTags": 4,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 40,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 40,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 40,
+    "excludedEntities": 0,
+    "themes": 1,
+    "hypotheses": 2
+   },
+   "hypotheses": [
+    {
+     "name": "Model",
+     "concept": "urn:tag:genre:person:model",
+     "facet": "genre:person",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Fashion",
+     "concept": "urn:tag:genre:media:fashion",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Media keywords",
+     "members": 2,
+     "possibleDuplicates": 0
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Re-run with the 20-tag profile: in recorded profiles, curated Qloo concepts often rank below the venue attributes that filled this scan's first 10 tags.",
+     "Profile the related artists, places, films or books with Qloo tags to see whether they share a genre (one additional call per list).",
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "Loewe 628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "52 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "40 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "6 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "1 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "2 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "4 cultural tags, 40 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "2 hypotheses, 2 audience-taste tags, 1 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "3 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "3 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "15 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "evals/fixtures/live/loewe-baseline-canary-1.live.json",
+   "evidence": "LIVE_RECORDED_REPLAY (baseline scan)",
+   "scanStatus": "INSUFFICIENT_EVIDENCE",
+   "audit": {
+    "returnedTags": 10,
+    "operationalTags": 0,
+    "culturalTags": 0,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 40,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 0
+   },
+   "hypotheses": [],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "NO_HYPOTHESIS",
+    "reasons": [
+     "The returned tags could not be traced to their Qloo call or classified, so none could be used."
+    ],
+    "nextSteps": [
+     "Run a new baseline scan: no traceable cultural evidence could be kept from this one."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "Loewe 628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "0 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "6 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "0 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "INSUFFICIENT",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": false,
+      "detail": "0 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": false,
+      "detail": "0 hypotheses, 0 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "6 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "8 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "alienware",
+   "evidence": "LIVE_RECORDED_REPLAY (tag profile only, take 20)",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 20,
+    "operationalTags": 5,
+    "culturalTags": 15,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 2,
+    "hypotheses": 5
+   },
+   "hypotheses": [
+    {
+     "name": "Youtuber",
+     "concept": "urn:tag:genre:person:youtuber",
+     "facet": "genre:person",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "electronic",
+     "concept": "urn:tag:genre:music:electronic",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Video-Game Music",
+     "concept": "urn:tag:genre:music:video_game_music",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "dubstep",
+     "concept": "urn:tag:genre:music:dubstep",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "dub",
+     "concept": "urn:tag:genre:music:dub",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Music genres",
+     "members": 4,
+     "possibleDuplicates": 0
+    },
+    {
+     "label": "Media keywords",
+     "members": 10,
+     "possibleDuplicates": 0
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "Alienware 2112ADD3-D05E-4CA3-B894-03F8FA6B6C4D"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "25 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "5 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "2 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "5 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "15 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "5 hypotheses, 5 audience-taste tags, 2 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "24 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "jacquemus",
+   "evidence": "LIVE_RECORDED_REPLAY (tag profile only, take 20)",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 20,
+    "operationalTags": 6,
+    "culturalTags": 14,
+    "possibleDuplicateTags": 1,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 1,
+    "hypotheses": 5
+   },
+   "hypotheses": [
+    {
+     "name": "France",
+     "concept": "urn:tag:genre:media:france",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "electronic",
+     "concept": "urn:tag:genre:music:electronic",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Model",
+     "concept": "urn:tag:genre:person:model",
+     "facet": "genre:person",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "High-Fashion Consumers",
+     "concept": "urn:tag:customer_segment:qloo:high_fashion_consumers",
+     "facet": "customer_segment:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "French-Inspired",
+     "concept": "urn:tag:aesthetic_property:qloo:french_inspired",
+     "facet": "aesthetic_property:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Media keywords",
+     "members": 2,
+     "possibleDuplicates": 1
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "Jacquemus 93A50AC5-FCF2-4F47-87C0-E821E0B9F823"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "25 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "6 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "1 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "5 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "14 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "5 hypotheses, 10 audience-taste tags, 1 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "23 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "lululemon",
+   "evidence": "LIVE_RECORDED_REPLAY (tag profile only, take 20)",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 20,
+    "operationalTags": 6,
+    "culturalTags": 14,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 2,
+    "hypotheses": 5
+   },
+   "hypotheses": [
+    {
+     "name": "country",
+     "concept": "urn:tag:genre:music:country",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Self Help",
+     "concept": "urn:tag:genre:media:self_help",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Mindful",
+     "concept": "urn:tag:lifestyle:qloo:mindful",
+     "facet": "lifestyle:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Lifestyle Brand",
+     "concept": "urn:tag:keyword:qloo:lifestyle_brand",
+     "facet": "keyword:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Yoga Instructors",
+     "concept": "urn:tag:influencer_appeal:qloo:yoga_instructors",
+     "facet": "influencer_appeal:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Emotional tone",
+     "members": 2,
+     "possibleDuplicates": 0
+    },
+    {
+     "label": "Customer segment",
+     "members": 2,
+     "possibleDuplicates": 0
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "Lululemon D9B9B404-7B35-4E4B-A0CE-4CAB8155FE9E"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "25 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "6 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "2 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "5 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "14 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "5 hypotheses, 11 audience-taste tags, 2 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "24 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "muji",
+   "evidence": "LIVE_RECORDED_REPLAY (tag profile only, take 20)",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 20,
+    "operationalTags": 5,
+    "culturalTags": 15,
+    "possibleDuplicateTags": 1,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 3,
+    "hypotheses": 4
+   },
+   "hypotheses": [
+    {
+     "name": "Manga",
+     "concept": "urn:tag:genre:media:manga",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Animation",
+     "concept": "urn:tag:genre:media:animation",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "J-pop",
+     "concept": "urn:tag:genre:music:j_pop",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "J-rock",
+     "concept": "urn:tag:genre:music:j_rock",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Media keywords",
+     "members": 10,
+     "possibleDuplicates": 0
+    },
+    {
+     "label": "Media genres",
+     "members": 2,
+     "possibleDuplicates": 0
+    },
+    {
+     "label": "Music genres",
+     "members": 2,
+     "possibleDuplicates": 1
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "Muji E12201A5-CC50-40AF-97AE-C54A2CA303F7"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "24 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "5 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "3 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "4 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "15 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "4 hypotheses, 5 audience-taste tags, 3 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "21 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "nintendo",
+   "evidence": "LIVE_RECORDED_REPLAY (tag profile only, take 20)",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 20,
+    "operationalTags": 6,
+    "culturalTags": 14,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 3,
+    "hypotheses": 5
+   },
+   "hypotheses": [
+    {
+     "name": "Youtuber",
+     "concept": "urn:tag:genre:person:youtuber",
+     "facet": "genre:person",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Video-Game Music",
+     "concept": "urn:tag:genre:music:video_game_music",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Graphic Novels",
+     "concept": "urn:tag:genre:media:graphic_novels",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Comics",
+     "concept": "urn:tag:genre:media:comics",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "electronic",
+     "concept": "urn:tag:genre:music:electronic",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Media keywords",
+     "members": 8,
+     "possibleDuplicates": 0
+    },
+    {
+     "label": "Music genres",
+     "members": 2,
+     "possibleDuplicates": 0
+    },
+    {
+     "label": "Media genres",
+     "members": 2,
+     "possibleDuplicates": 0
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "Nintendo FFD31D42-DF50-4B60-932C-7497C8E73A80"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "25 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "6 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "3 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "5 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "14 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "5 hypotheses, 5 audience-taste tags, 3 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "25 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "patagonia",
+   "evidence": "LIVE_RECORDED_REPLAY (tag profile only, take 20)",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 20,
+    "operationalTags": 6,
+    "culturalTags": 14,
+    "possibleDuplicateTags": 1,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 3,
+    "hypotheses": 5
+   },
+   "hypotheses": [
+    {
+     "name": "Ethical Consumption",
+     "concept": "urn:tag:cultural_relevance:qloo:ethical_consumption",
+     "facet": "cultural_relevance:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "folk",
+     "concept": "urn:tag:genre:music:folk",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Environmental Activism",
+     "concept": "urn:tag:keyword:qloo:environmental_activism",
+     "facet": "keyword:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Natural Fibers",
+     "concept": "urn:tag:aesthetic_property:qloo:natural_fibers",
+     "facet": "aesthetic_property:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Environmentally Conscious",
+     "concept": "urn:tag:lifestyle:qloo:environmentally_conscious",
+     "facet": "lifestyle:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Curated keywords",
+     "members": 3,
+     "possibleDuplicates": 0
+    },
+    {
+     "label": "Aesthetic property",
+     "members": 2,
+     "possibleDuplicates": 0
+    },
+    {
+     "label": "Lifestyle",
+     "members": 2,
+     "possibleDuplicates": 0
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "Patagonia DB4CE34E-3A63-4947-946F-9D52502C5762"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "25 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "6 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "3 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "5 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "14 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "5 hypotheses, 12 audience-taste tags, 3 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "25 user-facing statements checked"
+     }
+    ]
+   }
+  }
+ ],
+ "syntheticCases": [
+  {
+   "label": "luxury-shaped",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 10,
+    "operationalTags": 6,
+    "culturalTags": 4,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 40,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 40,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 40,
+    "excludedEntities": 0,
+    "themes": 1,
+    "hypotheses": 2
+   },
+   "hypotheses": [
+    {
+     "name": "Runway model",
+     "concept": "urn:tag:genre:person:syn_model",
+     "facet": "genre:person",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Couture",
+     "concept": "urn:tag:genre:media:syn_couture",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Media keywords",
+     "members": 2,
+     "possibleDuplicates": 0
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Profile the related artists, places, films or books with Qloo tags to see whether they share a genre (one additional call per list).",
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "52 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "40 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "6 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "1 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "2 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "4 cultural tags, 40 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "2 hypotheses, 2 audience-taste tags, 1 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "2 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "2 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "13 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "unrelated-category",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 3,
+    "operationalTags": 0,
+    "culturalTags": 3,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 40,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 40,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 40,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 3
+   },
+   "hypotheses": [
+    {
+     "name": "Trail living",
+     "concept": "urn:tag:lifestyle:qloo:syn_trail",
+     "facet": "lifestyle:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Folk",
+     "concept": "urn:tag:genre:music:syn_folk",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Climbers",
+     "concept": "urn:tag:customer_segment:qloo:syn_climbers",
+     "facet": "customer_segment:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "46 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "40 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "3 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "3 cultural tags, 40 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "3 hypotheses, 3 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "0 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "13 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "many-cultural-tags",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 7,
+    "operationalTags": 0,
+    "culturalTags": 7,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 1,
+    "hypotheses": 5
+   },
+   "hypotheses": [
+    {
+     "name": "Slow living",
+     "concept": "urn:tag:lifestyle:qloo:syn_a",
+     "facet": "lifestyle:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Hand-finished",
+     "concept": "urn:tag:aesthetic_property:qloo:syn_b",
+     "facet": "aesthetic_property:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Design",
+     "concept": "urn:tag:genre:media:syn_c",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Calm",
+     "concept": "urn:tag:emotional_tone:qloo:syn_d",
+     "facet": "emotional_tone:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Collectors",
+     "concept": "urn:tag:audience:qloo:syn_e",
+     "facet": "audience:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Lifestyle",
+     "members": 2,
+     "possibleDuplicates": 0
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "12 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "1 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "5 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "7 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "5 hypotheses, 7 audience-taste tags, 1 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "0 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "22 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "mainly-operational",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "PARTIAL",
+   "audit": {
+    "returnedTags": 7,
+    "operationalTags": 6,
+    "culturalTags": 1,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 0
+   },
+   "hypotheses": [],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "NO_HYPOTHESIS",
+    "reasons": [
+     "The cultural tags Qloo returned are free descriptive keywords or describe the brand's own category; neither supports a territory hypothesis on its own."
+    ],
+    "nextSteps": [
+     "Search Qloo for classification tags matching the descriptive keywords before forming a hypothesis."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "7 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "6 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "0 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "INSUFFICIENT",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "1 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": false,
+      "detail": "0 hypotheses, 0 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "2 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "4 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "only-operational",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "INSUFFICIENT_EVIDENCE",
+   "audit": {
+    "returnedTags": 5,
+    "operationalTags": 5,
+    "culturalTags": 0,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 0
+   },
+   "hypotheses": [],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "NO_HYPOTHESIS",
+    "reasons": [
+     "Every returned tag described store or venue listings rather than culture."
+    ],
+    "nextSteps": [
+     "Run a new baseline scan: no traceable cultural evidence could be kept from this one."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "5 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "5 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "0 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "INSUFFICIENT",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": false,
+      "detail": "0 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": false,
+      "detail": "0 hypotheses, 0 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "2 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "4 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "generic-types-scoped",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 1,
+    "operationalTags": 0,
+    "culturalTags": 1,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 10,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 10,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 10,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 1
+   },
+   "hypotheses": [
+    {
+     "name": "Documentary",
+     "concept": "urn:tag:genre:media:syn_x",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Profile the related artists, places, films or books with Qloo tags to see whether they share a genre (one additional call per list).",
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "12 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "10 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "1 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "1 cultural tags, 10 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "1 hypotheses, 1 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "2 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "7 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "mixed-types",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 1,
+    "operationalTags": 0,
+    "culturalTags": 1,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 5,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 3,
+     "QUERY_SCOPED": 2,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 5,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 1
+   },
+   "hypotheses": [
+    {
+     "name": "Soul",
+     "concept": "urn:tag:genre:music:syn_soul",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Profile the related artists, places, films or books with Qloo tags to see whether they share a genre (one additional call per list).",
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "7 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "5 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "1 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "1 cultural tags, 5 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "1 hypotheses, 1 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "2 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "7 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "no-associations",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "INSUFFICIENT_EVIDENCE",
+   "audit": {
+    "returnedTags": 0,
+    "operationalTags": 0,
+    "culturalTags": 0,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 0
+   },
+   "hypotheses": [],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "NO_HYPOTHESIS",
+    "reasons": [
+     "Qloo returned no usable tag profile for this brand, and territory hypotheses come only from tags."
+    ],
+    "nextSteps": [
+     "Run a new baseline scan: no traceable cultural evidence could be kept from this one."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "0 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "0 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "INSUFFICIENT",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": false,
+      "detail": "0 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": false,
+      "detail": "0 hypotheses, 0 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "3 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "rich-fingerprint",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 5,
+    "operationalTags": 0,
+    "culturalTags": 5,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 40,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 40,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 40,
+    "excludedEntities": 0,
+    "themes": 1,
+    "hypotheses": 3
+   },
+   "hypotheses": [
+    {
+     "name": "Jazz",
+     "concept": "urn:tag:genre:music:syn_jazz",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Bossa nova",
+     "concept": "urn:tag:genre:music:syn_bossa",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "Coastal living",
+     "concept": "urn:tag:lifestyle:qloo:syn_coastal",
+     "facet": "lifestyle:qloo",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Music genres",
+     "members": 2,
+     "possibleDuplicates": 0
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "48 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "40 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "1 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "3 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "5 cultural tags, 40 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "3 hypotheses, 3 audience-taste tags, 1 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "0 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "14 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "conflicting-types",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 1,
+    "operationalTags": 0,
+    "culturalTags": 1,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 2,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 1,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 1
+    },
+    "retainedAssociations": 1,
+    "excludedEntities": 1,
+    "themes": 0,
+    "hypotheses": 1
+   },
+   "hypotheses": [
+    {
+     "name": "Pop",
+     "concept": "urn:tag:genre:music:syn_pop",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "4 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "1 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "1 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "1 cultural tags, 1 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "1 hypotheses, 1 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "0 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "5 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "scope-mismatch",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 1,
+    "operationalTags": 0,
+    "culturalTags": 1,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 3,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 3
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 3,
+    "themes": 0,
+    "hypotheses": 1
+   },
+   "hypotheses": [
+    {
+     "name": "Poetry",
+     "concept": "urn:tag:genre:media:syn_y",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "5 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "1 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "1 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "1 hypotheses, 1 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "6 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "incomplete-responses",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "PARTIAL",
+   "audit": {
+    "returnedTags": 1,
+    "operationalTags": 0,
+    "culturalTags": 1,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 1
+   },
+   "hypotheses": [
+    {
+     "name": "Photography",
+     "concept": "urn:tag:genre:media:syn_z",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "2 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "1 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "1 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "1 hypotheses, 1 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "6 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "degraded-provenance",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "PARTIAL",
+   "audit": {
+    "returnedTags": 2,
+    "operationalTags": 0,
+    "culturalTags": 1,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 1
+   },
+   "hypotheses": [
+    {
+     "name": "Architecture",
+     "concept": "urn:tag:genre:media:syn_w",
+     "facet": "genre:media",
+     "evidenceStatus": "PARTIAL_EVIDENCE"
+    }
+   ],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "2 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "1 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "1 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "1 hypotheses, 1 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "2 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "8 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "duplicated-references",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 4,
+    "operationalTags": 0,
+    "culturalTags": 3,
+    "possibleDuplicateTags": 1,
+    "returnedEntities": 2,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 1,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 1,
+    "excludedEntities": 0,
+    "themes": 1,
+    "hypotheses": 2
+   },
+   "hypotheses": [
+    {
+     "name": "K-pop",
+     "concept": "urn:tag:genre:music:syn_kpop",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    },
+    {
+     "name": "R&B",
+     "concept": "urn:tag:genre:music:syn_rnb",
+     "facet": "genre:music",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [
+    {
+     "label": "Music genres",
+     "members": 2,
+     "possibleDuplicates": 1
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Profile the related artists, places, films or books with Qloo tags to see whether they share a genre (one additional call per list).",
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "6 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "1 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "1 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "2 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "3 cultural tags, 1 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "2 hypotheses, 3 audience-taste tags, 1 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "2 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "12 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "multi-signal",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 3,
+    "operationalTags": 0,
+    "culturalTags": 3,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 0,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 0,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 2
+   },
+   "hypotheses": [
+    {
+     "name": "Craft",
+     "concept": "urn:tag:lifestyle:qloo:syn_craft",
+     "facet": "lifestyle:qloo",
+     "evidenceStatus": "MULTI_SIGNAL_SUPPORT"
+    },
+    {
+     "name": "Ceramics",
+     "concept": "urn:tag:genre:media:syn_ceramics",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "6 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "0 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "2 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "3 cultural tags, 0 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "2 hypotheses, 3 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "0 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "1 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "9 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "zero-territories-keywords",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "PARTIAL",
+   "audit": {
+    "returnedTags": 3,
+    "operationalTags": 0,
+    "culturalTags": 3,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 4,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 4,
+     "GENERIC_TYPE_UNRESOLVED": 0,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 4,
+    "excludedEntities": 0,
+    "themes": 1,
+    "hypotheses": 0
+   },
+   "hypotheses": [],
+   "themes": [
+    {
+     "label": "Media keywords",
+     "members": 2,
+     "possibleDuplicates": 0
+    }
+   ],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "NO_HYPOTHESIS",
+    "reasons": [
+     "The cultural tags Qloo returned are free descriptive keywords or describe the brand's own category; neither supports a territory hypothesis on its own.",
+     "Related artists, places, films or books are shown as observations; this scan has no Qloo evidence that groups them into a shared theme."
+    ],
+    "nextSteps": [
+     "Profile the related artists, places, films or books with Qloo tags to see whether they share a genre (one additional call per list).",
+     "Search Qloo for classification tags matching the descriptive keywords before forming a hypothesis."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "7 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "4 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "1 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "0 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "INSUFFICIENT",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "3 cultural tags, 4 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": false,
+      "detail": "0 hypotheses, 0 audience-taste tags, 1 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "2 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "2 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "7 user-facing statements checked"
+     }
+    ]
+   }
+  },
+  {
+   "label": "unclassifiable-entities",
+   "evidence": "SYNTHETIC",
+   "scanStatus": "COMPLETE",
+   "audit": {
+    "returnedTags": 1,
+    "operationalTags": 0,
+    "culturalTags": 1,
+    "possibleDuplicateTags": 0,
+    "returnedEntities": 5,
+    "typeEvidence": {
+     "PROVIDER_CONFIRMED_TYPE": 0,
+     "QUERY_SCOPED": 0,
+     "GENERIC_TYPE_UNRESOLVED": 5,
+     "CONFLICTING_TYPE": 0
+    },
+    "retainedAssociations": 5,
+    "excludedEntities": 0,
+    "themes": 0,
+    "hypotheses": 1
+   },
+   "hypotheses": [
+    {
+     "name": "Travel",
+     "concept": "urn:tag:genre:media:syn_u",
+     "facet": "genre:media",
+     "evidenceStatus": "OBSERVED_ASSOCIATION"
+    }
+   ],
+   "themes": [],
+   "discovery": {
+    "rule": "observed-cultural-tag/v2",
+    "themeRule": "tag-facet-group/v1",
+    "outcome": "HYPOTHESES_FOUND",
+    "reasons": [],
+    "nextSteps": [
+     "Profile the related artists, places, films or books with Qloo tags to see whether they share a genre (one additional call per list).",
+     "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+    ]
+   },
+   "integrity": {
+    "verdict": "PASS",
+    "checks": [
+     {
+      "id": "schema_valid",
+      "pass": true,
+      "detail": "0.2 schema"
+     },
+     {
+      "id": "brand_identity",
+      "pass": true,
+      "detail": "SYNTHETIC House syn-brand-case"
+     },
+     {
+      "id": "provenance_integrity",
+      "pass": true,
+      "detail": "7 references, 0 without a recorded observation"
+     },
+     {
+      "id": "zero_fabricated_claims",
+      "pass": true,
+      "detail": "0 renamed items, 0 hypotheses without a retained tag"
+     },
+     {
+      "id": "type_grounding",
+      "pass": true,
+      "detail": "5 retained entities, 0 with a type claim the evidence does not support"
+     },
+     {
+      "id": "query_scope_accuracy",
+      "pass": true,
+      "detail": "0 entities with an unverifiable scope basis"
+     },
+     {
+      "id": "cultural_vs_operational",
+      "pass": true,
+      "detail": "0 operational tags returned, 0 kept as cultural"
+     },
+     {
+      "id": "duplicate_handling",
+      "pass": true,
+      "detail": "0 repeated references, 0 unsupported multi-signal claims"
+     },
+     {
+      "id": "grouping_rule_validity",
+      "pass": true,
+      "detail": "0 themes, 0 invalid"
+     },
+     {
+      "id": "territory_evidence_sufficiency",
+      "pass": true,
+      "detail": "1 hypotheses, 0 without sufficient tag evidence"
+     },
+     {
+      "id": "zero_cross_call_comparisons",
+      "pass": true,
+      "detail": "no affinity or popularity values are carried into the result"
+     }
+    ]
+   },
+   "usefulnessDeterministic": {
+    "verdict": "PASS",
+    "criteria": [
+     {
+      "id": "observed",
+      "question": "What did Qloo actually observe?",
+      "pass": true,
+      "detail": "1 cultural tags, 5 related entities"
+     },
+     {
+      "id": "meaningful",
+      "question": "Which cultural connections are meaningful enough to show?",
+      "pass": true,
+      "detail": "1 hypotheses, 1 audience-taste tags, 0 themes"
+     },
+     {
+      "id": "why",
+      "question": "Why did the system include them?",
+      "pass": true,
+      "detail": "explanations or zero-hypothesis reasons present"
+     },
+     {
+      "id": "evidence",
+      "question": "What evidence supports each connection?",
+      "pass": true,
+      "detail": "every hypothesis cites a Qloo call"
+     },
+     {
+      "id": "limitations",
+      "question": "What limitations prevent stronger claims?",
+      "pass": true,
+      "detail": "1 limitations"
+     },
+     {
+      "id": "next",
+      "question": "Which next research action is justified?",
+      "pass": true,
+      "detail": "2 next steps"
+     },
+     {
+      "id": "plain_language",
+      "question": "Can a non-technical user understand it?",
+      "pass": true,
+      "detail": "7 user-facing statements checked"
+     }
+    ]
+   }
+  }
+ ],
+ "performance": {
+  "note": "Offline, Node v22.23.2. Includes reading and parsing the frozen fixture on every run.",
+  "replayRuns": 500,
+  "meanReplayMs": 0.244,
+  "heapDeltaMb": -4.7,
+  "derivedArtifactBytes": 39028,
+  "asRunArtifactBytes": 7208,
+  "deterministic": true
+ }
+}

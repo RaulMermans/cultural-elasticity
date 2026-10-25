@@ -7,7 +7,7 @@ import { parseEnvelope } from "../qloo/normalize.js";
 import { defaultHarnessBinPath, type QlooTransport, type TransportResult } from "../qloo/transport.js";
 import { DEFAULT_QLOO_SPACING_MS } from "../config/production.js";
 import { QlooWorkflowError, QlooContractError } from "../qloo/errors.js";
-import { BASELINE_DOMAINS, BASELINE_MAX_ENTITIES, buildBaselineResult, type BaselineObservation } from "./research.js";
+import { BASELINE_DOMAINS, BASELINE_ENTITY_TAKE, BASELINE_TAG_TAKE, buildBaselineResult, type BaselineObservation } from "./research.js";
 import { BaselineRepository, BaselineRepositoryError } from "./repository.js";
 
 type Scope = { scanId: string; owner: string; stage: string } | { resolutionId: string };
@@ -119,8 +119,8 @@ export class BaselineWorker {
         const client = this.calls.scoped({ scanId, owner: this.owner, stage });
         try {
           const outcome = stage === "tags"
-            ? await client.entityTags({ entities: [brand.qlooId], entity_type: "brand", limit: BASELINE_MAX_ENTITIES })
-            : await client.recommend({ signals: [brand.qlooId], target_type: stage as (typeof BASELINE_DOMAINS)[number], limit: BASELINE_MAX_ENTITIES });
+            ? await client.entityTags({ entities: [brand.qlooId], entity_type: "brand", limit: BASELINE_TAG_TAKE })
+            : await client.recommend({ signals: [brand.qlooId], target_type: stage as (typeof BASELINE_DOMAINS)[number], limit: BASELINE_ENTITY_TAKE });
           const observation = { domain: stage as BaselineObservation["domain"], outcome, capturedAt: new Date().toISOString() } as BaselineObservation;
           await this.repository.recordObservation(scanId, this.owner, observation);
           observations.push(observation);

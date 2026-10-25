@@ -1,0 +1,758 @@
+{
+ "fixtureType": "live_qloo_canary_record",
+ "notice": "LIVE: normalized observation artifacts and the as-run result of the second approved Sprint 9B Loewe canary, exported read-only from its isolated canary database on 2026-10-25. Not a raw provider response. Values are comparable only within one call (same correlationId). Used only by offline replay; replay makes no Qloo call.",
+ "source": {
+  "database": "isolated local canary database (Sprint 9B)",
+  "scanId": "b3a92759-2d28-4fdb-aeca-ca7845750f38",
+  "ledger": "docs/sprint-9b/evidence/live-canary-2.json"
+ },
+ "brand": {
+  "name": "Loewe",
+  "qlooId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+  "describeCorrelationId": "mcp-ee06addd-146a-4ea0-a95c-62673b24f8cd"
+ },
+ "templateVersion": "ce-brand-baseline/v1",
+ "observations": [
+  {
+   "stage": "tags",
+   "schemaVersion": "ce-brand-baseline-observation/0.2",
+   "payload": {
+    "kind": "ok",
+    "domain": "tags",
+    "signals": [
+     {
+      "id": "urn:tag:genre:person:model",
+      "kind": "tag",
+      "name": "Model",
+      "type": "urn:tag:genre:person",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "id": "urn:tag:cost_description:place:expensive",
+      "kind": "tag",
+      "name": "Expensive",
+      "type": "urn:tag:cost_description:place",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "id": "urn:tag:inclusivity:place:identifies_as_women_owned",
+      "kind": "tag",
+      "name": "Identifies as women-owned",
+      "type": "urn:tag:inclusivity:place",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "id": "urn:tag:specialty_dish:place:postre",
+      "kind": "tag",
+      "name": "Postre",
+      "type": "urn:tag:specialty_dish:place",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "id": "urn:tag:credit_card:place:jcb",
+      "kind": "tag",
+      "name": "JCB",
+      "type": "urn:tag:credit_card:place",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "id": "urn:tag:hotel_rating:place:five_star",
+      "kind": "tag",
+      "name": "Five Star",
+      "type": "urn:tag:hotel_rating:place",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "id": "urn:tag:genre:place:restaurant:french",
+      "kind": "tag",
+      "name": "French",
+      "type": "urn:tag:genre:place",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "id": "urn:tag:keyword:media:japanese_drama",
+      "kind": "tag",
+      "name": "japanese drama",
+      "type": "urn:tag:keyword:media",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "id": "urn:tag:genre:media:fashion",
+      "kind": "tag",
+      "name": "Fashion",
+      "type": "urn:tag:genre:media",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "id": "urn:tag:keyword:media:live_action_adaptation",
+      "kind": "tag",
+      "name": "live action adaptation",
+      "type": "urn:tag:keyword:media",
+      "sourceCorrelationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     }
+    ],
+    "operation": "entity_tags",
+    "capturedAt": "2026-10-25T13:08:50.206Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+   }
+  },
+  {
+   "stage": "artist",
+   "schemaVersion": "ce-brand-baseline-observation/0.2",
+   "payload": {
+    "kind": "ok",
+    "domain": "artist",
+    "signals": [
+     {
+      "id": "C4A44F65-1EDB-4141-8233-CC041B419E23",
+      "kind": "entity",
+      "name": "Red Velvet",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     },
+     {
+      "id": "AFB6CA3D-9620-4D8B-9958-6727BA40AFA6",
+      "kind": "entity",
+      "name": "BLACKPINK",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     },
+     {
+      "id": "401D2EE5-0FDC-44D4-9EF5-FBAD7D88BFC2",
+      "kind": "entity",
+      "name": "SUNMI",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     },
+     {
+      "id": "E804E876-EA30-482C-9F49-E0E4A213A4A4",
+      "kind": "entity",
+      "name": "CHUNG HA",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     },
+     {
+      "id": "E404DC51-323B-4DB4-ABD3-0A9F02C0429E",
+      "kind": "entity",
+      "name": "TWICE",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     },
+     {
+      "id": "99BEA387-60EF-4532-9907-DD7995D8618B",
+      "kind": "entity",
+      "name": "Exo",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     },
+     {
+      "id": "2E3125E5-15B0-4E86-8E91-879F5D453D5B",
+      "kind": "entity",
+      "name": "aespa",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     },
+     {
+      "id": "8BD12F72-F767-4EC7-BC98-570556B21D98",
+      "kind": "entity",
+      "name": "f(x)",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     },
+     {
+      "id": "9DF1C20B-5CCF-40EB-B924-2B868EA4B66D",
+      "kind": "entity",
+      "name": "CLC",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     },
+     {
+      "id": "8132DE46-D09C-4386-9F6D-87A0A51D3CB2",
+      "kind": "entity",
+      "name": "CL",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+     }
+    ],
+    "operation": "recommend",
+    "capturedAt": "2026-10-25T13:08:59.867Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+   }
+  },
+  {
+   "stage": "place",
+   "schemaVersion": "ce-brand-baseline-observation/0.2",
+   "payload": {
+    "kind": "ok",
+    "domain": "place",
+    "signals": [
+     {
+      "id": "19E6425A-184D-40BA-B865-2CEF39371176",
+      "kind": "entity",
+      "name": "Les Ombres",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     },
+     {
+      "id": "9F818ACF-CAB4-44CC-8BF5-369C59AD8D15",
+      "kind": "entity",
+      "name": "Café de la Paix",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     },
+     {
+      "id": "80AAAF4C-FD3F-45B0-9882-E5D892FC2398",
+      "kind": "entity",
+      "name": "Hermès",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     },
+     {
+      "id": "77851888-2F29-4A50-A5F7-6ACE4855EDD5",
+      "kind": "entity",
+      "name": "Sofitel Paris le Faubourg",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     },
+     {
+      "id": "D02877BE-6AF3-4347-B604-914E16A33BE6",
+      "kind": "entity",
+      "name": "Hôtel de Crillon, A Rosewood Hotel",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     },
+     {
+      "id": "D40A899D-994D-4F98-891F-0754B2E1C055",
+      "kind": "entity",
+      "name": "Mandarin Oriental Lutetia, Paris",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     },
+     {
+      "id": "B2630179-9260-4263-9572-1C48691B3D5B",
+      "kind": "entity",
+      "name": "Boucheron",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     },
+     {
+      "id": "2351302F-E46B-4ADC-B6F6-EC80F89151C7",
+      "kind": "entity",
+      "name": "Four Seasons Hotel George V, Paris",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     },
+     {
+      "id": "DCB6522D-5CB3-43A7-BF07-CDC7894AA30A",
+      "kind": "entity",
+      "name": "Madame Brasserie",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     },
+     {
+      "id": "C29A4D24-455F-4DE0-B64B-0C2A515F7D68",
+      "kind": "entity",
+      "name": "Park Hyatt Paris-Vendôme",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+     }
+    ],
+    "operation": "recommend",
+    "capturedAt": "2026-10-25T13:09:04.446Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+   }
+  },
+  {
+   "stage": "movie",
+   "schemaVersion": "ce-brand-baseline-observation/0.2",
+   "payload": {
+    "kind": "ok",
+    "domain": "movie",
+    "signals": [
+     {
+      "id": "33388BBB-6625-4EF5-9BA1-75A78331C77D",
+      "kind": "entity",
+      "name": "Call Me by Your Name",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     },
+     {
+      "id": "C5931DB9-526D-47C4-8157-6D6E6FDFAD0B",
+      "kind": "entity",
+      "name": "Phantom Thread",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     },
+     {
+      "id": "FB052F84-01CF-48BB-A30A-51C45F183777",
+      "kind": "entity",
+      "name": "Roma",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     },
+     {
+      "id": "2955F3C4-36AB-49F3-A818-3597F35EF46C",
+      "kind": "entity",
+      "name": "Moonlight",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     },
+     {
+      "id": "4BE414CF-375F-4566-AA66-9AC6150A6B7F",
+      "kind": "entity",
+      "name": "Lady Bird",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     },
+     {
+      "id": "2E20280C-3E6F-4D69-89EA-DEF4BDBAFBB9",
+      "kind": "entity",
+      "name": "The Favourite",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     },
+     {
+      "id": "B47E7D07-C346-4B0C-87FB-F36CE4551597",
+      "kind": "entity",
+      "name": "The Shape of Water",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     },
+     {
+      "id": "A9991EB6-6D09-4215-8C17-5A82C9407DD8",
+      "kind": "entity",
+      "name": "I, Tonya",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     },
+     {
+      "id": "A181E2D0-3712-4A22-A946-620B1ABA08BD",
+      "kind": "entity",
+      "name": "A Fantastic Woman",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     },
+     {
+      "id": "DE02F90E-EF5E-4860-9D19-18BCFCD47F38",
+      "kind": "entity",
+      "name": "Pain and Glory",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+     }
+    ],
+    "operation": "recommend",
+    "capturedAt": "2026-10-25T13:09:12.205Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+   }
+  },
+  {
+   "stage": "book",
+   "schemaVersion": "ce-brand-baseline-observation/0.2",
+   "payload": {
+    "kind": "ok",
+    "domain": "book",
+    "signals": [
+     {
+      "id": "B0D607A8-5896-4D1A-B2D8-121A6ABB8068",
+      "kind": "entity",
+      "name": "More Than Enough: Claiming Space for Who You Are (No Matter What They Say)",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     },
+     {
+      "id": "1D814395-41E2-4EC2-BE52-F211B02C81AC",
+      "kind": "entity",
+      "name": "The Meaning of Mariah Carey",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     },
+     {
+      "id": "AC551F96-9E78-4FE7-A243-521BB64D6EC4",
+      "kind": "entity",
+      "name": "Big Friendship: How We Keep Each Other Close",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     },
+     {
+      "id": "AAE57900-A03D-4512-A1A7-EB31553AD558",
+      "kind": "entity",
+      "name": "Both/And: A Memoir",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     },
+     {
+      "id": "12084C7D-FB8F-41B9-8DD2-517D16F0BA6D",
+      "kind": "entity",
+      "name": "Becoming Beyoncé: The Untold Story",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     },
+     {
+      "id": "69CDF7FF-BCB5-4186-85A3-BFB0EC8B3D73",
+      "kind": "entity",
+      "name": "You Got Anything Stronger?",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     },
+     {
+      "id": "13229346-B6E8-4AA2-B957-B305E4240677",
+      "kind": "entity",
+      "name": "Dapper Dan: Made in Harlem",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     },
+     {
+      "id": "3E9FAAFE-A962-4D4A-8696-94F72B87EC14",
+      "kind": "entity",
+      "name": "The Genius of Women: From Overlooked to Changing the World",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     },
+     {
+      "id": "4E743BD5-9AE4-408A-83C9-5A5D6E7D0762",
+      "kind": "entity",
+      "name": "More Myself: A Journey",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     },
+     {
+      "id": "0BCA26C0-358D-44BD-AA20-2439B113606A",
+      "kind": "entity",
+      "name": "Inside Out",
+      "type": "urn:entity",
+      "sourceCorrelationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+     }
+    ],
+    "operation": "recommend",
+    "capturedAt": "2026-10-25T13:09:18.124Z",
+    "sourceStatus": "ok",
+    "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+   }
+  }
+ ],
+ "asRunResult": {
+  "schemaVersion": "ce-brand-baseline/0.1",
+  "payload": {
+   "brand": {
+    "id": "9f71b5dc-93f9-40b3-b01a-7e51cbd9e6b0",
+    "name": "Loewe",
+    "qlooId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+    "source": {
+     "scope": "identity",
+     "sourceId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+     "operation": "describe",
+     "capturedAt": "2026-10-25T13:08:43.545Z",
+     "sourceStatus": "ok",
+     "correlationId": "mcp-ee06addd-146a-4ea0-a95c-62673b24f8cd"
+    },
+    "resolutionStatus": "RESOLVED"
+   },
+   "scanId": "b3a92759-2d28-4fdb-aeca-ca7845750f38",
+   "execution": {
+    "startedAt": "2026-10-25T13:08:43.552Z",
+    "finishedAt": "2026-10-25T13:09:18.128Z",
+    "budgetStatus": "WITHIN_LIMIT",
+    "recordedOrLive": "live",
+    "completedStages": [
+     "identity",
+     "tags",
+     "artist",
+     "place",
+     "movie",
+     "book",
+     "normalize",
+     "discover",
+     "validate"
+    ],
+    "templateVersion": "ce-brand-baseline/v1",
+    "incompleteStages": [],
+    "providerCallCount": 5
+   },
+   "scanStatus": "COMPLETE",
+   "fingerprint": {
+    "signals": [
+     {
+      "id": "urn:tag:genre:person:model",
+      "kind": "tag",
+      "name": "Model",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:genre:person:model",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 1
+     },
+     {
+      "id": "urn:tag:cost_description:place:expensive",
+      "kind": "tag",
+      "name": "Expensive",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:cost_description:place:expensive",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 2
+     },
+     {
+      "id": "urn:tag:inclusivity:place:identifies_as_women_owned",
+      "kind": "tag",
+      "name": "Identifies as women-owned",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:inclusivity:place:identifies_as_women_owned",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 3
+     },
+     {
+      "id": "urn:tag:specialty_dish:place:postre",
+      "kind": "tag",
+      "name": "Postre",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:specialty_dish:place:postre",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 4
+     },
+     {
+      "id": "urn:tag:credit_card:place:jcb",
+      "kind": "tag",
+      "name": "JCB",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:credit_card:place:jcb",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 5
+     },
+     {
+      "id": "urn:tag:hotel_rating:place:five_star",
+      "kind": "tag",
+      "name": "Five Star",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:hotel_rating:place:five_star",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 6
+     },
+     {
+      "id": "urn:tag:genre:place:restaurant:french",
+      "kind": "tag",
+      "name": "French",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:genre:place:restaurant:french",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 7
+     },
+     {
+      "id": "urn:tag:keyword:media:japanese_drama",
+      "kind": "tag",
+      "name": "japanese drama",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:keyword:media:japanese_drama",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 8
+     },
+     {
+      "id": "urn:tag:genre:media:fashion",
+      "kind": "tag",
+      "name": "Fashion",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:genre:media:fashion",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 9
+     },
+     {
+      "id": "urn:tag:keyword:media:live_action_adaptation",
+      "kind": "tag",
+      "name": "live action adaptation",
+      "domain": "tags",
+      "source": {
+       "scope": "tags",
+       "sourceId": "urn:tag:keyword:media:live_action_adaptation",
+       "operation": "entity_tags",
+       "capturedAt": "2026-10-25T13:08:50.206Z",
+       "sourceStatus": "ok",
+       "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+      },
+      "rankWithinCall": 10
+     }
+    ],
+    "provenance": [
+     {
+      "scope": "identity",
+      "sourceId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+      "operation": "describe",
+      "capturedAt": "2026-10-25T13:08:43.545Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-ee06addd-146a-4ea0-a95c-62673b24f8cd"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:genre:person:model",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:cost_description:place:expensive",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:inclusivity:place:identifies_as_women_owned",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:specialty_dish:place:postre",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:credit_card:place:jcb",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:hotel_rating:place:five_star",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:genre:place:restaurant:french",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:keyword:media:japanese_drama",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:genre:media:fashion",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     },
+     {
+      "scope": "tags",
+      "sourceId": "urn:tag:keyword:media:live_action_adaptation",
+      "operation": "entity_tags",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb"
+     }
+    ],
+    "limitations": [
+     "artist: an entity with an unverified target type was excluded.",
+     "place: an entity with an unverified target type was excluded.",
+     "movie: an entity with an unverified target type was excluded.",
+     "book: an entity with an unverified target type was excluded.",
+     "No grounded territory concept was observed in this bounded scan."
+    ],
+    "domainCoverage": [
+     {
+      "domain": "tags",
+      "status": "OBSERVED",
+      "entityCount": 10
+     },
+     {
+      "domain": "artist",
+      "status": "OBSERVED",
+      "entityCount": 10
+     },
+     {
+      "domain": "place",
+      "status": "OBSERVED",
+      "entityCount": 10
+     },
+     {
+      "domain": "movie",
+      "status": "OBSERVED",
+      "entityCount": 10
+     },
+     {
+      "domain": "book",
+      "status": "OBSERVED",
+      "entityCount": 10
+     }
+    ]
+   },
+   "territories": [],
+   "schemaVersion": "ce-brand-baseline/0.1"
+  }
+ }
+}
