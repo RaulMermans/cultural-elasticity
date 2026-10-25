@@ -106,6 +106,13 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 4. **Both baseline admission flags default off.** Keep `CE_BASELINE_ENABLED=0`, `CE_BASELINE_LIVE_ENABLED=0`, `CE_BASELINE_TOTAL_QLOO_CALLS=0`, and `CE_ACCEPT_INVESTIGATIONS=0` on public/production deployments unless a separate release decision authorizes provider use.
 5. **The canonical Sprint 9B design, backup procedure, and live evidence are in** `docs/sprint-9b/BRAND_INTELLIGENCE_AND_DURABLE_INFRASTRUCTURE.md`. Synthetic tests are not live Qloo validation.
 
+## Baseline evidence grounding (Sprint 9B.1)
+
+1. **Observations, themes and hypotheses stay separate** (`ce-brand-baseline/0.2`). The observed profile never depends on finding a territory, and a hypothesis is always `UNVALIDATED`.
+2. **Query scope is not entity type.** A generic `urn:entity` returned by a type-filtered query is `QUERY_SCOPED`, never relabelled as a confirmed type. Keep Qloo's `subtype` and the harness-recorded `filter.type` verbatim.
+3. **The tag URN is authoritative** for facet and operational classification; a returned type label never overrides it. Names are never used to classify, only to flag possible duplicates, which are never merged or counted twice.
+4. **Stored results are never rewritten.** Re-projections of stored observations are separate derived artifacts with `execution.derivedFrom`. Canonical record: `docs/sprint-9b1/CULTURAL_INTELLIGENCE_GROUNDING_REPORT.md`.
+
 ## Engineering
 
 - Keep **frontend/backend boundaries clean.** The frontend talks only to the backend. Only the backend talks to Qloo, through `QlooClient` (`backend/src/qloo`).

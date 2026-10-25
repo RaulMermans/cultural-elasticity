@@ -8,7 +8,9 @@ Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Bouti
 
 The new brand-first panel resolves a Qloo brand, runs a bounded deterministic baseline without an LLM, and displays evidence-backed associations and candidate territories. New baseline scans use PostgreSQL with durable call reservations, idempotent creation, and restart-safe result retrieval. The existing agent remains admission-gated and in-memory. Production baseline admission defaults to off. See the [Sprint 9B source of truth](docs/sprint-9b/BRAND_INTELLIGENCE_AND_DURABLE_INFRASTRUCTURE.md) for the schema, deployment, backup/restore, live canary result, and limitations.
 
-Local commands: `pnpm db:migrate`, `pnpm test:db` (real isolated PostgreSQL), `pnpm eval:brand-baseline` (SYNTHETIC), and `pnpm smoke:baseline` (real PostgreSQL with SYNTHETIC Qloo transport). A live canary is a separate, explicitly budgeted operator action.
+Sprint 9B.1 replaced the result with `ce-brand-baseline/0.2`: an observed cultural profile, facet themes, and qualified territory hypotheses, with generic Qloo entity types kept as query-scoped rather than discarded. See the [Sprint 9B.1 report](docs/sprint-9b1/CULTURAL_INTELLIGENCE_GROUNDING_REPORT.md).
+
+Local commands: `pnpm db:migrate`, `pnpm test:db` (real isolated PostgreSQL), `pnpm eval:brand-baseline` (SYNTHETIC plus offline replay of recorded live evidence; `pnpm --filter backend eval:brand-baseline:report` writes the audit report), and `pnpm smoke:baseline` (real PostgreSQL with SYNTHETIC Qloo transport). A live canary is a separate, explicitly budgeted operator action.
 
 ## Current status: Sprint 8F.2 — Deployment activation and hosted E2E
 

@@ -1,10 +1,12 @@
 import { createHash, randomUUID } from "node:crypto";
-import { BRAND_BASELINE_SCHEMA_VERSION, BRAND_BASELINE_TEMPLATE_VERSION, type BrandBaselineResult, type BaselineStatus } from "@cultural-elasticity/shared";
+import { BRAND_BASELINE_SCHEMA_VERSION, BRAND_BASELINE_TEMPLATE_VERSION, type AnyBrandBaselineResult, type BrandBaselineResult, type BaselineStatus } from "@cultural-elasticity/shared";
 import type { PoolClient } from "pg";
 import type { ResolvedConcept } from "../contracts/qloo.js";
 import type { Database } from "./db.js";
-import { baselineObservationSchema, brandBaselineResultSchema } from "./schema.js";
-import type { BaselineObservation } from "./research.js";
+import { BASELINE_OBSERVATION_SCHEMA_VERSION, baselineObservationSchema, brandBaselineResultSchema, storedBrandBaselineResultSchema } from "./schema.js";
+import { BASELINE_TAG_TAKE, type BaselineObservation } from "./research.js";
+
+type CapturedSignal = { qlooId: string; label: string; kind: "tag" | "entity"; type?: string; subtype?: string; sourceCorrelationId: string };
 
 export const tokenHash = (token: string): string => createHash("sha256").update(token).digest("hex");
 export const payloadHash = (value: unknown): string => createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -127,15 +129,16 @@ export class BaselineRepository {
     });
   }
 
-  async readScan(id: string, accessToken: string): Promise<{ status: BaselineStatus; providerCallCount: number; result: BrandBaselineResult | null; stages: { stage: string; status: string }[] } | null> {
+  async readScan(id: string, accessToken: string): Promise<{ status: BaselineStatus; providerCallCount: number; result: AnyBrandBaselineResult | null; stages: { stage: string; status: string }[] } | null> {
     const scan = await this.pool.query<ScanRow>("SELECT * FROM baseline_scans WHERE id=$1 AND access_token_hash=$2", [id, tokenHash(accessToken)]);
     if (!scan.rows[0]) return null;
     const stages = await this.pool.query<{ stage: string; status: string }>("SELECT stage,status FROM baseline_stages WHERE scan_id=$1 ORDER BY started_at,stage", [id]);
-    let result: BrandBaselineResult | null = null;
+    let result: AnyBrandBaselineResult | null = null;
     if (scan.rows[0].result_artifact_id) {
       const artifact = await this.pool.query<{ payload: unknown }>("SELECT payload FROM baseline_artifacts WHERE id=$1 AND scan_id=$2", [scan.rows[0].result_artifact_id, id]);
       if (!artifact.rows[0]) throw new BaselineRepositoryError("RESULT_ARTIFACT_MISSING");
-      const parsed = brandBaselineResultSchema.safeParse(artifact.rows[0].payload);
+      // Stored 0.1 results stay readable exactly as written; they are never upgraded in place.
+      const parsed = storedBrandBaselineResultSchema.safeParse(artifact.rows[0].payload);
       if (!parsed.success) throw new BaselineRepositoryError("RESULT_ARTIFACT_CORRUPT");
       result = parsed.data;
     }
@@ -168,8 +171,12 @@ export class BaselineRepository {
   async recordObservation(scanId: string, owner: string, observation: BaselineObservation): Promise<void> {
     const outcome = observation.outcome;
     const signals = outcome.kind === "ok"
-      ? observation.domain === "tags" ? (outcome.data as { tags: { qlooId: string; label: string; kind: "tag" | "entity"; type?: string; sourceCorrelationId: string }[] }).tags : (outcome.data as { entities: { qlooId: string; label: string; kind: "tag" | "entity"; type?: string; sourceCorrelationId: string }[] }).entities
+      ? observation.domain === "tags" ? (outcome.data as { tags: CapturedSignal[] }).tags : (outcome.data as { entities: CapturedSignal[] }).entities
       : [];
+    const requestTypes = new Set((outcome.provenance.requests ?? []).map((request) => {
+      const query = request.query as Record<string, unknown> | null;
+      return query && typeof query["filter.type"] === "string" ? query["filter.type"] : undefined;
+    }).filter((value): value is string => value !== undefined));
     const payload = baselineObservationSchema.parse({
       domain: observation.domain,
       capturedAt: observation.capturedAt,
@@ -177,14 +184,15 @@ export class BaselineRepository {
       operation: observation.domain === "tags" ? "entity_tags" : "recommend",
       correlationId: outcome.provenance.correlationId,
       sourceStatus: outcome.provenance.status,
-      signals: signals.slice(0, 10).map((signal) => ({ id: signal.qlooId, name: signal.label, kind: signal.kind, type: signal.type, sourceCorrelationId: signal.sourceCorrelationId })),
+      ...(observation.domain !== "tags" && requestTypes.size === 1 ? { recordedRequestType: [...requestTypes][0] } : {}),
+      signals: signals.slice(0, BASELINE_TAG_TAKE).map((signal) => ({ id: signal.qlooId, name: signal.label, kind: signal.kind, type: signal.type, subtype: signal.subtype, sourceCorrelationId: signal.sourceCorrelationId })),
     });
     await this.transaction(async (client) => {
       const scan = await client.query("SELECT id FROM baseline_scans WHERE id=$1 AND status='RUNNING' AND lease_owner=$2 FOR UPDATE", [scanId, owner]);
       if (!scan.rowCount) throw new BaselineRepositoryError("LEASE_LOST");
       const providerCall = await client.query("SELECT id FROM baseline_provider_calls WHERE scan_id=$1 AND stage=$2 AND provider_correlation_id=$3 AND status='COMPLETE' AND unknown_outcome=false LIMIT 1", [scanId, observation.domain, outcome.provenance.correlationId]);
       if (!providerCall.rowCount) throw new BaselineRepositoryError("UNRECORDED_PROVIDER_CALL");
-      await client.query("INSERT INTO baseline_artifacts (id,scan_id,stage,schema_version,artifact_type,payload,source_correlation_ids) VALUES ($1,$2,$3,$4,'observation',$5,$6) ON CONFLICT (scan_id,artifact_type,stage) DO NOTHING", [randomUUID(), scanId, observation.domain, "ce-brand-baseline-observation/0.2", payload, [outcome.provenance.correlationId]]);
+      await client.query("INSERT INTO baseline_artifacts (id,scan_id,stage,schema_version,artifact_type,payload,source_correlation_ids) VALUES ($1,$2,$3,$4,'observation',$5,$6) ON CONFLICT (scan_id,artifact_type,stage) DO NOTHING", [randomUUID(), scanId, observation.domain, BASELINE_OBSERVATION_SCHEMA_VERSION, payload, [outcome.provenance.correlationId]]);
       await client.query("INSERT INTO baseline_stages (scan_id,stage,status,attempt,outcome,qloo_correlation_id,finished_at) VALUES ($1,$2,'COMPLETE',1,$3,$4,now()) ON CONFLICT (scan_id,stage,attempt) DO UPDATE SET status='COMPLETE',outcome=excluded.outcome,qloo_correlation_id=excluded.qloo_correlation_id,finished_at=now()", [scanId, observation.domain, { kind: outcome.kind }, outcome.provenance.correlationId]);
       await client.query("INSERT INTO baseline_execution_events (id,scan_id,event_type,stage,metadata) VALUES ($1,$2,'stage_complete',$3,$4)", [randomUUID(), scanId, observation.domain, { kind: outcome.kind }]);
     });
@@ -232,6 +240,13 @@ export class BaselineRepository {
       }
       for (const territory of validated.territories) for (const ref of territory.supportingReferences) {
         if (!observed.has(`${ref.correlationId}\0${ref.sourceId}`)) throw new BaselineRepositoryError("UNRECORDED_EVIDENCE");
+      }
+      for (const exclusion of validated.fingerprint.excluded) {
+        if (!observed.has(`${exclusion.source.correlationId}\0${exclusion.source.sourceId}`) || exclusion.id !== exclusion.source.sourceId) throw new BaselineRepositoryError("UNRECORDED_EVIDENCE");
+      }
+      const retained = new Set(validated.fingerprint.signals.map((signal) => signal.id));
+      for (const theme of validated.fingerprint.themes) {
+        if (![...theme.memberIds, ...theme.possibleDuplicateIds].every((member) => retained.has(member))) throw new BaselineRepositoryError("UNRECORDED_EVIDENCE");
       }
       for (const ref of validated.fingerprint.provenance) {
         if (ref.operation === "describe") {

@@ -56,7 +56,9 @@ describe("SYNTHETIC brand baseline research", () => {
     expect(first.territories[0]?.canonicalConcept).toBe("urn:tag:interests:qloo:maker_culture");
     expect(first.territories[0]?.supportingReferences[0]?.correlationId).toBe("syn-tags");
     expect(first.fingerprint.signals).toHaveLength(1);
-    expect(first.fingerprint.limitations).toContain("tags: venue or operational metadata was excluded from the cultural fingerprint.");
+    expect(first.fingerprint.excluded).toEqual([expect.objectContaining({ id: "urn:tag:credit_card:place:visa", rule: "payment", source: expect.objectContaining({ correlationId: "syn-tags" }) })]);
+    expect(first.fingerprint.limitations.some((item) => item.startsWith("Some returned tags describe store or venue listings"))).toBe(true);
+    expect(first.audit).toMatchObject({ returnedTags: 3, operationalTags: 1, culturalTags: 1, hypotheses: 1 });
     expect(JSON.stringify(first)).not.toMatch(/elasticityScore|opportunityScore|distanceScore/u);
   });
 
@@ -91,11 +93,14 @@ describe("SYNTHETIC brand baseline research", () => {
     const result = buildBaselineResult({ ...input(observations), scanId: "00000000-0000-4000-8000-000000000001", brandId: "00000000-0000-4000-8000-000000000002" });
     const parsed = brandBaselineResultSchema.safeParse(result);
     expect(parsed.success, parsed.error?.issues.map((issue) => issue.path.join(".")).join(", ")).toBe(true);
-    expect(result.fingerprint.limitations).toHaveLength(4);
+    // A specific type that contradicts the requested domain is set aside with its source, never silently retyped.
+    expect(result.fingerprint.excluded).toHaveLength(40);
+    expect(result.fingerprint.excluded.every((item) => item.rule === "conflicting_type" && item.source.operation === "recommend")).toBe(true);
+    expect(result.audit.typeEvidence.CONFLICTING_TYPE).toBe(40);
     expect(result.fingerprint.signals).toHaveLength(1);
   });
 
-  it("marks a SYNTHETIC live-shaped response partial when only generic entity types and no grounded territory are available", () => {
+  it("qualifies a SYNTHETIC live-shaped generic entity instead of typing or discarding it", () => {
     const tags = syntheticTagObservation([
       syntheticTag("urn:tag:genre:media:fashion", "Fashion"),
       syntheticTag("urn:tag:credit_card:place:jcb", "JCB"),
@@ -110,9 +115,21 @@ describe("SYNTHETIC brand baseline research", () => {
       },
     };
     const result = buildBaselineResult(input([tags, artist]));
+    expect(result.fingerprint.signals.map((signal) => signal.name)).toEqual(["Fashion", "SYNTHETIC Artist"]);
+    // No recorded request and no stored stage: the type stays unresolved, not "artist".
+    expect(result.fingerprint.signals[1]?.grounding).toEqual({ typeEvidence: "GENERIC_TYPE_UNRESOLVED", providerType: "urn:entity", providerSubtype: null, requestedType: "urn:entity:artist", scopeBasis: null });
+    expect(result.territories.map((territory) => territory.name)).toEqual(["Fashion"]);
+    expect(result.territories.every((territory) => territory.supportingReferences.every((ref) => ref.operation === "entity_tags"))).toBe(true);
+  });
+
+  it("marks a result partial when signals exist but no territory hypothesis is supported", () => {
+    const result = buildBaselineResult(input([syntheticTagObservation([
+      syntheticTag("urn:tag:keyword:media:live_action_adaptation", "live action adaptation"),
+      syntheticTag("urn:tag:credit_card:place:jcb", "JCB"),
+    ])]));
     expect(result.scanStatus).toBe("PARTIAL");
-    expect(result.fingerprint.signals.map((signal) => signal.name)).toEqual(["Fashion"]);
     expect(result.territories).toEqual([]);
-    expect(result.fingerprint.limitations).toContain("artist: an entity with an unverified target type was excluded.");
+    expect(result.discovery.outcome).toBe("NO_HYPOTHESIS");
+    expect(result.discovery.reasons.length).toBeGreaterThan(0);
   });
 });

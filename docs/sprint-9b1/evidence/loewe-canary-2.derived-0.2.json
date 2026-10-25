@@ -1,0 +1,1598 @@
+{
+ "fixtureType": "derived_offline_projection",
+ "notice": "LIVE_RECORDED_REPLAY: ce-brand-baseline/0.2 projection of the stored observations of scan b3a92759-2d28-4fdb-aeca-ca7845750f38. Produced offline with no provider call. The stored as-run 0.1 result is unchanged and remains the record of what ran.",
+ "lineage": {
+  "sourceFixture": "evals/fixtures/live/loewe-baseline-canary-2.live.json",
+  "sourceScanId": "b3a92759-2d28-4fdb-aeca-ca7845750f38",
+  "sourceResultSchema": "ce-brand-baseline/0.1"
+ },
+ "result": {
+  "schemaVersion": "ce-brand-baseline/0.2",
+  "scanId": "b3a92759-2d28-4fdb-aeca-ca7845750f38",
+  "scanStatus": "COMPLETE",
+  "brand": {
+   "id": "9f71b5dc-93f9-40b3-b01a-7e51cbd9e6b0",
+   "qlooId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+   "name": "Loewe",
+   "resolutionStatus": "RESOLVED",
+   "source": {
+    "operation": "describe",
+    "correlationId": "mcp-ee06addd-146a-4ea0-a95c-62673b24f8cd",
+    "sourceId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+    "capturedAt": "2026-10-25T13:08:43.545Z",
+    "sourceStatus": "ok",
+    "scope": "identity"
+   }
+  },
+  "fingerprint": {
+   "signals": [
+    {
+     "id": "urn:tag:genre:person:model",
+     "name": "Model",
+     "kind": "tag",
+     "domain": "tags",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:genre:person:model",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     },
+     "rankWithinCall": 1,
+     "facet": "genre:person",
+     "role": "AUDIENCE_TASTE"
+    },
+    {
+     "id": "urn:tag:keyword:media:japanese_drama",
+     "name": "japanese drama",
+     "kind": "tag",
+     "domain": "tags",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:keyword:media:japanese_drama",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     },
+     "rankWithinCall": 8,
+     "facet": "keyword:media",
+     "role": "DESCRIPTIVE_KEYWORD"
+    },
+    {
+     "id": "urn:tag:genre:media:fashion",
+     "name": "Fashion",
+     "kind": "tag",
+     "domain": "tags",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:genre:media:fashion",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     },
+     "rankWithinCall": 9,
+     "facet": "genre:media",
+     "role": "AUDIENCE_TASTE"
+    },
+    {
+     "id": "urn:tag:keyword:media:live_action_adaptation",
+     "name": "live action adaptation",
+     "kind": "tag",
+     "domain": "tags",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:keyword:media:live_action_adaptation",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     },
+     "rankWithinCall": 10,
+     "facet": "keyword:media",
+     "role": "DESCRIPTIVE_KEYWORD"
+    },
+    {
+     "id": "C4A44F65-1EDB-4141-8233-CC041B419E23",
+     "name": "Red Velvet",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "C4A44F65-1EDB-4141-8233-CC041B419E23",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 1,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "AFB6CA3D-9620-4D8B-9958-6727BA40AFA6",
+     "name": "BLACKPINK",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "AFB6CA3D-9620-4D8B-9958-6727BA40AFA6",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 2,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "401D2EE5-0FDC-44D4-9EF5-FBAD7D88BFC2",
+     "name": "SUNMI",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "401D2EE5-0FDC-44D4-9EF5-FBAD7D88BFC2",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 3,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "E804E876-EA30-482C-9F49-E0E4A213A4A4",
+     "name": "CHUNG HA",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "E804E876-EA30-482C-9F49-E0E4A213A4A4",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 4,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "E404DC51-323B-4DB4-ABD3-0A9F02C0429E",
+     "name": "TWICE",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "E404DC51-323B-4DB4-ABD3-0A9F02C0429E",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 5,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "99BEA387-60EF-4532-9907-DD7995D8618B",
+     "name": "Exo",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "99BEA387-60EF-4532-9907-DD7995D8618B",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 6,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "2E3125E5-15B0-4E86-8E91-879F5D453D5B",
+     "name": "aespa",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "2E3125E5-15B0-4E86-8E91-879F5D453D5B",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 7,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "8BD12F72-F767-4EC7-BC98-570556B21D98",
+     "name": "f(x)",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "8BD12F72-F767-4EC7-BC98-570556B21D98",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 8,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "9DF1C20B-5CCF-40EB-B924-2B868EA4B66D",
+     "name": "CLC",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "9DF1C20B-5CCF-40EB-B924-2B868EA4B66D",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 9,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "8132DE46-D09C-4386-9F6D-87A0A51D3CB2",
+     "name": "CL",
+     "kind": "entity",
+     "domain": "artist",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+      "sourceId": "8132DE46-D09C-4386-9F6D-87A0A51D3CB2",
+      "capturedAt": "2026-10-25T13:08:59.867Z",
+      "sourceStatus": "ok",
+      "scope": "artist"
+     },
+     "rankWithinCall": 10,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:artist",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "19E6425A-184D-40BA-B865-2CEF39371176",
+     "name": "Les Ombres",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "19E6425A-184D-40BA-B865-2CEF39371176",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 1,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "9F818ACF-CAB4-44CC-8BF5-369C59AD8D15",
+     "name": "Café de la Paix",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "9F818ACF-CAB4-44CC-8BF5-369C59AD8D15",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 2,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "80AAAF4C-FD3F-45B0-9882-E5D892FC2398",
+     "name": "Hermès",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "80AAAF4C-FD3F-45B0-9882-E5D892FC2398",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 3,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "77851888-2F29-4A50-A5F7-6ACE4855EDD5",
+     "name": "Sofitel Paris le Faubourg",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "77851888-2F29-4A50-A5F7-6ACE4855EDD5",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 4,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "D02877BE-6AF3-4347-B604-914E16A33BE6",
+     "name": "Hôtel de Crillon, A Rosewood Hotel",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "D02877BE-6AF3-4347-B604-914E16A33BE6",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 5,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "D40A899D-994D-4F98-891F-0754B2E1C055",
+     "name": "Mandarin Oriental Lutetia, Paris",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "D40A899D-994D-4F98-891F-0754B2E1C055",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 6,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "B2630179-9260-4263-9572-1C48691B3D5B",
+     "name": "Boucheron",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "B2630179-9260-4263-9572-1C48691B3D5B",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 7,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "2351302F-E46B-4ADC-B6F6-EC80F89151C7",
+     "name": "Four Seasons Hotel George V, Paris",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "2351302F-E46B-4ADC-B6F6-EC80F89151C7",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 8,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "DCB6522D-5CB3-43A7-BF07-CDC7894AA30A",
+     "name": "Madame Brasserie",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "DCB6522D-5CB3-43A7-BF07-CDC7894AA30A",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 9,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "C29A4D24-455F-4DE0-B64B-0C2A515F7D68",
+     "name": "Park Hyatt Paris-Vendôme",
+     "kind": "entity",
+     "domain": "place",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+      "sourceId": "C29A4D24-455F-4DE0-B64B-0C2A515F7D68",
+      "capturedAt": "2026-10-25T13:09:04.446Z",
+      "sourceStatus": "ok",
+      "scope": "place"
+     },
+     "rankWithinCall": 10,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:place",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "33388BBB-6625-4EF5-9BA1-75A78331C77D",
+     "name": "Call Me by Your Name",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "33388BBB-6625-4EF5-9BA1-75A78331C77D",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 1,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "C5931DB9-526D-47C4-8157-6D6E6FDFAD0B",
+     "name": "Phantom Thread",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "C5931DB9-526D-47C4-8157-6D6E6FDFAD0B",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 2,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "FB052F84-01CF-48BB-A30A-51C45F183777",
+     "name": "Roma",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "FB052F84-01CF-48BB-A30A-51C45F183777",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 3,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "2955F3C4-36AB-49F3-A818-3597F35EF46C",
+     "name": "Moonlight",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "2955F3C4-36AB-49F3-A818-3597F35EF46C",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 4,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "4BE414CF-375F-4566-AA66-9AC6150A6B7F",
+     "name": "Lady Bird",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "4BE414CF-375F-4566-AA66-9AC6150A6B7F",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 5,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "2E20280C-3E6F-4D69-89EA-DEF4BDBAFBB9",
+     "name": "The Favourite",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "2E20280C-3E6F-4D69-89EA-DEF4BDBAFBB9",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 6,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "B47E7D07-C346-4B0C-87FB-F36CE4551597",
+     "name": "The Shape of Water",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "B47E7D07-C346-4B0C-87FB-F36CE4551597",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 7,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "A9991EB6-6D09-4215-8C17-5A82C9407DD8",
+     "name": "I, Tonya",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "A9991EB6-6D09-4215-8C17-5A82C9407DD8",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 8,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "A181E2D0-3712-4A22-A946-620B1ABA08BD",
+     "name": "A Fantastic Woman",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "A181E2D0-3712-4A22-A946-620B1ABA08BD",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 9,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "DE02F90E-EF5E-4860-9D19-18BCFCD47F38",
+     "name": "Pain and Glory",
+     "kind": "entity",
+     "domain": "movie",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+      "sourceId": "DE02F90E-EF5E-4860-9D19-18BCFCD47F38",
+      "capturedAt": "2026-10-25T13:09:12.205Z",
+      "sourceStatus": "ok",
+      "scope": "movie"
+     },
+     "rankWithinCall": 10,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:movie",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "B0D607A8-5896-4D1A-B2D8-121A6ABB8068",
+     "name": "More Than Enough: Claiming Space for Who You Are (No Matter What They Say)",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "B0D607A8-5896-4D1A-B2D8-121A6ABB8068",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 1,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "1D814395-41E2-4EC2-BE52-F211B02C81AC",
+     "name": "The Meaning of Mariah Carey",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "1D814395-41E2-4EC2-BE52-F211B02C81AC",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 2,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "AC551F96-9E78-4FE7-A243-521BB64D6EC4",
+     "name": "Big Friendship: How We Keep Each Other Close",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "AC551F96-9E78-4FE7-A243-521BB64D6EC4",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 3,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "AAE57900-A03D-4512-A1A7-EB31553AD558",
+     "name": "Both/And: A Memoir",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "AAE57900-A03D-4512-A1A7-EB31553AD558",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 4,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "12084C7D-FB8F-41B9-8DD2-517D16F0BA6D",
+     "name": "Becoming Beyoncé: The Untold Story",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "12084C7D-FB8F-41B9-8DD2-517D16F0BA6D",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 5,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "69CDF7FF-BCB5-4186-85A3-BFB0EC8B3D73",
+     "name": "You Got Anything Stronger?",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "69CDF7FF-BCB5-4186-85A3-BFB0EC8B3D73",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 6,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "13229346-B6E8-4AA2-B957-B305E4240677",
+     "name": "Dapper Dan: Made in Harlem",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "13229346-B6E8-4AA2-B957-B305E4240677",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 7,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "3E9FAAFE-A962-4D4A-8696-94F72B87EC14",
+     "name": "The Genius of Women: From Overlooked to Changing the World",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "3E9FAAFE-A962-4D4A-8696-94F72B87EC14",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 8,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "4E743BD5-9AE4-408A-83C9-5A5D6E7D0762",
+     "name": "More Myself: A Journey",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "4E743BD5-9AE4-408A-83C9-5A5D6E7D0762",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 9,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    },
+    {
+     "id": "0BCA26C0-358D-44BD-AA20-2439B113606A",
+     "name": "Inside Out",
+     "kind": "entity",
+     "domain": "book",
+     "source": {
+      "operation": "recommend",
+      "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+      "sourceId": "0BCA26C0-358D-44BD-AA20-2439B113606A",
+      "capturedAt": "2026-10-25T13:09:18.124Z",
+      "sourceStatus": "ok",
+      "scope": "book"
+     },
+     "rankWithinCall": 10,
+     "grounding": {
+      "typeEvidence": "QUERY_SCOPED",
+      "providerType": "urn:entity",
+      "providerSubtype": null,
+      "requestedType": "urn:entity:book",
+      "scopeBasis": "BASELINE_TEMPLATE_STAGE"
+     }
+    }
+   ],
+   "excluded": [
+    {
+     "id": "urn:tag:cost_description:place:expensive",
+     "name": "Expensive",
+     "domain": "tags",
+     "rule": "price_descriptor",
+     "reason": "venue price descriptor (e.g. Expensive), not a brand positioning statement",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:cost_description:place:expensive",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     }
+    },
+    {
+     "id": "urn:tag:inclusivity:place:identifies_as_women_owned",
+     "name": "Identifies as women-owned",
+     "domain": "tags",
+     "rule": "venue_listing_badge",
+     "reason": "ownership badge of a venue listing; observed on nearly every live brand profile regardless of brand culture",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:inclusivity:place:identifies_as_women_owned",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     }
+    },
+    {
+     "id": "urn:tag:specialty_dish:place:postre",
+     "name": "Postre",
+     "domain": "tags",
+     "rule": "menu_item",
+     "reason": "menu dish served at a venue",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:specialty_dish:place:postre",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     }
+    },
+    {
+     "id": "urn:tag:credit_card:place:jcb",
+     "name": "JCB",
+     "domain": "tags",
+     "rule": "payment",
+     "reason": "payment method accepted at a venue (e.g. VISA)",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:credit_card:place:jcb",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     }
+    },
+    {
+     "id": "urn:tag:hotel_rating:place:five_star",
+     "name": "Five Star",
+     "domain": "tags",
+     "rule": "venue_rating",
+     "reason": "star rating of a lodging venue",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:hotel_rating:place:five_star",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     }
+    },
+    {
+     "id": "urn:tag:genre:place:restaurant:french",
+     "name": "French",
+     "domain": "tags",
+     "rule": "venue_category",
+     "reason": "category of a venue listing (e.g. Restaurant, Shopping mall, Tourist attraction)",
+     "source": {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:genre:place:restaurant:french",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     }
+    }
+   ],
+   "themes": [
+    {
+     "id": "a3178390cdb2e0e266cb34f7",
+     "label": "Media keywords",
+     "rule": "tag-facet-group/v1",
+     "facet": "keyword:media",
+     "memberIds": [
+      "urn:tag:keyword:media:japanese_drama",
+      "urn:tag:keyword:media:live_action_adaptation"
+     ],
+     "possibleDuplicateIds": []
+    }
+   ],
+   "domainCoverage": [
+    {
+     "domain": "tags",
+     "status": "OBSERVED",
+     "entityCount": 10
+    },
+    {
+     "domain": "artist",
+     "status": "OBSERVED",
+     "entityCount": 10
+    },
+    {
+     "domain": "place",
+     "status": "OBSERVED",
+     "entityCount": 10
+    },
+    {
+     "domain": "movie",
+     "status": "OBSERVED",
+     "entityCount": 10
+    },
+    {
+     "domain": "book",
+     "status": "OBSERVED",
+     "entityCount": 10
+    }
+   ],
+   "provenance": [
+    {
+     "operation": "describe",
+     "correlationId": "mcp-ee06addd-146a-4ea0-a95c-62673b24f8cd",
+     "sourceId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+     "capturedAt": "2026-10-25T13:08:43.545Z",
+     "sourceStatus": "ok",
+     "scope": "identity"
+    },
+    {
+     "operation": "entity_tags",
+     "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+     "sourceId": "urn:tag:genre:person:model",
+     "capturedAt": "2026-10-25T13:08:50.206Z",
+     "sourceStatus": "ok",
+     "scope": "tags"
+    },
+    {
+     "operation": "entity_tags",
+     "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+     "sourceId": "urn:tag:keyword:media:japanese_drama",
+     "capturedAt": "2026-10-25T13:08:50.206Z",
+     "sourceStatus": "ok",
+     "scope": "tags"
+    },
+    {
+     "operation": "entity_tags",
+     "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+     "sourceId": "urn:tag:genre:media:fashion",
+     "capturedAt": "2026-10-25T13:08:50.206Z",
+     "sourceStatus": "ok",
+     "scope": "tags"
+    },
+    {
+     "operation": "entity_tags",
+     "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+     "sourceId": "urn:tag:keyword:media:live_action_adaptation",
+     "capturedAt": "2026-10-25T13:08:50.206Z",
+     "sourceStatus": "ok",
+     "scope": "tags"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "C4A44F65-1EDB-4141-8233-CC041B419E23",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "AFB6CA3D-9620-4D8B-9958-6727BA40AFA6",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "401D2EE5-0FDC-44D4-9EF5-FBAD7D88BFC2",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "E804E876-EA30-482C-9F49-E0E4A213A4A4",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "E404DC51-323B-4DB4-ABD3-0A9F02C0429E",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "99BEA387-60EF-4532-9907-DD7995D8618B",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "2E3125E5-15B0-4E86-8E91-879F5D453D5B",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "8BD12F72-F767-4EC7-BC98-570556B21D98",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "9DF1C20B-5CCF-40EB-B924-2B868EA4B66D",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b",
+     "sourceId": "8132DE46-D09C-4386-9F6D-87A0A51D3CB2",
+     "capturedAt": "2026-10-25T13:08:59.867Z",
+     "sourceStatus": "ok",
+     "scope": "artist"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "19E6425A-184D-40BA-B865-2CEF39371176",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "9F818ACF-CAB4-44CC-8BF5-369C59AD8D15",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "80AAAF4C-FD3F-45B0-9882-E5D892FC2398",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "77851888-2F29-4A50-A5F7-6ACE4855EDD5",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "D02877BE-6AF3-4347-B604-914E16A33BE6",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "D40A899D-994D-4F98-891F-0754B2E1C055",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "B2630179-9260-4263-9572-1C48691B3D5B",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "2351302F-E46B-4ADC-B6F6-EC80F89151C7",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "DCB6522D-5CB3-43A7-BF07-CDC7894AA30A",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535",
+     "sourceId": "C29A4D24-455F-4DE0-B64B-0C2A515F7D68",
+     "capturedAt": "2026-10-25T13:09:04.446Z",
+     "sourceStatus": "ok",
+     "scope": "place"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "33388BBB-6625-4EF5-9BA1-75A78331C77D",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "C5931DB9-526D-47C4-8157-6D6E6FDFAD0B",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "FB052F84-01CF-48BB-A30A-51C45F183777",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "2955F3C4-36AB-49F3-A818-3597F35EF46C",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "4BE414CF-375F-4566-AA66-9AC6150A6B7F",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "2E20280C-3E6F-4D69-89EA-DEF4BDBAFBB9",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "B47E7D07-C346-4B0C-87FB-F36CE4551597",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "A9991EB6-6D09-4215-8C17-5A82C9407DD8",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "A181E2D0-3712-4A22-A946-620B1ABA08BD",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588",
+     "sourceId": "DE02F90E-EF5E-4860-9D19-18BCFCD47F38",
+     "capturedAt": "2026-10-25T13:09:12.205Z",
+     "sourceStatus": "ok",
+     "scope": "movie"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "B0D607A8-5896-4D1A-B2D8-121A6ABB8068",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "1D814395-41E2-4EC2-BE52-F211B02C81AC",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "AC551F96-9E78-4FE7-A243-521BB64D6EC4",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "AAE57900-A03D-4512-A1A7-EB31553AD558",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "12084C7D-FB8F-41B9-8DD2-517D16F0BA6D",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "69CDF7FF-BCB5-4186-85A3-BFB0EC8B3D73",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "13229346-B6E8-4AA2-B957-B305E4240677",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "3E9FAAFE-A962-4D4A-8696-94F72B87EC14",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "4E743BD5-9AE4-408A-83C9-5A5D6E7D0762",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    },
+    {
+     "operation": "recommend",
+     "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0",
+     "sourceId": "0BCA26C0-358D-44BD-AA20-2439B113606A",
+     "capturedAt": "2026-10-25T13:09:18.124Z",
+     "sourceStatus": "ok",
+     "scope": "book"
+    }
+   ],
+   "limitations": [
+    "Some returned tags describe store or venue listings (payment, price, rating, menu or venue category). They were set aside as operational metadata, not culture.",
+    "This stored scan did not keep Qloo's own record of each request; what each related list was searched for comes from the stored research step.",
+    "Qloo did not label each related result with its own type. The artists, places, films and books are shown as results of a search for that kind of result, not as individually confirmed."
+   ]
+  },
+  "territories": [
+   {
+    "id": "66193c386ca89f1fe79d38c9",
+    "name": "Model",
+    "canonicalConcept": "urn:tag:genre:person:model",
+    "level": "TERRITORY_HYPOTHESIS",
+    "validation": "UNVALIDATED",
+    "evidenceStatus": "OBSERVED_ASSOCIATION",
+    "discoveryBasis": "observed-cultural-tag/v2",
+    "facet": "genre:person",
+    "observedDomains": [
+     "tags"
+    ],
+    "supportingReferences": [
+     {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:genre:person:model",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     }
+    ],
+    "explanation": "Qloo's tag profile for Loewe includes “Model” (person genres), at position 1 of 10 in Qloo's returned order.",
+    "nextInvestigation": "Run a deep research comparison to test whether Loewe's audience over-indexes on “Model” against comparable references.",
+    "limitations": [
+     "One Qloo tag observation. Not corroborated by an independent call.",
+     "A brand association, not a validated relative analysis or a commercial opportunity."
+    ],
+    "availableActions": [
+     "inspect_evidence"
+    ]
+   },
+   {
+    "id": "0211e0a8ac38b663d9da739f",
+    "name": "Fashion",
+    "canonicalConcept": "urn:tag:genre:media:fashion",
+    "level": "TERRITORY_HYPOTHESIS",
+    "validation": "UNVALIDATED",
+    "evidenceStatus": "OBSERVED_ASSOCIATION",
+    "discoveryBasis": "observed-cultural-tag/v2",
+    "facet": "genre:media",
+    "observedDomains": [
+     "tags"
+    ],
+    "supportingReferences": [
+     {
+      "operation": "entity_tags",
+      "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb",
+      "sourceId": "urn:tag:genre:media:fashion",
+      "capturedAt": "2026-10-25T13:08:50.206Z",
+      "sourceStatus": "ok",
+      "scope": "tags"
+     }
+    ],
+    "explanation": "Qloo's tag profile for Loewe includes “Fashion” (media genres), at position 9 of 10 in Qloo's returned order.",
+    "nextInvestigation": "Run a deep research comparison to test whether Loewe's audience over-indexes on “Fashion” against comparable references.",
+    "limitations": [
+     "One Qloo tag observation. Not corroborated by an independent call.",
+     "A brand association, not a validated relative analysis or a commercial opportunity."
+    ],
+    "availableActions": [
+     "inspect_evidence"
+    ]
+   }
+  ],
+  "discovery": {
+   "rule": "observed-cultural-tag/v2",
+   "themeRule": "tag-facet-group/v1",
+   "outcome": "HYPOTHESES_FOUND",
+   "reasons": [],
+   "nextSteps": [
+    "Re-run with the 20-tag profile: in recorded profiles, curated Qloo concepts often rank below the venue attributes that filled this scan's first 10 tags.",
+    "Profile the related artists, places, films or books with Qloo tags to see whether they share a genre (one additional call per list).",
+    "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+   ]
+  },
+  "audit": {
+   "returnedTags": 10,
+   "operationalTags": 6,
+   "culturalTags": 4,
+   "possibleDuplicateTags": 0,
+   "returnedEntities": 40,
+   "typeEvidence": {
+    "PROVIDER_CONFIRMED_TYPE": 0,
+    "QUERY_SCOPED": 40,
+    "GENERIC_TYPE_UNRESOLVED": 0,
+    "CONFLICTING_TYPE": 0
+   },
+   "retainedAssociations": 40,
+   "excludedEntities": 0,
+   "themes": 1,
+   "hypotheses": 2
+  },
+  "execution": {
+   "templateVersion": "ce-brand-baseline/v1",
+   "startedAt": "2026-10-25T13:08:43.552Z",
+   "finishedAt": "2026-10-25T13:09:18.128Z",
+   "providerCallCount": 5,
+   "completedStages": [
+    "identity",
+    "tags",
+    "artist",
+    "place",
+    "movie",
+    "book",
+    "normalize",
+    "discover",
+    "validate"
+   ],
+   "incompleteStages": [],
+   "recordedOrLive": "recorded",
+   "budgetStatus": "WITHIN_LIMIT",
+   "derivedFrom": {
+    "scanId": "b3a92759-2d28-4fdb-aeca-ca7845750f38",
+    "schemaVersion": "ce-brand-baseline/0.1",
+    "note": "Offline re-projection of stored observations. The stored as-run result is unchanged."
+   }
+  }
+ }
+}

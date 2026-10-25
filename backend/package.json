@@ -13,7 +13,7 @@
     "db:migrate": "tsx scripts/baseline-migrate.ts",
     "baseline:canary": "tsx scripts/baseline-canary.ts",
     "test:db": "vitest run --config vitest.db.config.ts",
-    "eval:brand-baseline": "vitest run tests/brand-baseline-research.test.ts",
+    "eval:brand-baseline": "vitest run tests/brand-baseline-research.test.ts tests/brand-baseline-grounding.test.ts",
     "smoke:baseline": "vitest run --config vitest.db.config.ts tests/brand-baseline-db.test.ts",
     "feasibility:qloo": "tsx scripts/qloo-feasibility.ts",
     "eval:methodology": "tsx scripts/eval-methodology.ts",
@@ -31,7 +31,8 @@
     "perf:agent": "tsx scripts/perf-agent.ts",
     "perf:live-trace": "tsx scripts/perf-live-trace.ts",
     "effort:compare": "tsx scripts/effort-compare.ts",
-    "poc:vercel": "tsx scripts/vercel-feasibility/run-poc.ts"
+    "poc:vercel": "tsx scripts/vercel-feasibility/run-poc.ts",
+    "eval:brand-baseline:report": "tsx scripts/brand-baseline-eval/report.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.131.0",

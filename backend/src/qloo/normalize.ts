@@ -140,6 +140,7 @@ export function toEntitySignals(operation: QlooOperation, envelope: QlooEnvelope
       qlooId: entity.entity_id,
       label: entity.name,
       ...(entity.type !== undefined ? { type: entity.type } : {}),
+      ...(entity.subtype !== undefined ? { subtype: entity.subtype } : {}),
       ...(entity.affinity !== undefined ? { affinity: entity.affinity } : {}),
       ...(entity.popularity !== undefined && entity.popularity !== null ? { popularity: entity.popularity } : {}),
       sourceCorrelationId: envelope.execution.correlation_id,

@@ -9,6 +9,7 @@ import { syntheticBrand, syntheticTag, syntheticTagObservation } from "./fixture
 import { buildApp } from "../src/app.js";
 import { BaselineCallGate, BaselineWorker } from "../src/brand-baseline/worker.js";
 import { compactEntity, compactTag, envelope, FixtureTransport } from "./fixtures/synthetic/envelopes.js";
+import { readFileSync } from "node:fs";
 
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL_REQUIRED_FOR_REAL_POSTGRES_TESTS");
 const url = process.env.DATABASE_URL;
@@ -221,4 +222,63 @@ describe("REAL POSTGRES synthetic baseline durability", () => {
     const artifacts = await pool.query<{ count: string }>("SELECT count(*) FROM baseline_artifacts WHERE scan_id=$1 AND artifact_type='observation'", [scanId]);
     expect(Number(artifacts.rows[0]?.count)).toBe(5);
   }, 60_000);
+
+  it("keeps a stored 0.1 as-run artifact readable exactly as written", async () => {
+    const recorded = JSON.parse(readFileSync(new URL("../../evals/fixtures/live/loewe-baseline-canary-2.live.json", import.meta.url), "utf8")) as { asRunResult: { payload: Record<string, unknown> } };
+    const entity = syntheticBrand("Synthetic Legacy Holder", `syn-brand-${randomUUID()}`);
+    const scanId = (await repo.createScan({ resolutionId: await resolution(entity), scope, accessToken, idempotencyKey: randomUUID(), requestHash: "syn-legacy" })).id;
+    const artifactId = randomUUID();
+    await pool.query("INSERT INTO baseline_artifacts (id,scan_id,schema_version,artifact_type,payload) VALUES ($1,$2,'ce-brand-baseline/0.1','result',$3)", [artifactId, scanId, recorded.asRunResult.payload]);
+    await pool.query("UPDATE baseline_scans SET status='COMPLETE',result_artifact_id=$2 WHERE id=$1", [scanId, artifactId]);
+    const read = await repo.readScan(scanId, accessToken);
+    expect(read?.result?.schemaVersion).toBe("ce-brand-baseline/0.1");
+    expect(read?.result).toEqual(recorded.asRunResult.payload);
+    const stored = await pool.query<{ payload: unknown }>("SELECT payload FROM baseline_artifacts WHERE id=$1", [artifactId]);
+    expect(stored.rows[0]?.payload).toEqual(recorded.asRunResult.payload);
+  });
+
+  it("captures subtype and the recorded request type, and qualifies generic entities end to end", async () => {
+    const entity = syntheticBrand("Synthetic Generic Type Brand", `syn-brand-${randomUUID()}`);
+    const scanId = (await repo.createScan({ resolutionId: await resolution(entity), scope, accessToken, idempotencyKey: randomUUID(), requestHash: "syn-generic-workflow" })).id;
+    const transport = new FixtureTransport((operation, input) => {
+      if (operation === "entity_tags") return envelope("entity_tags", "ok", { interpretation: { entities: [] }, results: [compactTag("urn:tag:genre:media:syn_design", "Design"), compactTag("urn:tag:credit_card:place:syn_card", "SYNTHETIC Card")] });
+      const domain = String(input.target_type);
+      const requests = [{ method: "GET", path: "/v2/insights", query: { "filter.type": `urn:entity:${domain}`, take: 10 } }];
+      const results = [compactEntity(`syn-${domain}-generic`, `Synthetic ${domain}`, "urn:entity"), { ...compactEntity(`syn-${domain}-typed`, `Synthetic typed ${domain}`, "urn:entity"), subtype: `urn:entity:${domain}` }];
+      return envelope("recommend", "ok", { interpretation: { signals: [] }, results, provenance: { source: "SYNTHETIC", endpoint: "/v2/insights", documentation: "https://docs.qloo.com/reference/insights-api-deep-dive", requests } });
+    });
+    const gate = new BaselineCallGate(repo, transport);
+    const worker = new BaselineWorker(repo, gate, "recorded");
+    await worker.run(scanId);
+    worker.stop();
+    const read = await repo.readScan(scanId, accessToken);
+    const result = read?.result;
+    if (result?.schemaVersion !== "ce-brand-baseline/0.2") throw new Error("expected a 0.2 result");
+    expect(result.execution.templateVersion).toBe("ce-brand-baseline/v2");
+    expect(result.audit.typeEvidence).toEqual({ PROVIDER_CONFIRMED_TYPE: 4, QUERY_SCOPED: 4, GENERIC_TYPE_UNRESOLVED: 0, CONFLICTING_TYPE: 0 });
+    expect(result.territories.map((territory) => territory.name)).toEqual(["Design"]);
+    expect(result.fingerprint.excluded.map((item) => item.rule)).toEqual(["payment"]);
+    expect((transport.calls[0]?.input as { limit?: number }).limit).toBe(20);
+    const observations = await pool.query<{ schema_version: string; payload: { recordedRequestType?: string; signals: { subtype?: string }[] } }>("SELECT schema_version,payload FROM baseline_artifacts WHERE scan_id=$1 AND artifact_type='observation' AND stage='artist'", [scanId]);
+    expect(observations.rows[0]?.schema_version).toBe("ce-brand-baseline-observation/0.3");
+    expect(observations.rows[0]?.payload.recordedRequestType).toBe("urn:entity:artist");
+    expect(observations.rows[0]?.payload.signals.map((signal) => signal.subtype ?? null)).toEqual([null, "urn:entity:artist"]);
+  }, 60_000);
+
+  it("rejects an exclusion that cites no recorded observation", async () => {
+    const entity = syntheticBrand("Synthetic Exclusion Brand", `syn-brand-${randomUUID()}`);
+    const scanId = (await repo.createScan({ resolutionId: await resolution(entity), scope, accessToken, idempotencyKey: randomUUID(), requestHash: "syn-exclusion" })).id;
+    const owner = randomUUID();
+    expect(await repo.claim(scanId, owner)).toBe(true);
+    const brandRow = await repo.scanBrand(scanId);
+    const observation = syntheticTagObservation([syntheticTag("urn:tag:interests:qloo:craft", "Craft"), syntheticTag("urn:tag:credit_card:place:visa", "Visa")]);
+    const callId = await repo.reserveCall(scanId, owner, "tags", "entity_tags", 1);
+    await repo.settleCall(callId, { status: "COMPLETE", correlationId: "syn-tags", category: "ok", durationMs: 2 });
+    await repo.recordObservation(scanId, owner, observation);
+    const result = buildBaselineResult({ scanId, brandId: brandRow!.id, brand: entity, brandCapturedAt: "2026-10-25T00:00:00.000Z", observations: [observation], startedAt: "2026-10-25T00:00:00.000Z", finishedAt: "2026-10-25T00:01:00.000Z", providerCallCount: 1, recordedOrLive: "recorded" });
+    const invented = structuredClone(result);
+    invented.fingerprint.excluded[0]!.source.correlationId = "syn-not-recorded";
+    await expect(repo.complete(scanId, owner, invented)).rejects.toMatchObject({ code: "UNRECORDED_EVIDENCE" });
+    expect(await repo.complete(scanId, owner, result)).toBe(true);
+  });
 });

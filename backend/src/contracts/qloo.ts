@@ -65,6 +65,8 @@ export const culturalSignalSchema = z.strictObject({
   qlooId: z.string().min(1),
   label: z.string(),
   type: z.string().optional(),
+  /** [harness] compactEntity passes Qloo's `subtype` through. Kept verbatim; never inferred from `type` or a query. */
+  subtype: z.string().optional(),
   /** Query-relative. Comparable ONLY with other signals carrying the same `sourceCorrelationId`. */
   affinity: z.number().optional(),
   popularity: z.number().optional(),
