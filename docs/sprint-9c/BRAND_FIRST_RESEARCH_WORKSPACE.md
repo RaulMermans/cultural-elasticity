@@ -202,7 +202,17 @@ If it is approved and succeeds, the new scan can be added to the recorded catalo
 
 ## 12. Hosted preview
 
-See §14 of the completion record in the PR and the commit history. The preview is created by the Vercel Git integration on push to this branch, under the existing project with Vercel Authentication. It is verified with `node scripts/vercel-protection-probe.mjs`. Railway, production, admissions and `main` are untouched.
+The implementation commit `548f1d2` was pushed to `sprint/9c-brand-first-research-workspace`; it is not merged to `main`. The Vercel Git integration built preview `cultural-elasticity-2m0xpjt2u-raulmermans-projects.vercel.app` (target `preview`, Ready) in the existing project.
+
+`node scripts/vercel-protection-probe.mjs` gave these results:
+
+- the preview returned **HTTP 401** (not served anonymously);
+- `/api/demo/baselines` redirected anonymous requests to SSO (302);
+- the production alias returned **404 `DEPLOYMENT_NOT_FOUND`** (unassigned): `VERCEL_PROTECTION_PROBE_PASS`.
+
+No protection bypass token was created, so the authenticated page was not rendered by the agent. The owner should open the preview while signed in to confirm it visually.
+
+Railway (still `9fc12a6`), production, the admission flags and the database were not touched. The preview's brand research uses the bundled recorded artifact and the existing server-side backend proxy. Backend admissions are off, so live research reads as "temporarily unavailable".
 
 ## 13. Sprint 9D handoff
 
@@ -224,7 +234,7 @@ RESEARCH_USEFULNESS:               INSUFFICIENT (Loewe directions weak; connecti
 DATABASE_REGRESSION:               PASS      (local isolated PostgreSQL 16)
 FULL_REGRESSION:                   PASS      (local; cloud CI not run)
 LIVE_QLOO_VALIDATION:              NOT_RUN   (LIVE_QLOO_VALIDATION_NOT_RUN; canary awaiting approval)
-HOSTED_PREVIEW:                    see completion report
+HOSTED_PREVIEW:                    VERIFIED  (Ready preview, SSO-protected 401; authenticated rendering not inspected by the agent)
 PUBLIC_RELEASE_READY:              NO
 AGENT_MODEL_READY:                 UNCHANGED — NOT_READY
 ```
