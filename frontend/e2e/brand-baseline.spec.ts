@@ -27,7 +27,9 @@ test("SYNTHETIC brand-first flow resolves ambiguity, starts, polls, and inspects
   await expect(page.getByText("Confirmed: Northwind Atelier")).toBeVisible();
   await page.getByRole("button", { name: "Start cultural baseline" }).click();
   await expect(page.getByRole("heading", { name: /Northwind Atelier · Cultural Fingerprint/u })).toBeVisible();
+  await page.getByText("Craft · tags").click();
+  await expect(page.getByText("urn:tag:interests:qloo:craft").first()).toBeVisible();
   await page.getByRole("button", { name: /Craft Observed association/u }).click();
-  await expect(page.getByText("syn-corr-21")).toBeVisible();
+  await expect(page.getByText("syn-corr-21")).toHaveCount(2);
   expect(resolveCalls).toBe(2);
 });

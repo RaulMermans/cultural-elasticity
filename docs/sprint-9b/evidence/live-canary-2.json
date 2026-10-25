@@ -1,0 +1,33 @@
+{
+  "fixtureType": "live_qloo_canary_record",
+  "date": "2026-10-25",
+  "approval": "Separate second canary, maximum 7 new dispatched Qloo calls including retries",
+  "brand": {
+    "name": "Loewe",
+    "qlooId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+    "qlooType": "urn:entity:brand"
+  },
+  "scanId": "b3a92759-2d28-4fdb-aeca-ca7845750f38",
+  "asRunScanStatus": "COMPLETE",
+  "resultArtifactPersistedAfterReconnect": true,
+  "durationMs": 34609,
+  "approvedDispatchCeiling": 7,
+  "actualDispatchesIncludingRetries": 6,
+  "retryCount": 0,
+  "idempotentRepeatNewCalls": 0,
+  "anthropicCalls": 0,
+  "reservationState": { "SETTLED": 6 },
+  "calls": [
+    { "operation": "describe", "stage": "identity", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-ee06addd-146a-4ea0-a95c-62673b24f8cd", "durationMs": 1522 },
+    { "operation": "entity_tags", "stage": "tags", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-9ce06be1-f0ad-416c-8aeb-2b87652180fb", "durationMs": 1177 },
+    { "operation": "recommend", "stage": "artist", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b", "durationMs": 3831 },
+    { "operation": "recommend", "stage": "place", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535", "durationMs": 1392 },
+    { "operation": "recommend", "stage": "movie", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588", "durationMs": 2148 },
+    { "operation": "recommend", "stage": "book", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0", "durationMs": 1060 }
+  ],
+  "providerCoverage": { "tags": 10, "artist": 10, "place": 10, "movie": 10, "book": 10 },
+  "acceptedSignalsAsRun": 10,
+  "territoryCandidatesAsRun": 0,
+  "recommendationEntityTypes": { "artist": "urn:entity", "place": "urn:entity", "movie": "urn:entity", "book": "urn:entity" },
+  "qualityFinding": "Qloo returned generic entity types for all 40 recommendations, so the baseline excluded them from type-specific claims. The ten raw tags included six operational or venue attributes. The original result was persisted as COMPLETE despite no grounded territory; a later deterministic correction reports this shape as PARTIAL and excludes operational tags from the cultural fingerprint. The stored as-run result is preserved unchanged."
+}

@@ -120,6 +120,10 @@ export function buildBaselineResult(input: {
         limitations.add("tags: a non-tag result was excluded.");
         return;
       }
+      if (observation.domain === "tags" && matchOperationalRule({ id: signal.qlooId, category: undefined })) {
+        limitations.add("tags: venue or operational metadata was excluded from the cultural fingerprint.");
+        return;
+      }
       const source = evidenceRef(signal, observation);
       if (!source) {
         limitations.add(`${observation.domain}: a signal lacked matching call provenance and was excluded.`);
@@ -151,7 +155,7 @@ export function buildBaselineResult(input: {
   if (!territories.length) limitations.add("No grounded territory concept was observed in this bounded scan.");
   const incompleteStages = input.incompleteStages ?? [];
   const hasPartial = coverage.some((item) => item.status === "PARTIAL" || item.status === "DEGRADED" || item.status === "UNAVAILABLE");
-  const scanStatus = !signals.length ? "INSUFFICIENT_EVIDENCE" : hasPartial || incompleteStages.length ? "PARTIAL" : "COMPLETE";
+  const scanStatus = !signals.length ? "INSUFFICIENT_EVIDENCE" : hasPartial || incompleteStages.length || !territories.length ? "PARTIAL" : "COMPLETE";
   return {
     schemaVersion: BRAND_BASELINE_SCHEMA_VERSION,
     scanId: input.scanId,

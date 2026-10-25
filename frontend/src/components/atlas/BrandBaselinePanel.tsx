@@ -117,6 +117,8 @@ export function BrandBaselinePanel() {
               <h3>{result.brand.name} · Cultural Fingerprint</h3>
               <p>{result.execution.recordedOrLive === "recorded" ? "Recorded Qloo evidence" : "New Qloo research"} · {result.execution.providerCallCount} calls in this scan</p>
               <ul>{result.fingerprint.domainCoverage.map((domain) => <li key={domain.domain}>{domain.domain}: {domain.status.toLowerCase()} ({domain.entityCount} returned)</li>)}</ul>
+              <h4>Validated cultural signals</h4>
+              {result.fingerprint.signals.length ? <ul>{result.fingerprint.signals.map((signal) => <li key={`${signal.source.correlationId}:${signal.id}`}><details><summary>{signal.name} · {signal.domain}</summary><dl><dt>Qloo call</dt><dd>{signal.source.operation} · {signal.source.correlationId}</dd><dt>Observed ID</dt><dd>{signal.id}</dd><dt>Captured</dt><dd>{signal.source.capturedAt}</dd><dt>Status</dt><dd>{signal.source.sourceStatus}</dd></dl></details></li>)}</ul> : <p>No validated cultural signal emerged from this bounded scan.</p>}
               {result.fingerprint.limitations.map((limitation) => <p className="quiet" key={limitation}>{limitation}</p>)}
               <h3>Territories to inspect</h3>
               {result.territories.length ? result.territories.map((item) => <button className="brand-baseline__territory" type="button" key={item.id} onClick={() => setSelected(item.id)} aria-pressed={selected === item.id}><strong>{item.name}</strong><span>{item.evidenceStatus === "OBSERVED_ASSOCIATION" ? "Observed association" : "Partial evidence"}</span></button>) : <p>No grounded territory emerged from this bounded scan.</p>}

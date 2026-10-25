@@ -55,7 +55,8 @@ describe("SYNTHETIC brand baseline research", () => {
     expect(first.territories).toHaveLength(1);
     expect(first.territories[0]?.canonicalConcept).toBe("urn:tag:interests:qloo:maker_culture");
     expect(first.territories[0]?.supportingReferences[0]?.correlationId).toBe("syn-tags");
-    expect(first.fingerprint.signals).toHaveLength(2);
+    expect(first.fingerprint.signals).toHaveLength(1);
+    expect(first.fingerprint.limitations).toContain("tags: venue or operational metadata was excluded from the cultural fingerprint.");
     expect(JSON.stringify(first)).not.toMatch(/elasticityScore|opportunityScore|distanceScore/u);
   });
 
@@ -92,5 +93,26 @@ describe("SYNTHETIC brand baseline research", () => {
     expect(parsed.success, parsed.error?.issues.map((issue) => issue.path.join(".")).join(", ")).toBe(true);
     expect(result.fingerprint.limitations).toHaveLength(4);
     expect(result.fingerprint.signals).toHaveLength(1);
+  });
+
+  it("marks a SYNTHETIC live-shaped response partial when only generic entity types and no grounded territory are available", () => {
+    const tags = syntheticTagObservation([
+      syntheticTag("urn:tag:genre:media:fashion", "Fashion"),
+      syntheticTag("urn:tag:credit_card:place:jcb", "JCB"),
+    ]);
+    const artist = {
+      domain: "artist" as const,
+      capturedAt: "2026-10-25T00:00:00.000Z",
+      outcome: {
+        kind: "ok" as const,
+        data: { signals: [brand], entities: [{ kind: "entity" as const, qlooId: "syn-generic-artist", label: "SYNTHETIC Artist", type: "urn:entity", sourceCorrelationId: "syn-generic" }] },
+        provenance: syntheticProvenance("recommend", "syn-generic"),
+      },
+    };
+    const result = buildBaselineResult(input([tags, artist]));
+    expect(result.scanStatus).toBe("PARTIAL");
+    expect(result.fingerprint.signals.map((signal) => signal.name)).toEqual(["Fashion"]);
+    expect(result.territories).toEqual([]);
+    expect(result.fingerprint.limitations).toContain("artist: an entity with an unverified target type was excluded.");
   });
 });
