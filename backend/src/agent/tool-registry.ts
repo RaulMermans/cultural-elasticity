@@ -320,6 +320,7 @@ const resolveEntity: AgentTool<{ name: string; type: RankableType; role: "brand"
         const wanted = candidates.filter((c) => shortEntityType(c.type) === input.type);
         if (issue?.kind === "ambiguous" && wanted.length === 1) {
           const chosen = wanted[0]!;
+          if (state.expectedBrandId && chosen.qlooId !== state.expectedBrandId) { state.brand.notFound = true; return failed("BRAND_ID_MISMATCH", "the resolved brand differs from the authorized baseline"); }
           const correlationId = result.call.envelope.execution.correlation_id;
           recordEntity(state, { id: chosen.qlooId, label: chosen.label, type: input.type }, { kind: "resolved", tagIds: [], conditionedOn: null, correlationId, popularity: null });
           state.brand.entity = { id: chosen.qlooId, label: chosen.label, type: chosen.type ?? `urn:entity:${input.type}`, match: "type_evidence", resolution: "unconfirmed", call: result.call };
@@ -338,6 +339,7 @@ const resolveEntity: AgentTool<{ name: string; type: RankableType; role: "brand"
       return { status: "empty", summary: `no Qloo entity for "${input.name}"` };
     }
     const entity = recordResolved(state, result.call)!;
+    if (input.role === "brand" && state.expectedBrandId && entity.id !== state.expectedBrandId) { state.brand.notFound = true; return failed("BRAND_ID_MISMATCH", "the resolved brand differs from the authorized baseline"); }
     state.trace.resolvedEntities.push({ role: input.role, id: entity.id, label: entity.label, type: entity.type, match: entity.match, resolution: entity.match === "exact" || entity.match === "identifier" ? "confirmed" : "unconfirmed" });
     if (input.role === "brand") {
       if (state.brand.ambiguity && !state.brand.ambiguity.candidates.some((c) => c.qlooId === entity.id)) {

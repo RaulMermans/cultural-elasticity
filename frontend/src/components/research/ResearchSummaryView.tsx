@@ -3,20 +3,21 @@
 import { useMemo } from "react";
 import { buildSummary, renderSummaryHtml } from "@/lib/research-summary";
 import type { ResearchView } from "@/lib/research-view";
+import type { QueryResponse } from "@cultural-elasticity/shared";
 
-export function ResearchSummaryView({ view }: { view: ResearchView }) {
+export function ResearchSummaryView({ view, investigation = null }: { view: ResearchView; investigation?: QueryResponse | null }) {
   const { summary, ms } = useMemo(() => {
     const started = performance.now();
-    const built = buildSummary(view);
+    const built = buildSummary(view, investigation);
     return { summary: built, ms: performance.now() - started };
-  }, [view]);
+  }, [view, investigation]);
 
   const download = () => {
     const html = renderSummaryHtml(summary, new Date().toISOString());
     const url = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${view.brand.name.toLowerCase().replace(/[^a-z0-9]+/gu, "-") || "brand"}-research-summary.html`;
+    link.download = `${view.brand.name.toLowerCase().replace(/[^a-z0-9]+/gu, "-") || "brand"}-strategic-research-brief.html`;
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 0);
   };
@@ -25,9 +26,9 @@ export function ResearchSummaryView({ view }: { view: ResearchView }) {
     <article className="rw-summary" aria-labelledby="rw-summary-title" data-testid="research-summary" data-generation-ms={ms.toFixed(2)}>
       <div className="rw-summary__actions">
         <button type="button" className="primary" onClick={() => window.print()}>Print or save as PDF</button>
-        <button type="button" className="ghost" onClick={download}>Download summary (HTML)</button>
+        <button type="button" className="ghost" onClick={download}>Download brief (HTML)</button>
       </div>
-      <p className="kicker">Research summary</p>
+      <p className="kicker">Strategic research brief</p>
       <h2 id="rw-summary-title">{summary.title}</h2>
       <p className="quiet">{summary.provenanceLine} Research date: {summary.researchDate}.</p>
       <p><strong>Research objective.</strong> {summary.objective}</p>

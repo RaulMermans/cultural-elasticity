@@ -96,6 +96,12 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 3. **Recorded research is real, bundled and labelled.** Only live-origin evidence rebuilt by `backend/scripts/demo/build-recorded-baseline.ts` may be listed; never synthetic fixtures or benchmark profiles.
 4. **No scan token in a URL**, and no enabled paid action while its admission is paused. Canonical record: `docs/sprint-9c/BRAND_FIRST_RESEARCH_WORKSPACE.md`.
 
+## Agentic research handoff (Sprint 9D)
+
+1. **A baseline direction is a hypothesis.** The server rereads the authorized scan, verifies territory ownership and supporting provenance, and pins the canonical Qloo brand ID before using the existing agent runtime. Selection does not upgrade support.
+2. **The research finding and brief are projections.** They preserve source scope, validated claims and recorded/live origin. Comparison reads completed same-brand results only and makes no provider call or cross-call numerical ranking. Canonical record: `docs/sprint-9d/AGENTIC_INTELLIGENCE_AND_STRATEGIC_DECISION.md`.
+3. **Agent jobs are still in process.** Handoff idempotency and job results disappear on backend restart. Public paid investigations remain disabled pending separate readiness and durability decisions. The Sprint 9D benchmark has no LLM-only arm yet; do not claim measured comparative Qloo value.
+
 ## Deployment provenance (permanent, from Sprint 8F)
 
 1. **GitHub is the canonical source.** `RaulMermans/cultural-elasticity` is the only release repository. Do not deploy from copied archives as the ordinary process.

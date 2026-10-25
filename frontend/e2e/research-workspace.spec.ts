@@ -8,7 +8,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const legacy = JSON.parse(readFileSync(new URL("../../backend/tests/fixtures/synthetic/brand-baseline-e2e.json", import.meta.url), "utf8")) as { result: { scanId: string } };
 const v2 = JSON.parse(readFileSync(new URL("../../backend/tests/fixtures/synthetic/brand-baseline-e2e-v2.json", import.meta.url), "utf8")) as { results: Record<"hypotheses" | "zeroTerritory" | "insufficient" | "partialProvider", { scanId: string; scanStatus: string }> };
-const shots = fileURLToPath(new URL("../../docs/sprint-9c/screenshots/after/", import.meta.url));
+const shots = fileURLToPath(new URL("../../docs/sprint-9d/screenshots/", import.meta.url));
 mkdirSync(shots, { recursive: true });
 /** Never allowed in the ordinary research view (methodology and source disclosures are removed first). */
 const INTERNAL = /urn:|mcp-|correlation|entity_tags|QUERY_SCOPED|OBSERVED_ASSOCIATION|PARTIAL_EVIDENCE|ce-brand-baseline|ADMISSIONS_PAUSED|BRAND_CLASSIFICATION|AUDIENCE_TASTE|undefined|null|\[object/u;
@@ -104,13 +104,13 @@ test("recorded journey: fingerprint, connection evidence, direction limits, summ
 
   await page.getByRole("link", { name: "Summary" }).click();
   const summary = page.getByTestId("research-summary");
-  await expect(summary.getByRole("heading", { name: "Loewe: cultural research summary" })).toBeVisible();
+  await expect(summary.getByRole("heading", { name: "Loewe: strategic research brief" })).toBeVisible();
   await expect(summary).toContainText("Recorded Qloo research. It was captured earlier and is not a new live run.");
-  await expect(summary).toContainText("Model: Observed association");
+  await expect(summary).toContainText("Model: unvalidated baseline hypothesis. Observed association");
   await expect(summary).toContainText("Hôtel de Crillon, A Rosewood Hotel");
   const download = page.waitForEvent("download");
-  await summary.getByRole("button", { name: "Download summary (HTML)" }).click();
-  expect((await download).suggestedFilename()).toBe("loewe-research-summary.html");
+  await summary.getByRole("button", { name: "Download brief (HTML)" }).click();
+  expect((await download).suggestedFilename()).toBe("loewe-strategic-research-brief.html");
   expect(Number(await summary.getAttribute("data-generation-ms"))).toBeLessThan(50);
   expect(paid).toEqual([]);
 });
@@ -175,16 +175,34 @@ test("Living Atlas stays available and opens the recorded Jacquemus investigatio
   expect(paid).toEqual([]);
 });
 
-test("deep-investigation action is hidden while agent admissions are paused, and prefilled when accepting", async ({ page }) => {
+test("recorded baseline cannot claim a live handoff without an authorized scan", async ({ page }) => {
   await stub(page, { agent: "paused" });
   await page.goto("/?research=loewe&view=directions");
   await expect(page.getByTestId("deep-research-unavailable")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Ask this in a deep investigation" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /Prepare investigation/u })).toHaveCount(0);
   await page.unrouteAll();
   await stub(page, { agent: "accepting" });
   await page.reload();
-  await page.getByRole("button", { name: "Ask this in a deep investigation" }).click();
-  await expect(page.getByTestId("query-input")).toHaveValue(/over-indexes on “Model”/u);
+  await expect(page.getByRole("button", { name: /Prepare investigation/u })).toHaveCount(0);
+  await expect(page.getByTestId("deep-research-unavailable")).toBeVisible();
+});
+
+test("SYNTHETIC live scan previews a server handoff before any paid job", async ({ page }) => {
+  const { paid } = await stub(page, { brands: "available", agent: "accepting", result: v2.results.hypotheses });
+  const territory = v2.results.hypotheses.territories[0]!;
+  await page.route("**/api/research/handoff/preview", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({
+    version: "ce-deep-investigation/0.1", objective: "SYNTHETIC research question", brand: { name: "SYNTHETIC House", qlooId: "syn-brand-21" },
+    territory: { id: territory.id, name: territory.name }, limitations: ["SYNTHETIC evidence is unvalidated"], evidence: [{ correlationId: "syn-source", operation: "entity_tags" }],
+  }) }));
+  await page.goto("/");
+  await page.getByLabel("Brand name").fill("SYNTHETIC House");
+  await page.getByRole("button", { name: "Find brand" }).click();
+  await page.getByRole("button", { name: /Start research/u }).click();
+  await page.getByRole("link", { name: /Directions/u }).click();
+  await page.getByRole("button", { name: `Prepare investigation of ${territory.name}` }).click();
+  await expect(page.getByTestId("deep-investigation")).toContainText("SYNTHETIC research question");
+  await expect(page.getByRole("button", { name: "Start live investigation" })).toBeVisible();
+  expect(paid.filter((entry) => entry.includes("/api/agent/jobs"))).toEqual([]);
 });
 
 test("SYNTHETIC live research: ambiguity, confirmation, progress, then a fingerprint; the token never enters the URL", async ({ page }) => {

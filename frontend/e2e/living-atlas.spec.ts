@@ -117,6 +117,23 @@ test("a recorded example is labelled and does not start a job", async ({ page })
   expect(jobs).toEqual([]);
 });
 
+test("existing recorded territories compare read-only without starting a job", async ({ page }) => {
+  const jobs: string[] = [];
+  page.on("request", (request) => { if (request.method() === "POST" && request.url().includes("/api/agent/jobs")) jobs.push(request.url()); });
+  await open(page);
+  await page.getByTestId("recorded-open").click();
+  await branch(page, /Bohemian lifestyle/).first().click();
+  await page.getByRole("button", { name: "Compare", exact: true }).click();
+  await branch(page, /design-led boutique hospitality/i).first().click();
+  await page.getByRole("button", { name: "Compare", exact: true }).click();
+  await page.getByTestId("compare-existing").click();
+  const comparison = page.getByTestId("read-only-comparison");
+  await expect(comparison).toContainText("Bohemian lifestyle");
+  await expect(comparison).toContainText("design-led boutique hospitality");
+  await expect(comparison).toContainText("no numerical ranking");
+  expect(jobs).toEqual([]);
+});
+
 test("the landing preview keeps nested territories inside the pane", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await open(page);

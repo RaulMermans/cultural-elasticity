@@ -94,6 +94,8 @@ export type MethodologyRun = { id: string; territoryKeys: string[]; result: Cult
 
 export type AgentRunState = {
   runId: string;
+  /** A canonical baseline identity to recheck before using the newly resolved brand. */
+  expectedBrandId?: string | null;
   status: AgentRunStatus;
   request: AgentRequest;
   limits: InvestigationLimits;

@@ -1,5 +1,8 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+import { createBaselinePool } from "../brand-baseline/db.js";
+import { BaselineRepository } from "../brand-baseline/repository.js";
+import { buildDeepInvestigationRequest, HandoffError } from "./baseline-handoff.js";
 import { admit, globalJobLimit, jobCreateLimit } from "./admission.js";
 import { baselineAllowed, developmentRoutesOpen } from "./exposure.js";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../agent/errors.js";
@@ -49,6 +52,7 @@ const analyzeBody = z.strictObject({
 });
 const continueBody = z.strictObject({ runId: z.string().uuid(), clarification: z.string().trim().min(1).max(1_000), model: z.enum(["auto", "baseline"]).optional() });
 const continueJobBody = z.strictObject({ continueRunId: z.string().uuid(), clarification: z.string().trim().min(1).max(1_000), model: z.enum(["auto", "baseline"]).optional() });
+const handoffBody = z.strictObject({ scanId: z.uuid(), territoryId: z.string().trim().min(1).max(120), idempotencyKey: z.uuid() });
 
 type ErrorBody = { error: string; message?: string; issues?: EvidenceIssue[] };
 
@@ -87,6 +91,9 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
     // Query-layer telemetry carries no raw query text (length + hash only), no prompt and no credential.
     const log = (telemetry: unknown) => app.log.info({ queryTelemetry: telemetry }, "query");
     const reservations = new Map<string, { id: string; started: boolean }>();
+    const handoffJobs = new Map<string, { territoryId: string; pending: Promise<unknown> }>();
+    const baselinePool = process.env.CE_BASELINE_ENABLED === "1" && process.env.DATABASE_URL ? createBaselinePool(process.env.DATABASE_URL) : null;
+    const baselines = baselinePool ? new BaselineRepository(baselinePool) : null;
     const jobs = new JobManager({
       runnerFor: (model) => service(model === "baseline" ? "baseline" : "auto", log),
       log: (event) => {
@@ -132,6 +139,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
     registerJobManager(jobs);
     app.addHook("onClose", async () => {
       jobs.shutdown("The investigation service is stopping.");
+      await baselinePool?.end();
     });
     const modelChoice = (model: string | undefined) => (model === "baseline" ? "baseline" : "auto");
     const headersOf = (request: FastifyRequest) => request.headers as Record<string, unknown>;
@@ -184,6 +192,27 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         throw error;
       }
     };
+    const enqueue = (jobRequest: JobRequest, reply: FastifyReply) => {
+      const hold = reserveSpend(reply);
+      if (!hold) return;
+      opsMetrics().record("budget_reserved");
+      return handle(reply, async () => {
+        try {
+          const bound = spendLedger().bound(hold.id) ?? undefined;
+          const created = jobs.create(jobRequest, bound ? { spend: bound } : undefined);
+          spendLedger().attach(hold.id, created.jobId);
+          const started = created.status === "running";
+          reservations.set(created.jobId, { id: hold.id, started });
+          if (started) spendLedger().markStarted(hold.id);
+          opsMetrics().record("job_accepted");
+          reply.code(202);
+          return created;
+        } catch (error) {
+          spendLedger().settle(hold.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
+          throw error;
+        }
+      });
+    };
 
     app.post<{ Body: unknown }>("/api/agent/analyze", { bodyLimit: 32_768 }, async (request, reply) => {
       if (closed(reply)) return;
@@ -232,26 +261,40 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         if (rejectBaseline(query.data.model, reply)) return;
         jobRequest = { kind: "execute", body: query.data, model: modelChoice(query.data.model) };
       } else return reply.code(400).send({ error: "invalid_job_request", message: "The question could not be accepted." });
-      const hold = reserveSpend(reply);
-      if (!hold) return;
-      opsMetrics().record("budget_reserved");
-      return handle(reply, async () => {
-        try {
-          const bound = spendLedger().bound(hold.id) ?? undefined;
-          const created = jobs.create(jobRequest, bound ? { spend: bound } : undefined);
-          spendLedger().attach(hold.id, created.jobId);
-          const started = created.status === "running";
-          reservations.set(created.jobId, { id: hold.id, started });
-          if (started) spendLedger().markStarted(hold.id);
-          opsMetrics().record("job_accepted");
-          reply.code(202);
-          return created;
-        } catch (error) {
-          spendLedger().settle(hold.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
-          throw error;
-        }
-      });
+      return enqueue(jobRequest, reply);
     });
+    /** Structured baseline handoff. The client cannot provide brand, evidence, objective, tools or budgets. */
+    const handoff = async (request: FastifyRequest<{ Body: unknown }>, reply: FastifyReply, execute: boolean) => {
+      if (rejectUnauthenticated(request, reply)) return;
+      const parsed = handoffBody.safeParse(request.body);
+      if (!parsed.success) return reply.code(400).send({ error: "invalid_handoff_request" });
+      const token = tokenOf(request.headers["x-baseline-token"]);
+      if (!baselines || !token) return reply.code(404).send({ error: "baseline_not_found" });
+      const scan = await baselines.readScan(parsed.data.scanId, token);
+      if (!scan?.result) return reply.code(404).send({ error: "baseline_not_found" });
+      let prepared;
+      try { prepared = buildDeepInvestigationRequest(scan.result, parsed.data.territoryId); }
+      catch (error) { if (error instanceof HandoffError) return reply.code(422).send({ error: error.code.toLowerCase() }); throw error; }
+      if (!execute) return prepared;
+      if (!admitCreate(request, reply)) return;
+      const key = `${parsed.data.scanId}:${parsed.data.idempotencyKey}`;
+      const existing = handoffJobs.get(key);
+      if (existing) {
+        if (existing.territoryId !== parsed.data.territoryId) return reply.code(409).send({ error: "idempotency_conflict" });
+        const prior = await existing.pending;
+        if (!prior || typeof prior !== "object" || !("jobId" in prior)) return reply.code(409).send({ error: "idempotency_unavailable" });
+        return reply.code(200).send(prior);
+      }
+      const body = queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "analyze_move", territories: [prepared.territory.name] });
+      const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId }, reply));
+      handoffJobs.set(key, { territoryId: parsed.data.territoryId, pending });
+      if (handoffJobs.size > 200) handoffJobs.delete(handoffJobs.keys().next().value!);
+      const created = await pending;
+      if (!created || typeof created !== "object" || !("jobId" in created)) handoffJobs.delete(key);
+      return created;
+    };
+    app.post<{ Body: unknown }>("/api/agent/handoff/preview", { bodyLimit: 4096 }, (request, reply) => handoff(request, reply, false));
+    app.post<{ Body: unknown }>("/api/agent/handoff/jobs", { bodyLimit: 4096 }, (request, reply) => handoff(request, reply, true));
     app.get<{ Params: { id: string } }>("/api/agent/jobs/:id", async (request, reply) => {
       if (rejectUnauthenticated(request, reply)) return;
       const view = jobs.get(request.params.id, tokenOf(request.headers["x-job-token"]));
