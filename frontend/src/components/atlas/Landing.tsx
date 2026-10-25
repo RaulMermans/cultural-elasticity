@@ -13,7 +13,9 @@ export function Landing({
   onRecorded,
   onAsk,
   onHow,
+  initialQuery = "",
 }: {
+  initialQuery?: string;
   admissions: AdmissionStatus;
   busy: boolean;
   onRecorded: (responses?: QueryResponse[]) => void;
@@ -52,7 +54,7 @@ export function Landing({
         {live ? (
           <div>
             <p className="kicker">Ask a cultural question</p>
-            <QueryComposer busy={busy} onSubmit={onAsk} />
+            <QueryComposer busy={busy} onSubmit={onAsk} initial={initialQuery} />
           </div>
         ) : null}
       </div>

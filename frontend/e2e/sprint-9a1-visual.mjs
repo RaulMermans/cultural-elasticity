@@ -22,7 +22,7 @@ async function pausedLanding() {
 
 await pausedLanding();
 await page.setViewportSize({ width: 1440, height: 900 });
-await page.goto("http://127.0.0.1:3100/", { waitUntil: "domcontentloaded", timeout: 120_000 });
+await page.goto("http://127.0.0.1:3100/?mode=atlas", { waitUntil: "domcontentloaded", timeout: 120_000 });
 await page.getByTestId("atlas-app").waitFor();
 await page.locator(".landing__preview .atlas-node").first().waitFor({ timeout: 20_000 });
 await page.screenshot({ path: shot("01-homepage-1440x900.png") });

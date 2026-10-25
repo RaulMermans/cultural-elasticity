@@ -8,9 +8,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## Living Atlas
+## Brand research workspace and Living Atlas
 
-The product page is the Living Atlas. Follow `.agents/skills/living-atlas-design/SKILL.md` (version 4). Tokens live in `src/app/globals.css`. A recorded example is served from `src/app/api/demo/recorded` and is labelled `RECORDED_EXAMPLE`. It is not a live investigation. When live admissions are paused, the primary action is the recorded Jacquemus investigation — never an enabled Ask that can only return ADMISSIONS_PAUSED.
+The default product page is the brand research workspace (`src/components/research/`); the Living Atlas is the optional `?mode=atlas` view. Follow `.agents/skills/living-atlas-design/SKILL.md` (version 5). Research copy lives in `src/lib/research-copy.ts`; the result adapter is `src/lib/research-view.ts`. Recorded brand research is served from `src/app/api/demo/baselines` and never calls a provider. Tokens live in `src/app/globals.css`. A recorded example is served from `src/app/api/demo/recorded` and is labelled `RECORDED_EXAMPLE`. It is not a live investigation. When live admissions are paused, the primary action is the recorded Jacquemus investigation — never an enabled Ask that can only return ADMISSIONS_PAUSED.
 
 The browser calls only the Next.js routes under `src/app/api/agent/jobs`. Those routes call the backend. Do not put `QLOO_API_KEY` or `ANTHROPIC_API_KEY` in client code, and do not give the client a backend URL.
 

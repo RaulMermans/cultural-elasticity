@@ -10,7 +10,7 @@ async function open(page: import("@playwright/test").Page) {
   page.on("console", (msg) => {
     if (msg.type() === "error") consoleErrors.push(msg.text());
   });
-  const response = await page.goto("/", { waitUntil: "domcontentloaded", timeout: 120_000 });
+  const response = await page.goto("/?mode=atlas", { waitUntil: "domcontentloaded", timeout: 120_000 });
   if (!response || response.status() >= 500) {
     throw new Error(`Living Atlas GET / failed: status=${response?.status() ?? "none"}`);
   }

@@ -6,12 +6,14 @@ export function QueryComposer({
   busy,
   onSubmit,
   compact = false,
+  initial = "",
 }: {
   busy: boolean;
   onSubmit: (query: string) => void;
   compact?: boolean;
+  initial?: string;
 }) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initial);
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   return (

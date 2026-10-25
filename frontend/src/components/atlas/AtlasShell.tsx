@@ -6,22 +6,29 @@ export function AtlasShell({
   inspector = false,
   admissions,
   recorded = false,
+  nav,
+  metaLabel,
+  skipLabel = "Skip to the investigation",
 }: {
   children: ReactNode;
   inspector?: boolean;
   admissions: AdmissionStatus;
   recorded?: boolean;
+  nav?: ReactNode;
+  metaLabel?: string;
+  skipLabel?: string;
 }) {
   const copy = admissionCopy(admissions);
   return (
     <div className={inspector ? "atlas atlas--inspector" : "atlas"} data-testid="atlas-app" data-admissions={admissions} data-recorded={recorded ? "true" : "false"}>
-      <a className="skip" href="#atlas-main">Skip to the investigation</a>
+      <a className="skip" href="#atlas-main">{skipLabel}</a>
       <header className="mast">
         <div className="mast__brand">
           <p className="mast__mark">Cultural Elasticity</p>
           <p className="mast__edition">Cultural Observatory</p>
         </div>
-        <p className="mast__meta">{copy.shortLabel}</p>
+        {nav}
+        <p className="mast__meta">{metaLabel ?? copy.shortLabel}</p>
       </header>
       <main id="atlas-main">{children}</main>
     </div>
