@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { liveQuestionsEnabled } from "@/lib/admissions";
 import { AlternativeConfirmation } from "./AlternativeConfirmation";
 import { AtlasNavigation } from "./AtlasNavigation";
+import { BrandBaselinePanel } from "./BrandBaselinePanel";
 import { AtlasShell } from "./AtlasShell";
 import { ClarificationDialog } from "./ClarificationDialog";
 import { EvidenceInspector } from "./EvidenceInspector";
@@ -48,6 +49,7 @@ export function AtlasApp() {
             onAsk={(query) => void atlas.submit({ query })}
             onHow={() => setHow(true)}
           />
+          <BrandBaselinePanel />
           <div className="landing-status">
             {atlas.active ? (
               <InvestigationProgress label={atlas.active.stageLabel} stopping={atlas.active.stopping} onCancel={() => void atlas.cancel(atlas.active!)} />

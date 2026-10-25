@@ -4,6 +4,12 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
+## Sprint 9B — Brand baseline and PostgreSQL
+
+The new brand-first panel resolves a Qloo brand, runs a bounded deterministic baseline without an LLM, and displays evidence-backed associations and candidate territories. New baseline scans use PostgreSQL with durable call reservations, idempotent creation, and restart-safe result retrieval. The existing agent remains admission-gated and in-memory. Production baseline admission defaults to off. See the [Sprint 9B source of truth](docs/sprint-9b/BRAND_INTELLIGENCE_AND_DURABLE_INFRASTRUCTURE.md) for the schema, deployment, backup/restore, live canary result, and limitations.
+
+Local commands: `pnpm db:migrate`, `pnpm test:db` (real isolated PostgreSQL), `pnpm eval:brand-baseline` (SYNTHETIC), and `pnpm smoke:baseline` (real PostgreSQL with SYNTHETIC Qloo transport). A live canary is a separate, explicitly budgeted operator action.
+
 ## Current status: Sprint 8F.2 — Deployment activation and hosted E2E
 
 - **Sprint 8F.2** applied the staged Railway GitHub source and created a protected Vercel preview. The existing API service now runs GitHub `main@47a20fd` (docs-only vs the 8F.1 pin `4c35a20`), one replica, admissions **off**, remote smoke 23/23. The existing Vercel project has a **preview** deployment of `deploy/8f2-protected-preview@47a20fd` with Authentication **All Deployments**; anonymous visitors are refused; the production alias remains `DEPLOYMENT_NOT_FOUND`. Hosted Vercel→Railway with the correct secret is admissions-paused (503, no paid call). GitHub Actions remains billing-blocked. Public hackathon release is **not** ready. The agent stays **`AGENT_MODEL_NOT_READY`**. See [docs/sprint-8f2/DEPLOYMENT_ACTIVATION_AND_HOSTED_E2E.md](docs/sprint-8f2/DEPLOYMENT_ACTIVATION_AND_HOSTED_E2E.md).

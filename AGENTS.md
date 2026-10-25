@@ -98,6 +98,14 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 5. **Railway stays one replica, admissions off, until a live run is separately approved.** Connecting GitHub must not enable PR environments or unreviewed auto-deploys.
 6. **Operator `/ops/status` may expose Git SHA and branch.** It must never expose secrets, commit messages, or provider keys.
 
+## Brand baseline durability (Sprint 9B)
+
+1. **The brand baseline is deterministic and model-free.** It uses the existing `QlooClient`; the existing agent remains separately admission-gated and in-memory. A baseline candidate is an observed association, never a commercial recommendation or a FULL relative analysis.
+2. **PostgreSQL durability applies only to new baseline scans.** Migrations are explicit, additive and checksum-pinned. Do not auto-reset, auto-migrate, or claim that existing agent jobs became crash-resumable.
+3. **Provider dispatches are reserved before they leave the process.** Seven calls per scan includes retries; unknown outcomes consume quota and are never replayed automatically. Preserve minimal normalized artifacts and correlation IDs.
+4. **Both baseline admission flags default off.** Keep `CE_BASELINE_ENABLED=0`, `CE_BASELINE_LIVE_ENABLED=0`, `CE_BASELINE_TOTAL_QLOO_CALLS=0`, and `CE_ACCEPT_INVESTIGATIONS=0` on public/production deployments unless a separate release decision authorizes provider use.
+5. **The canonical Sprint 9B design, backup procedure, and live evidence are in** `docs/sprint-9b/BRAND_INTELLIGENCE_AND_DURABLE_INFRASTRUCTURE.md`. Synthetic tests are not live Qloo validation.
+
 ## Engineering
 
 - Keep **frontend/backend boundaries clean.** The frontend talks only to the backend. Only the backend talks to Qloo, through `QlooClient` (`backend/src/qloo`).

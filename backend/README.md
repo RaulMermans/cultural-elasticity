@@ -2,6 +2,8 @@
 
 Fastify API and Qloo integration for Cultural Elasticity.
 
+Sprint 9B adds `src/brand-baseline/`: a deterministic Qloo brand baseline with PostgreSQL persistence. Set `DATABASE_URL` only on the backend, run `pnpm db:migrate` explicitly, then `pnpm test:db` against an isolated database. The baseline and its live provider dispatch both default to disabled (`CE_BASELINE_ENABLED=0`, `CE_BASELINE_LIVE_ENABLED=0`, `CE_BASELINE_TOTAL_QLOO_CALLS=0`). Its operator diagnostics are at `/ops/baselines`. The existing agent jobs remain in memory and separately gated. Migration, budget, recovery, Railway, and backup instructions live in the [Sprint 9B document](../docs/sprint-9b/BRAND_INTELLIGENCE_AND_DURABLE_INFRASTRUCTURE.md).
+
 ```sh
 pnpm --filter backend dev               # http://127.0.0.1:4000/health
 pnpm --filter backend test              # unit + fixture + recorded-output tests (no live Qloo)

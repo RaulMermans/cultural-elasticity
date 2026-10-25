@@ -4,6 +4,7 @@ import { analysisRoutes } from "./api/analysis.js";
 import { healthRoutes } from "./api/health.js";
 import { methodologyRoutes } from "./api/methodology.js";
 import { opsRoutes } from "./api/ops.js";
+import { brandBaselineRoutes } from "./brand-baseline/api.js";
 
 export type BuildAppOptions = {
   logLevel?: string;
@@ -28,6 +29,7 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
           "req.headers['x-api-key']",
           "req.headers['x-ce-internal-auth']",
           "req.headers['x-ce-operator']",
+          "req.headers['x-baseline-token']",
           "*.headers['x-api-key']",
           "*.headers['X-Api-Key']",
           "*.headers['x-ce-internal-auth']",
@@ -48,5 +50,6 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
   app.register(analysisRoutes);
   app.register(methodologyRoutes);
   app.register(agentRoutes(options.agentRuntimeFactory, options.queryInterpreterFactory));
+  app.register(brandBaselineRoutes);
   return app;
 }
