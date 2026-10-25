@@ -32,7 +32,7 @@ export type JobView = {
 export type JobCreated = JobView & { accessToken: string };
 
 export type JobRequest =
-  | { kind: "execute"; body: QueryBody; model: string }
+  | { kind: "execute"; body: QueryBody; model: string; expectedBrandId?: string }
   | { kind: "confirm"; queryId: string; model: string }
   | { kind: "continue"; runId: string; clarification: string; model: string };
 
@@ -365,7 +365,7 @@ export class JobManager {
 async function runRequest(runner: InvestigationRunner, request: JobRequest, hooks: QueryHooks): Promise<QueryResponse> {
   if (request.kind === "confirm") return runner.confirm(request.queryId, hooks);
   if (request.kind === "continue") return runner.continueRun(request.runId, request.clarification, hooks);
-  return runner.execute(request.body, hooks);
+  return runner.execute(request.body, { ...hooks, expectedBrandId: request.expectedBrandId });
 }
 
 function publicError(error: unknown): { code: string; message: string } {

@@ -56,6 +56,7 @@ export type AgentRuntimeDeps = {
 /** Sprint 5B.2: `signal` aborts between turns. The in-flight model or Qloo call is allowed to finish; its result is not a completed finding. */
 export type RunOptions = {
   interpretation?: Interpretation;
+  expectedBrandId?: string;
   link?: InvestigationLink;
   signal?: AbortSignal;
   spend?: SpendBound;
@@ -98,6 +99,7 @@ export class AgentRuntime {
     const check = options.interpretation ? resolveInterpretation(request, options.interpretation) : null;
     if (check && !check.ok) throw new AgentInputError([{ path: "interpretation", message: check.reason }]);
     const state = createRunState(request, this.deps.model.info, { name: this.deps.provider.name, mode: this.deps.provider.mode, evidenceSource: this.deps.provider.evidenceSource }, limits);
+    state.expectedBrandId = options.expectedBrandId ?? null;
     if (options.link) {
       state.link = options.link;
       state.trace.investigationLink = options.link;

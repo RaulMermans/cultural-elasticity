@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "ce-qloo-value-benchmark/0.1",
+  "fixtureType": "recorded_live",
+  "notice": "Frozen live Qloo and Haiku results. LLM-only condition A has not been run; no comparative Qloo value claim is authorized.",
+  "cases": [
+    {
+      "id": "L-C1",
+      "question": "For Rapha, compare cycling cafes, mountaineering and coffee.",
+      "brand": "RAPHA",
+      "conditionB": {
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-C1.json",
+        "sha256": "fc89496b73baa19a5e61fb7899519e27f9260a5a9e7e79afa434b6086d534dc3"
+      },
+      "conditionA": {
+        "status": "NOT_RUN"
+      }
+    },
+    {
+      "id": "L-C2",
+      "question": "For Liquid Death, compare heavy metal and moonlit gastronomy.",
+      "brand": "Liquid Death",
+      "conditionB": {
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-C2.json",
+        "sha256": "b3be18f71aec12b76a809fcf0fd1d3f51d391bbd42e9c2e2525cfe08cd0a04de"
+      },
+      "conditionA": {
+        "status": "NOT_RUN"
+      }
+    },
+    {
+      "id": "L-E1",
+      "question": "Where could Oatly credibly expand culturally?",
+      "brand": "Oatly",
+      "conditionB": {
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-E1.json",
+        "sha256": "541b8a6a3133239bd247fe25a4f8e80209a98051dc445524f890d517c858a5c9"
+      },
+      "conditionA": {
+        "status": "NOT_RUN"
+      }
+    },
+    {
+      "id": "L-E2",
+      "question": "Where could Allbirds credibly expand culturally?",
+      "brand": "Allbirds",
+      "conditionB": {
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-E2.json",
+        "sha256": "bc33eb4f3f27e1bc0f7579b42ff1f1a4069ede6f06bb4e809b75f55df63930ae"
+      },
+      "conditionA": {
+        "status": "NOT_RUN"
+      }
+    },
+    {
+      "id": "L-M1",
+      "question": "Could Aesop credibly move into coffee?",
+      "brand": "Aesop",
+      "conditionB": {
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-M1.json",
+        "sha256": "9bf52100b84baf6bee2a36688c1a63cbb64ea62e4cb1e0e810834f80648bc67c"
+      },
+      "conditionA": {
+        "status": "NOT_RUN"
+      }
+    },
+    {
+      "id": "L-M2",
+      "question": "Could Yeti move into fly fishing?",
+      "brand": "YETI",
+      "conditionB": {
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-M2.json",
+        "sha256": "8f5111d841beb453f604e8e8a8d792e81d1b2a1f6ed06c923c0d417ae7e85a7e"
+      },
+      "conditionA": {
+        "status": "NOT_RUN"
+      }
+    },
+    {
+      "id": "L-M3",
+      "question": "Could Le Creuset move into tea culture?",
+      "brand": "Le Creuset",
+      "conditionB": {
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-M3.json",
+        "sha256": "e3946c13ea5af51900cde492e4f5add1a65a7198f1c4e546a0fefe8e5116a8d3"
+      },
+      "conditionA": {
+        "status": "NOT_RUN"
+      }
+    }
+  ]
+}

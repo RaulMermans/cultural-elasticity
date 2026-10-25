@@ -82,8 +82,7 @@ export function ResearchApp({ initialRoute, catalog, initialRecorded }: { initia
   }
 
   const section = (next: ResearchSection, item: string | null = null, replace = false) => navigate({ ...route, view: next, item }, replace);
-  const deepResearch = admissions === "accepting" ? "available" : "unavailable";
-  const onDeepResearch = (question: string) => navigate({ ...HOME, mode: "atlas", ask: question });
+  const deepResearch = admissions === "accepting" && route.research === SESSION_RESEARCH && Boolean(research.scanToken) ? "available" : "unavailable";
   const result = route.research === SESSION_RESEARCH ? research.scan?.result ?? null : recordedKey ? recorded[recordedKey] ?? null : null;
 
   let body;
@@ -112,9 +111,9 @@ export function ResearchApp({ initialRoute, catalog, initialRecorded }: { initia
         section={route.view}
         item={route.item}
         deepResearch={deepResearch}
+        scanToken={route.research === SESSION_RESEARCH ? research.scanToken : null}
         onNavigate={section}
         onHome={() => navigate(HOME)}
-        onDeepResearch={onDeepResearch}
       />
     );
   } else if (route.research === SESSION_RESEARCH) {

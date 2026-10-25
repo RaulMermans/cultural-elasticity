@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "ce-qloo-value-benchmark-report/0.1",
+  "comparisonStatus": "NOT_RUN",
+  "finding": "No measured Qloo-versus-LLM-only value difference is available.",
+  "caseCount": 7,
+  "conditionB": {
+    "sourceLinkedCases": 7,
+    "acceptedSummaryValidatorPasses": 7,
+    "rejectedSummaryClaims": 1,
+    "casesWithNextSteps": 7
+  },
+  "cases": [
+    {
+      "id": "L-C1",
+      "question": "For Rapha, compare cycling cafes, mountaineering and coffee.",
+      "brand": "RAPHA",
+      "conditionA": "NOT_RUN",
+      "conditionB": {
+        "origin": "recorded_live",
+        "model": "claude-haiku-5-5",
+        "runId": "8d7c7a94-e298-4c60-a3d6-4f0a29305f93",
+        "territoryCount": 3,
+        "eligibleTerritoriesSourceLinked": true,
+        "acceptedSummaryPassedValidator": true,
+        "rejectedSummaryClaims": 0,
+        "nextStepsPresent": true,
+        "insufficientTerritories": 0,
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-C1.json",
+        "sha256": "fc89496b73baa19a5e61fb7899519e27f9260a5a9e7e79afa434b6086d534dc3"
+      }
+    },
+    {
+      "id": "L-C2",
+      "question": "For Liquid Death, compare heavy metal and moonlit gastronomy.",
+      "brand": "Liquid Death",
+      "conditionA": "NOT_RUN",
+      "conditionB": {
+        "origin": "recorded_live",
+        "model": "claude-haiku-5-5",
+        "runId": "8d0e5e0e-4155-4c56-9731-9b8dac7dd1ee",
+        "territoryCount": 2,
+        "eligibleTerritoriesSourceLinked": true,
+        "acceptedSummaryPassedValidator": true,
+        "rejectedSummaryClaims": 0,
+        "nextStepsPresent": true,
+        "insufficientTerritories": 0,
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-C2.json",
+        "sha256": "b3be18f71aec12b76a809fcf0fd1d3f51d391bbd42e9c2e2525cfe08cd0a04de"
+      }
+    },
+    {
+      "id": "L-E1",
+      "question": "Where could Oatly credibly expand culturally?",
+      "brand": "Oatly",
+      "conditionA": "NOT_RUN",
+      "conditionB": {
+        "origin": "recorded_live",
+        "model": "claude-haiku-5-5",
+        "runId": "92a17d28-d3f8-4cc0-a47b-c53c7aa79d91",
+        "territoryCount": 4,
+        "eligibleTerritoriesSourceLinked": true,
+        "acceptedSummaryPassedValidator": true,
+        "rejectedSummaryClaims": 0,
+        "nextStepsPresent": true,
+        "insufficientTerritories": 2,
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-E1.json",
+        "sha256": "541b8a6a3133239bd247fe25a4f8e80209a98051dc445524f890d517c858a5c9"
+      }
+    },
+    {
+      "id": "L-E2",
+      "question": "Where could Allbirds credibly expand culturally?",
+      "brand": "Allbirds",
+      "conditionA": "NOT_RUN",
+      "conditionB": {
+        "origin": "recorded_live",
+        "model": "claude-haiku-5-5",
+        "runId": "a7a23bae-a3c8-416c-bf1f-1648a8267e3d",
+        "territoryCount": 4,
+        "eligibleTerritoriesSourceLinked": true,
+        "acceptedSummaryPassedValidator": true,
+        "rejectedSummaryClaims": 0,
+        "nextStepsPresent": true,
+        "insufficientTerritories": 1,
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-E2.json",
+        "sha256": "bc33eb4f3f27e1bc0f7579b42ff1f1a4069ede6f06bb4e809b75f55df63930ae"
+      }
+    },
+    {
+      "id": "L-M1",
+      "question": "Could Aesop credibly move into coffee?",
+      "brand": "Aesop",
+      "conditionA": "NOT_RUN",
+      "conditionB": {
+        "origin": "recorded_live",
+        "model": "claude-haiku-5-5",
+        "runId": "500ce0b2-9cfd-48a8-9619-57a2e975daba",
+        "territoryCount": 1,
+        "eligibleTerritoriesSourceLinked": true,
+        "acceptedSummaryPassedValidator": true,
+        "rejectedSummaryClaims": 0,
+        "nextStepsPresent": true,
+        "insufficientTerritories": 0,
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-M1.json",
+        "sha256": "9bf52100b84baf6bee2a36688c1a63cbb64ea62e4cb1e0e810834f80648bc67c"
+      }
+    },
+    {
+      "id": "L-M2",
+      "question": "Could Yeti move into fly fishing?",
+      "brand": "YETI",
+      "conditionA": "NOT_RUN",
+      "conditionB": {
+        "origin": "recorded_live",
+        "model": "claude-haiku-5-5",
+        "runId": "62980055-d511-4db0-a43a-dd5db38a31fc",
+        "territoryCount": 1,
+        "eligibleTerritoriesSourceLinked": true,
+        "acceptedSummaryPassedValidator": true,
+        "rejectedSummaryClaims": 0,
+        "nextStepsPresent": true,
+        "insufficientTerritories": 0,
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-M2.json",
+        "sha256": "8f5111d841beb453f604e8e8a8d792e81d1b2a1f6ed06c923c0d417ae7e85a7e"
+      }
+    },
+    {
+      "id": "L-M3",
+      "question": "Could Le Creuset move into tea culture?",
+      "brand": "Le Creuset",
+      "conditionA": "NOT_RUN",
+      "conditionB": {
+        "origin": "recorded_live",
+        "model": "claude-haiku-5-5",
+        "runId": "06aff836-81df-4102-8425-d5adb295cc58",
+        "territoryCount": 1,
+        "eligibleTerritoriesSourceLinked": true,
+        "acceptedSummaryPassedValidator": true,
+        "rejectedSummaryClaims": 1,
+        "nextStepsPresent": true,
+        "insufficientTerritories": 0,
+        "artifact": "backend/feasibility-output/sprint5a2-live/final/live_model-L-M3.json",
+        "sha256": "e3946c13ea5af51900cde492e4f5add1a65a7198f1c4e546a0fefe8e5116a8d3"
+      }
+    }
+  ]
+}

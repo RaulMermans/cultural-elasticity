@@ -187,6 +187,10 @@ export async function createJob(body: unknown, visitorId?: string): Promise<{ st
   return backendFetch("/api/agent/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }, 15_000, visitorId);
 }
 
+export async function baselineHandoff(mode: "preview" | "jobs", body: unknown, token: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/handoff/${mode}`, { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": token }, body: JSON.stringify(body) }, 15_000, visitorId);
+}
+
 export async function readJob(id: string, token: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
   return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}`, { headers: { "x-job-token": token } }, 10_000, visitorId);
 }

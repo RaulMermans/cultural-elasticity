@@ -14,6 +14,7 @@
     "baseline:canary": "tsx scripts/baseline-canary.ts",
     "test:db": "vitest run --config vitest.db.config.ts",
     "eval:brand-baseline": "vitest run tests/brand-baseline-research.test.ts tests/brand-baseline-grounding.test.ts",
+    "eval:qloo-value": "node --import tsx scripts/eval-qloo-value.ts",
     "smoke:baseline": "vitest run --config vitest.db.config.ts tests/brand-baseline-db.test.ts",
     "feasibility:qloo": "tsx scripts/qloo-feasibility.ts",
     "eval:methodology": "tsx scripts/eval-methodology.ts",

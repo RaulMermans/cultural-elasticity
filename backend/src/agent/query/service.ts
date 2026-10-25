@@ -48,6 +48,8 @@ export type QueryProgress = { phase: "interpreting" | "investigating" | "prepari
 
 export type QueryHooks = {
   signal?: AbortSignal;
+  /** Server-validated baseline identity; never supplied by a query proposal. */
+  expectedBrandId?: string;
   onProgress?: (event: QueryProgress) => void;
   /** A real gate outcome, published before a long investigation. Territories are not yet investigated. */
   onPreview?: (response: QueryResponse) => void;
@@ -205,6 +207,7 @@ export class QueryService {
       link,
       signal: hooks?.signal,
       spend: hooks?.spend,
+      expectedBrandId: hooks?.expectedBrandId,
       admission: { queueWaitMs: hooks?.queueWaitMs, interpretationMs: telemetry.interpretationLatencyMs },
     });
     telemetry.childRunId = result.runId;

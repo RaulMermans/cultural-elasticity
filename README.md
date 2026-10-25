@@ -8,6 +8,10 @@ Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Bouti
 
 The default product view is now a brand research workspace: explore a brand, read its cultural fingerprint, inspect each Qloo connection's evidence, review directions worth investigating with their limits, and download a deterministic research summary. It is a view over the canonical `ce-brand-baseline` result: no new evidence, scores, model calls or provider calls. Recorded Loewe research (real stored evidence) opens instantly; the Living Atlas remains available at `?mode=atlas`. See [docs/sprint-9c/BRAND_FIRST_RESEARCH_WORKSPACE.md](docs/sprint-9c/BRAND_FIRST_RESEARCH_WORKSPACE.md).
 
+## Sprint 9D — Agentic research workflow
+
+An authorized baseline scan can now hand a selected direction to the existing governed agent runtime after the backend verifies the stored scan, source references, and canonical brand ID. The workspace shows research progress and validated findings; the Atlas offers a read-only side-by-side comparison; the strategic brief is deterministic and source-linked. Public paid investigations stay disabled because agent jobs and the handoff idempotency map remain in-process. `pnpm eval:qloo-value` audits seven frozen recorded-live Qloo results; its LLM-only comparison arm has not run. See [docs/sprint-9d/AGENTIC_INTELLIGENCE_AND_STRATEGIC_DECISION.md](docs/sprint-9d/AGENTIC_INTELLIGENCE_AND_STRATEGIC_DECISION.md).
+
 ## Sprint 9B — Brand baseline and PostgreSQL
 
 The new brand-first panel resolves a Qloo brand, runs a bounded deterministic baseline without an LLM, and displays evidence-backed associations and candidate territories. New baseline scans use PostgreSQL with durable call reservations, idempotent creation, and restart-safe result retrieval. The existing agent remains admission-gated and in-memory. Production baseline admission defaults to off. See the [Sprint 9B source of truth](docs/sprint-9b/BRAND_INTELLIGENCE_AND_DURABLE_INFRASTRUCTURE.md) for the schema, deployment, backup/restore, live canary result, and limitations.

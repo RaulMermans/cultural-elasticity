@@ -4,6 +4,7 @@
  * No model call, no new numbers, no recommendation added to fill space.
  */
 import { domainWords } from "./research-copy.ts";
+import type { QueryResponse } from "@cultural-elasticity/shared";
 import type { ResearchView } from "./research-view.ts";
 
 export type SummaryItem = { text: string; detail?: string };
@@ -22,9 +23,14 @@ export type ResearchSummary = {
 
 export const formatDate = (iso: string) => new Date(iso).toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short", timeZone: "UTC" }) + " UTC";
 
-export function buildSummary(view: ResearchView): ResearchSummary {
+export function buildSummary(view: ResearchView, investigation: QueryResponse | null = null): ResearchSummary {
   const brand = view.brand.name;
   const sections: SummarySection[] = [];
+  const run = investigation?.investigation?.result;
+  const matched = run && run.status !== "NEEDS_INPUT" && run.status === "COMPLETE" && run.brand?.id === view.brand.qlooId && run.evidenceOrigin === "live" ? run : null;
+  const targets = matched?.territories.filter((item) => item.role === "target") ?? [];
+
+  sections.push({ id: "profile", title: "Brand Cultural Profile", items: [{ text: view.core.note }] });
 
   const connectionItems: SummaryItem[] = view.collections.map((collection) => {
     const words = domainWords(collection.domain);
@@ -34,25 +40,23 @@ export function buildSummary(view: ResearchView): ResearchSummary {
   if (view.keywords.length) connectionItems.push({ text: `Descriptive keywords: ${view.keywords.map((item) => item.name).join("; ")}`, detail: "Loose keywords, not curated categories." });
   sections.push({
     id: "connections",
-    title: "Cultural connections discovered",
+    title: "Cultural Connections",
     intro: connectionItems.length ? "Observed Qloo associations, listed in Qloo's order. Order is not a ranking of strength or opportunity." : undefined,
     items: connectionItems.length ? connectionItems : [{ text: "Qloo returned no cultural connections in this research." }],
   });
 
   sections.push({
-    id: "position",
-    title: `${brand}'s current position`,
-    items: [{ text: view.core.note }],
-  });
-
-  sections.push({
     id: "directions",
-    title: "Directions to investigate",
+    title: "Investigated Territories",
     intro: view.directions.length ? "Research directions, not validated findings or recommendations." : undefined,
     items: view.directions.length
-      ? view.directions.map((direction) => ({ text: `${direction.name}: ${direction.categoryLabel}.`, detail: `Why it appeared: ${direction.why} Next question: ${direction.nextQuestion}` }))
+      ? view.directions.map((direction) => ({ text: `${direction.name}: ${targets.some((target) => target.label === direction.name) ? "investigated in this session" : "unvalidated baseline hypothesis"}. ${direction.categoryLabel}.`, detail: `Why it appeared: ${direction.why} Next question: ${direction.nextQuestion}` }))
       : [{ text: "The available evidence does not yet support a specific direction." }],
   });
+
+  sections.push({ id: "observations", title: "Key Observations", items: targets.length ? targets.flatMap((target) => target.keyEvidence.map((text) => ({ text, detail: `From the ${target.label} investigation.` }))) : [{ text: "No completed, matching deep investigation is attached to this brief. The cultural connections above remain baseline observations." }] });
+  sections.push({ id: "interpretations", title: "Supported Interpretations", items: matched && matched.summary.claimValidation.passed ? [{ text: matched.summary.text, detail: `Validated against the ${brand} investigation result.` }] : [{ text: "No validated agent interpretation is available for this brand in this brief." }] });
+  sections.push({ id: "comparison", title: "Comparison of Research Directions", items: targets.length >= 2 ? targets.map((target) => ({ text: `${target.label}: ${target.keyEvidence[0] ?? "no supported observation"}`, detail: "Read side by side only; separate Qloo calls are not combined or ranked." })) : [{ text: "Fewer than two matching investigated territories are available. No relative comparison or winner is claimed." }] });
 
   const marked = view.directions.filter((direction) => direction.categoryBasis === "user");
   if (marked.length) {
@@ -66,23 +70,35 @@ export function buildSummary(view: ResearchView): ResearchSummary {
 
   sections.push({
     id: "unanswered",
-    title: "Unanswered questions",
+    title: "Unresolved Questions",
     items: view.unresolved.length ? view.unresolved.map((item) => ({ text: item.title, detail: item.detail })) : [{ text: "No open question was recorded beyond the limitations below." }],
   });
 
-  const limitations = [...view.uncertainties];
+  const limitations = [...view.uncertainties, ...targets.flatMap((target) => target.limitations.map((item) => item.detail))];
   if (view.setAside.length) limitations.push(`${view.setAside.length} returned tags described store or venue listings and were set aside as operational metadata, not culture.`);
   limitations.push("Nothing here measures commercial potential, cultural distance or audience size.");
-  sections.push({ id: "limitations", title: "Evidence limitations", items: limitations.map((text) => ({ text })) });
+  sections.push({ id: "limitations", title: "Limitations and Missing Evidence", items: limitations.map((text) => ({ text })) });
 
   sections.push({
     id: "next",
-    title: "Next research steps",
-    items: (view.nextSteps.length ? view.nextSteps : [`Repeat the research for ${brand} with the current method when new research is available.`]).map((text) => ({ text })),
+    title: "Recommended Next Research Steps",
+    items: [...(matched?.followUpOptions ?? []), ...(view.nextSteps.length ? view.nextSteps : [`Repeat the research for ${brand} with the current method when new research is available.`])].map((text) => ({ text })),
   });
 
+  sections.push({ id: "method", title: "Research Date and Methodology Version", items: [{ text: `Baseline captured ${formatDate(view.capturedAt)}. Baseline method ${view.method.templateVersion}. ${matched ? `Deep investigation run ${matched.runId}; method ${matched.schemaVersion}.` : "No matching deep investigation is included."}` }] });
+
+  const sources = view.method.sources.map((ref) => ({
+    label: ref.operation === "describe" ? "Brand lookup" : ref.operation === "entity_tags" ? "Cultural tag profile" : `Related ${domainWords(ref.scope).plural}`,
+    capturedAt: formatDate(ref.capturedAt),
+    status: ref.sourceStatus === "ok" ? "complete response" : `${ref.sourceStatus} response`,
+    reference: ref.correlationId,
+  }));
+  for (const target of targets) for (const reference of target.provenance.correlationIds) {
+    if (!sources.some((source) => source.reference === reference)) sources.push({ label: `${target.label} investigation`, capturedAt: "Investigation session", status: "agent result", reference });
+  }
+
   return {
-    title: `${brand}: cultural research summary`,
+    title: `${brand}: strategic research brief`,
     brand,
     objective: view.objective,
     provenanceLine: view.origin === "recorded"
@@ -91,12 +107,7 @@ export function buildSummary(view: ResearchView): ResearchSummary {
     researchDate: formatDate(view.capturedAt),
     outcome: { headline: view.outcome.headline, detail: view.outcome.detail },
     sections,
-    sources: view.method.sources.map((ref) => ({
-      label: ref.operation === "describe" ? "Brand lookup" : ref.operation === "entity_tags" ? "Cultural tag profile" : `Related ${domainWords(ref.scope).plural}`,
-      capturedAt: formatDate(ref.capturedAt),
-      status: ref.sourceStatus === "ok" ? "complete response" : `${ref.sourceStatus} response`,
-      reference: ref.correlationId,
-    })),
+    sources,
     footer: view.derivedFrom
       ? `Read from stored observations of an earlier scan with the current method. The stored original is unchanged.`
       : "Generated from the stored research result.",

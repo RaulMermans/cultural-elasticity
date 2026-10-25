@@ -14,6 +14,7 @@ export function TerritoryDetail({
   onFollow,
   onReturn,
   onCompareSelected,
+  onReadOnlyComparison,
   canCompare,
   comparisonNote,
   liveEnabled,
@@ -27,6 +28,7 @@ export function TerritoryDetail({
   onFollow: (query: string) => void;
   onReturn: () => void;
   onCompareSelected: () => void;
+  onReadOnlyComparison: () => void;
   canCompare: boolean;
   comparisonNote: string | null;
   liveEnabled: boolean;
@@ -128,6 +130,7 @@ export function TerritoryDetail({
           Compare these in a new investigation
         </button>
       ) : null}
+      {canCompare ? <button className="ghost" type="button" data-testid="compare-existing" onClick={onReadOnlyComparison}>Compare existing findings</button> : null}
       {canCompare && !liveEnabled ? <p className="quiet">Comparing these would start a new live investigation, which is not being accepted right now.</p> : null}
       {comparisonNote ? <p className="quiet">{comparisonNote}</p> : null}
     </section>

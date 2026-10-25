@@ -17,6 +17,7 @@ import { QueryComposer } from "./QueryComposer";
 import { TerritoryDetail } from "./TerritoryDetail";
 import { reasonCopy, isRecorded } from "./atlas-model";
 import { assessComparison } from "./atlas-comparison";
+import { ReadOnlyComparison } from "./ReadOnlyComparison";
 import { useAtlas } from "./use-atlas";
 
 /** The optional Living Atlas exploration view. Brand research is the default product view (ResearchApp). */
@@ -31,6 +32,7 @@ export function AtlasApp({ nav, autoOpenRecorded = false, initialQuery = null }:
   }, [autoOpenRecorded, atlas.showRecorded, atlas.fail]);
   const [dismissed, setDismissed] = useState<string | null>(null);
   const [how, setHow] = useState(false);
+  const [showReadOnlyComparison, setShowReadOnlyComparison] = useState(false);
   const inspectRef = useRef<HTMLButtonElement>(null);
   const latest = atlas.latest;
   const dialogId = latest?.queryId ?? null;
@@ -125,7 +127,7 @@ export function AtlasApp({ nav, autoOpenRecorded = false, initialQuery = null }:
               onSelect={atlas.select}
             />
           </div>
-          {atlas.inspectorOpen && response ? (
+          {showReadOnlyComparison ? <ReadOnlyComparison plan={comparison} responses={atlas.responses} onClose={() => setShowReadOnlyComparison(false)} /> : atlas.inspectorOpen && response ? (
             <EvidenceInspector
               response={response}
               scope={{
@@ -184,6 +186,7 @@ export function AtlasApp({ nav, autoOpenRecorded = false, initialQuery = null }:
                 });
                 atlas.clearCompare();
               }}
+              onReadOnlyComparison={() => setShowReadOnlyComparison(true)}
             />
           ) : <p className="quiet finding">Select a territory to read what the evidence supports.</p>}
         </div>

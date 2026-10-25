@@ -1,6 +1,6 @@
 "use client";
 
-import type { AnyBrandBaselineResult } from "@cultural-elasticity/shared";
+import type { AnyBrandBaselineResult, QueryResponse } from "@cultural-elasticity/shared";
 import { useEffect, useMemo, useState } from "react";
 import { formatDate } from "@/lib/research-summary";
 import type { ResearchSection } from "@/lib/research-route";
@@ -9,6 +9,7 @@ import { ConnectionExplorer } from "./ConnectionExplorer";
 import { DirectionList } from "./DirectionList";
 import { FingerprintOverview } from "./FingerprintOverview";
 import { ResearchSummaryView } from "./ResearchSummaryView";
+import { DeepResearchPanel } from "./DeepResearchPanel";
 
 const contextKey = (scanId: string) => `ce.research.context.${scanId}`;
 
@@ -40,17 +41,19 @@ const SECTIONS: { id: ResearchSection; label: (counts: { connections: number; di
   { id: "summary", label: () => "Summary" },
 ];
 
-export function ResearchWorkspace({ researchKey, result, section, item, deepResearch, onNavigate, onHome, onDeepResearch }: {
+export function ResearchWorkspace({ researchKey, result, section, item, deepResearch, scanToken, onNavigate, onHome }: {
   researchKey: string;
   result: AnyBrandBaselineResult;
   section: ResearchSection;
   item: string | null;
   deepResearch: "available" | "unavailable";
+  scanToken: string | null;
   onNavigate: (section: ResearchSection, item?: string | null, replace?: boolean) => void;
   onHome: () => void;
-  onDeepResearch: (question: string) => void;
 }) {
   const [context, setUserContext] = useUserContext(result.scanId);
+  const [investigateId, setInvestigateId] = useState<string | null>(null);
+  const [finding, setFinding] = useState<QueryResponse | null>(null);
   const view = useMemo(() => buildResearchView(result, context), [result, context]);
   const counts = { connections: view.connections.length, directions: view.directions.length };
 
@@ -93,12 +96,14 @@ export function ResearchWorkspace({ researchKey, result, section, item, deepRese
             onSelect={(key) => onNavigate("directions", key)}
             onClear={() => onNavigate("directions", null)}
             onContext={setUserContext}
-            onDeepResearch={onDeepResearch}
+            onDeepResearch={setInvestigateId}
           />
         ) : (
-          <ResearchSummaryView view={view} />
+          <ResearchSummaryView view={view} investigation={finding} />
         )}
       </div>
+
+      {investigateId && scanToken ? <DeepResearchPanel scanId={result.scanId} territoryId={investigateId} token={scanToken} onClose={() => setInvestigateId(null)} onFinding={setFinding} /> : null}
 
       <details className="rw-method">
         <summary>Methodology details</summary>

@@ -8,12 +8,14 @@ import { EvidenceDetail, directionDetail } from "./EvidenceDetail";
 
 const ORDER: PositionCategory[] = ["ADJACENT", "OBSERVED", "UNRESOLVED", "ESTABLISHED"];
 
-function DirectionCard({ direction, brand, selected, onInspect, onContext }: {
+function DirectionCard({ direction, brand, selected, canInvestigate, onInspect, onContext, onInvestigate }: {
   direction: DirectionView;
   brand: string;
   selected: boolean;
+  canInvestigate: boolean;
   onInspect: () => void;
   onContext: (position: UserPosition) => void;
+  onInvestigate: () => void;
 }) {
   const name = `rw-context-${direction.key}`;
   return (
@@ -29,6 +31,7 @@ function DirectionCard({ direction, brand, selected, onInspect, onContext }: {
       </dl>
       <div className="rw-direction__actions">
         <button type="button" className="ghost" data-row={direction.key} aria-current={selected ? "true" : undefined} onClick={onInspect}>Inspect the evidence for {direction.name}</button>
+        {canInvestigate ? <button type="button" className="primary" onClick={onInvestigate}>Prepare investigation of {direction.name}</button> : null}
         <fieldset className="rw-context">
           <legend>Your context <span className="quiet">(optional, not Qloo evidence)</span></legend>
           {(["unsure", "current", "new"] as const).map((value) => (
@@ -50,7 +53,7 @@ export function DirectionList({ view, selectedKey, deepResearch, onSelect, onCle
   onSelect: (key: string) => void;
   onClear: () => void;
   onContext: (concept: string, position: UserPosition) => void;
-  onDeepResearch: (question: string) => void;
+  onDeepResearch: (territoryId: string) => void;
 }) {
   const brand = view.brand.name;
   const selected = view.directions.find((item) => item.key === selectedKey) ?? null;
@@ -76,7 +79,7 @@ export function DirectionList({ view, selectedKey, deepResearch, onSelect, onCle
               <div key={category} className="rw-direction-group">
                 <h3 className="rw-direction-group__title">{POSITION_COPY[category].label}</h3>
                 {view.directions.filter((item) => item.category === category).map((direction) => (
-                  <DirectionCard key={direction.key} direction={direction} brand={brand} selected={direction.key === selectedKey} onInspect={() => onSelect(direction.key)} onContext={(position) => onContext(direction.canonicalConcept, position)} />
+                  <DirectionCard key={direction.key} direction={direction} brand={brand} selected={direction.key === selectedKey} canInvestigate={deepResearch === "available"} onInspect={() => onSelect(direction.key)} onInvestigate={() => onDeepResearch(direction.id)} onContext={(position) => onContext(direction.canonicalConcept, position)} />
                 ))}
               </div>
             ))}
@@ -103,9 +106,7 @@ export function DirectionList({ view, selectedKey, deepResearch, onSelect, onCle
         <section aria-labelledby="rw-next" className="rw-next">
           <h2 id="rw-next" className="rw-section-title">Next research steps</h2>
           <ol>{view.nextSteps.map((step) => <li key={step}>{step}</li>)}</ol>
-          {deepResearch === "available" && view.directions[0]
-            ? <button type="button" className="primary" onClick={() => onDeepResearch(view.directions[0]!.nextQuestion)}>Ask this in a deep investigation</button>
-            : <p className="quiet" data-testid="deep-research-unavailable">Deep investigations are temporarily unavailable, so these steps can&apos;t be started from here right now.</p>}
+          {deepResearch === "unavailable" ? <p className="quiet" data-testid="deep-research-unavailable">Deep investigations are temporarily unavailable, so these steps can&apos;t be started from here right now.</p> : null}
         </section>
       ) : null}
     </div>

@@ -6,7 +6,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import type { AnyBrandBaselineResult, BrandBaselineResult } from "@cultural-elasticity/shared";
+import type { AnyBrandBaselineResult, BrandBaselineResult, QueryResponse } from "@cultural-elasticity/shared";
 import { apiErrorCopy, availabilityCopy, coverageCopy, scanStatusCopy, stageCopy } from "./research-copy.ts";
 import { buildSummary, renderSummaryHtml } from "./research-summary.ts";
 import { buildResearchView, connectionKey } from "./research-view.ts";
@@ -18,6 +18,7 @@ const loeweAsRun = read("../../../evals/fixtures/live/loewe-baseline-canary-2.li
 const synthetic = read("../../../backend/tests/fixtures/synthetic/brand-baseline-e2e-v2.json") as { fixtureType: string; results: Record<"hypotheses" | "zeroTerritory" | "insufficient" | "partialProvider", BrandBaselineResult> };
 const legacySynthetic = read("../../../backend/tests/fixtures/synthetic/brand-baseline-e2e.json") as { result: AnyBrandBaselineResult };
 const derived = read("../../../docs/sprint-9b1/evidence/loewe-canary-2.derived-0.2.json") as { result: BrandBaselineResult };
+const jacquemus = read("../demo/recorded-example.json") as { responses: QueryResponse[] };
 
 /** Words that must never appear in ordinary user copy. */
 const INTERNAL = /urn:|mcp-|correlation|entity_tags|QUERY_SCOPED|OBSERVED_ASSOCIATION|PARTIAL_EVIDENCE|ce-brand-baseline|PROVIDER_CONFIRMED|GENERIC_TYPE|BRAND_CLASSIFICATION|AUDIENCE_TASTE|INSUFFICIENT_EVIDENCE|ADMISSIONS_PAUSED|_[A-Z]{3,}/u;
@@ -307,4 +308,11 @@ test("SM-05 summary generation is deterministic", () => {
   const a = renderSummaryHtml(buildSummary(buildResearchView(loewe)), "fixed");
   const b = renderSummaryHtml(buildSummary(buildResearchView(loewe)), "fixed");
   assert.equal(a, b);
+});
+
+test("SM-06 a different brand's recorded investigation cannot enter the brief", () => {
+  const response = jacquemus.responses.find((item) => item.investigation?.result?.status === "COMPLETE")!;
+  const summary = buildSummary(buildResearchView(loewe), response);
+  assert.match(summary.sections.find((item) => item.id === "observations")!.items[0]!.text, /No completed, matching/u);
+  assert.equal(summary.sources.length, buildResearchView(loewe).method.sources.length);
 });

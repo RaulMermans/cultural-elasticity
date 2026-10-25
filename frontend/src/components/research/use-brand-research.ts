@@ -104,5 +104,5 @@ export function useBrandResearch() {
 
   const clearResolution = useCallback(() => { setResolution(null); setError(""); }, []);
 
-  return { availability, resolution, scan, hasSessionScan: Boolean(pointer), busy, error, resolve, start, clearResolution };
+  return { availability, resolution, scan, scanToken: pointer?.token ?? null, hasSessionScan: Boolean(pointer), busy, error, resolve, start, clearResolution };
 }
