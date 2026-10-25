@@ -15,7 +15,8 @@ COPY backend backend
 RUN pnpm install --frozen-lockfile --filter backend... \
  && pnpm --filter backend build \
  && pnpm --filter backend deploy --prod --legacy /out \
- && cp -r backend/dist /out/dist
+ && cp -r backend/dist /out/dist \
+ && cp -r backend/migrations /out/migrations
 
 FROM node:22-slim AS runtime
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=4000

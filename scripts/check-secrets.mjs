@@ -5,7 +5,7 @@
 //   - the local QLOO_API_KEY value (if set) appears in any such file;
 //   - any such file carries a literal X-Api-Key header value;
 //   - backend/.env is not gitignored, or .dockerignore does not exclude .env files;
-//   - the browser bundle (frontend/.next/static) mentions QLOO at all, or contains the local key.
+//   - the browser bundle (frontend/.next/static) contains credential names, key literals, or a configured secret value.
 // The public hackathon base URL (QLOO_API_BASE_URL) is configuration, not a secret, and is allowed.
 // It never prints the key itself.
 import { execFileSync } from "node:child_process";
@@ -70,9 +70,11 @@ if (existsSync(bundleDir)) {
   for (const path of walk(bundleDir)) {
     bundleFiles += 1;
     const text = readFileSync(path, "utf8");
-    if (/QLOO/i.test(text)) findings.push(`${path.slice(root.length)}: browser bundle mentions QLOO`);
-    if (/ANTHROPIC_API_KEY|sk-ant-/.test(text)) findings.push(`${path.slice(root.length)}: browser bundle mentions the model credential`);
+    if (/QLOO_API_KEY|ANTHROPIC_API_KEY|CE_INTERNAL_API_SECRET|x-ce-internal-auth|x-api-key|sk-ant-/i.test(text)) {
+      findings.push(`${path.slice(root.length)}: browser bundle mentions a credential`);
+    }
     if (localKey && localKey.length >= 8 && text.includes(localKey)) findings.push(`${path.slice(root.length)}: browser bundle contains the local key`);
+    if (localModelKey && localModelKey.length >= 8 && text.includes(localModelKey)) findings.push(`${path.slice(root.length)}: browser bundle contains the local model key`);
   }
 }
 

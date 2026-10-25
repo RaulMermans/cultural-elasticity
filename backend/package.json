@@ -10,6 +10,11 @@
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
+    "db:migrate": "tsx scripts/baseline-migrate.ts",
+    "baseline:canary": "tsx scripts/baseline-canary.ts",
+    "test:db": "vitest run --config vitest.db.config.ts",
+    "eval:brand-baseline": "vitest run tests/brand-baseline-research.test.ts",
+    "smoke:baseline": "vitest run --config vitest.db.config.ts tests/brand-baseline-db.test.ts",
     "feasibility:qloo": "tsx scripts/qloo-feasibility.ts",
     "eval:methodology": "tsx scripts/eval-methodology.ts",
     "eval:live": "tsx scripts/eval-live.ts",
@@ -33,10 +38,12 @@
     "@cultural-elasticity/shared": "workspace:*",
     "@qloo/qloo-harness": "0.1.26",
     "fastify": "5.12.7",
+    "pg": "8.23.1",
     "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22.19.0",
+    "@types/pg": "8.15.6",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
     "vitest": "5.0.5"

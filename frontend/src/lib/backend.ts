@@ -156,6 +156,12 @@ async function backendFetch(path: string, init: RequestInit, timeoutMs: number, 
   }
 }
 
+/** Server-only brand baseline proxy. The browser supplies only an opaque scan token, never the internal secret. */
+export async function brandBaselineFetch(path: string, init: RequestInit = {}, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
+  if (!/^\/api\/brands\/(?:status|resolve|baselines(?:\/[0-9a-f-]{36}(?:\/(?:territories|evidence))?)?)$/u.test(path)) return null;
+  return backendFetch(path, init, 15_000, visitorId);
+}
+
 export type AdmissionProbe = AdmissionView;
 
 /**

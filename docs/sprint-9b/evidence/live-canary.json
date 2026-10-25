@@ -1,0 +1,43 @@
+{
+  "fixtureType": "live_qloo_canary_record",
+  "date": "2026-10-25",
+  "brand": {
+    "name": "Loewe",
+    "qlooId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+    "qlooType": "urn:entity:brand"
+  },
+  "scanId": "5b980e3c-1f1f-4178-bfb2-4fa9db40ce21",
+  "result": "INTERRUPTED",
+  "resultArtifactPersisted": false,
+  "partialFailureSummary": "WORKER_FAILURE",
+  "durationMs": 34637,
+  "approvedDispatchCeiling": 7,
+  "actualDispatchesIncludingRetries": 6,
+  "retryCount": 0,
+  "idempotentRepeatNewCalls": 0,
+  "anthropicCalls": 0,
+  "calls": [
+    { "operation": "describe", "stage": "identity", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-9bc93549-8cab-4a1e-a067-fd45b4aa9a77", "durationMs": 1449 },
+    { "operation": "entity_tags", "stage": "tags", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-9b1ee8ab-e7f6-43ec-99fb-dd70be16b0ef", "durationMs": 969 },
+    { "operation": "recommend", "stage": "artist", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-7280abff-5b8a-43d3-ae65-ac8529b692f4", "durationMs": 3759 },
+    { "operation": "recommend", "stage": "place", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-c899470d-a48b-45b6-83ac-e7072feb2fd4", "durationMs": 1428 },
+    { "operation": "recommend", "stage": "movie", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-a2828eaa-1223-4bee-a7f5-3bf4be34a749", "durationMs": 1828 },
+    { "operation": "recommend", "stage": "book", "status": "COMPLETE", "qlooStatus": "ok", "correlationId": "mcp-c3e062fb-d0ee-4298-8b4b-229f3c11a795", "durationMs": 977 }
+  ],
+  "recordedEvidence": {
+    "tagCount": 10,
+    "recommendationCountByDomain": { "artist": 10, "place": 10, "movie": 10, "book": 10 },
+    "sampleTags": [
+      { "id": "urn:tag:genre:media:fashion", "name": "Fashion" },
+      { "id": "urn:tag:genre:person:model", "name": "Model" },
+      { "id": "urn:tag:credit_card:place:jcb", "name": "JCB" }
+    ],
+    "sampleRecommendations": {
+      "artist": ["Red Velvet", "BLACKPINK", "SUNMI"],
+      "place": ["Les Ombres", "Café de la Paix", "Hermès"],
+      "movie": ["Call Me by Your Name", "Phantom Thread", "Roma"],
+      "book": ["More Than Enough: Claiming Space for Who You Are (No Matter What They Say)", "The Meaning of Mariah Carey", "Big Friendship: How We Keep Each Other Close"]
+    }
+  },
+  "interpretation": "The Qloo calls returned observations, but result finalization failed. No territory candidate or cultural finding was accepted as a completed baseline."
+}

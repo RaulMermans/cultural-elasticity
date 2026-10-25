@@ -1,0 +1,17 @@
+{
+  "fixtureType": "synthetic",
+  "result": {
+    "schemaVersion": "ce-brand-baseline/0.1",
+    "scanId": "00000000-0000-4000-8000-000000000021",
+    "scanStatus": "COMPLETE",
+    "brand": { "id": "00000000-0000-4000-8000-000000000022", "qlooId": "syn-brand-21", "name": "Northwind Atelier", "resolutionStatus": "RESOLVED", "source": { "operation": "describe", "correlationId": "syn-describe-21", "sourceId": "syn-brand-21", "capturedAt": "2026-10-25T00:00:00.000Z", "sourceStatus": "ok", "scope": "identity" } },
+    "fingerprint": {
+      "signals": [{ "id": "urn:tag:interests:qloo:craft", "name": "Craft", "kind": "tag", "domain": "tags", "rankWithinCall": 1, "source": { "operation": "entity_tags", "correlationId": "syn-corr-21", "sourceId": "urn:tag:interests:qloo:craft", "capturedAt": "2026-10-25T00:00:00.000Z", "sourceStatus": "ok", "scope": "tags" } }],
+      "domainCoverage": [{ "domain": "tags", "status": "OBSERVED", "entityCount": 1 }],
+      "provenance": [{ "operation": "describe", "correlationId": "syn-describe-21", "sourceId": "syn-brand-21", "capturedAt": "2026-10-25T00:00:00.000Z", "sourceStatus": "ok", "scope": "identity" }, { "operation": "entity_tags", "correlationId": "syn-corr-21", "sourceId": "urn:tag:interests:qloo:craft", "capturedAt": "2026-10-25T00:00:00.000Z", "sourceStatus": "ok", "scope": "tags" }],
+      "limitations": []
+    },
+    "territories": [{ "id": "syn-territory-21", "name": "Craft", "canonicalConcept": "urn:tag:interests:qloo:craft", "evidenceStatus": "OBSERVED_ASSOCIATION", "discoveryBasis": "observed-cultural-tag/v1", "supportingReferences": [{ "operation": "entity_tags", "correlationId": "syn-corr-21", "sourceId": "urn:tag:interests:qloo:craft", "capturedAt": "2026-10-25T00:00:00.000Z", "sourceStatus": "ok", "scope": "tags" }], "limitations": ["Observed association only."], "availableActions": ["inspect_evidence"] }],
+    "execution": { "templateVersion": "ce-brand-baseline/v1", "startedAt": "2026-10-25T00:00:00.000Z", "finishedAt": "2026-10-25T00:01:00.000Z", "providerCallCount": 0, "completedStages": ["identity", "tags"], "incompleteStages": [], "recordedOrLive": "recorded", "budgetStatus": "WITHIN_LIMIT" }
+  }
+}
