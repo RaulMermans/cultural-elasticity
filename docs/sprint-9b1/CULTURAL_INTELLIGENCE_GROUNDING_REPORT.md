@@ -170,6 +170,8 @@ Playwright ran through the repository's Playwright runner, not the Playwright MC
 
 There were no provider or model calls. Production baseline code imports no model client, agent runtime, benchmark or eval code (test). Admission flags, the Railway configuration, the production commit pin and the call budgets are unchanged. No public route was added, and the operator diagnostics are unchanged. The secret scanner rules are unchanged.
 
+**Git and deployment.** Implementation commit `573c62a` was pushed to `sprint/9b1-cultural-intelligence-grounding`. It is not merged to `main`. The push created Vercel preview `cultural-elasticity-enx8slmt6-raulmermans-projects.vercel.app` (Ready). The anonymous probe returned **HTTP 401** for it and **404 `DEPLOYMENT_NOT_FOUND`** for the production alias (`VERCEL_PROTECTION_PROBE_PASS`). Railway still runs `9fc12a6` and was not touched.
+
 ## 14. Provider-call impact
 
 v2 is the same as v1: identity 1, tags 1, related 4, so ≤ 7 including retries, with the same spacing, reservations and unknown-outcome handling. The only request change is `limit: 20` on `entity_tags`.
