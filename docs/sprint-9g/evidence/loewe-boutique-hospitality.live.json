@@ -1,0 +1,3249 @@
+{
+  "schemaVersion": "ce-agent-result/0.3",
+  "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+  "status": "COMPLETE",
+  "finalSufficiency": "SUFFICIENT",
+  "intent": "analyze_move",
+  "userQuery": "Does the available cultural evidence support investigating Loewe in boutique hospitality?",
+  "brand": {
+    "id": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+    "label": "Loewe",
+    "type": "urn:entity:brand",
+    "resolution": "confirmed"
+  },
+  "territories": [
+    {
+      "key": "boutique_hospitality",
+      "label": "Boutique hospitality",
+      "role": "target",
+      "origin": "user",
+      "rationale": "named by the user",
+      "resolvedConcept": {
+        "id": "urn:tag:interests:qloo:boutique_hospitality",
+        "label": "Boutique Hospitality",
+        "type": "urn:tag:interests:qloo"
+      },
+      "representation": {
+        "strategy": "PLACE_PANEL",
+        "entityType": "place",
+        "exemplars": [
+          {
+            "id": "01140223-0E93-450A-8CFA-A64DF342F82A",
+            "label": "Hotel Ritta Höppner",
+            "type": "place",
+            "role": "primary",
+            "selectionReason": "Top-ranked tag member of Boutique Hospitality with a profiled tag set (design-led independent hotel).",
+            "conceptSupport": "tag_member",
+            "popularity": 0.9858794302294007,
+            "quality": "VALID"
+          },
+          {
+            "id": "009A09A5-FFE9-4F04-AFF5-72CA1882AC8B",
+            "label": "Casa Art Hotel",
+            "type": "place",
+            "role": "alternate",
+            "selectionReason": "Profiled tag member of Boutique Hospitality; art-focused boutique hotel.",
+            "conceptSupport": "tag_member",
+            "popularity": 0.8326164211521039,
+            "quality": "VALID"
+          },
+          {
+            "id": "00E4ED0B-AD40-479A-89C0-1B208AAB9164",
+            "label": "MonkBridge House",
+            "type": "place",
+            "role": "alternate",
+            "selectionReason": "Profiled tag member of Boutique Hospitality; small independent property.",
+            "conceptSupport": "tag_member",
+            "popularity": 0.7512348162271772,
+            "quality": "VALID"
+          }
+        ],
+        "rejectedExemplars": [],
+        "diversity": "unknown",
+        "diversityDetail": "not every exemplar's tag profile is known, so distinctness is not established",
+        "attempts": 1,
+        "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Boutique Hospitality (urn:tag:interests:qloo:boutique_hospitality): Hotel Ritta Höppner, Casa Art Hotel, MonkBridge House",
+        "failure": null
+      },
+      "keyEvidence": [
+        "Shared cultural signals (operational tags filtered): median 0 across 2 exemplar(s) (NONE).",
+        "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Le Domaine de l'Astragale, Hôtel et Villas 5 étoiles, Saint-Tropez, J.K. Place Capri, Hôtel de NELL, La Villa del Re, an SLH Hotel, Palazzo Dama.",
+        "Evidence quality MEDIUM."
+      ],
+      "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+      "capabilities": {
+        "representation": "SUPPORTED",
+        "relativePosition": "UNAVAILABLE",
+        "robustness": "UNAVAILABLE",
+        "coherence": "AVAILABLE",
+        "conditionedEvidence": "AVAILABLE",
+        "classification": "UNAVAILABLE"
+      },
+      "comparisonSet": null,
+      "relativePosition": null,
+      "robustness": null,
+      "coherence": {
+        "rawSharedMedian": 0,
+        "filteredSharedMedian": 0,
+        "filteredBand": "NONE",
+        "exemplarsCompared": 2,
+        "consistentlyShared": []
+      },
+      "conditionedEvidence": {
+        "support": "SUPPORTED",
+        "entityCount": 20,
+        "topEntities": [
+          {
+            "label": "Le Domaine de l'Astragale, Hôtel et Villas 5 étoiles, Saint-Tropez",
+            "rank": 1
+          },
+          {
+            "label": "J.K. Place Capri",
+            "rank": 2
+          },
+          {
+            "label": "Hôtel de NELL",
+            "rank": 3
+          },
+          {
+            "label": "La Villa del Re, an SLH Hotel",
+            "rank": 4
+          },
+          {
+            "label": "Palazzo Dama",
+            "rank": 5
+          }
+        ],
+        "correlationId": "mcp-dfbfcf0b-6827-4b2c-ae6a-6d03fac3c8cb"
+      },
+      "evidenceQuality": {
+        "level": "MEDIUM",
+        "drivers": [
+          "profileCoverage: limited"
+        ]
+      },
+      "classification": null,
+      "limitations": [
+        {
+          "code": "COMPARISON_SET_TOO_SMALL",
+          "detail": "only 1 rankable place territory in this analysis; a relative position needs ≥ 3 of one entity type"
+        },
+        {
+          "code": "CONDITIONED_LIST_TRUNCATED",
+          "detail": "urn:tag:interests:qloo:boutique_hospitality: the list reached the requested limit; more entities may exist"
+        },
+        {
+          "code": "NO_RELATIVE_POSITION",
+          "detail": "Boutique hospitality: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+        }
+      ],
+      "provenance": {
+        "correlationIds": [
+          "mcp-28765a2a-df8a-4a63-bcc8-9bc9b262c532",
+          "mcp-8fbe180a-f420-47e2-8af9-31a7ad822669",
+          "mcp-b50ec841-d4cf-48bb-941a-14e51f91858f",
+          "mcp-d8fe14f9-7817-4dc5-927c-d6311cc94903",
+          "mcp-dfbfcf0b-6827-4b2c-ae6a-6d03fac3c8cb",
+          "mcp-ff1b385a-5460-4ec5-bdb3-f7660e42b1ae"
+        ],
+        "sources": [
+          "qloo-hackathon-api"
+        ]
+      },
+      "candidate": {
+        "originalLabel": "Boutique hospitality",
+        "sourceTagId": null,
+        "resolvedId": "urn:tag:interests:qloo:boutique_hospitality",
+        "canonicalConceptKey": "boutique_hospitality",
+        "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+        "candidateSource": "user",
+        "anchorRelation": "NO_SOURCE_TAG",
+        "uncertainty": null
+      },
+      "evidenceStatus": "PARTIAL_EVIDENCE",
+      "probes": [
+        {
+          "conceptKey": "urn:tag:interests:qloo:boutique_hospitality",
+          "label": "Boutique Hospitality",
+          "namespace": "interests:qloo",
+          "attemptedTypes": [
+            "place"
+          ],
+          "emptyTypes": [],
+          "successfulTypes": [
+            "place"
+          ],
+          "unreliableTypes": [],
+          "totalEmptyTypeProbes": 0,
+          "probingExhausted": false,
+          "exhaustionReason": null
+        }
+      ]
+    }
+  ],
+  "hypothesisAssessment": {
+    "version": "single-hypothesis/v1",
+    "outcome": "INCONCLUSIVE",
+    "question": "Does the available cultural evidence support investigating Loewe in boutique hospitality?",
+    "observed": [
+      "Qloo returned 20 distinct place entities in the brand-conditioned Boutique Hospitality query."
+    ],
+    "supports": [],
+    "limitations": [
+      "The observed relationship lacks a verified shared cultural signal in the available profiles.",
+      "urn:tag:interests:qloo:boutique_hospitality: the list reached the requested limit; more entities may exist"
+    ],
+    "unknowns": [
+      "Cultural association does not establish demand, purchase intent, commercial viability, or partnership feasibility."
+    ],
+    "nextStep": "Refine the Boutique Hospitality question or identify an alternative Qloo-resolvable concept before drawing a strategic conclusion.",
+    "correlationIds": [
+      "mcp-dfbfcf0b-6827-4b2c-ae6a-6d03fac3c8cb",
+      "mcp-28765a2a-df8a-4a63-bcc8-9bc9b262c532",
+      "mcp-8fbe180a-f420-47e2-8af9-31a7ad822669",
+      "mcp-b50ec841-d4cf-48bb-941a-14e51f91858f",
+      "mcp-d8fe14f9-7817-4dc5-927c-d6311cc94903",
+      "mcp-ff1b385a-5460-4ec5-bdb3-f7660e42b1ae"
+    ]
+  },
+  "methodologyRuns": [],
+  "summary": {
+    "text": "The available evidence is enough to justify further exploration of Loewe in boutique hospitality as a cultural association question, but the route is only partial. Place exemplars are linked to the concept, and a brand-conditioned query returned a supported set of entities. No relative position or robustness result is available, and the shared signals across exemplars are absent, so the results cannot say how Loewe's affinity with this territory compares to any comparison set. The evidence describes cultural association only and cannot indicate outcomes.\nBoutique hospitality: Place exemplars linked to the boutique hospitality concept are available, so the territory has a representable cultural footprint on this route. The representation is limited to a small exemplar set and does not establish a comparison. The coherence band is NONE and no signals are consistently shared across the exemplars, so the exemplars do not show a common cultural signal set on this route. The brand-conditioned query for this concept is supported and places entities such as Le Domaine de l'Astragale, Hôtel et Villas 5 étoiles, Saint-Tropez and J.K. Place Capri at the top of the returned list. The list is truncated, so this is a partial view of the conditioned association rather than a complete one.",
+    "source": "model",
+    "claimValidation": {
+      "passed": true,
+      "violations": []
+    }
+  },
+  "followUpOptions": [
+    "Run additional boutique hospitality exemplar queries to widen the place representation set.",
+    "Establish a reference territory with comparable place exemplars so a relative position can be computed.",
+    "Query related entity types, such as hospitality brands or destinations, to test whether the conditioned association holds beyond place exemplars.",
+    "Retrieve the full conditioned entity list to address the truncation before drawing conclusions from the top entities."
+  ],
+  "limitations": [
+    {
+      "code": "NOT_A_SUCCESS_PREDICTION",
+      "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+    },
+    {
+      "code": "NO_APPROVED_SCORE",
+      "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+    }
+  ],
+  "evidenceOrigin": "live",
+  "model": {
+    "id": "claude-haiku-5-5",
+    "kind": "llm",
+    "live": true,
+    "effort": "high"
+  },
+  "trace": {
+    "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+    "intent": "analyze_move",
+    "userQuery": "Does the available cultural evidence support investigating Loewe in boutique hospitality?",
+    "interpretedRequest": {
+      "intent": "analyze_move",
+      "brand": "Loewe",
+      "territories": [
+        "Boutique hospitality"
+      ]
+    },
+    "model": {
+      "id": "claude-haiku-5-5",
+      "kind": "llm",
+      "live": true,
+      "effort": "high"
+    },
+    "toolProvider": {
+      "name": "qloo-mcp",
+      "mode": "live"
+    },
+    "limits": {
+      "maxAgentIterations": 8,
+      "maxRepresentationAttemptsPerTerritory": 3,
+      "maxCandidateTerritories": 1,
+      "maxExemplarsPerTerritory": 3,
+      "maxRetryPerToolCall": 1,
+      "maxActionsPerTurn": 12,
+      "maxInvalidTurns": 2,
+      "toolTimeoutMs": 300000,
+      "maxQlooCalls": 12
+    },
+    "statusTransitions": [
+      {
+        "iteration": 0,
+        "from": "INTAKE",
+        "to": "PLANNING",
+        "reason": "request validated"
+      },
+      {
+        "iteration": 1,
+        "from": "PLANNING",
+        "to": "RESOLVING",
+        "reason": "evidence changed the working phase"
+      },
+      {
+        "iteration": 2,
+        "from": "RESOLVING",
+        "to": "INVESTIGATING",
+        "reason": "evidence changed the working phase"
+      },
+      {
+        "iteration": 7,
+        "from": "INVESTIGATING",
+        "to": "ANALYZING",
+        "reason": "analyze boutique_hospitality"
+      },
+      {
+        "iteration": 7,
+        "from": "ANALYZING",
+        "to": "INVESTIGATING",
+        "reason": "analysis step done"
+      },
+      {
+        "iteration": 8,
+        "from": "INVESTIGATING",
+        "to": "COMPLETE",
+        "reason": "agent finished"
+      }
+    ],
+    "planRevisions": [
+      {
+        "iteration": 1,
+        "items": [
+          "[x] interpret the goal (intent, brand, named territories)",
+          "[ ] resolve the brand",
+          "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+          "[ ] Boutique hospitality: anchor to a Qloo concept",
+          "[ ] Boutique hospitality: discover and validate exemplars (or accept concept-only evidence)",
+          "[ ] Boutique hospitality: analyze",
+          "[ ] finish when deterministic sufficiency allows"
+        ],
+        "note": "User asks whether available cultural evidence supports Loewe moving into boutique hospitality, a single proposed direction under single_hypothesis_v1."
+      },
+      {
+        "iteration": 2,
+        "items": [
+          "[x] interpret the goal (intent, brand, named territories)",
+          "[x] resolve the brand",
+          "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+          "[ ] Boutique hospitality: anchor to a Qloo concept",
+          "[ ] Boutique hospitality: discover and validate exemplars (or accept concept-only evidence)",
+          "[ ] Boutique hospitality: analyze",
+          "[ ] finish when deterministic sufficiency allows"
+        ],
+        "note": "The analysis subject Loewe must be resolved to a Qloo brand entity before any territory evidence can be tested."
+      },
+      {
+        "iteration": 4,
+        "items": [
+          "[x] interpret the goal (intent, brand, named territories)",
+          "[x] resolve the brand",
+          "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+          "[x] Boutique hospitality: anchor to a Qloo concept",
+          "[ ] Boutique hospitality: discover and validate exemplars (or accept concept-only evidence)",
+          "[ ] Boutique hospitality: analyze",
+          "[ ] finish when deterministic sufficiency allows"
+        ],
+        "note": "Probing the Boutique Hospitality interest tag for place members, the next untested entity type the focus lists."
+      },
+      {
+        "iteration": 6,
+        "items": [
+          "[x] interpret the goal (intent, brand, named territories)",
+          "[x] resolve the brand",
+          "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+          "[x] Boutique hospitality: anchor to a Qloo concept",
+          "[x] Boutique hospitality: discover and validate exemplars (or accept concept-only evidence)",
+          "[ ] Boutique hospitality: analyze",
+          "[ ] finish when deterministic sufficiency allows"
+        ],
+        "note": "Propose three profiled boutique hotel exemplars from the tag-member pool for the available place strategy."
+      },
+      {
+        "iteration": 7,
+        "items": [
+          "[x] interpret the goal (intent, brand, named territories)",
+          "[x] resolve the brand",
+          "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+          "[x] Boutique hospitality: anchor to a Qloo concept",
+          "[x] Boutique hospitality: discover and validate exemplars (or accept concept-only evidence)",
+          "[x] Boutique hospitality: analyze",
+          "[ ] finish when deterministic sufficiency allows"
+        ],
+        "note": "Target territory is represented with three valid exemplars and no material evidence gap remains, so run the single-hypothesis analysis."
+      },
+      {
+        "iteration": 8,
+        "items": [
+          "[x] interpret the goal (intent, brand, named territories)",
+          "[x] resolve the brand",
+          "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+          "[x] Boutique hospitality: anchor to a Qloo concept",
+          "[x] Boutique hospitality: discover and validate exemplars (or accept concept-only evidence)",
+          "[x] Boutique hospitality: analyze",
+          "[x] finish when deterministic sufficiency allows"
+        ],
+        "note": "Single-hypothesis target is analyzed, sufficiency is SUFFICIENT, and the turn budget is exhausted, so no further calls can change the result."
+      }
+    ],
+    "turns": [
+      {
+        "iteration": 1,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "interpret_request",
+            "arguments": {
+              "intent": "analyze_move",
+              "brand": "Loewe",
+              "territories": [
+                "Boutique hospitality"
+              ]
+            },
+            "reasonSummary": "User asks whether available cultural evidence supports Loewe moving into boutique hospitality, a single proposed direction under single_hypothesis_v1.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 823,
+          "outputTokens": 184,
+          "cacheReadTokens": 0,
+          "cacheCreationTokens": 1815
+        },
+        "latencyMs": 2153,
+        "skills": [
+          {
+            "id": "interpret_request",
+            "version": 1
+          },
+          {
+            "id": "resolve_brand",
+            "version": 1
+          }
+        ],
+        "toolsExposed": [
+          "interpret_request",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 2593,
+        "contextTokensEstimate": 649
+      },
+      {
+        "iteration": 2,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_resolve_entity",
+            "arguments": {
+              "name": "Loewe",
+              "type": "brand",
+              "role": "brand"
+            },
+            "reasonSummary": "The analysis subject Loewe must be resolved to a Qloo brand entity before any territory evidence can be tested.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 1118,
+          "outputTokens": 296,
+          "cacheReadTokens": 0,
+          "cacheCreationTokens": 1793
+        },
+        "latencyMs": 1652,
+        "skills": [
+          {
+            "id": "resolve_brand",
+            "version": 1
+          },
+          {
+            "id": "resolve_territory",
+            "version": 5
+          }
+        ],
+        "toolsExposed": [
+          "qloo_resolve_entity",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 3073,
+        "contextTokensEstimate": 769
+      },
+      {
+        "iteration": 3,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_find_tags",
+            "arguments": {
+              "query": "boutique hospitality"
+            },
+            "reasonSummary": "The territory Boutique hospitality has no concept yet, so I need to search Qloo's tag vocabulary for it.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 1774,
+          "outputTokens": 202,
+          "cacheReadTokens": 0,
+          "cacheCreationTokens": 2886
+        },
+        "latencyMs": 1510,
+        "skills": [
+          {
+            "id": "resolve_territory",
+            "version": 5
+          }
+        ],
+        "toolsExposed": [
+          "qloo_find_tags",
+          "qloo_recommend",
+          "anchor_territory",
+          "drop_territory",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 7070,
+        "contextTokensEstimate": 1768
+      },
+      {
+        "iteration": 4,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_recommend",
+            "arguments": {
+              "targetType": "place",
+              "tagIds": [
+                "urn:tag:interests:qloo:boutique_hospitality"
+              ],
+              "conditionOnBrand": false
+            },
+            "reasonSummary": "Probing the Boutique Hospitality interest tag for place members, the next untested entity type the focus lists.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 3181,
+          "outputTokens": 399,
+          "cacheReadTokens": 2886,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 2288,
+        "skills": [
+          {
+            "id": "resolve_territory",
+            "version": 5
+          },
+          {
+            "id": "build_territory_representation",
+            "version": 4
+          }
+        ],
+        "toolsExposed": [
+          "qloo_find_tags",
+          "qloo_recommend",
+          "anchor_territory",
+          "drop_territory",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 9970,
+        "contextTokensEstimate": 2493
+      },
+      {
+        "iteration": 5,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_get_entity_tags",
+            "arguments": {
+              "entityId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2"
+            },
+            "reasonSummary": "Brand profile is needed for analysis and for checking the brand relationship to boutique hospitality.",
+            "accepted": true
+          },
+          {
+            "action": "call_tool",
+            "tool": "qloo_get_entity_tags",
+            "arguments": {
+              "entityId": "01140223-0E93-450A-8CFA-A64DF342F82A"
+            },
+            "reasonSummary": "Leading candidate profile (Hotel Ritta Höppner) is needed so the quality check can compare it against peers.",
+            "accepted": true
+          },
+          {
+            "action": "call_tool",
+            "tool": "qloo_get_entity_tags",
+            "arguments": {
+              "entityId": "009A09A5-FFE9-4F04-AFF5-72CA1882AC8B"
+            },
+            "reasonSummary": "Candidate profile (Casa Art Hotel) is needed so the quality check can compare it against peers.",
+            "accepted": true
+          },
+          {
+            "action": "call_tool",
+            "tool": "qloo_get_entity_tags",
+            "arguments": {
+              "entityId": "00E4ED0B-AD40-479A-89C0-1B208AAB9164"
+            },
+            "reasonSummary": "Candidate profile (MonkBridge House) is needed so the quality check can compare it against peers.",
+            "accepted": true
+          },
+          {
+            "action": "call_tool",
+            "tool": "qloo_get_entity_tags",
+            "arguments": {
+              "entityId": "01B3C055-8569-4967-8BC9-F2C7147AE3A8"
+            },
+            "reasonSummary": "Candidate profile (The Thomas Paine Hotel) is needed so the quality check can compare it against peers.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 4671,
+          "outputTokens": 1197,
+          "cacheReadTokens": 0,
+          "cacheCreationTokens": 4017
+        },
+        "latencyMs": 5606,
+        "skills": [
+          {
+            "id": "build_territory_representation",
+            "version": 4
+          }
+        ],
+        "toolsExposed": [
+          "qloo_find_tags",
+          "qloo_get_entity_tags",
+          "qloo_recommend",
+          "anchor_territory",
+          "validate_territory_representation",
+          "declare_concept_only",
+          "drop_territory"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 15741,
+        "contextTokensEstimate": 3936
+      },
+      {
+        "iteration": 6,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "validate_territory_representation",
+            "arguments": {
+              "territoryKey": "boutique_hospitality",
+              "entityType": "place",
+              "exemplars": [
+                {
+                  "id": "01140223-0E93-450A-8CFA-A64DF342F82A",
+                  "reason": "Top-ranked tag member of Boutique Hospitality with a profiled tag set (design-led independent hotel).",
+                  "semantic": {
+                    "relevance": "strong",
+                    "reason": "Independent design hotel is a direct instance of boutique hospitality."
+                  }
+                },
+                {
+                  "id": "009A09A5-FFE9-4F04-AFF5-72CA1882AC8B",
+                  "reason": "Profiled tag member of Boutique Hospitality; art-focused boutique hotel.",
+                  "semantic": {
+                    "relevance": "adequate",
+                    "reason": "Art hotel positioning links boutique hospitality to Loewe's artistic-exploration profile, though the match is partial."
+                  }
+                },
+                {
+                  "id": "00E4ED0B-AD40-479A-89C0-1B208AAB9164",
+                  "reason": "Profiled tag member of Boutique Hospitality; small independent property.",
+                  "semantic": {
+                    "relevance": "adequate",
+                    "reason": "Small independent stay is a boutique hospitality instance, though less design-oriented."
+                  }
+                }
+              ]
+            },
+            "reasonSummary": "Propose three profiled boutique hotel exemplars from the tag-member pool for the available place strategy.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 6754,
+          "outputTokens": 1022,
+          "cacheReadTokens": 4017,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 5244,
+        "skills": [
+          {
+            "id": "build_territory_representation",
+            "version": 4
+          },
+          {
+            "id": "analyze_territories",
+            "version": 3
+          }
+        ],
+        "toolsExposed": [
+          "qloo_find_tags",
+          "qloo_get_entity_tags",
+          "qloo_recommend",
+          "anchor_territory",
+          "validate_territory_representation",
+          "declare_concept_only",
+          "drop_territory"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 19887,
+        "contextTokensEstimate": 4972
+      },
+      {
+        "iteration": 7,
+        "decisions": [
+          {
+            "action": "analyze",
+            "reasonSummary": "Target territory is represented with three valid exemplars and no material evidence gap remains, so run the single-hypothesis analysis.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 2220,
+          "outputTokens": 170,
+          "cacheReadTokens": 0,
+          "cacheCreationTokens": 2184
+        },
+        "latencyMs": 1549,
+        "skills": [
+          {
+            "id": "analyze_territories",
+            "version": 3
+          }
+        ],
+        "toolsExposed": [
+          "drop_territory",
+          "assess_evidence_sufficiency",
+          "analyze",
+          "finish"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 5695,
+        "contextTokensEstimate": 1424
+      },
+      {
+        "iteration": 8,
+        "decisions": [
+          {
+            "action": "finish",
+            "reasonSummary": "Single-hypothesis target is analyzed, sufficiency is SUFFICIENT, and the turn budget is exhausted, so no further calls can change the result.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 1808,
+          "outputTokens": 222,
+          "cacheReadTokens": 2184,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 1430,
+        "skills": [
+          {
+            "id": "analyze_territories",
+            "version": 3
+          }
+        ],
+        "toolsExposed": [
+          "drop_territory",
+          "assess_evidence_sufficiency",
+          "analyze",
+          "finish"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 4820,
+        "contextTokensEstimate": 1205
+      }
+    ],
+    "toolCalls": [
+      {
+        "id": "tc-1",
+        "iteration": 1,
+        "tool": "interpret_request",
+        "permission": "local_computation",
+        "arguments": {
+          "intent": "analyze_move",
+          "brand": "Loewe",
+          "territories": [
+            "Boutique hospitality"
+          ]
+        },
+        "status": "ok",
+        "summary": "intent analyze_move; brand \"Loewe\"; 1 named territory(ies)",
+        "qlooOperations": [],
+        "correlationIds": [],
+        "attempts": 0,
+        "latencyMs": 11,
+        "skill": {
+          "id": "interpret_request",
+          "version": 1
+        }
+      },
+      {
+        "id": "tc-2",
+        "iteration": 2,
+        "tool": "qloo_resolve_entity",
+        "permission": "read_only_external",
+        "arguments": {
+          "name": "Loewe",
+          "type": "brand",
+          "role": "brand"
+        },
+        "status": "ok",
+        "summary": "Loewe (628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2, urn:entity:brand, match exact)",
+        "qlooOperations": [
+          "describe"
+        ],
+        "correlationIds": [
+          "mcp-1940ff3f-1eef-4a30-89a1-e3799bc3379d"
+        ],
+        "attempts": 1,
+        "latencyMs": 1790,
+        "skill": {
+          "id": "resolve_brand",
+          "version": 1
+        },
+        "expectedValue": "HIGH"
+      },
+      {
+        "id": "tc-3",
+        "iteration": 3,
+        "tool": "qloo_find_tags",
+        "permission": "read_only_external",
+        "arguments": {
+          "query": "boutique hospitality",
+          "limit": 8
+        },
+        "status": "ok",
+        "summary": "8 tag(s)",
+        "qlooOperations": [
+          "find_tags"
+        ],
+        "correlationIds": [
+          "mcp-8fbe180a-f420-47e2-8af9-31a7ad822669"
+        ],
+        "attempts": 1,
+        "latencyMs": 4798,
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "expectedValue": "HIGH"
+      },
+      {
+        "id": "tc-4",
+        "iteration": 4,
+        "tool": "qloo_recommend",
+        "permission": "read_only_external",
+        "arguments": {
+          "targetType": "place",
+          "tagIds": [
+            "urn:tag:interests:qloo:boutique_hospitality"
+          ],
+          "conditionOnBrand": false,
+          "limit": 20
+        },
+        "status": "ok",
+        "summary": "20 place entities (brand-independent pool); boutique_hospitality anchored to this tag (its own concept; next: validate_territory_representation with place)",
+        "qlooOperations": [
+          "recommend"
+        ],
+        "correlationIds": [
+          "mcp-c4e2eb37-d2e7-43e1-a2f7-83653988b5f6"
+        ],
+        "attempts": 1,
+        "latencyMs": 4479,
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-5",
+        "iteration": 5,
+        "tool": "qloo_get_entity_tags",
+        "permission": "read_only_external",
+        "arguments": {
+          "entityId": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2"
+        },
+        "status": "ok",
+        "summary": "20 tag(s)",
+        "qlooOperations": [
+          "entity_tags"
+        ],
+        "correlationIds": [
+          "mcp-d8fe14f9-7817-4dc5-927c-d6311cc94903"
+        ],
+        "attempts": 1,
+        "latencyMs": 1532,
+        "skill": {
+          "id": "build_territory_representation",
+          "version": 4
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-6",
+        "iteration": 5,
+        "tool": "qloo_get_entity_tags",
+        "permission": "read_only_external",
+        "arguments": {
+          "entityId": "01140223-0E93-450A-8CFA-A64DF342F82A"
+        },
+        "status": "ok",
+        "summary": "20 tag(s)",
+        "qlooOperations": [
+          "entity_tags"
+        ],
+        "correlationIds": [
+          "mcp-28765a2a-df8a-4a63-bcc8-9bc9b262c532"
+        ],
+        "attempts": 1,
+        "latencyMs": 6622,
+        "skill": {
+          "id": "build_territory_representation",
+          "version": 4
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-7",
+        "iteration": 5,
+        "tool": "qloo_get_entity_tags",
+        "permission": "read_only_external",
+        "arguments": {
+          "entityId": "009A09A5-FFE9-4F04-AFF5-72CA1882AC8B"
+        },
+        "status": "ok",
+        "summary": "20 tag(s)",
+        "qlooOperations": [
+          "entity_tags"
+        ],
+        "correlationIds": [
+          "mcp-b50ec841-d4cf-48bb-941a-14e51f91858f"
+        ],
+        "attempts": 1,
+        "latencyMs": 6815,
+        "skill": {
+          "id": "build_territory_representation",
+          "version": 4
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-8",
+        "iteration": 5,
+        "tool": "qloo_get_entity_tags",
+        "permission": "read_only_external",
+        "arguments": {
+          "entityId": "00E4ED0B-AD40-479A-89C0-1B208AAB9164"
+        },
+        "status": "ok",
+        "summary": "20 tag(s)",
+        "qlooOperations": [
+          "entity_tags"
+        ],
+        "correlationIds": [
+          "mcp-ff1b385a-5460-4ec5-bdb3-f7660e42b1ae"
+        ],
+        "attempts": 1,
+        "latencyMs": 6984,
+        "skill": {
+          "id": "build_territory_representation",
+          "version": 4
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-9",
+        "iteration": 5,
+        "tool": "qloo_get_entity_tags",
+        "permission": "read_only_external",
+        "arguments": {
+          "entityId": "01B3C055-8569-4967-8BC9-F2C7147AE3A8"
+        },
+        "status": "ok",
+        "summary": "20 tag(s)",
+        "qlooOperations": [
+          "entity_tags"
+        ],
+        "correlationIds": [
+          "mcp-cee4707a-21ca-4371-a067-6cd8dc5416c5"
+        ],
+        "attempts": 1,
+        "latencyMs": 6971,
+        "skill": {
+          "id": "build_territory_representation",
+          "version": 4
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-10",
+        "iteration": 6,
+        "tool": "validate_territory_representation",
+        "permission": "local_computation",
+        "arguments": {
+          "territoryKey": "boutique_hospitality",
+          "entityType": "place",
+          "exemplars": [
+            {
+              "id": "01140223-0E93-450A-8CFA-A64DF342F82A",
+              "reason": "Top-ranked tag member of Boutique Hospitality with a profiled tag set (design-led independent hotel).",
+              "semantic": {
+                "relevance": "strong",
+                "reason": "Independent design hotel is a direct instance of boutique hospitality."
+              }
+            },
+            {
+              "id": "009A09A5-FFE9-4F04-AFF5-72CA1882AC8B",
+              "reason": "Profiled tag member of Boutique Hospitality; art-focused boutique hotel.",
+              "semantic": {
+                "relevance": "adequate",
+                "reason": "Art hotel positioning links boutique hospitality to Loewe's artistic-exploration profile, though the match is partial."
+              }
+            },
+            {
+              "id": "00E4ED0B-AD40-479A-89C0-1B208AAB9164",
+              "reason": "Profiled tag member of Boutique Hospitality; small independent property.",
+              "semantic": {
+                "relevance": "adequate",
+                "reason": "Small independent stay is a boutique hospitality instance, though less design-oriented."
+              }
+            }
+          ]
+        },
+        "status": "ok",
+        "summary": "boutique_hospitality: accepted Hotel Ritta Höppner, Casa Art Hotel, MonkBridge House; diversity unknown",
+        "qlooOperations": [],
+        "correlationIds": [],
+        "attempts": 0,
+        "latencyMs": 3,
+        "skill": {
+          "id": "build_territory_representation",
+          "version": 4
+        }
+      },
+      {
+        "id": "tc-11",
+        "iteration": 7,
+        "tool": "analyze_evidence",
+        "permission": "read_only_external",
+        "arguments": {
+          "territoryKeys": [
+            "boutique_hospitality"
+          ]
+        },
+        "status": "ok",
+        "summary": "brand profile 20 tags; 4 exemplar/other profiles in run; 1 brand-conditioned list(s)",
+        "qlooOperations": [
+          "recommend"
+        ],
+        "correlationIds": [
+          "mcp-dfbfcf0b-6827-4b2c-ae6a-6d03fac3c8cb"
+        ],
+        "attempts": 1,
+        "latencyMs": 0
+      },
+      {
+        "id": "tc-12",
+        "iteration": 7,
+        "tool": "build_candidate_panel",
+        "permission": "read_only_external",
+        "arguments": {
+          "territoryKeys": [
+            "boutique_hospitality"
+          ]
+        },
+        "status": "ok",
+        "summary": "no comparison set of ≥ 3 rankable territories of one type",
+        "qlooOperations": [],
+        "correlationIds": [],
+        "attempts": 0,
+        "latencyMs": 0
+      }
+    ],
+    "resolvedEntities": [
+      {
+        "role": "brand",
+        "id": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+        "label": "Loewe",
+        "type": "urn:entity:brand",
+        "match": "exact",
+        "resolution": "confirmed"
+      }
+    ],
+    "territoryHypotheses": [
+      {
+        "key": "boutique_hospitality",
+        "label": "Boutique hospitality",
+        "role": "target",
+        "origin": "user",
+        "status": "analyzed",
+        "rationale": "named by the user"
+      }
+    ],
+    "representations": [
+      {
+        "territoryKey": "boutique_hospitality",
+        "attempt": 1,
+        "accepted": [
+          "Hotel Ritta Höppner",
+          "Casa Art Hotel",
+          "MonkBridge House"
+        ],
+        "rejected": []
+      }
+    ],
+    "sufficiency": [
+      {
+        "iteration": 0,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "interpret the request (interpret_request)"
+        ],
+        "nextActions": [
+          {
+            "action": "interpret_request",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the goal is not interpreted yet"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 1,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "resolve the brand (qloo_resolve_entity, role brand)"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_resolve_entity",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the brand is not resolved"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 2,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "boutique_hospitality: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+            "value": "MEDIUM",
+            "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+          },
+          {
+            "action": "qloo_find_tags",
+            "target": "boutique_hospitality",
+            "value": "HIGH",
+            "reason": "search Qloo's tag vocabulary for a concept"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 3,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "boutique_hospitality: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+            "value": "MEDIUM",
+            "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+          },
+          {
+            "action": "anchor_territory",
+            "target": "boutique_hospitality",
+            "value": "HIGH",
+            "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 4,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "boutique_hospitality: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+            "value": "MEDIUM",
+            "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+          },
+          {
+            "action": "validate_territory_representation",
+            "target": "boutique_hospitality",
+            "value": "HIGH",
+            "reason": "Qloo returned exemplar candidates for an available strategy"
+          },
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "boutique_hospitality",
+            "value": "MEDIUM",
+            "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 5,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "boutique_hospitality: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+        ],
+        "nextActions": [
+          {
+            "action": "more_brand_tags",
+            "target": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+            "value": "NONE",
+            "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+          },
+          {
+            "action": "validate_territory_representation",
+            "target": "boutique_hospitality",
+            "value": "HIGH",
+            "reason": "Qloo returned exemplar candidates for an available strategy"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 6,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "boutique_hospitality: ready to analyze (3 validated exemplar(s))"
+        ],
+        "nextActions": [
+          {
+            "action": "more_brand_tags",
+            "target": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+            "value": "NONE",
+            "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+          },
+          {
+            "action": "add_exemplar",
+            "target": "boutique_hospitality",
+            "value": "NONE",
+            "reason": "exemplar limit reached"
+          },
+          {
+            "action": "analyze",
+            "target": "boutique_hospitality",
+            "value": "HIGH",
+            "reason": "no material evidence gap remains: analyze"
+          }
+        ],
+        "materialGap": false
+      },
+      {
+        "iteration": 7,
+        "verdict": "SUFFICIENT",
+        "reasons": [
+          "all 1 in-scope territories have analysis results"
+        ],
+        "nextActions": [
+          {
+            "action": "more_brand_tags",
+            "target": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+            "value": "NONE",
+            "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+          },
+          {
+            "action": "finish",
+            "target": null,
+            "value": "HIGH",
+            "reason": "every in-scope territory is analyzed"
+          }
+        ],
+        "materialGap": false
+      }
+    ],
+    "representationQuality": [
+      {
+        "territoryKey": "boutique_hospitality",
+        "attempt": 1,
+        "candidateId": "01140223-0E93-450A-8CFA-A64DF342F82A",
+        "label": "Hotel Ritta Höppner",
+        "deterministic": {
+          "level": "VALID",
+          "signals": {
+            "resolves": true,
+            "correctType": true,
+            "isBrand": false,
+            "linkedToConcept": "tag_member",
+            "brandConditionedOnly": false,
+            "profileFetched": true,
+            "profileTags": 20,
+            "popularity": 0.9858794302294007,
+            "duplicateOf": null,
+            "nameFamilyOf": null,
+            "peersWithProfiles": 3,
+            "maxSharedWithPeer": 0,
+            "conceptInProfile": false,
+            "peersCarryingConcept": 0
+          },
+          "reasons": []
+        },
+        "modelAssessment": {
+          "relevance": "STRONG",
+          "reason": "Independent design hotel is a direct instance of boutique hospitality.",
+          "advisory": true
+        },
+        "final": "VALID",
+        "rule": "R6 no hard failure, no weak signal",
+        "rulesVersion": "representation-quality-v1"
+      },
+      {
+        "territoryKey": "boutique_hospitality",
+        "attempt": 1,
+        "candidateId": "009A09A5-FFE9-4F04-AFF5-72CA1882AC8B",
+        "label": "Casa Art Hotel",
+        "deterministic": {
+          "level": "VALID",
+          "signals": {
+            "resolves": true,
+            "correctType": true,
+            "isBrand": false,
+            "linkedToConcept": "tag_member",
+            "brandConditionedOnly": false,
+            "profileFetched": true,
+            "profileTags": 20,
+            "popularity": 0.8326164211521039,
+            "duplicateOf": null,
+            "nameFamilyOf": null,
+            "peersWithProfiles": 3,
+            "maxSharedWithPeer": 0,
+            "conceptInProfile": false,
+            "peersCarryingConcept": 0
+          },
+          "reasons": []
+        },
+        "modelAssessment": {
+          "relevance": "ADEQUATE",
+          "reason": "Art hotel positioning links boutique hospitality to Loewe's artistic-exploration profile, though the match is partial.",
+          "advisory": true
+        },
+        "final": "VALID",
+        "rule": "R6 no hard failure, no weak signal",
+        "rulesVersion": "representation-quality-v1"
+      },
+      {
+        "territoryKey": "boutique_hospitality",
+        "attempt": 1,
+        "candidateId": "00E4ED0B-AD40-479A-89C0-1B208AAB9164",
+        "label": "MonkBridge House",
+        "deterministic": {
+          "level": "VALID",
+          "signals": {
+            "resolves": true,
+            "correctType": true,
+            "isBrand": false,
+            "linkedToConcept": "tag_member",
+            "brandConditionedOnly": false,
+            "profileFetched": true,
+            "profileTags": 20,
+            "popularity": 0.7512348162271772,
+            "duplicateOf": null,
+            "nameFamilyOf": null,
+            "peersWithProfiles": 3,
+            "maxSharedWithPeer": 0,
+            "conceptInProfile": false,
+            "peersCarryingConcept": 0
+          },
+          "reasons": []
+        },
+        "modelAssessment": {
+          "relevance": "ADEQUATE",
+          "reason": "Small independent stay is a boutique hospitality instance, though less design-oriented.",
+          "advisory": true
+        },
+        "final": "VALID",
+        "rule": "R6 no hard failure, no weak signal",
+        "rulesVersion": "representation-quality-v1"
+      }
+    ],
+    "conceptDedup": [],
+    "earlyStops": [],
+    "skillUsage": [
+      {
+        "skill": {
+          "id": "interpret_request",
+          "version": 1
+        },
+        "turns": 1,
+        "qlooCalls": 0,
+        "toolCalls": 1
+      },
+      {
+        "skill": {
+          "id": "resolve_brand",
+          "version": 1
+        },
+        "turns": 1,
+        "qlooCalls": 1,
+        "toolCalls": 1
+      },
+      {
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "turns": 2,
+        "qlooCalls": 2,
+        "toolCalls": 2
+      },
+      {
+        "skill": {
+          "id": "build_territory_representation",
+          "version": 4
+        },
+        "turns": 2,
+        "qlooCalls": 5,
+        "toolCalls": 6
+      },
+      {
+        "skill": {
+          "id": "analyze_territories",
+          "version": 3
+        },
+        "turns": 2,
+        "qlooCalls": 0,
+        "toolCalls": 0
+      }
+    ],
+    "methodologyInvocations": [],
+    "synthesis": {
+      "source": "model",
+      "attempts": 2,
+      "violations": [],
+      "attemptDetails": [
+        {
+          "attempt": 1,
+          "accepted": false,
+          "categories": {
+            "PROHIBITED_COMMERCIAL_OR_PREDICTION": 1
+          },
+          "violations": [
+            "summary: forbidden language \"would succeed\" (business-outcome prediction)"
+          ],
+          "rejectedOutput": "{\"summary\":\"The available cultural evidence supports exploring Loewe in boutique hospitality as a partial analysis, not a comparative conclusion. Only three place exemplars are linked to the concept, there is no comparison set or relative position, and the filtered shared signals show no consistent common profile. The brand-conditioned entity list adds association context but cannot establish how Loewe compares with other territories, and it cannot say whether the move would succeed.\",\"findings\":[{\"territoryKey\":\"boutique_hospitality\",\"claimType\":\"evidence_quality\",\"supportingFields\":[\"evidenceQuality\",\"route\",\"capabilities.relativePosition\",\"capabilities.robustness\"],\"interpretation\":\"Evidence quality is medium and the route is partial, with relative position and robustness unavailable, so the results support exploration rather than a comparative reading.\",\"limitationCodes\":[\"COMPARISON_SET_TOO_SMALL\",\"NO_RELATIVE_POSITION\"]},{\"territoryKey\":\"boutique_hospitality\",\"claimType\":\"shared_signals\",\"supportingFields\":[\"coherence.band\",\"coherence.consistentlyShared\"],\"interpretation\":\"The filtered shared signals fall in a NONE band with no consistently shared signals, so the exemplars do not show a common cultural profile in these results.\",\"limitationCodes\":[\"COMPARISON_SET_TOO_SMALL\"]},{\"territoryKey\":\"boutique_hospitality\",\"claimType\":\"conditioned_evidence\",\"supportingFields\":[\"conditionedEvidence.support\",\"conditionedEvidence.top\"],\"interpretation\":\"The brand-conditioned query for this concept returned a supported list, with leading entries including Le Domaine de l'Astragale, J.K. Place Capri and Hôtel de NELL; this is association only and the list is truncated.\",\"limitationCodes\":[\"CONDITIONED_LIST_TRUNCATED\"]}],\"followUpOptions\":[\"Expand the boutique hospitality place exemplars to build a larger comparison set before reading relative position.\",\"Run a reference territory such as luxury hotels to compare against boutique hospitality under the same method.\",\"Retrieve the full brand-conditioned entity list beyond the truncated top entries and examine it by entity type.\",\"Query Loewe-conditioned entities in fashion or lifestyle entity types to check whether the association pattern holds across categories.\"]}"
+        },
+        {
+          "attempt": 2,
+          "accepted": true,
+          "categories": {},
+          "violations": []
+        }
+      ]
+    },
+    "errors": [],
+    "userClarifications": [],
+    "representationPlans": [],
+    "completion": [
+      {
+        "iteration": 6,
+        "requiredReferenceCount": 3,
+        "validReferenceCount": 1,
+        "missingReferenceCount": 2,
+        "compatibleEntityType": "place",
+        "remainingRelevantCandidates": 14,
+        "remainingTurns": 2,
+        "remainingQlooCalls": 4,
+        "turnsNeeded": 3,
+        "callsNeeded": 7,
+        "fullAnalysisFeasible": false,
+        "reason": "FULL is not feasible: no candidate-territory slot left for more references; analysis will be partial"
+      }
+    ],
+    "probeRecommendations": [
+      {
+        "iteration": 3,
+        "territoryKey": "boutique_hospitality",
+        "conceptKey": "urn:tag:interests:qloo:boutique_hospitality",
+        "namespace": "interests:qloo",
+        "type": "place",
+        "priority": "EXPLORATION",
+        "reason": "untested in interests:qloo"
+      }
+    ],
+    "interpretationSource": "agent_turn",
+    "anchorDecisions": [
+      {
+        "iteration": 4,
+        "territoryKey": "boutique_hospitality",
+        "sourceTagId": null,
+        "anchoredTagId": "urn:tag:interests:qloo:boutique_hospitality",
+        "relation": "NO_SOURCE_TAG",
+        "basis": "LABEL_TAG_MEMBERS",
+        "decidedBy": "runtime",
+        "reasonCode": null,
+        "evidence": "the territory's own same-named tag returned 20 place member(s) (brand-independent pool)",
+        "correlationIds": [
+          "mcp-c4e2eb37-d2e7-43e1-a2f7-83653988b5f6"
+        ]
+      }
+    ],
+    "stopReason": {
+      "code": "AGENT_FINISHED",
+      "detail": "agent finished"
+    },
+    "semanticAssessments": [],
+    "spans": [
+      {
+        "spanId": "s-1-0e2069d8",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": null,
+        "phase": "RUN_START",
+        "operation": "run",
+        "startOffsetMs": 0,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-2-40c8b106",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 0,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 0,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-3-5b846d6e",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 0,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 1,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-4-e7326dfd",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 2,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-5-8c36d6b2",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 4,
+        "durationMs": 2153,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-6-36c81659",
+        "parentSpanId": "s-5-8c36d6b2",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 2157,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-7-8df6b239",
+        "parentSpanId": "s-5-8c36d6b2",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 2158,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-8-0d770a2f",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 2158,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-11-0bfb8646",
+        "parentSpanId": "s-10-f838ea4a",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "interpret_request",
+        "startOffsetMs": 2225,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-10-f838ea4a",
+        "parentSpanId": "s-9-305aad14",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "TOOL_EXECUTION",
+        "operation": "interpret_request",
+        "startOffsetMs": 2214,
+        "durationMs": 11,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-9-305aad14",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "TOOL_DISPATCH",
+        "operation": "interpret_request",
+        "startOffsetMs": 2214,
+        "durationMs": 11,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-12-b3eaadc7",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 2225,
+        "durationMs": 6,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-13-befdfeb9",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 2263,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-14-029eba0c",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 1,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 2263,
+        "durationMs": 9,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-15-97df48ba",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 2272,
+        "durationMs": 32,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-16-ef553f0a",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 2304,
+        "durationMs": 1651,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-17-a852acf6",
+        "parentSpanId": "s-16-ef553f0a",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 3955,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-18-3d5849c7",
+        "parentSpanId": "s-16-ef553f0a",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 3956,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-19-59ec9bf8",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 3956,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-23-d949b58b",
+        "parentSpanId": "s-22-e9e87d22",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "QLOO_TRANSPORT_STARTUP",
+        "operation": "describe:startup",
+        "startOffsetMs": 3978,
+        "durationMs": 1166,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-22-e9e87d22",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "QLOO_REQUEST",
+        "operation": "describe",
+        "startOffsetMs": 3978,
+        "durationMs": 1789,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-24-7d6fc773",
+        "parentSpanId": "s-22-e9e87d22",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "QLOO_RESPONSE",
+        "operation": "describe:ok",
+        "startOffsetMs": 5767,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-25-aabac5f7",
+        "parentSpanId": "s-21-60809c49",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 5768,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-21-60809c49",
+        "parentSpanId": "s-20-ab5c6249",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 3978,
+        "durationMs": 1790,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-20-ab5c6249",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 3978,
+        "durationMs": 1790,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-26-2b17d423",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 5768,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-27-7bbcf877",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 5768,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-28-b8aa7cbe",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 2,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 5768,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-29-31a5c363",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 5768,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-30-48755b95",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 5770,
+        "durationMs": 1510,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-31-e2c167e4",
+        "parentSpanId": "s-30-48755b95",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 7280,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-32-5c0c7be3",
+        "parentSpanId": "s-30-48755b95",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 7280,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-33-ddeee0db",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 7280,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-37-3831c96b",
+        "parentSpanId": "s-36-0e239d1b",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "QLOO_SPACING",
+        "operation": "find_tags:spacing",
+        "startOffsetMs": 7281,
+        "durationMs": 3698,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-36-0e239d1b",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "QLOO_REQUEST",
+        "operation": "find_tags",
+        "startOffsetMs": 7281,
+        "durationMs": 4796,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-38-6458cd45",
+        "parentSpanId": "s-36-0e239d1b",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "QLOO_RESPONSE",
+        "operation": "find_tags:ok",
+        "startOffsetMs": 12077,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-39-61ac3afe",
+        "parentSpanId": "s-35-8a05ae0b",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_find_tags",
+        "startOffsetMs": 12078,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-35-8a05ae0b",
+        "parentSpanId": "s-34-8428ee58",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_find_tags",
+        "startOffsetMs": 7281,
+        "durationMs": 4797,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-34-8428ee58",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_find_tags",
+        "startOffsetMs": 7281,
+        "durationMs": 4797,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-40-bb848dba",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 12078,
+        "durationMs": 9,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-41-66df6888",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 12087,
+        "durationMs": 4,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-42-3d2a729b",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 3,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 12091,
+        "durationMs": 7,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-43-e7f1ab8e",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 12103,
+        "durationMs": 7,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-44-2db4e49a",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 12110,
+        "durationMs": 2288,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-45-a5370d56",
+        "parentSpanId": "s-44-2db4e49a",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 14398,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-46-b0a04745",
+        "parentSpanId": "s-44-2db4e49a",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 14398,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-47-bc9f6351",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 14398,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-51-f7f94212",
+        "parentSpanId": "s-50-9a7198b1",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "QLOO_SPACING",
+        "operation": "recommend:spacing",
+        "startOffsetMs": 14403,
+        "durationMs": 3576,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-50-9a7198b1",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "QLOO_REQUEST",
+        "operation": "recommend",
+        "startOffsetMs": 14403,
+        "durationMs": 4478,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-52-553d81d0",
+        "parentSpanId": "s-50-9a7198b1",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "QLOO_RESPONSE",
+        "operation": "recommend:ok",
+        "startOffsetMs": 18881,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-53-07949f9b",
+        "parentSpanId": "s-49-19e8538a",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 18882,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-49-19e8538a",
+        "parentSpanId": "s-48-92fd1466",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 14403,
+        "durationMs": 4479,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-48-92fd1466",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 14403,
+        "durationMs": 4479,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-54-f9cc2b70",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 18882,
+        "durationMs": 19,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-55-f305f575",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 18902,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-56-ff82f680",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 4,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 18905,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-57-d6fd06d7",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 18907,
+        "durationMs": 8,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-58-0c9d01c1",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 18915,
+        "durationMs": 5606,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-59-000d54b4",
+        "parentSpanId": "s-58-0c9d01c1",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:5",
+        "startOffsetMs": 24521,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-60-172974eb",
+        "parentSpanId": "s-58-0c9d01c1",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 24521,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-61-a5971971",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 24521,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-65-b52d46cf",
+        "parentSpanId": "s-64-92b6d1b9",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_SPACING",
+        "operation": "entity_tags:spacing",
+        "startOffsetMs": 24527,
+        "durationMs": 454,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-64-92b6d1b9",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_REQUEST",
+        "operation": "entity_tags",
+        "startOffsetMs": 24527,
+        "durationMs": 1531,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-66-af944606",
+        "parentSpanId": "s-64-92b6d1b9",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_RESPONSE",
+        "operation": "entity_tags:ok",
+        "startOffsetMs": 26058,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-67-d83abc6b",
+        "parentSpanId": "s-63-5b763f22",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 26058,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-63-5b763f22",
+        "parentSpanId": "s-62-93f482ba",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 24527,
+        "durationMs": 1532,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-62-93f482ba",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 24527,
+        "durationMs": 1532,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-68-14a036d4",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 26059,
+        "durationMs": 7,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-69-ce19e64d",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 26066,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-73-29061e2f",
+        "parentSpanId": "s-72-f1012440",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_SPACING",
+        "operation": "entity_tags:spacing",
+        "startOffsetMs": 26076,
+        "durationMs": 5904,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-72-f1012440",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_REQUEST",
+        "operation": "entity_tags",
+        "startOffsetMs": 26076,
+        "durationMs": 6621,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-74-92ef56c4",
+        "parentSpanId": "s-72-f1012440",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_RESPONSE",
+        "operation": "entity_tags:ok",
+        "startOffsetMs": 32697,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-75-ef21effe",
+        "parentSpanId": "s-71-946f11d5",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 32698,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-71-946f11d5",
+        "parentSpanId": "s-70-206377ee",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 26076,
+        "durationMs": 6622,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-70-206377ee",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 26076,
+        "durationMs": 6622,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-76-98c5279e",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 32698,
+        "durationMs": 10,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-77-ccbc747c",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 32708,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-81-d4a20a69",
+        "parentSpanId": "s-80-23c3d698",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_SPACING",
+        "operation": "entity_tags:spacing",
+        "startOffsetMs": 32722,
+        "durationMs": 6258,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-80-23c3d698",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_REQUEST",
+        "operation": "entity_tags",
+        "startOffsetMs": 32722,
+        "durationMs": 6815,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-82-f6f0906b",
+        "parentSpanId": "s-80-23c3d698",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_RESPONSE",
+        "operation": "entity_tags:ok",
+        "startOffsetMs": 39537,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-83-92bd5707",
+        "parentSpanId": "s-79-1c1d2e71",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 39537,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-79-1c1d2e71",
+        "parentSpanId": "s-78-8ede20cf",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 32722,
+        "durationMs": 6815,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-78-8ede20cf",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 32722,
+        "durationMs": 6815,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-84-d9179965",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 39537,
+        "durationMs": 13,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-85-2050b1e6",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 39551,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-89-3554491f",
+        "parentSpanId": "s-88-a5a5d8a4",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_SPACING",
+        "operation": "entity_tags:spacing",
+        "startOffsetMs": 39571,
+        "durationMs": 6409,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-88-a5a5d8a4",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_REQUEST",
+        "operation": "entity_tags",
+        "startOffsetMs": 39571,
+        "durationMs": 6984,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-90-23bfe76f",
+        "parentSpanId": "s-88-a5a5d8a4",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_RESPONSE",
+        "operation": "entity_tags:ok",
+        "startOffsetMs": 46555,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-91-a401234d",
+        "parentSpanId": "s-87-081c68e6",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 46555,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-87-081c68e6",
+        "parentSpanId": "s-86-d385d2aa",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 39571,
+        "durationMs": 6984,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-86-d385d2aa",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 39571,
+        "durationMs": 6984,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-92-fa6f1d00",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 46555,
+        "durationMs": 15,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-93-717a6fd5",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 46571,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-97-a5e77d54",
+        "parentSpanId": "s-96-09a6786a",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_SPACING",
+        "operation": "entity_tags:spacing",
+        "startOffsetMs": 46595,
+        "durationMs": 6384,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-96-09a6786a",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_REQUEST",
+        "operation": "entity_tags",
+        "startOffsetMs": 46596,
+        "durationMs": 6971,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-98-b1568e86",
+        "parentSpanId": "s-96-09a6786a",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "QLOO_RESPONSE",
+        "operation": "entity_tags:ok",
+        "startOffsetMs": 53566,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-99-dca2e037",
+        "parentSpanId": "s-95-74b90811",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 53567,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-95-74b90811",
+        "parentSpanId": "s-94-0fcbf407",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 46596,
+        "durationMs": 6971,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-94-0fcbf407",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_get_entity_tags",
+        "startOffsetMs": 46596,
+        "durationMs": 6971,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-100-381c4f36",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 53567,
+        "durationMs": 17,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-101-a8d95c45",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 53585,
+        "durationMs": 22,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-102-a926eab3",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 5,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 53606,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-103-cd8286a6",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 53622,
+        "durationMs": 48,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-104-3105fab3",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 53670,
+        "durationMs": 5244,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-105-20c21cc0",
+        "parentSpanId": "s-104-3105fab3",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 58914,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-106-20099746",
+        "parentSpanId": "s-104-3105fab3",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 58914,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-107-674948f7",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 58914,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-110-ce007ef0",
+        "parentSpanId": "s-109-9eea3d22",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "validate_territory_representation",
+        "startOffsetMs": 58942,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-109-9eea3d22",
+        "parentSpanId": "s-108-4d1987d0",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "TOOL_EXECUTION",
+        "operation": "validate_territory_representation",
+        "startOffsetMs": 58939,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-108-4d1987d0",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "TOOL_DISPATCH",
+        "operation": "validate_territory_representation",
+        "startOffsetMs": 58939,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-111-d603a25b",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 58942,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-112-c6da1ce7",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 58942,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-113-b31a9da0",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 6,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 58942,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-114-7f69dc4f",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 58944,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-115-2f58a698",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 58945,
+        "durationMs": 1548,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-116-225b7ae6",
+        "parentSpanId": "s-115-2f58a698",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 60493,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-117-4ca9239e",
+        "parentSpanId": "s-115-2f58a698",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 60493,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-118-f91fec3f",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "TOOL_ROUTING",
+        "operation": "analyze",
+        "startOffsetMs": 60493,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-120-a40a8482",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "QLOO_REQUEST",
+        "operation": "recommend",
+        "startOffsetMs": 60496,
+        "durationMs": 1162,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-121-0233d4af",
+        "parentSpanId": "s-120-a40a8482",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "QLOO_RESPONSE",
+        "operation": "recommend:ok",
+        "startOffsetMs": 61657,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-119-08dd0adb",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "METHODOLOGY_ANALYSIS",
+        "operation": "boutique_hospitality",
+        "startOffsetMs": 60495,
+        "durationMs": 1178,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-122-0d0f3b99",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 61672,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-123-167d8a77",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 61672,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-124-19f7ad5b",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 7,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 61672,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-125-193bcb87",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 8,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 61673,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-126-93872d8c",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 8,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 61673,
+        "durationMs": 1430,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-127-ada7bceb",
+        "parentSpanId": "s-126-93872d8c",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 8,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 63103,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-128-0b38872d",
+        "parentSpanId": "s-126-93872d8c",
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 8,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 63103,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-129-701aad3a",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 8,
+        "phase": "TOOL_ROUTING",
+        "operation": "finish",
+        "startOffsetMs": 63103,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-130-d640f9c3",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 8,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 63103,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-132-ff0fa6f6",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 8,
+        "phase": "SYNTHESIS",
+        "operation": "synthesize",
+        "startOffsetMs": 63110,
+        "durationMs": 22423,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-131-887d6a5e",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": 8,
+        "phase": "FINALIZATION",
+        "operation": "finalize",
+        "startOffsetMs": 63104,
+        "durationMs": 22435,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-133-64a9ff19",
+        "parentSpanId": null,
+        "runId": "25dd88ae-6f74-4a80-9250-c6f5bda3e496",
+        "turnIndex": null,
+        "phase": "RUN_END",
+        "operation": "run",
+        "startOffsetMs": 85538,
+        "durationMs": 0,
+        "outcome": "ok"
+      }
+    ]
+  },
+  "metrics": {
+    "agent_iterations": 8,
+    "qloo_calls": 9,
+    "tool_calls": 12,
+    "tool_success_rate": 1,
+    "invalid_actions": 0,
+    "representation_attempts": 1,
+    "territories_proposed": 1,
+    "territories_resolved": 1,
+    "territories_rejected": 0,
+    "full_analysis_count": 0,
+    "partial_analysis_count": 1,
+    "descriptive_analysis_count": 0,
+    "unsupported_count": 0,
+    "methodology_calls": 0,
+    "latency_ms": 85540,
+    "model_input_tokens": 48720,
+    "model_output_tokens": 8130,
+    "retry_count": 0,
+    "budget_exhausted": false,
+    "model_turns": 8,
+    "model_attempts": 8,
+    "first_attempt_valid_turns": 8,
+    "valid_after_repair_turns": 8,
+    "repairs": 0,
+    "unknown_tool_attempts": 0,
+    "invalid_argument_attempts": 0,
+    "unsupported_state_actions": 0,
+    "synthesis_attempts": 2,
+    "calls_avoided": 0,
+    "avg_context_chars": 8606,
+    "max_context_chars": 19887,
+    "avg_context_tokens_estimate": 2152,
+    "model_latency_ms": 21432,
+    "qloo_latency_ms": 41147,
+    "model_cost_usd": 0.0084,
+    "model_id": "claude-haiku-5-5",
+    "model_effort": "high",
+    "synthesis_latency_ms": 22423,
+    "analysis_latency_ms": 1178,
+    "qloo_spacing_ms": 32683,
+    "unattributed_ms": 0,
+    "span_covered_ms": 85296,
+    "span_unattributed_ms": 243,
+    "span_coverage_ratio": 0.997,
+    "monotonic_elapsed_ms": 85539,
+    "wall_clock_skew_ms": 1,
+    "synthesis_first_attempt_valid": false,
+    "synthesis_valid_after_repair": true,
+    "synthesis_fallback": false,
+    "reference_deferrals": 0,
+    "empty_type_probes": 0,
+    "max_empty_type_probes_per_concept": 0,
+    "probe_limit_refusals": 0,
+    "type_alignment_deferrals": 0,
+    "reference_namespace_refusals": 0,
+    "successful_type_probes": 1,
+    "namespace_type_refusals": 0,
+    "alternate_anchor_refusals": 0,
+    "source_evidence_anchors": 1,
+    "frontier_completion_refusals": 0
+  },
+  "skillsUsed": [
+    {
+      "id": "interpret_request",
+      "version": 1
+    },
+    {
+      "id": "resolve_brand",
+      "version": 1
+    },
+    {
+      "id": "resolve_territory",
+      "version": 5
+    },
+    {
+      "id": "build_territory_representation",
+      "version": 4
+    },
+    {
+      "id": "analyze_territories",
+      "version": 3
+    }
+  ],
+  "comparisonSetConstruction": {
+    "intent": "analyze_move",
+    "proposed": [
+      {
+        "key": "boutique_hospitality",
+        "label": "Boutique hospitality",
+        "role": "target",
+        "source": "user",
+        "evidence": "named by the user"
+      }
+    ],
+    "rejected": [],
+    "final": [
+      {
+        "key": "boutique_hospitality",
+        "label": "Boutique hospitality",
+        "role": "target",
+        "source": "user",
+        "route": "PARTIAL_CULTURAL_ANALYSIS"
+      }
+    ],
+    "dedupDecisions": [],
+    "semanticAssessments": [],
+    "diversity": {
+      "assessment": "unknown",
+      "similarPairs": [],
+      "detail": "fewer than two non-target territories: diversity not assessed"
+    },
+    "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+  },
+  "layers": {
+    "qlooEvidence": {
+      "brand": {
+        "id": "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2",
+        "label": "Loewe",
+        "correlationId": "mcp-1940ff3f-1eef-4a30-89a1-e3799bc3379d"
+      },
+      "concepts": [
+        {
+          "territoryKey": "boutique_hospitality",
+          "id": "urn:tag:interests:qloo:boutique_hospitality",
+          "label": "Boutique Hospitality",
+          "correlationIds": [
+            "mcp-8fbe180a-f420-47e2-8af9-31a7ad822669"
+          ]
+        }
+      ],
+      "exemplars": [
+        {
+          "territoryKey": "boutique_hospitality",
+          "id": "01140223-0E93-450A-8CFA-A64DF342F82A",
+          "label": "Hotel Ritta Höppner",
+          "conceptSupport": "tag_member",
+          "supportCorrelationId": "mcp-c4e2eb37-d2e7-43e1-a2f7-83653988b5f6"
+        },
+        {
+          "territoryKey": "boutique_hospitality",
+          "id": "009A09A5-FFE9-4F04-AFF5-72CA1882AC8B",
+          "label": "Casa Art Hotel",
+          "conceptSupport": "tag_member",
+          "supportCorrelationId": "mcp-c4e2eb37-d2e7-43e1-a2f7-83653988b5f6"
+        },
+        {
+          "territoryKey": "boutique_hospitality",
+          "id": "00E4ED0B-AD40-479A-89C0-1B208AAB9164",
+          "label": "MonkBridge House",
+          "conceptSupport": "tag_member",
+          "supportCorrelationId": "mcp-c4e2eb37-d2e7-43e1-a2f7-83653988b5f6"
+        }
+      ],
+      "qlooCalls": 9
+    },
+    "systemAnalysis": {
+      "routes": [
+        {
+          "territoryKey": "boutique_hospitality",
+          "route": "PARTIAL_CULTURAL_ANALYSIS",
+          "classification": null,
+          "position": null,
+          "robustness": null
+        }
+      ],
+      "methodologyRunIds": [],
+      "finalSufficiency": "SUFFICIENT",
+      "representationDecisions": {
+        "valid": 3,
+        "weak": 0,
+        "rejected": 0
+      },
+      "semanticComparison": []
+    },
+    "agentInterpretation": {
+      "summary": "The available evidence is enough to justify further exploration of Loewe in boutique hospitality as a cultural association question, but the route is only partial. Place exemplars are linked to the concept, and a brand-conditioned query returned a supported set of entities. No relative position or robustness result is available, and the shared signals across exemplars are absent, so the results cannot say how Loewe's affinity with this territory compares to any comparison set. The evidence describes cultural association only and cannot indicate outcomes.\nBoutique hospitality: Place exemplars linked to the boutique hospitality concept are available, so the territory has a representable cultural footprint on this route. The representation is limited to a small exemplar set and does not establish a comparison. The coherence band is NONE and no signals are consistently shared across the exemplars, so the exemplars do not show a common cultural signal set on this route. The brand-conditioned query for this concept is supported and places entities such as Le Domaine de l'Astragale, Hôtel et Villas 5 étoiles, Saint-Tropez and J.K. Place Capri at the top of the returned list. The list is truncated, so this is a partial view of the conditioned association rather than a complete one.",
+      "source": "model",
+      "claimValidationPassed": true,
+      "semanticJudgments": [
+        {
+          "territoryKey": "boutique_hospitality",
+          "label": "Hotel Ritta Höppner",
+          "relevance": "STRONG",
+          "reason": "Independent design hotel is a direct instance of boutique hospitality."
+        },
+        {
+          "territoryKey": "boutique_hospitality",
+          "label": "Casa Art Hotel",
+          "relevance": "ADEQUATE",
+          "reason": "Art hotel positioning links boutique hospitality to Loewe's artistic-exploration profile, though the match is partial."
+        },
+        {
+          "territoryKey": "boutique_hospitality",
+          "label": "MonkBridge House",
+          "relevance": "ADEQUATE",
+          "reason": "Small independent stay is a boutique hospitality instance, though less design-oriented."
+        }
+      ],
+      "followUpOptions": [
+        "Run additional boutique hospitality exemplar queries to widen the place representation set.",
+        "Establish a reference territory with comparable place exemplars so a relative position can be computed.",
+        "Query related entity types, such as hospitality brands or destinations, to test whether the conditioned association holds beyond place exemplars.",
+        "Retrieve the full conditioned entity list to address the truncation before drawing conclusions from the top entities."
+      ],
+      "findings": [
+        {
+          "territoryKey": "boutique_hospitality",
+          "claimType": "representation",
+          "supportingFields": [
+            "representation",
+            "capabilities.representation"
+          ],
+          "interpretation": "Place exemplars linked to the boutique hospitality concept are available, so the territory has a representable cultural footprint on this route. The representation is limited to a small exemplar set and does not establish a comparison.",
+          "limitationCodes": [
+            "COMPARISON_SET_TOO_SMALL",
+            "NO_RELATIVE_POSITION"
+          ]
+        },
+        {
+          "territoryKey": "boutique_hospitality",
+          "claimType": "shared_signals",
+          "supportingFields": [
+            "coherence.band",
+            "coherence.consistentlyShared"
+          ],
+          "interpretation": "The coherence band is NONE and no signals are consistently shared across the exemplars, so the exemplars do not show a common cultural signal set on this route.",
+          "limitationCodes": [
+            "COMPARISON_SET_TOO_SMALL"
+          ]
+        },
+        {
+          "territoryKey": "boutique_hospitality",
+          "claimType": "conditioned_evidence",
+          "supportingFields": [
+            "conditionedEvidence.support",
+            "conditionedEvidence.top"
+          ],
+          "interpretation": "The brand-conditioned query for this concept is supported and places entities such as Le Domaine de l'Astragale, Hôtel et Villas 5 étoiles, Saint-Tropez and J.K. Place Capri at the top of the returned list. The list is truncated, so this is a partial view of the conditioned association rather than a complete one.",
+          "limitationCodes": [
+            "CONDITIONED_LIST_TRUNCATED"
+          ]
+        }
+      ]
+    }
+  },
+  "failureCategory": null
+}
