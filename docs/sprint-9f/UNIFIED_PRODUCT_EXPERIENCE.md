@@ -47,7 +47,26 @@ Lint, typecheck, production build and `check:secrets` passed on Node 22. Fronten
 
 An owner-approved isolated PostgreSQL database `ce9f_regression` was created under `/private/tmp` on a private Unix socket with TCP disabled, role `ce9f_operator`, and zero user tables before migration. The first 17-case run passed 16; the real process-restart case timed out while an orphan browser test server consumed a CPU core, and then passed alone after that server stopped. A clean rerun passed **17/17**. No Railway database was contacted. The local cluster was stopped after testing.
 
-The Vercel project was inspected before preview deployment: `ssoProtection.enabled=true` and `deploymentType=all`. Preview outcome and anonymous protection probe are reported in the final handoff. Public paid admission remains OFF; production release and hackathon submission remain pending Sprint 9G.
+The Vercel project was inspected before preview deployment: `ssoProtection.enabled=true` and `deploymentType=all`. Git created a [protected preview](https://cultural-elasticity-qyl9esfkf-raulmermans-projects.vercel.app) for code commit `097fd6318fbc310e52b41a0e327806411d9c1e66`; Vercel reported `READY`, and the repository's anonymous protection probe returned HTTP 401 with `servedApp=false` (`VERCEL_PROTECTION_PROBE_PASS`). The preview is not production. Public paid admission remains OFF; production release and hackathon submission remain pending Sprint 9G.
+
+## Gate summary
+
+| Gate | Status | Limit |
+| --- | --- | --- |
+| PRODUCT_JOURNEY | PARTIAL | Recorded and synthetic browser journeys pass; a fresh completed Haiku investigation was not run. |
+| QLOO_BRAND_DISCOVERY | SAFE_FALLBACK | Explicit submitted `describe` resolution; partial-name coverage and autocomplete remain unverified. |
+| AGENT_INTEGRATION | PARTIAL | Existing runtime and handoff retained; no fresh live agent execution. |
+| FRESH_HAIKU_COMPETENCE | NOT_RUN | No trustworthy new single-hypothesis canary artifact. |
+| RESEARCH_USEFULNESS | NOT_EVALUATED | No blinded human review. |
+| EVIDENCE_INTEGRITY | PASS | Canonical baseline and claim validators remain authoritative; offline regressions pass. |
+| RECORDED_LIVE_SEPARATION | PASS | Origin labels and export scope checked offline. |
+| LEGACY_CONSOLIDATION | PARTIAL | Competing top-level Atlas navigation removed; archived compatibility view remains. |
+| ACCESSIBILITY | PARTIAL | Keyboard, reduced motion and responsive browser cases pass; no independent WCAG audit. |
+| DATABASE_REGRESSION | PASS | 17/17 on isolated real PostgreSQL. |
+| FULL_REGRESSION | PASS | Offline gates and protected preview build pass; live provider gates were outside this sprint. |
+| PUBLIC_PAID_ADMISSION | OFF | No production flag changed. |
+| PRODUCTION_RELEASE | NOT_DEPLOYED | Sprint 9G decision required. |
+| HACKATHON_SUBMISSION | NOT_SUBMITTED | Sprint 9G decision required. |
 
 ## Sprint 9G release blockers
 
