@@ -1,0 +1,10 @@
+{
+  "databaseIdentity": {
+    "database": "ce9d_loewe_canary",
+    "systemIdentifier": "7700690390508001827",
+    "dataDirectory": "/private/tmp/ce9d-loewe-OL1trX/data",
+    "socketDirectory": "/private/tmp/ce9d-loewe-OL1trX/socket"
+  },
+  "checkedAt": "2026-10-25T19:36:44.424Z",
+  "userTablesBeforeMigration": 0
+}

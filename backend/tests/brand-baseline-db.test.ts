@@ -223,6 +223,21 @@ describe("REAL POSTGRES synthetic baseline durability", () => {
     expect(Number(artifacts.rows[0]?.count)).toBe(5);
   }, 60_000);
 
+  it("stops a SYNTHETIC scan immediately when the provider contract drifts", async () => {
+    const entity = syntheticBrand("Synthetic Contract Brand", `syn-brand-${randomUUID()}`);
+    const scanId = (await repo.createScan({ resolutionId: await resolution(entity), scope, accessToken, idempotencyKey: randomUUID(), requestHash: "syn-contract-drift" })).id;
+    const transport = new FixtureTransport(() => ({ schema_version: "SYNTHETIC_INVALID_CONTRACT" }));
+    const gate = new BaselineCallGate(repo, transport);
+    const worker = new BaselineWorker(repo, gate, "recorded");
+    await worker.run(scanId);
+    worker.stop();
+    expect(transport.calls).toHaveLength(1);
+    const scan = await pool.query<{ status: string; partial_failure_summary: string }>("SELECT status,partial_failure_summary FROM baseline_scans WHERE id=$1", [scanId]);
+    expect(scan.rows[0]).toMatchObject({ status: "INTERRUPTED", partial_failure_summary: "CONTRACT_DRIFT" });
+    const calls = await pool.query<{ status: string; outcome_category: string }>("SELECT status,outcome_category FROM baseline_provider_calls WHERE scan_id=$1", [scanId]);
+    expect(calls.rows).toEqual([{ status: "FAILED", outcome_category: "CONTRACT_DRIFT" }]);
+  });
+
   it("keeps a stored 0.1 as-run artifact readable exactly as written", async () => {
     const recorded = JSON.parse(readFileSync(new URL("../../evals/fixtures/live/loewe-baseline-canary-2.live.json", import.meta.url), "utf8")) as { asRunResult: { payload: Record<string, unknown> } };
     const entity = syntheticBrand("Synthetic Legacy Holder", `syn-brand-${randomUUID()}`);

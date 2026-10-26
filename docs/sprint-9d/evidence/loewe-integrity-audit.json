@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "fixtureType": "live",
+  "calls": 6,
+  "retries": 0,
+  "unknown": 0,
+  "observations": 5,
+  "resultStatus": "COMPLETE",
+  "sourceLinksVerified": true,
+  "requestTypesVerified": true,
+  "confirmedEntityTypes": 40
+}

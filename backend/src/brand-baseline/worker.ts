@@ -49,7 +49,7 @@ export class BaselineCallGate {
                 category = envelope.status;
               } catch { category = "CONTRACT_DRIFT"; }
             } else correlationId = response.failure.correlationId;
-            await this.repository.settleCall(callId, { status: response.kind === "failure" || category === "error" ? "FAILED" : "COMPLETE", correlationId, category, durationMs: performance.now() - started });
+            await this.repository.settleCall(callId, { status: response.kind === "failure" || category === "error" || category === "CONTRACT_DRIFT" ? "FAILED" : "COMPLETE", correlationId, category, durationMs: performance.now() - started });
             return response;
           } catch (error) {
             await this.repository.settleCall(callId, { status: "UNKNOWN", category: "DISPATCH_OUTCOME_UNKNOWN", durationMs: performance.now() - started }).catch(() => undefined);
@@ -128,6 +128,10 @@ export class BaselineWorker {
           const code = error instanceof BaselineRepositoryError ? error.code : "QLOO_STAGE_FAILED";
           await this.repository.stage(scanId, this.owner, stage, "FAILED", { code });
           incomplete.push(stage);
+          if (error instanceof QlooContractError) {
+            await this.repository.fail(scanId, this.owner, "INTERRUPTED", "CONTRACT_DRIFT");
+            return;
+          }
           if (code === "GLOBAL_CALL_LIMIT_EXHAUSTED" || code === "SCAN_CALL_LIMIT_EXHAUSTED") {
             exhausted = true;
             for (const skipped of stages.slice(stages.indexOf(stage) + 1)) {
