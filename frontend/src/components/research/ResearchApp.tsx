@@ -1,7 +1,7 @@
 "use client";
 
 import { isBrandBaselineResult, type AnyBrandBaselineResult } from "@cultural-elasticity/shared";
-import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { parseAdmission, type AdmissionStatus } from "@/lib/admissions";
 import type { RecordedBaseline, RecordedEntry } from "@/lib/recorded-research";
 import { availabilityCopy, scanStatusCopy, stageCopy } from "@/lib/research-copy";
@@ -11,18 +11,6 @@ import { AtlasShell } from "../atlas/AtlasShell";
 import { BrandDiscovery } from "./BrandDiscovery";
 import { ResearchWorkspace } from "./ResearchWorkspace";
 import { useBrandResearch } from "./use-brand-research";
-
-function ModeNav({ mode, onGo }: { mode: Route["mode"]; onGo: (mode: Route["mode"]) => void }) {
-  const link = (target: Route["mode"], href: string, label: string) => (
-    <a href={href} aria-current={mode === target ? "page" : undefined} onClick={(event: MouseEvent) => { if (event.metaKey || event.ctrlKey || event.shiftKey) return; event.preventDefault(); onGo(target); }}>{label}</a>
-  );
-  return (
-    <nav className="mode-nav" aria-label="Product views">
-      {link("research", "/", "Brand research")}
-      {link("atlas", "/?mode=atlas", "Living Atlas")}
-    </nav>
-  );
-}
 
 export function ResearchApp({ initialRoute, catalog, initialRecorded }: { initialRoute: Route; catalog: RecordedEntry[]; initialRecorded: RecordedBaseline | null }) {
   const [route, setRoute] = useState<Route>(initialRoute);
@@ -74,8 +62,7 @@ export function ResearchApp({ initialRoute, catalog, initialRecorded }: { initia
     if (route.mode === "research") document.querySelector<HTMLElement>("#atlas-main h1")?.focus();
   }, [route.mode, route.research]);
 
-  const goMode = (mode: Route["mode"]) => navigate(mode === "atlas" ? { ...HOME, mode: "atlas" } : HOME);
-  const nav = <ModeNav mode={route.mode} onGo={goMode} />;
+  const nav = route.mode === "atlas" ? <nav aria-label="Research navigation"><a href="/" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey) return; event.preventDefault(); navigate(HOME); }}>Back to brand research</a></nav> : undefined;
 
   if (route.mode === "atlas") {
     return <AtlasApp nav={nav} autoOpenRecorded={route.open === "recorded"} initialQuery={route.ask} />;

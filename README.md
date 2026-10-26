@@ -4,6 +4,10 @@
 
 Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Boutique Hospitality**.
 
+## Sprint 9F — One research journey
+
+The brand research workspace is the primary product journey: submit a brand name to the existing admission-gated Qloo identity resolver or open clearly labelled recorded research; inspect the cultural landscape; preview and explicitly start an authorized investigation; review validated findings and export the same research brief. The historical Living Atlas is retained for archived deep links and the recorded Jacquemus investigation, without a competing top-level product navigation. Public paid admission remains off. See [the Sprint 9F audit and contract](docs/sprint-9f/UNIFIED_PRODUCT_EXPERIENCE.md).
+
 ## Sprint 9C — Brand-first research workspace
 
 The default product view is now a brand research workspace: explore a brand, read its cultural fingerprint, inspect each Qloo connection's evidence, review directions worth investigating with their limits, and download a deterministic research summary. It is a view over the canonical `ce-brand-baseline` result: no new evidence, scores, model calls or provider calls. Recorded Loewe research (real stored evidence) opens instantly; the Living Atlas remains available at `?mode=atlas`. See [docs/sprint-9c/BRAND_FIRST_RESEARCH_WORKSPACE.md](docs/sprint-9c/BRAND_FIRST_RESEARCH_WORKSPACE.md).

@@ -24,16 +24,18 @@ function isPrepared(value: unknown): value is Prepared {
 const stopped = new Set(["completed", "failed", "cancelled", "expired"]);
 
 /** Shows only the job's actual stage and validated result, never a reasoning stream. */
-export function DeepResearchPanel({ scanId, territoryId, proposedDirection, token, onClose, onFinding }: { scanId: string; territoryId?: string; proposedDirection?: string; token: string; onClose: () => void; onFinding: (response: QueryResponse) => void }) {
+export function DeepResearchPanel({ scanId, territoryId, proposedDirection, token, onClose, onFinding, onOpenSummary }: { scanId: string; territoryId?: string; proposedDirection?: string; token: string; onClose: () => void; onFinding: (response: QueryResponse) => void; onOpenSummary: () => void }) {
   const [prepared, setPrepared] = useState<Prepared | null>(null);
   const [job, setJob] = useState<JobEnvelope | null>(null);
   const [error, setError] = useState("");
+  const [lost, setLost] = useState(false);
+  const [startUnknown, setStartUnknown] = useState(false);
   const [busy, setBusy] = useState(false);
   const [key] = useState(() => crypto.randomUUID());
 
   useEffect(() => {
     let active = true;
-    setPrepared(null); setJob(null); setError("");
+    setPrepared(null); setJob(null); setError(""); setLost(false);
     void fetch("/api/research/handoff/preview", { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": token }, body: JSON.stringify({ scanId, territoryId, proposedDirection, idempotencyKey: key }) })
       .then(async (response) => {
         const value: unknown = await response.json();
@@ -45,7 +47,7 @@ export function DeepResearchPanel({ scanId, territoryId, proposedDirection, toke
   }, [scanId, territoryId, proposedDirection, token, key]);
 
   useEffect(() => {
-    if (!job?.accessToken || stopped.has(job.status)) return;
+    if (!job?.accessToken || stopped.has(job.status) || lost) return;
     let active = true;
     const timer = setTimeout(() => {
       void fetch(`/api/agent/jobs/${encodeURIComponent(job.jobId)}`, { headers: { "x-job-token": job.accessToken! }, cache: "no-store" })
@@ -56,20 +58,22 @@ export function DeepResearchPanel({ scanId, territoryId, proposedDirection, toke
             setJob({ ...parsed.job, accessToken: job.accessToken });
             if (parsed.job.status === "completed" && parsed.job.response?.investigation?.result?.status === "COMPLETE") onFinding(parsed.job.response);
           }
-          else setError("This investigation is no longer available. It may have expired or the service may have restarted.");
-        }).catch(() => { if (active) setError("The research service cannot be reached right now."); });
+          else { setLost(true); setError("This investigation cannot be reopened. It may have expired or the service may have restarted. An uncertain paid request will not be retried automatically."); }
+        }).catch(() => { if (active) { setLost(true); setError("The research service cannot be reached. This investigation may still be running; no new paid request has been started."); } });
     }, 2500);
     return () => { active = false; clearTimeout(timer); };
   }, [job, onFinding]);
 
   const start = async () => {
+    if (busy || job || !prepared || startUnknown) return;
     setBusy(true); setError("");
     try {
       const response = await fetch("/api/research/handoff/jobs", { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": token }, body: JSON.stringify({ scanId, territoryId, proposedDirection, idempotencyKey: key }) });
       const parsed = parseJobEnvelope(await response.json());
       if (response.ok && parsed.ok && parsed.job.accessToken) setJob(parsed.job);
-      else setError(response.status === 503 ? "Live investigations are paused." : "The investigation could not be started.");
-    } catch { setError("The research service cannot be reached right now."); }
+      else if (response.status === 503) setError("Live investigations are paused.");
+      else { setStartUnknown(true); setError("The start request could not be confirmed. It may have reached the provider, so this page will not send it again. Check with the research operator before starting another investigation."); }
+    } catch { setStartUnknown(true); setError("The start request could not be confirmed. It may have reached the provider, so this page will not send it again. Check with the research operator before starting another investigation."); }
     finally { setBusy(false); }
   };
 
@@ -86,13 +90,15 @@ export function DeepResearchPanel({ scanId, territoryId, proposedDirection, toke
     {prepared ? <>
       <p><strong>Research question.</strong> {prepared.objective}</p>
       <p className="quiet">{prepared.version === "ce-deep-investigation/0.2" ? "This is your proposed direction. It has no supporting Qloo evidence yet." : "This direction is an unvalidated baseline hypothesis."} The investigation checks it against fresh Qloo evidence.</p>
-      {!job ? <button type="button" className="primary" disabled={busy} onClick={() => void start()}>{busy ? "Starting…" : "Start live investigation"}</button> : null}
+      {!job ? <button type="button" className="primary" disabled={busy || startUnknown} onClick={() => void start()}>{busy ? "Starting…" : "Start live investigation"}</button> : null}
       <details><summary>Starting evidence and limits</summary><ul>{prepared.limitations.map((line) => <li key={line}>{line}</li>)}</ul><p>{prepared.evidence.length} stored source references; the agent must recheck support.</p></details>
-    </> : <p role="status">Checking the selected research direction…</p>}
-    {job ? <p role="status">{job.status === "completed" ? "Investigation finished." : job.status === "failed" ? "Investigation failed before a conclusion was available." : job.stageLabel} {job.error?.message ?? ""}</p> : null}
+    </> : !error ? <p role="status">Checking the selected research direction…</p> : null}
+    {job ? <p role="status">{lost ? "The current job status is unavailable." : job.status === "completed" ? "Investigation finished. The validated finding is available below and in the research summary." : job.status === "failed" ? "Investigation failed before a conclusion was available." : job.status === "cancelled" ? "Investigation cancelled. Requests already sent to providers may still have been processed or charged." : job.status === "expired" ? "Investigation expired. Its in-process result is no longer available." : job.stageLabel} {job.error?.message ?? ""}</p> : null}
+    {job?.status === "completed" && !result ? <p>No validated conclusion was returned. This is not evidence against the research direction.</p> : null}
     {result?.status === "NEEDS_INPUT" ? <p>This investigation needs clarification: {result.question}</p> : null}
     {result?.status === "COMPLETE" ? <>
       <h3>Findings</h3>
+      <button type="button" className="rw-secondary" onClick={onOpenSummary}>Review and export the research brief</button>
       {result.hypothesisAssessment ? <div className="rw-hypothesis-finding">
         <p><strong>{hypothesisOutcomeCopy[result.hypothesisAssessment.outcome]}.</strong> This is a cultural research judgment, not a commercial recommendation.</p>
         <h4>What Qloo showed</h4><ul>{result.hypothesisAssessment.observed.length ? result.hypothesisAssessment.observed.map((line) => <li key={line}>{line}</li>) : <li>No completed relationship observation was available.</li>}</ul>

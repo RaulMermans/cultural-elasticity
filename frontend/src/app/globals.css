@@ -691,10 +691,6 @@ body:not(:has(.atlas)) .sprint { margin-bottom: 0; opacity: 0.7; }
    Reading surface on paper; the Living Atlas keeps the observatory field.
    ------------------------------------------------------------------ */
 .mast { flex-wrap: wrap; }
-.mode-nav { display: flex; gap: var(--ce-space-5); align-self: center; }
-.mode-nav a { color: var(--ce-ink-soft); text-decoration: none; padding: var(--ce-space-1) 0; border-bottom: 2px solid transparent; }
-.mode-nav a[aria-current="page"] { color: var(--ce-ink); border-bottom-color: var(--ce-copper); }
-.mode-nav a:hover { color: var(--ce-ink); }
 
 .rw-secondary {
   border: 1px solid var(--ce-ink-soft);
@@ -895,7 +891,6 @@ body:not(:has(.atlas)) .sprint { margin-bottom: 0; opacity: 0.7; }
   .rw-detail__back { display: inline-block; }
 }
 @media (max-width: 720px) {
-  .mode-nav { order: 3; width: 100%; gap: var(--ce-space-4); }
   .rw-discovery, .rw, .rw-progress { padding-left: var(--ce-space-4); padding-right: var(--ce-space-4); }
   .rw-discovery { padding-top: var(--ce-space-5); }
   .rw-discovery h1 { font-size: clamp(2.1rem, 10vw, 2.8rem); }
