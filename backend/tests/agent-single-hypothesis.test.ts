@@ -2,6 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { ScriptedAgentModel } from "../src/agent/model/scripted.js";
 import { AgentRuntime } from "../src/agent/runtime.js";
+import { queryBody } from "../src/agent/query/contracts.js";
 import { createScriptedToolProvider } from "../scripts/synthetic/synthetic-world.js";
 import { call, loadWorld, runtime } from "./fixtures/synthetic/agent.js";
 
@@ -20,6 +21,13 @@ function steps() {
 }
 
 describe("single hypothesis v1, SYNTHETIC", () => {
+  it("accepts the exact typed local job body and refuses a comparison-shaped mode", () => {
+    const body = { query: request.userQuery, brand: request.brand, intent: request.intent, territories: request.territories, researchMode: request.researchMode };
+    const parsed = queryBody.parse(body);
+    expect("researchMode" in parsed ? parsed.researchMode : null).toBe("single_hypothesis_v1");
+    expect(queryBody.safeParse({ ...body, intent: "compare_territories", territories: ["Tableware", "Books"] }).success).toBe(false);
+  });
+
   it("analyzes one target without reference deferral and keeps a bounded qualitative contract", async () => {
     const model = new ScriptedAgentModel(steps());
     const { runtime: agent } = runtime(model);
