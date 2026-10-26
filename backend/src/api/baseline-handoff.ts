@@ -15,7 +15,60 @@ export type DeepInvestigationRequest = {
 };
 
 export class HandoffError extends Error {
-  constructor(readonly code: "SCAN_NOT_COMPLETE" | "TERRITORY_NOT_FOUND" | "TERRITORY_UNSUPPORTED") { super(code); }
+  constructor(readonly code: "SCAN_NOT_COMPLETE" | "TERRITORY_NOT_FOUND" | "TERRITORY_UNSUPPORTED" | "INSUFFICIENT_REFERENCES" | "TOO_MANY_REFERENCES" | "DUPLICATE_TERRITORIES") { super(code); }
+}
+
+export type ComparativeInvestigationRequest = {
+  version: "ce-comparative-investigation/0.1";
+  baselineScanId: string;
+  brand: { name: string; qlooId: string };
+  target: { id: string; name: string };
+  references: { id: string; name: string }[];
+  objective: string;
+  authorization: "BASELINE_TOKEN_AND_AGENT_ADMISSION";
+  agentRequest: AgentRequest;
+};
+
+export function buildComparativeBaselineInvestigationRequest(
+  result: AnyBrandBaselineResult,
+  targetTerritoryId: string,
+  referenceTerritoryIds: string[],
+): ComparativeInvestigationRequest {
+  if (!["COMPLETE", "PARTIAL", "INSUFFICIENT_EVIDENCE"].includes(result.scanStatus)) throw new HandoffError("SCAN_NOT_COMPLETE");
+  const target = result.territories.find((item) => item.id === targetTerritoryId);
+  if (!target) throw new HandoffError("TERRITORY_NOT_FOUND");
+
+  if (referenceTerritoryIds.length < 2) throw new HandoffError("INSUFFICIENT_REFERENCES");
+  if (referenceTerritoryIds.length > 5) throw new HandoffError("TOO_MANY_REFERENCES");
+
+  const references = referenceTerritoryIds.map((id) => {
+    const ref = result.territories.find((item) => item.id === id);
+    if (!ref) throw new HandoffError("TERRITORY_NOT_FOUND");
+    return { id: ref.id, name: ref.name };
+  });
+
+  const allNames = [target.name, ...references.map((r) => r.name)];
+  const normalized = allNames.map((n) => n.normalize("NFKC").trim().toLowerCase());
+  if (new Set(normalized).size !== allNames.length) throw new HandoffError("DUPLICATE_TERRITORIES");
+
+  const objective = `Compare proposed brand expansion "${target.name}" relative to alternative territories [${references.map((r) => `"${r.name}"`).join(", ")}] for ${result.brand.name}.`;
+  const agentRequest = agentRequestSchema.parse({
+    userQuery: objective,
+    intent: "compare_territories",
+    brand: result.brand.name,
+    territories: allNames,
+  });
+
+  return {
+    version: "ce-comparative-investigation/0.1",
+    baselineScanId: result.scanId,
+    brand: { name: result.brand.name, qlooId: result.brand.qlooId },
+    target: { id: target.id, name: target.name },
+    references,
+    objective,
+    authorization: "BASELINE_TOKEN_AND_AGENT_ADMISSION",
+    agentRequest,
+  };
 }
 
 export function buildDeepInvestigationRequest(result: AnyBrandBaselineResult, territoryId: string): DeepInvestigationRequest {

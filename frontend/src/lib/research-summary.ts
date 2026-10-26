@@ -27,9 +27,10 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
   const brand = view.brand.name;
   const sections: SummarySection[] = [];
   const run = investigation?.investigation?.result;
-  const matched = run && run.status !== "NEEDS_INPUT" && run.status === "COMPLETE" && run.brand?.id === view.brand.qlooId && run.evidenceOrigin === "live" ? run : null;
+  const matched = run && run.status !== "NEEDS_INPUT" && run.status === "COMPLETE" && run.brand?.id === view.brand.qlooId && (run.evidenceOrigin === "live" || run.evidenceOrigin === "recorded") ? run : null;
   const targets = matched?.territories.filter((item) => item.role === "target") ?? [];
   const hypothesis = matched?.hypothesisAssessment;
+  const fullComparative = matched?.territories.filter((t) => t.analysisRoute === "FULL_RELATIVE_ANALYSIS" && t.relativePosition && t.classification) ?? [];
 
   if (hypothesis) sections.push({ id: "hypothesis", title: "Single Direction Investigation", intro: "A qualitative cultural research judgment, not commercial validation.", items: [
     { text: `${hypothesisOutcomeCopy[hypothesis.outcome]}. ${hypothesis.question}` },
@@ -66,7 +67,26 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
 
   sections.push({ id: "observations", title: "Key Observations", items: targets.length ? targets.flatMap((target) => target.keyEvidence.map((text) => ({ text, detail: `From the ${target.label} investigation.` }))) : [{ text: "No completed, matching deep investigation is attached to this brief. The cultural connections above remain baseline observations." }] });
   sections.push({ id: "interpretations", title: "Supported Interpretations", items: matched && matched.summary.claimValidation.passed ? [{ text: matched.summary.text, detail: `Validated against the ${brand} investigation result.` }] : [{ text: "No validated agent interpretation is available for this brand in this brief." }] });
-  sections.push({ id: "comparison", title: "Comparison of Research Directions", items: targets.length >= 2 ? targets.map((target) => ({ text: `${target.label}: ${target.keyEvidence[0] ?? "no supported observation"}`, detail: "Read side by side only; separate Qloo calls are not combined or ranked." })) : [{ text: "Fewer than two matching investigated territories are available. No relative comparison or winner is claimed." }] });
+  if (fullComparative.length >= 2) {
+    const candidateSet = fullComparative[0]!.comparisonSet?.labels.join(", ") ?? fullComparative.map((t) => t.label).join(", ");
+    sections.push({
+      id: "comparison",
+      title: "Comparative Cultural Elasticity Assessment",
+      intro: `Relative ranking and provisional classification derived from compatible Qloo evidence. Positions and classifications are relative strictly to candidate set [${candidateSet}]:`,
+      items: fullComparative.map((t) => ({
+        text: `${t.label}: Rank position ${t.relativePosition!.position} of ${t.relativePosition!.of} (${Math.round((t.relativePosition!.medianPercentile ?? 0) * 100)}th percentile). Provisional classification: ${t.classification!.label}.`,
+        detail: `Robustness is ${t.robustness?.level.toLowerCase() ?? "unspecified"}. ${t.keyEvidence[0] ?? ""}`,
+      })),
+    });
+  } else {
+    sections.push({
+      id: "comparison",
+      title: "Comparison of Research Directions",
+      items: targets.length >= 2
+        ? targets.map((target) => ({ text: `${target.label}: ${target.keyEvidence[0] ?? "no supported observation"}`, detail: "Read side by side only; separate Qloo calls are not combined or ranked." }))
+        : [{ text: "Fewer than two matching investigated territories are available. No relative comparison or winner is claimed." }],
+    });
+  }
 
   const marked = view.directions.filter((direction) => direction.categoryBasis === "user");
   if (marked.length) {
@@ -117,7 +137,14 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
       ? "Recorded Qloo research. It was captured earlier and is not a new live run."
       : "Live Qloo research from this session.",
     researchDate: formatDate(view.capturedAt),
-    outcome: hypothesis ? { headline: hypothesisOutcomeCopy[hypothesis.outcome], detail: hypothesis.observed[0] ?? hypothesis.limitations[0] ?? "No supported relationship observation was established." } : { headline: view.outcome.headline, detail: view.outcome.detail },
+    outcome: fullComparative.length >= 2
+      ? {
+          headline: `Comparative Assessment: ${fullComparative[0]!.label} (${fullComparative[0]!.classification!.label})`,
+          detail: `Rank position ${fullComparative[0]!.relativePosition!.position} of ${fullComparative[0]!.relativePosition!.of} within candidate set [${fullComparative.map((t) => t.label).join(", ")}]. Position and provisional classification are relative strictly to this set.`,
+        }
+      : hypothesis
+      ? { headline: hypothesisOutcomeCopy[hypothesis.outcome], detail: hypothesis.observed[0] ?? hypothesis.limitations[0] ?? "No supported relationship observation was established." }
+      : { headline: view.outcome.headline, detail: view.outcome.detail },
     sections,
     sources,
     footer: view.derivedFrom
