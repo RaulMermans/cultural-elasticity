@@ -460,7 +460,7 @@ export class AgentRuntime {
         // Sprint 5A: analyzing a target locks its route. While a meaningful comparison set is still feasible within
         // the budget, the decision is deferred (bounded: after MAX_REFERENCE_DEFERRALS the runtime stops deferring).
         const plan = referencePlan(state);
-        if (plan.feasible && state.referenceDeferrals < MAX_REFERENCE_DEFERRALS && requested.some((k) => state.territories.find((t) => t.key === k)?.role === "target")) {
+        if (state.request.researchMode !== "single_hypothesis_v1" && plan.feasible && state.referenceDeferrals < MAX_REFERENCE_DEFERRALS && requested.some((k) => state.territories.find((t) => t.key === k)?.role === "target")) {
           state.referenceDeferrals += 1;
           reject("analyze", "REFERENCES_PENDING", `${plan.outstanding ?? plan.reason} (deferred once; if you analyze again now, the analysis proceeds and the result is PARTIAL)`, { reasonSummary: decision.reasonSummary });
           return { accepted: false, stop: null };

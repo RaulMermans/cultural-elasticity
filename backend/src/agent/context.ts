@@ -152,6 +152,14 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
       evidence.alreadyCollected = { profiledEntityIds, searchedQueries };
     }
   }
+  if (state.request.researchMode === "single_hypothesis_v1") {
+    evidence.recentConceptQueries = state.pools.slice(-8).map((pool) => ({
+      tagId: pool.tagIds.join(" + "), entityType: pool.targetType,
+      brandConditioned: pool.conditionedOn !== null,
+      outcome: pool.call.envelope.status, members: new Set(pool.memberIds).size,
+      correlationId: pool.call.envelope.execution.correlation_id,
+    }));
+  }
 
   const sufficiency = options.sufficiency ?? assessEvidenceSufficiency(state);
   return {
@@ -163,6 +171,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
       ...(state.request.intent && { intent: state.request.intent }),
       ...(state.request.brand && { brand: state.request.brand }),
       ...(state.request.territories && { territories: state.request.territories }),
+      ...(state.request.researchMode && { researchMode: state.request.researchMode }),
     },
     interpretation: state.interpretation,
     phase: derivePhase(state),
@@ -227,9 +236,11 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
   // Sprint 5A.1: type alignment comes before further probing (a shared type is what makes a comparison possible).
   const alignment = comparisonRepresentationPlan(state);
   if (alignment && alignment.feasibility !== "SUPPORTED" && alignment.preferredCommonType) for (const m of alignment.missingRequirements.slice(0, 3)) outstanding.push(`type alignment (${alignment.preferredCommonType}): ${m}`);
-  const plan = referencePlan(state);
-  if (plan.feasible && plan.outstanding) outstanding.push(plan.outstanding);
-  else if (plan.applicable && plan.reason && plan.valid < plan.required) outstanding.push(`references: ${plan.reason}`);
+  if (state.request.researchMode !== "single_hypothesis_v1") {
+    const plan = referencePlan(state);
+    if (plan.feasible && plan.outstanding) outstanding.push(plan.outstanding);
+    else if (plan.applicable && plan.reason && plan.valid < plan.required) outstanding.push(`references: ${plan.reason}`);
+  }
   const evidenceGap = frontierEvidenceBaseGap(state);
   if (evidenceGap) outstanding.unshift(`${evidenceGap.action} (${evidenceGap.target}): ${evidenceGap.reason}`);
   if (sufficiency.verdict === "SUFFICIENT") outstanding.push("evidence is sufficient: finish");
@@ -239,7 +250,9 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
     ...state.candidateRejections.slice(-4).map((c) => `${c.key}: ${c.code} — ${c.reason}`.slice(0, 220)),
   ];
   return {
-    objective: OBJECTIVE[state.interpretation?.intent ?? ""] ?? "Interpret the request, then gather the Qloo evidence the deterministic methodology needs, then stop.",
+    objective: state.request.researchMode === "single_hypothesis_v1"
+      ? "Investigate the one user-proposed cultural direction. Test a brand-conditioned Qloo relationship, inspect whether the concept and representation are specific, then analyze or stop. No comparison set is required."
+      : OBJECTIVE[state.interpretation?.intent ?? ""] ?? "Interpret the request, then gather the Qloo evidence the deterministic methodology needs, then stop.",
     stage,
     activeSkills: active.map((s) => `${s.id} v${s.version}`),
     blocker: blockerAction ? `${blockerAction.action}${blockerAction.target ? ` (${blockerAction.target})` : ""}: ${blockerAction.reason}` : null,

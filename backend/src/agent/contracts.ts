@@ -60,7 +60,12 @@ export const agentRequestSchema = z.strictObject({
   intent: z.enum(AGENT_INTENTS).optional(),
   brand: text.max(200).optional(),
   territories: z.array(text.max(200)).max(6).optional(),
+  researchMode: z.literal("single_hypothesis_v1").optional(),
   limits: investigationLimitsSchema.partial().optional(),
+}).superRefine((value, ctx) => {
+  if (value.researchMode && (value.intent !== "analyze_move" || value.territories?.length !== 1)) {
+    ctx.addIssue({ code: "custom", path: ["researchMode"], message: "single_hypothesis_v1 requires one explicitly named analyze_move territory" });
+  }
 });
 export type AgentRequest = z.output<typeof agentRequestSchema>;
 

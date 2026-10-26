@@ -99,6 +99,7 @@ const explicitFields = {
 const investigationBody = z.strictObject({
   query: text(2_000),
   ...explicitFields,
+  researchMode: z.literal("single_hypothesis_v1").optional(),
   context: contextBody.optional(),
   /**
    * Territories chosen from earlier investigations of one brand. The server reads their labels from those runs
@@ -107,6 +108,10 @@ const investigationBody = z.strictObject({
   comparisonSources: z.array(comparisonSource).min(2).max(6).optional(),
   /** Development only: "baseline" uses the structural interpreter and the baseline reference policy. */
   ...modelField,
+}).superRefine((value, ctx) => {
+  if (value.researchMode && (value.intent !== "analyze_move" || value.territories?.length !== 1 || !value.brand || value.context || value.comparisonSources)) {
+    ctx.addIssue({ code: "custom", path: ["researchMode"], message: "single hypothesis research needs one explicit brand and direction" });
+  }
 });
 
 /** Continues a stored NEEDS_CLARIFICATION query. The original question stays on the server. */

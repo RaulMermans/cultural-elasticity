@@ -10,6 +10,7 @@ import { buildApp } from "../src/app.js";
 import { BaselineCallGate, BaselineWorker } from "../src/brand-baseline/worker.js";
 import { compactEntity, compactTag, envelope, FixtureTransport } from "./fixtures/synthetic/envelopes.js";
 import { readFileSync } from "node:fs";
+import { resetLifecycle } from "../src/ops/lifecycle.js";
 
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL_REQUIRED_FOR_REAL_POSTGRES_TESTS");
 const url = process.env.DATABASE_URL;
@@ -96,6 +97,34 @@ describe("REAL POSTGRES synthetic baseline durability", () => {
       expect(read?.result?.territories).toHaveLength(1);
       expect(await restarted.readScan(scanId, "wrong-token")).toBeNull();
     } finally { await restartedPool.end(); }
+  });
+
+  it("previews a SYNTHETIC user-proposed direction from an authorized stored scan while paid admission stays closed", async () => {
+    const entity = syntheticBrand("Synthetic Proposal Brand", `syn-brand-${randomUUID()}`);
+    const scanId = (await repo.createScan({ resolutionId: await resolution(entity), scope, accessToken, idempotencyKey: randomUUID(), requestHash: "syn-proposal-preview" })).id;
+    const owner = randomUUID();
+    expect(await repo.claim(scanId, owner)).toBe(true);
+    const brandRow = await repo.scanBrand(scanId);
+    const result = buildBaselineResult({ scanId, brandId: brandRow!.id, brand: entity, brandCapturedAt: "2026-10-25T00:00:00.000Z", observations: [], startedAt: "2026-10-25T00:00:00.000Z", finishedAt: "2026-10-25T00:01:00.000Z", providerCallCount: 0, recordedOrLive: "recorded" });
+    expect(await repo.complete(scanId, owner, result)).toBe(true);
+    const previous = { CE_BASELINE_ENABLED: process.env.CE_BASELINE_ENABLED, CE_BASELINE_LIVE_ENABLED: process.env.CE_BASELINE_LIVE_ENABLED, CE_BASELINE_TOTAL_QLOO_CALLS: process.env.CE_BASELINE_TOTAL_QLOO_CALLS, CE_ACCEPT_INVESTIGATIONS: process.env.CE_ACCEPT_INVESTIGATIONS, CE_INTERNAL_API_SECRET: process.env.CE_INTERNAL_API_SECRET };
+    Object.assign(process.env, { CE_BASELINE_ENABLED: "1", CE_BASELINE_LIVE_ENABLED: "0", CE_BASELINE_TOTAL_QLOO_CALLS: "100", CE_ACCEPT_INVESTIGATIONS: "0", CE_INTERNAL_API_SECRET: "synthetic-secret-for-backend-test-12345" });
+    resetLifecycle();
+    const app = buildApp({ logLevel: "silent" });
+    try {
+      const payload = { scanId, proposedDirection: "Ritual hospitality", idempotencyKey: randomUUID() };
+      const headers = { "x-ce-internal-auth": "synthetic-secret-for-backend-test-12345", "x-baseline-token": accessToken };
+      const preview = await app.inject({ method: "POST", url: "/api/agent/handoff/preview", headers, payload });
+      expect(preview.statusCode).toBe(200);
+      expect(preview.json()).toMatchObject({ version: "ce-deep-investigation/0.2", evidence: [], territory: { name: "Ritual hospitality", canonicalConcept: "UNVERIFIED" }, agentRequest: { researchMode: "single_hypothesis_v1" } });
+      expect((await app.inject({ method: "POST", url: "/api/agent/handoff/preview", headers: { ...headers, "x-baseline-token": "wrong-token" }, payload })).statusCode).toBe(404);
+      const blocked = await app.inject({ method: "POST", url: "/api/agent/handoff/jobs", headers, payload });
+      expect(blocked.statusCode).toBe(503);
+    } finally {
+      await app.close();
+      for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
+      resetLifecycle();
+    }
   });
 
   it("interrupts stale workers and marks in-flight calls unknown without replay", async () => {

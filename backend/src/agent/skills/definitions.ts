@@ -159,7 +159,7 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
   preconditions: ["a target is represented", `fewer than ${MIN_COMPARISON_SET} meaningful represented territories of its entity type`, "a meaningful reference set is still feasible within the budget, or the profiles needed to find one are missing"],
   relevant: (state) => {
     const intent = state.interpretation?.intent;
-    if ((intent !== "analyze_move" && intent !== "compare_territories") || !state.brand.entity || discoverySpent(state, "build_comparison_set")) return false;
+    if ((intent !== "analyze_move" && intent !== "compare_territories") || state.request.researchMode === "single_hypothesis_v1" || !state.brand.entity || discoverySpent(state, "build_comparison_set")) return false;
     if (referenceEntityType(state) === null || comparisonSetSize(state) >= MIN_COMPARISON_SET) return false;
     if (state.territories.length >= state.limits.maxCandidateTerritories || remainingQlooCalls(state) < 2) return false;
     const brandProfiled = state.profiles.has(state.brand.entity.id);
@@ -225,7 +225,7 @@ export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { ana
   id: "analyze_territories",
   // v2 (Sprint 5A): analysis of targets is deferred (bounded, REFERENCES_PENDING) while a meaningful comparison set
   // is still feasible; FULL additionally requires the semantic comparison validator's acceptance.
-  version: 2,
+  version: 3,
   purpose: "Run the deterministic analysis for ready territories and finish when sufficiency allows.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "a territory is ready (validated panel, or concept-only/unsupported with nothing left to try), a result exists, or every territory is analyzed"],
@@ -243,7 +243,7 @@ export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { ana
   stoppingConditions: ["deterministic sufficiency is SUFFICIENT or INSUFFICIENT", "no material evidence gap remains"],
   failureModes: ["ANALYSIS_ROUTE_ERROR", "EVIDENCE_SUFFICIENCY_ERROR", "METHODOLOGY_ERROR"],
   evalIds: ["ie-descriptive", "ie-unmeasurable", "bc-qloo-budget", "fs-faithful", "sk-early-stop", "s5-references-before-analysis"],
-  procedure: "Analyze ready territories together (one call per comparison set: ≥ 3 meaningful represented territories of one type yield a relative position). While focus.outstanding still asks for references, build them first (analysis of a target is deferred). Finish when sufficiency allows; a PARTIAL result is a valid outcome. The route, every number and every class come from deterministic code.",
+  procedure: "In single_hypothesis_v1, investigate only the target: use the observed concept and its members to test a brand-conditioned Qloo relationship, then analyze when further calls cannot change the qualitative conclusion. Do not construct references for that mode. Otherwise analyze ready territories together; a FULL relative position requires ≥ 3 meaningful represented territories of one type, and target analysis is deferred once while feasible references remain. Finish when sufficiency allows. Every route, number and class comes from code.",
 };
 
 /** Registry order is the attribution order for shared tools (earlier skill wins). */

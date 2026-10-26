@@ -166,6 +166,11 @@ export type AgentRunState = {
 export function createRunState(request: AgentRequest, model: AgentModelInfo, toolProvider: AgentRunState["toolProvider"], limits?: InvestigationLimits): AgentRunState {
   const runId = randomUUID();
   const resolvedLimits = limits ?? { ...defaultLimits(request.intent), ...(request.limits ?? {}) };
+  if (request.researchMode === "single_hypothesis_v1") {
+    resolvedLimits.maxQlooCalls = Math.min(request.limits?.maxQlooCalls ?? limits?.maxQlooCalls ?? 12, 12);
+    resolvedLimits.maxAgentIterations = Math.min(resolvedLimits.maxAgentIterations, 8);
+    resolvedLimits.maxCandidateTerritories = 1;
+  }
   return {
     runId,
     status: "INTAKE",

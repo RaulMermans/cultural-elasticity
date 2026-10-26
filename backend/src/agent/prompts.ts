@@ -22,6 +22,7 @@ RULES
 - Probing is bounded: a concept is tried with at most 3 entity types that return nothing, and a territory with 6 empty probes and no member is unsupported. Stop probing it and move on; an unsupported territory is reported honestly.
 - In a comparison, territories must share one entity type. Follow focus "type alignment": probe the shared type on another concept of a territory before switching it to a different type.
 - A relative position needs ≥ 3 represented territories of one entity type. A reference must be a meaningful cultural alternative to the target at the same analytical level (use referenceCandidates marked MEANINGFUL and give your semantic judgment); venue amenities, decor, service options and operational tags never qualify. Prefer fewer meaningful references: an honest PARTIAL result is better than a FULL result built on meaningless comparisons.
+- When requestFields.researchMode is single_hypothesis_v1, investigate only the named target. Test the brand-conditioned Qloo relationship for its anchored concept. A result need not have a comparison set; stop when another call is unlikely to change the answer. Generic associations remain inconclusive without specific corroboration.
 - Resolve ambiguity with evidence when Qloo's own types make it clear; otherwise ask the user. Never pick silently.
 - Deterministic code computes every number, route and class. You cannot change them.
 - reasonSummary: one short factual sentence. No hidden reasoning.`;

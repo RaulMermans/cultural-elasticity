@@ -205,6 +205,38 @@ test("SYNTHETIC live scan previews a server handoff before any paid job", async 
   expect(paid.filter((entry) => entry.includes("/api/agent/jobs"))).toEqual([]);
 });
 
+test("SYNTHETIC user direction previews a single question on desktop and mobile without starting a job", async ({ page }) => {
+  const { paid } = await stub(page, { brands: "available", agent: "accepting", result: v2.results.hypotheses });
+  const requested: unknown[] = [];
+  await page.route("**/api/research/handoff/preview", (route) => {
+    requested.push(route.request().postDataJSON());
+    return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({
+      version: "ce-deep-investigation/0.2", objective: "SYNTHETIC: investigate a user-proposed direction", brand: { name: "SYNTHETIC House", qlooId: "syn-brand-21" },
+      territory: { id: "user:ritual hospitality", name: "Ritual hospitality" }, limitations: ["SYNTHETIC: no prior direction evidence"], evidence: [],
+    }) });
+  });
+  await page.goto("/");
+  await page.getByLabel("Brand name").fill("SYNTHETIC House");
+  await page.getByRole("button", { name: "Find brand" }).click();
+  await page.getByRole("button", { name: /Start research/u }).click();
+  await page.getByRole("link", { name: /Directions/u }).click();
+  const field = page.getByLabel("Have a specific cultural direction in mind?");
+  await field.fill("Ritual hospitality");
+  await field.press("Enter");
+  await expect(page.getByTestId("deep-investigation")).toContainText("SYNTHETIC: investigate a user-proposed direction");
+  await expect(page.getByTestId("deep-investigation")).toContainText("no supporting Qloo evidence yet");
+  expect(requested.length).toBeGreaterThan(0);
+  expect(requested.every((entry) => (entry as { proposedDirection?: string }).proposedDirection === "Ritual hospitality")).toBe(true);
+  expect(paid.filter((entry) => entry.includes("/api/agent/jobs"))).toEqual([]);
+  const dir = fileURLToPath(new URL("../../docs/sprint-9e/screenshots/", import.meta.url));
+  mkdirSync(dir, { recursive: true });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.screenshot({ path: `${dir}/desktop-proposed-direction.png`, fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("button", { name: "Start live investigation" })).toBeVisible();
+  await page.screenshot({ path: `${dir}/mobile-proposed-direction.png`, fullPage: true });
+});
+
 test("SYNTHETIC live research: ambiguity, confirmation, progress, then a fingerprint; the token never enters the URL", async ({ page }) => {
   const { resolves } = await stub(page, { brands: "available", ambiguous: true, result: v2.results.hypotheses });
   await page.goto("/");

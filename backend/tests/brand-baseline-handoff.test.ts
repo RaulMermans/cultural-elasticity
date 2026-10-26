@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildBaselineResult } from "../src/brand-baseline/research.js";
-import { buildDeepInvestigationRequest, HandoffError } from "../src/api/baseline-handoff.js";
+import { buildDeepInvestigationRequest, buildProposedInvestigationRequest, HandoffError } from "../src/api/baseline-handoff.js";
 import { syntheticBrand, syntheticTag, syntheticTagObservation } from "./fixtures/synthetic/brand-baseline.js";
 
 const result = () => buildBaselineResult({
@@ -24,5 +24,17 @@ describe("SYNTHETIC baseline handoff", () => {
     expect(() => buildDeepInvestigationRequest(scan, "syn-other-territory")).toThrowError(HandoffError);
     const tampered = { ...scan, territories: [{ ...scan.territories[0]!, supportingReferences: [{ ...scan.territories[0]!.supportingReferences[0]!, correlationId: "syn-unrecorded" }] }] };
     expect(() => buildDeepInvestigationRequest(tampered, tampered.territories[0]!.id)).toThrow("TERRITORY_UNSUPPORTED");
+  });
+
+  it("keeps a SYNTHETIC user proposal separate from baseline evidence", () => {
+    const prepared = buildProposedInvestigationRequest(result(), "Ritual hospitality");
+    expect(prepared).toMatchObject({ version: "ce-deep-investigation/0.2", brand: { qlooId: "syn-brand-1" }, territory: { name: "Ritual hospitality", canonicalConcept: "UNVERIFIED" }, evidence: [] });
+    expect(prepared.agentRequest).toMatchObject({ intent: "analyze_move", researchMode: "single_hypothesis_v1", territories: ["Ritual hospitality"] });
+    expect(prepared.objective).toContain("Investigate whether");
+  });
+
+  it("refuses a proposal when the source scan has no verified brand identity", () => {
+    const scan = result();
+    expect(() => buildProposedInvestigationRequest({ ...scan, brand: { ...scan.brand, qlooId: "" } }, "Ritual hospitality")).toThrow("TERRITORY_UNSUPPORTED");
   });
 });
