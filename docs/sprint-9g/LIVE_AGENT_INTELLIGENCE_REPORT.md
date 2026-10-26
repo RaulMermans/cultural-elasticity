@@ -5,11 +5,11 @@
 Sprint 9G successfully authorized, executed, and validated a real live investigation of a cultural hypothesis using **Claude Haiku 5.5** and genuine **Qloo evidence** via the official Qloo MCP harness:
 
 - **Target Research Question:** *"Does the available cultural evidence support investigating Loewe in boutique hospitality?"*
-- **Outcome:** **`COMPLETE`**, evaluated deterministically as **`INCONCLUSIVE`** (robust conservative calibration: strong brand-conditioned affinity with specific luxury destinations, but absence of consistently shared cultural signals across general boutique hotel exemplars).
+- **Outcome:** **`COMPLETE`**, evaluated deterministically as **`INCONCLUSIVE`** (robust conservative calibration: observed brand-conditioned recommendation entities with specific luxury destinations, but absence of consistently shared cultural signals across general boutique hotel exemplars).
 - **Execution Latency:** **85.55 seconds** (comfortably within the 240s deadline).
 - **Qloo Dispatches:** **9 calls** (within 12-call ceiling; 0 retries, 100% success rate).
-- **Model Cost:** **$0.0084 USD** (48,720 input tokens, 8,130 output tokens; well within $1.00 budget reservation).
-- **Claim Validation:** **PASSED on the first attempt** with **0 claim violations** (no hallucinated scores, demand percentages, or unverified claims).
+- **Estimated Model Cost:** **~$0.0084 USD** (estimated from 48,720 input tokens, 8,130 output tokens at standard published rates; not verified billing; well within $1.00 budget reservation).
+- **Claim Validation:** **PASSED on the second attempt (after repair)**: Attempt 1 was rejected by deterministic claim validation due to business-outcome predictive language (`summary: forbidden language "would succeed" (business-outcome prediction)` under category `PROHIBITED_COMMERCIAL_OR_PREDICTION`). The model executed a deterministic repair in Turn 8, producing a compliant synthesis with **0 final claim violations** (no hallucinated scores, demand percentages, or unverified claims).
 - **Competence Gate:** **`PASS`**.
 - **Verification Status:** Full regression pass across Unit tests, E2E browser tests (51/51), Methodology eval (19/19), Agent eval (53/53), Query eval (57/57), Brand Baseline eval (41/41), Secrets check (0 leaks), and production build.
 
@@ -37,7 +37,7 @@ A comprehensive audit was performed on the existing `single_hypothesis_v1` archi
 2. **Deterministic Ownership:** LLM proposes exploratory tool actions (`qloo_find_tags`, `qloo_recommend`, `anchor_territory`, `validate_territory_representation`, `analyze`, `finish`). Code strictly owns all arithmetic, brand profiling, brand-conditioned evidence gathering (`needConditioned`), route assignment, and hypothesis assessment.
 3. **Core vs. Expansion Protection:** Brand core is determined solely by Qloo category tags in the brand entity profile. If a candidate tag overlaps the core profile, `inBrandProfile` triggers an automatic rejection of positive expansion.
 4. **Tool Permissions & Phase Gates:** Analysis skill does not expose `qloo_recommend` to the model, preventing redundant model-driven conditioned queries and guaranteeing clean deterministic execution.
-5. **Detailed Audit Artifact:** Preserved in `sprint-9g-agent-audit.md`.
+5. **Detailed Audit Artifact:** Preserved in [`sprint-9g-agent-audit.md`](sprint-9g-agent-audit.md).
 
 ---
 
@@ -89,7 +89,7 @@ The complete live trace is recorded in [`docs/sprint-9g/evidence/loewe-boutique-
 | **Tool Success Rate** | ≥ 95% | **100% (9/9 successful)** |
 | **Model Input Tokens** | — | **48,720 tokens** |
 | **Model Output Tokens** | — | **8,130 tokens** |
-| **Total Anthropic Cost** | ≤ $1.00 USD | **$0.0084 USD** |
+| **Estimated Anthropic Cost** | ≤ $1.00 USD | **~$0.0084 USD (estimate)** |
 | **Secrets Exposed** | 0 | **0** |
 
 ---
@@ -97,7 +97,7 @@ The complete live trace is recorded in [`docs/sprint-9g/evidence/loewe-boutique-
 ## 8. Cultural Evidence Discovered
 
 1. **Brand Grounding (Loewe):**
-   - Observed core tags: ready-to-wear, leather goods, luxury fashion, Spanish craftsmanship, artistic exploration.
+   - Observed brand-category tags from Qloo entity profile: ready-to-wear, leather goods, luxury fashion, Spanish craftsmanship, artistic exploration (these formal category tags define the brand core and are kept distinct from broader lifestyle, interest, or keyword tags).
 2. **Concept Anchoring:**
    - Tag: `urn:tag:interests:qloo:boutique_hospitality` ("Boutique Hospitality", `urn:tag:interests:qloo`).
 3. **Territory Exemplars (Place):**
@@ -105,7 +105,7 @@ The complete live trace is recorded in [`docs/sprint-9g/evidence/loewe-boutique-
    - *Casa Art Hotel*
    - *MonkBridge House*
 4. **Brand-Conditioned Cultural Intersections (Loewe + Boutique Hospitality):**
-   - Top returned place entities:
+   - Top observed recommendation place entities (observed co-occurrence in Qloo's entity database, not a measured causal affinity or commercial partnership):
      - *Le Domaine de l'Astragale, Hôtel et Villas 5 étoiles, Saint-Tropez*
      - *J.K. Place Capri*
    - Correlation ID: `mcp-dfbfcf0b-6827-4b2c-ae6a-6d03fac3c8cb`
@@ -177,7 +177,7 @@ The complete live trace is recorded in [`docs/sprint-9g/evidence/loewe-boutique-
 - **Request Preparation (`pnpm prepare:qloo-value:llm-only`):** Generated deterministic, hash-pinned request bundle (`51a0cd330a4809a075e5720b7a4498fdd42b66bec536ff9213dfba1078117426`) with 0 tools and empty citations.
 - **Status:** **`NOT_EVALUATED`** / **`LLM_ARM_NOT_RUN`**. In accordance with non-negotiable rules, no unapproved LLM calls were made, and no ungrounded superiority claims are made.
 - **Qualitative Reality (Canary vs. General LLM):** While an unconstrained LLM hallucinates speculative reasons why a luxury brand should open hotels, Qloo ground truth revealed:
-  1. Specific, verified high-affinity luxury destinations (*Le Domaine de l'Astragale, Saint-Tropez*, *J.K. Place Capri*).
+  1. Specific, observed brand-conditioned recommendation entities in luxury destinations (*Le Domaine de l'Astragale, Saint-Tropez*, *J.K. Place Capri*), representing observed co-occurrence in Qloo's cultural entity database rather than a measured causal affinity or commercial partnership.
   2. The critical absence of consistently shared cultural markers across generic boutique hotels, preventing ungrounded strategic expansion.
 
 ---
@@ -185,7 +185,7 @@ The complete live trace is recorded in [`docs/sprint-9g/evidence/loewe-boutique-
 ## 14. Agent Competence Gate
 
 - **Status:** **`PASS`**
-- **Evidence:** Clean live investigation, 100% valid tool calls, 0 claim violations, deterministic score ownership, accurate conservative conclusion.
+- **Evidence:** Clean live investigation, 100% valid tool calls, 0 final claim violations (passed on second attempt following deterministic claim validation repair of business-outcome language), deterministic score ownership, accurate conservative conclusion.
 
 ---
 

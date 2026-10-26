@@ -658,7 +658,7 @@ export type AgentAnalysisResult = {
   followUpOptions: string[];
   limitations: Limitation[];
   /** "synthetic" whenever any evidence came from the scripted synthetic world. Never presented as live. */
-  evidenceOrigin: "live" | "synthetic";
+  evidenceOrigin: "live" | "recorded" | "synthetic";
   model: AgentModelInfo;
   trace: AgentTrace;
   metrics: AgentMetrics;
@@ -690,3 +690,70 @@ export function isAgentRunResponse(value: unknown): value is AgentRunResponse {
   const record = value as Record<string, unknown>;
   return record.schemaVersion === AGENT_RESULT_SCHEMA_VERSION && typeof record.runId === "string" && typeof record.status === "string" && typeof record.trace === "object";
 }
+
+// ---- Sprint 9H: Comparative Cultural Elasticity Bridge & Report ----
+
+export type ComparisonEligibilityCode =
+  | "ELIGIBLE"
+  | "COMPARISON_NOT_READY"
+  | "INSUFFICIENT_REFERENCES"
+  | "TOO_MANY_TERRITORIES"
+  | "INCOMPATIBLE_ENTITY_TYPES"
+  | "DUPLICATE_TERRITORIES"
+  | "INVALID_TARGET_REPRESENTATION"
+  | "BRAND_NOT_CONFIRMED"
+  | "PAID_ADMISSION_PAUSED";
+
+export type ComparisonEligibility = {
+  eligible: boolean;
+  code: ComparisonEligibilityCode;
+  reason: string;
+  candidateSet: string[];
+  missingRequirements: string[];
+  target?: {
+    key: string;
+    label: string;
+    entityType: string;
+    conceptId?: string;
+    exemplarCount: number;
+  };
+  validatedReferences?: {
+    key: string;
+    label: string;
+    entityType: string;
+    conceptId?: string;
+    origin: "user" | "evidence";
+  }[];
+};
+
+export type ComparativeStrategicReport = {
+  schemaVersion: "ce-comparative-report/0.1";
+  brand: { id: string; name: string };
+  targetTerritory: {
+    key: string;
+    name: string;
+    singleHypothesisOutcome?: string;
+    relativePosition: { position: number | null; of: number; medianPercentile: number | null } | null;
+    provisionalClassification: { label: string; statement: string } | null;
+    robustness: { level: string; sensitivityDetail: string } | null;
+    coherence: { band: string; consistentlyShared: { id: string; label: string }[] } | null;
+    evidenceQuality: { level: string; drivers: string[] } | null;
+    candidateSet: string[];
+  };
+  alternativesEvaluated: {
+    key: string;
+    name: string;
+    role: "reference" | "frontier_candidate";
+    origin: "user" | "evidence";
+    relativePosition: { position: number | null; of: number; medianPercentile: number | null } | null;
+    classification: { label: string } | null;
+    robustness: { level: string } | null;
+  }[];
+  whatEvidenceEstablishes: string[];
+  whatRemainsUnknown: string[];
+  strategicImplications: string[];
+  nextResearchActions: string[];
+  evidenceOrigin: "live" | "recorded" | "synthetic";
+  provenance: { correlationIds: string[]; methodologyVersion: string };
+};
+

@@ -14,7 +14,10 @@ export type ResearchFinding = {
   unresolvedQuestions: string[];
   status: "EVIDENCE_SUPPORTED" | "PARTIAL" | "INSUFFICIENT";
   suggestedNextResearchAction: string;
-  origin: "live" | "synthetic";
+  origin: "live" | "synthetic" | "recorded";
+  relativePosition?: { position: number | null; of: number; medianPercentile: number | null } | null;
+  classification?: { label: string } | null;
+  robustness?: { level: string } | null;
 };
 
 export function buildResearchFinding(result: AgentAnalysisResult, territoryKey: string): ResearchFinding | null {
@@ -39,5 +42,8 @@ export function buildResearchFinding(result: AgentAnalysisResult, territoryKey: 
     status: supported ? territory.analysisRoute === "FULL_RELATIVE_ANALYSIS" ? "EVIDENCE_SUPPORTED" : "PARTIAL" : "INSUFFICIENT",
     suggestedNextResearchAction: result.followUpOptions?.[0] ?? `Validate ${territory.label} with an explicitly authorized follow-up investigation.`,
     origin: result.evidenceOrigin,
+    relativePosition: territory.relativePosition ? { position: territory.relativePosition.position, of: territory.relativePosition.of, medianPercentile: territory.relativePosition.medianPercentile } : null,
+    classification: territory.classification ? { label: territory.classification.label } : null,
+    robustness: territory.robustness ? { level: territory.robustness.level } : null,
   };
 }

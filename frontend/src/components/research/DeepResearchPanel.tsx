@@ -107,6 +107,49 @@ export function DeepResearchPanel({ scanId, territoryId, proposedDirection, toke
         <h4>Research next</h4><p>{result.hypothesisAssessment.nextStep}</p>
         <details><summary>Source and method</summary><p>{result.hypothesisAssessment.correlationIds.join("; ") || "No eligible source references"}</p></details>
       </div> : null}
+      {result.territories.some((t) => t.analysisRoute === "FULL_RELATIVE_ANALYSIS") ? (
+        <div className="rw-comparative-assessment" data-testid="comparative-assessment">
+          <h4>Comparative Cultural Elasticity Assessment</h4>
+          <p className="quiet">
+            Relative positioning and provisional classification derived deterministically from Qloo ranking evidence.
+            All classifications are relative strictly to candidate set [
+            {result.territories.find((t) => t.comparisonSet)?.comparisonSet?.labels.join(", ") ?? result.territories.map((t) => t.label).join(", ")}
+            ].
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Territory</th>
+                <th>Position</th>
+                <th>Percentile</th>
+                <th>Classification</th>
+                <th>Robustness</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.territories.filter((t) => t.relativePosition && t.classification).map((t) => (
+                <tr key={t.key}>
+                  <td><strong>{t.label}</strong> {t.role === "target" ? "(Target)" : "(Reference)"}</td>
+                  <td>{t.relativePosition?.position != null ? `${t.relativePosition.position} of ${t.relativePosition.of}` : "n/a"}</td>
+                  <td>{t.relativePosition?.medianPercentile != null ? `${Math.round(t.relativePosition.medianPercentile * 100)}%` : "n/a"}</td>
+                  <td><code>{t.classification?.label ?? "UNAVAILABLE"}</code></td>
+                  <td>{t.robustness?.level ?? "n/a"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="quiet">
+            This assesses comparative proximity within the observed candidate set. It does not measure universal distance, demand, or commercial outcome.
+          </p>
+        </div>
+      ) : result.hypothesisAssessment ? (
+        <div className="rw-compare-bridge" data-testid="compare-bridge">
+          <h4>Comparative Research Handoff (Optional)</h4>
+          <p className="quiet">
+            Compare this target against alternative territories of the same entity type ({result.territories[0]?.representation?.entityType ?? "compatible domain"}).
+          </p>
+        </div>
+      ) : null}
       <p>{result.summary.claimValidation.passed ? result.summary.text : "The investigation did not produce a validated interpretation."}</p>
       {findings.map((item) => <article key={item.territory.key}>
         <h4>{item.territory.name}</h4>
