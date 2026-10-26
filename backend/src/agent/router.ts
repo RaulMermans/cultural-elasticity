@@ -50,7 +50,7 @@ export function applyInterpretation(state: AgentRunState, interpretation: Interp
   state.trace.intent = interpretation.intent;
   state.trace.interpretedRequest = { ...interpretation };
   state.trace.interpretationSource = source;
-  if (!state.qlooBudgetExplicit && !state.request.intent) {
+  if (!state.qlooBudgetExplicit && !state.request.intent && !state.request.researchMode) {
     // Budget defaults are per intent (spec §25); the intent is only known now.
     state.limits.maxQlooCalls = Math.max(state.usage.qlooCalls, DEFAULT_QLOO_CALLS[interpretation.intent]);
     state.trace.limits.maxQlooCalls = state.limits.maxQlooCalls;

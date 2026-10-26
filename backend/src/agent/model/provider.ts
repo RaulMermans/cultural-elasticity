@@ -31,7 +31,7 @@ export type AgentDecisionContext = {
   iteration: number;
   userQuery: string;
   /** Fields the request fixed explicitly; the interpretation must agree with them. */
-  requestFields: { intent?: string; brand?: string; territories?: string[] };
+  requestFields: { intent?: string; brand?: string; territories?: string[]; researchMode?: string };
   interpretation: { intent: string; brand: string; territories: string[] } | null;
   phase: string;
   brand:
@@ -80,6 +80,7 @@ export type AgentDecisionContext = {
     analysisResults?: { key: string; route: string; classification: string | null; robustness: string | null }[];
     /** Sprint 8D: ids and queries that cannot change the result if requested again. */
     alreadyCollected?: { profiledEntityIds: string[]; searchedQueries: string[] };
+    recentConceptQueries?: { tagId: string; entityType: string; brandConditioned: boolean; outcome: string; members: number; correlationId: string }[];
   };
   /** Sprint 5A: nextSteps and the open plan moved into `focus` (one authoritative statement of what remains). */
   sufficiency: { verdict: EvidenceSufficiencyVerdict; reasons: string[]; nextActions: NextActionValue[]; materialGap: boolean };

@@ -354,7 +354,7 @@ const resolveEntity: AgentTool<{ name: string; type: RankableType; role: "brand"
 
 const findTags: AgentTool<{ query: string; limit: number }> = {
   name: "qloo_find_tags",
-  description: "1 Qloo call. Search Qloo's tag vocabulary for a territory's concept (semantic). Returns tag ids, names and namespaces; a territory needs one as its anchor. Use once per territory label; a repeated query is refused. Not for exemplars.",
+  description: "1 Qloo call. Resolve the named cultural concept into Qloo tags with IDs and namespaces. Search a specific research direction, then inspect candidates before anchoring. An empty answer means no tag was returned for this wording; a repeated query is refused.",
   permission: "read_only_external",
   inputSchema: z.strictObject({ query: text.max(120), limit: z.number().int().min(1).max(10).default(8) }),
   maxQlooCalls: 1,
@@ -362,6 +362,7 @@ const findTags: AgentTool<{ query: string; limit: number }> = {
   async execute({ state, provider, trace }, input) {
     const result = await callQloo(state, provider, trace, "find_tags", { query: input.query, semantic: true, limit: input.limit });
     if (result.outcome === "failed") return failed(result.code, result.detail);
+    if (result.outcome === "needs_input") return { status: "needs_input", summary: "Qloo needs clarification before this concept can be resolved", data: { issues: result.issues } };
     const key = input.query.trim().toLowerCase();
     if (result.outcome !== "ok") {
       if (!state.searchedQueries.has(key)) state.searchedQueries.set(key, []);
@@ -398,7 +399,7 @@ function profileView(state: AgentRunState, id: string) {
 const recommend: AgentTool<{ targetType: RankableType; tagIds: string[]; conditionOnBrand: boolean; limit: number }> = {
   name: "qloo_recommend",
   description:
-    "1 Qloo call. Entities of one type that Qloo associates with concept tag(s). conditionOnBrand=false: a brand-independent member pool — use it to test whether a concept has members of an entity type and to discover exemplar candidates (order not meaningful; popularity shown). conditionOnBrand=true: the brand-conditioned list (evidence about the brand, never exemplars; analysis collects it itself). Several tagIds are an INTERSECTION (members must carry every tag), so probe one tag per call. Choose the entity type from the territory's nextProbe (ranked by Qloo evidence: members for this concept, then for its tag namespace, then the comparison's shared type); after 3 empty types a concept is not probed further, and a type that returned nothing for 2 other concepts of the namespace is deferred. A frontier candidate whose own grounding tag returns members is anchored to it automatically. Tags must have been returned by Qloo in this run.",
+    "1 Qloo call. Test what entities Qloo returns for an observed cultural tag. conditionOnBrand=false finds concept members for an eligible representation; conditionOnBrand=true tests that concept with the resolved brand and is relationship evidence, never an exemplar pool. Use one tag per call to keep the question interpretable. An empty answer is an observed empty result, not proof the relationship cannot exist. Choose targetType from observed probe guidance; all tag IDs must already be verified in this run.",
   permission: "read_only_external",
   inputSchema: z.strictObject({ targetType: rankableType, tagIds: z.array(text).min(1).max(3), conditionOnBrand: z.boolean(), limit: z.number().int().min(1).max(20).default(20) }),
   maxQlooCalls: 1,
@@ -439,6 +440,7 @@ const relatedEntities: AgentTool<{ entityId: string; targetType: RankableType; l
     const limit = input.entityId === state.brand.entity?.id ? FRONTIER_RELATED_TAKE : input.limit;
     const result = await callQloo(state, provider, trace, "recommend", { target_type: input.targetType, signals: [input.entityId], limit, explain: false });
     if (result.outcome === "failed") return failed(result.code, result.detail);
+    if (result.outcome === "needs_input") return { status: "needs_input", summary: "Qloo needs clarification before related entities can be read", data: { issues: result.issues } };
     if (result.outcome !== "ok") return { status: "empty", summary: "no related entities" };
     const ids = state.related.some((r) => r.call.envelope.execution.correlation_id === result.call.envelope.execution.correlation_id) ? [] : recordRelated(state, result.call, input.entityId, input.targetType);
     return { status: "ok", summary: `${ids.length} related ${input.targetType} entities`, data: ids.map((id) => ({ id, label: state.entities.get(id)!.label })) };

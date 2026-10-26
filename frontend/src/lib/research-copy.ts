@@ -177,3 +177,9 @@ export const USER_POSITION_COPY = {
   current: "Already part of the brand",
   new: "A new direction",
 } as const;
+export const hypothesisOutcomeCopy = {
+  WORTH_FURTHER_INVESTIGATION: "Worth further investigation",
+  INCONCLUSIVE: "Inconclusive",
+  NOT_SUPPORTED_BY_CURRENT_EVIDENCE: "Not supported by current evidence",
+  UNABLE_TO_COMPLETE_RESEARCH: "Research could not be completed",
+} as const;

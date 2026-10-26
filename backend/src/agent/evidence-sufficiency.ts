@@ -95,7 +95,7 @@ export function nextActionValues(state: AgentRunState): NextActionValue[] {
   const intent = state.interpretation.intent;
   const room = state.territories.length < state.limits.maxCandidateTerritories && remainingQlooCalls(state) >= 2;
   let referencesPending = false;
-  if ((intent === "analyze_move" || intent === "compare_territories") && referenceEntityType(state) !== null && comparisonSetSize(state) < MIN_COMPARISON_SET) {
+  if (state.request.researchMode !== "single_hypothesis_v1" && (intent === "analyze_move" || intent === "compare_territories") && referenceEntityType(state) !== null && comparisonSetSize(state) < MIN_COMPARISON_SET) {
     const plan = referencePlan(state);
     if (plan.feasible) {
       referencesPending = true;
@@ -159,7 +159,7 @@ export function investigationStage(state: AgentRunState): InvestigationStage {
   const open = activeTerritories(state).filter((t) => t.status !== "analyzed");
   if (open.some((t) => territoryReadiness(state, t).state === "needs_concept")) return "RESOLUTION";
   if (open.some((t) => territoryReadiness(state, t).state === "needs_representation" || recoverable(state, t))) return "REPRESENTATION";
-  if (referencePlan(state).feasible) return "REFERENCE_CONSTRUCTION";
+  if (state.request.researchMode !== "single_hypothesis_v1" && referencePlan(state).feasible) return "REFERENCE_CONSTRUCTION";
   if (state.interpretation.intent === "explore_frontier" && nextActionValues(state).some((a) => a.action === "propose_frontier" && a.value !== "NONE")) return "FRONTIER_DISCOVERY";
   if (open.length > 0) return "ANALYSIS";
   return "FINISH";

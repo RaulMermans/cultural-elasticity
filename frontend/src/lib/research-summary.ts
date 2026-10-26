@@ -3,7 +3,7 @@
  * The on-screen summary and the downloadable HTML render the same sections, so they cannot disagree.
  * No model call, no new numbers, no recommendation added to fill space.
  */
-import { domainWords } from "./research-copy.ts";
+import { domainWords, hypothesisOutcomeCopy } from "./research-copy.ts";
 import type { QueryResponse } from "@cultural-elasticity/shared";
 import type { ResearchView } from "./research-view.ts";
 
@@ -29,6 +29,16 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
   const run = investigation?.investigation?.result;
   const matched = run && run.status !== "NEEDS_INPUT" && run.status === "COMPLETE" && run.brand?.id === view.brand.qlooId && run.evidenceOrigin === "live" ? run : null;
   const targets = matched?.territories.filter((item) => item.role === "target") ?? [];
+  const hypothesis = matched?.hypothesisAssessment;
+
+  if (hypothesis) sections.push({ id: "hypothesis", title: "Single Direction Investigation", intro: "A qualitative cultural research judgment, not commercial validation.", items: [
+    { text: `${hypothesisOutcomeCopy[hypothesis.outcome]}. ${hypothesis.question}` },
+    ...hypothesis.observed.map((text) => ({ text, detail: "Observed Qloo relationship." })),
+    ...hypothesis.supports.map((text) => ({ text, detail: "Deterministic interpretation of source-linked evidence." })),
+    ...hypothesis.limitations.map((text) => ({ text, detail: "Limitation." })),
+    ...hypothesis.unknowns.map((text) => ({ text, detail: "Not established by this research." })),
+    { text: hypothesis.nextStep, detail: "Suggested next research step." },
+  ] });
 
   sections.push({ id: "profile", title: "Brand Cultural Profile", items: [{ text: view.core.note }] });
 
@@ -100,12 +110,14 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
   return {
     title: `${brand}: strategic research brief`,
     brand,
-    objective: view.objective,
-    provenanceLine: view.origin === "recorded"
+    objective: hypothesis?.question ?? view.objective,
+    provenanceLine: hypothesis
+      ? `${view.origin === "recorded" ? "Recorded baseline research captured earlier" : "Live baseline research from this session"}; separate live Qloo deep investigation included.`
+      : view.origin === "recorded"
       ? "Recorded Qloo research. It was captured earlier and is not a new live run."
       : "Live Qloo research from this session.",
     researchDate: formatDate(view.capturedAt),
-    outcome: { headline: view.outcome.headline, detail: view.outcome.detail },
+    outcome: hypothesis ? { headline: hypothesisOutcomeCopy[hypothesis.outcome], detail: hypothesis.observed[0] ?? hypothesis.limitations[0] ?? "No supported relationship observation was established." } : { headline: view.outcome.headline, detail: view.outcome.detail },
     sections,
     sources,
     footer: view.derivedFrom

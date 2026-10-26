@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 import { createBaselinePool } from "../brand-baseline/db.js";
 import { BaselineRepository } from "../brand-baseline/repository.js";
-import { buildDeepInvestigationRequest, HandoffError } from "./baseline-handoff.js";
+import { buildDeepInvestigationRequest, buildProposedInvestigationRequest, HandoffError } from "./baseline-handoff.js";
 import { admit, globalJobLimit, jobCreateLimit } from "./admission.js";
 import { baselineAllowed, developmentRoutesOpen } from "./exposure.js";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../agent/errors.js";
@@ -52,7 +52,7 @@ const analyzeBody = z.strictObject({
 });
 const continueBody = z.strictObject({ runId: z.string().uuid(), clarification: z.string().trim().min(1).max(1_000), model: z.enum(["auto", "baseline"]).optional() });
 const continueJobBody = z.strictObject({ continueRunId: z.string().uuid(), clarification: z.string().trim().min(1).max(1_000), model: z.enum(["auto", "baseline"]).optional() });
-const handoffBody = z.strictObject({ scanId: z.uuid(), territoryId: z.string().trim().min(1).max(120), idempotencyKey: z.uuid() });
+const handoffBody = z.strictObject({ scanId: z.uuid(), territoryId: z.string().trim().min(1).max(120).optional(), proposedDirection: z.string().trim().min(1).max(120).optional(), idempotencyKey: z.uuid() }).refine((value) => Boolean(value.territoryId) !== Boolean(value.proposedDirection));
 
 type ErrorBody = { error: string; message?: string; issues?: EvidenceIssue[] };
 
@@ -91,7 +91,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
     // Query-layer telemetry carries no raw query text (length + hash only), no prompt and no credential.
     const log = (telemetry: unknown) => app.log.info({ queryTelemetry: telemetry }, "query");
     const reservations = new Map<string, { id: string; started: boolean }>();
-    const handoffJobs = new Map<string, { territoryId: string; pending: Promise<unknown> }>();
+    const handoffJobs = new Map<string, { directionKey: string; pending: Promise<unknown> }>();
     const baselinePool = process.env.CE_BASELINE_ENABLED === "1" && process.env.DATABASE_URL ? createBaselinePool(process.env.DATABASE_URL) : null;
     const baselines = baselinePool ? new BaselineRepository(baselinePool) : null;
     const jobs = new JobManager({
@@ -273,21 +273,21 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       const scan = await baselines.readScan(parsed.data.scanId, token);
       if (!scan?.result) return reply.code(404).send({ error: "baseline_not_found" });
       let prepared;
-      try { prepared = buildDeepInvestigationRequest(scan.result, parsed.data.territoryId); }
+      try { prepared = parsed.data.proposedDirection ? buildProposedInvestigationRequest(scan.result, parsed.data.proposedDirection) : buildDeepInvestigationRequest(scan.result, parsed.data.territoryId!); }
       catch (error) { if (error instanceof HandoffError) return reply.code(422).send({ error: error.code.toLowerCase() }); throw error; }
       if (!execute) return prepared;
       if (!admitCreate(request, reply)) return;
       const key = `${parsed.data.scanId}:${parsed.data.idempotencyKey}`;
       const existing = handoffJobs.get(key);
       if (existing) {
-        if (existing.territoryId !== parsed.data.territoryId) return reply.code(409).send({ error: "idempotency_conflict" });
+        if (existing.directionKey !== prepared.territory.id) return reply.code(409).send({ error: "idempotency_conflict" });
         const prior = await existing.pending;
         if (!prior || typeof prior !== "object" || !("jobId" in prior)) return reply.code(409).send({ error: "idempotency_unavailable" });
         return reply.code(200).send(prior);
       }
-      const body = queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "analyze_move", territories: [prepared.territory.name] });
+      const body = queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "analyze_move", territories: [prepared.territory.name], researchMode: "single_hypothesis_v1" });
       const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId }, reply));
-      handoffJobs.set(key, { territoryId: parsed.data.territoryId, pending });
+      handoffJobs.set(key, { directionKey: prepared.territory.id, pending });
       if (handoffJobs.size > 200) handoffJobs.delete(handoffJobs.keys().next().value!);
       const created = await pending;
       if (!created || typeof created !== "object" || !("jobId" in created)) handoffJobs.delete(key);

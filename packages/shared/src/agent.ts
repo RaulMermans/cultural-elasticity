@@ -640,6 +640,18 @@ export type AgentAnalysisResult = {
   userQuery: string;
   brand: { id: string; label: string; type: string; resolution: string } | null;
   territories: AgentTerritoryResult[];
+  /** Versioned qualitative assessment for an explicitly requested single hypothesis. Never a commercial verdict. */
+  hypothesisAssessment?: {
+    version: "single-hypothesis/v1";
+    outcome: "WORTH_FURTHER_INVESTIGATION" | "INCONCLUSIVE" | "NOT_SUPPORTED_BY_CURRENT_EVIDENCE" | "UNABLE_TO_COMPLETE_RESEARCH";
+    question: string;
+    observed: string[];
+    supports: string[];
+    limitations: string[];
+    unknowns: string[];
+    nextStep: string;
+    correlationIds: string[];
+  };
   /** Full deterministic methodology outputs, one per comparison set. */
   methodologyRuns: { id: string; territoryKeys: string[]; result: CulturalElasticityResult }[];
   summary: { text: string; source: "model" | "deterministic_template"; claimValidation: { passed: boolean; violations: string[] } };

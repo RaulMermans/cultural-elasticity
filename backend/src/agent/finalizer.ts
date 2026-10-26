@@ -19,6 +19,7 @@ import { conceptProbeState, probeViews } from "./probe-policy.js";
 import { categorize, validateClaims, validateFindings } from "./claim-validator.js";
 import { synthesisSchema, type Synthesis } from "./contracts.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
+import { assessSingleHypothesis } from "./hypothesis-assessment.js";
 import type { AgentModel, FinalizationContext } from "./model/provider.js";
 import { synthesisTerritoryView } from "./prompts.js";
 import type { AgentRunState } from "./state.js";
@@ -325,6 +326,7 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
     userQuery: state.request.userQuery,
     brand: state.brand.entity ? { id: state.brand.entity.id, label: state.brand.entity.label, type: state.brand.entity.type, resolution: state.brand.entity.resolution } : null,
     territories: results,
+    ...(state.request.researchMode === "single_hypothesis_v1" && { hypothesisAssessment: assessSingleHypothesis(state, results.find((item) => item.role === "target")) }),
     methodologyRuns: state.methodologyRuns,
     summary,
     followUpOptions: final.followUpOptions,

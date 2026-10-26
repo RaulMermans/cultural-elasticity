@@ -836,6 +836,11 @@ body:not(:has(.atlas)) .sprint { margin-bottom: 0; opacity: 0.7; }
 
 /* Directions */
 .rw-directions > p { max-width: 46rem; }
+.rw-propose { display: flex; flex-wrap: wrap; align-items: end; gap: var(--ce-space-2); padding: var(--ce-space-4) 0; border-bottom: 1px solid var(--ce-line); margin-bottom: var(--ce-space-4); }
+.rw-propose label { flex-basis: 100%; font-weight: 600; }
+.rw-propose input { flex: 1 1 16rem; min-width: 0; padding: .7rem .8rem; border: 1px solid var(--ce-line); background: var(--ce-paper-raised); color: var(--ce-ink); font: inherit; }
+.rw-propose p { flex-basis: 100%; margin: 0; }
+.rw-hypothesis-finding { border-left: 4px solid var(--ce-botanical); padding-left: var(--ce-space-4); }
 .rw-direction-group { margin: var(--ce-space-5) 0; }
 .rw-direction-group__title { margin: 0 0 var(--ce-space-3); font-size: 0.9rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ce-muted); font-weight: 500; }
 .rw-direction { padding: var(--ce-space-4) var(--ce-space-5); margin-bottom: var(--ce-space-4); background: var(--ce-paper-raised); border: 1px solid var(--ce-line); border-left: 4px solid var(--ce-brass); border-radius: var(--ce-radius); overflow-wrap: anywhere; }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { POSITION_COPY, USER_POSITION_COPY } from "@/lib/research-copy";
 import type { DirectionView, PositionCategory, ResearchView, UserPosition } from "@/lib/research-view";
 import { MasterDetail, onListKey } from "./ConnectionExplorer";
@@ -46,7 +46,7 @@ function DirectionCard({ direction, brand, selected, canInvestigate, onInspect, 
   );
 }
 
-export function DirectionList({ view, selectedKey, deepResearch, onSelect, onClear, onContext, onDeepResearch }: {
+export function DirectionList({ view, selectedKey, deepResearch, onSelect, onClear, onContext, onDeepResearch, onPropose }: {
   view: ResearchView;
   selectedKey: string | null;
   deepResearch: "available" | "unavailable";
@@ -54,7 +54,14 @@ export function DirectionList({ view, selectedKey, deepResearch, onSelect, onCle
   onClear: () => void;
   onContext: (concept: string, position: UserPosition) => void;
   onDeepResearch: (territoryId: string) => void;
+  onPropose: (direction: string) => void;
 }) {
+  const [proposed, setProposed] = useState("");
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const direction = proposed.trim();
+    if (direction) onPropose(direction);
+  };
   const brand = view.brand.name;
   const selected = view.directions.find((item) => item.key === selectedKey) ?? null;
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -72,6 +79,12 @@ export function DirectionList({ view, selectedKey, deepResearch, onSelect, onCle
     <div onKeyDown={onListKey}>
       <section aria-labelledby="rw-directions-title" className="rw-directions">
         <h2 id="rw-directions-title" className="rw-section-title">Directions worth investigating</h2>
+        <form onSubmit={submit} className="rw-propose">
+          <label htmlFor="rw-proposed-direction">Have a specific cultural direction in mind?</label>
+          <input id="rw-proposed-direction" value={proposed} maxLength={120} onChange={(event) => setProposed(event.target.value)} placeholder="Name a direction to investigate" disabled={deepResearch !== "available"} />
+          <button type="submit" className="primary" disabled={deepResearch !== "available" || !proposed.trim()}>Review research question</button>
+          <p className="quiet">Your suggestion is a hypothesis. It has no Qloo support until investigated.</p>
+        </form>
         {view.directions.length ? (
           <>
             <p>Each direction is a question for further research, not a validated finding or a recommendation. Only the classifications the evidence supports are used.</p>

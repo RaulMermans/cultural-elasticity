@@ -89,6 +89,12 @@ type Job = {
 
 const DEFAULT_TTL_MS = 30 * 60 * 1000;
 const DEFAULT_MAX_RUN_MS = 20 * 60 * 1000;
+const SINGLE_HYPOTHESIS_MAX_RUN_MS = 4 * 60 * 1000;
+
+function runLimitMs(request: JobRequest, defaultMs: number): number {
+  return request.kind === "execute" && "researchMode" in request.body && request.body.researchMode === "single_hypothesis_v1"
+    ? Math.min(defaultMs, SINGLE_HYPOTHESIS_MAX_RUN_MS) : defaultMs;
+}
 
 export function stageLabel(stage: JobStage, intent: string | null): string {
   if (stage === "queued") return "Waiting to start";
@@ -145,7 +151,7 @@ export class JobManager {
       createdAt: now,
       updatedAt: now,
       finishedAt: null,
-      expiresAt: now + this.maxRunMs + this.ttlMs,
+      expiresAt: now + runLimitMs(request, this.maxRunMs) + this.ttlMs,
       controller: new AbortController(),
       timer: null,
     };
@@ -219,7 +225,7 @@ export class JobManager {
     const timer = setTimeout(() => {
       job.abortReason = "timeout";
       job.controller.abort();
-    }, this.maxRunMs);
+    }, runLimitMs(job.request, this.maxRunMs));
     timer.unref?.();
     job.timer = timer;
     void this.execute(job).finally(() => {

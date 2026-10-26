@@ -52,7 +52,7 @@ export function ResearchWorkspace({ researchKey, result, section, item, deepRese
   onHome: () => void;
 }) {
   const [context, setUserContext] = useUserContext(result.scanId);
-  const [investigateId, setInvestigateId] = useState<string | null>(null);
+  const [investigation, setInvestigation] = useState<{ territoryId?: string; proposedDirection?: string } | null>(null);
   const [finding, setFinding] = useState<QueryResponse | null>(null);
   const view = useMemo(() => buildResearchView(result, context), [result, context]);
   const counts = { connections: view.connections.length, directions: view.directions.length };
@@ -96,14 +96,15 @@ export function ResearchWorkspace({ researchKey, result, section, item, deepRese
             onSelect={(key) => onNavigate("directions", key)}
             onClear={() => onNavigate("directions", null)}
             onContext={setUserContext}
-            onDeepResearch={setInvestigateId}
+            onDeepResearch={(territoryId) => setInvestigation({ territoryId })}
+            onPropose={(proposedDirection) => setInvestigation({ proposedDirection })}
           />
         ) : (
           <ResearchSummaryView view={view} investigation={finding} />
         )}
       </div>
 
-      {investigateId && scanToken ? <DeepResearchPanel scanId={result.scanId} territoryId={investigateId} token={scanToken} onClose={() => setInvestigateId(null)} onFinding={setFinding} /> : null}
+      {investigation && scanToken ? <DeepResearchPanel key={investigation.territoryId ?? investigation.proposedDirection} scanId={result.scanId} {...investigation} token={scanToken} onClose={() => setInvestigation(null)} onFinding={setFinding} /> : null}
 
       <details className="rw-method">
         <summary>Methodology details</summary>

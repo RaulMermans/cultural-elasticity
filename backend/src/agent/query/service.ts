@@ -163,6 +163,9 @@ export class QueryService {
     if (!outcome.ok) return this.respond({ telemetry, state: "INTERPRETATION_FAILED", interpretation: null, context, errors: [{ code: outcome.code, detail: outcome.detail }] });
 
     const gate = runGate({ query: body.query, explicit, proposal: outcome.proposal, context, interpreter: this.deps.interpreter.info });
+    if (body.researchMode && gate.plan?.request.intent === "analyze_move" && gate.plan.request.territories?.length === 1) {
+      gate.plan.request.researchMode = body.researchMode;
+    }
     const interpretation = gate.interpretation;
     telemetry.intent = interpretation.primaryIntent;
     telemetry.secondaryIntents = interpretation.secondaryIntents;
