@@ -104,7 +104,7 @@ export function ResearchWorkspace({ researchKey, result, section, item, deepRese
         )}
       </div>
 
-      {investigation && scanToken ? <DeepResearchPanel key={investigation.territoryId ?? investigation.proposedDirection} scanId={result.scanId} {...investigation} token={scanToken} onClose={() => setInvestigation(null)} onFinding={setFinding} /> : null}
+      {investigation && scanToken ? <DeepResearchPanel key={investigation.territoryId ?? investigation.proposedDirection} scanId={result.scanId} {...investigation} token={scanToken} onClose={() => setInvestigation(null)} onFinding={setFinding} onOpenSummary={() => { setInvestigation(null); onNavigate("summary", null); }} /> : null}
 
       <details className="rw-method">
         <summary>Methodology details</summary>

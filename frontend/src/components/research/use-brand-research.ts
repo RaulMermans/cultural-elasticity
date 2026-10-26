@@ -1,7 +1,7 @@
 "use client";
 
 import { isBrandBaselineResult, type AnyBrandBaselineResult } from "@cultural-elasticity/shared";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { RESOLUTION_COPY, TERMINAL_SCAN_STATUSES, apiErrorCopy, type BrandResearchAvailability } from "@/lib/research-copy";
 
 export type Candidate = { qlooId: string; label: string; type?: string };
@@ -36,6 +36,9 @@ export function useBrandResearch() {
   const [scan, setScan] = useState<LiveScan | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const lookupVersion = useRef(0);
+  const startKey = useRef<string | null>(null);
+  const starting = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -56,7 +59,7 @@ export function useBrandResearch() {
         const response = await fetch(`/api/brands/baselines/${pointer.scanId}`, { headers: { "x-baseline-token": pointer.token }, cache: "no-store" });
         const body = await json(response);
         if (!active) return;
-        if (!response.ok || !body) { setError(apiErrorCopy(body?.error)); return; }
+        if (!response.ok || !body) { setError(response.status === 404 ? "This scan could not be reopened. Its access may have expired; start a new scan or open recorded research." : apiErrorCopy(body?.error)); return; }
         const status = typeof body.scanStatus === "string" ? body.scanStatus : "RUNNING";
         const stages = Array.isArray(body.stages) ? body.stages.filter((stage): stage is { stage: string; status: string } => typeof stage?.stage === "string" && typeof stage?.status === "string") : [];
         const result = isBrandBaselineResult(body.result) ? body.result : null;
@@ -65,7 +68,7 @@ export function useBrandResearch() {
         // Stop reading once the scan has finished: a finished result does not change.
         if (!TERMINAL_SCAN_STATUSES.has(status)) timer = setTimeout(() => { void poll(); }, POLL_MS);
       } catch {
-        if (active) setError("The research service can't be reached right now. Your research stays stored; try again later.");
+        if (active) setError("The research service can't be reached right now. The scan may still be running; return later to check its status.");
       }
     };
     void poll();
@@ -73,23 +76,27 @@ export function useBrandResearch() {
   }, [pointer]);
 
   const resolve = useCallback(async (name: string, selectedQlooId?: string) => {
+    const version = ++lookupVersion.current;
     setBusy(true); setError("");
     try {
       const response = await fetch("/api/brands/resolve", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, ...(selectedQlooId ? { selectedQlooId } : {}) }) });
       const body = await json(response);
+      if (version !== lookupVersion.current) return;
       if (!response.ok && body?.status !== "TEMPORARILY_UNAVAILABLE") { setError(apiErrorCopy(body?.error)); setResolution(null); return; }
       if (!body || typeof body.status !== "string" || typeof body.resolutionId !== "string" || typeof body.accessToken !== "string") { setError(apiErrorCopy(null)); return; }
       setResolution(body as Resolution);
       if (RESOLUTION_COPY[body.status] && body.status !== "AMBIGUOUS") setError(RESOLUTION_COPY[body.status]!);
-    } catch { setError("The research service can't be reached right now. Please try again later."); }
-    finally { setBusy(false); }
+    } catch { if (version === lookupVersion.current) setError("The research service can't be reached right now. Please try again later."); }
+    finally { if (version === lookupVersion.current) setBusy(false); }
   }, []);
 
   const start = useCallback(async (): Promise<boolean> => {
-    if (!resolution || resolution.status !== "RESOLVED") return false;
+    if (!resolution || resolution.status !== "RESOLVED" || starting.current) return false;
+    starting.current = true;
+    startKey.current ??= crypto.randomUUID();
     setBusy(true); setError("");
     try {
-      const response = await fetch("/api/brands/baselines", { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": resolution.accessToken }, body: JSON.stringify({ resolutionId: resolution.resolutionId, idempotencyKey: crypto.randomUUID() }) });
+      const response = await fetch("/api/brands/baselines", { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": resolution.accessToken }, body: JSON.stringify({ resolutionId: resolution.resolutionId, idempotencyKey: startKey.current }) });
       const body = await json(response);
       if (!response.ok || !body || typeof body.scanId !== "string" || typeof body.scanStatus !== "string") { setError(apiErrorCopy(body?.error)); return false; }
       const next = { scanId: body.scanId, token: resolution.accessToken };
@@ -97,12 +104,13 @@ export function useBrandResearch() {
       setScan({ scanId: body.scanId, scanStatus: body.scanStatus, stages: [], result: null });
       setPointer(next);
       setResolution(null);
+      startKey.current = null;
       return true;
-    } catch { setError("The research service can't be reached right now. Please try again later."); return false; }
-    finally { setBusy(false); }
+    } catch { setError("The start request could not be confirmed. Check the current scan before starting again; the provider may already have received it."); return false; }
+    finally { starting.current = false; setBusy(false); }
   }, [resolution]);
 
-  const clearResolution = useCallback(() => { setResolution(null); setError(""); }, []);
+  const clearResolution = useCallback(() => { lookupVersion.current++; startKey.current = null; setResolution(null); setBusy(false); setError(""); }, []);
 
   return { availability, resolution, scan, scanToken: pointer?.token ?? null, hasSessionScan: Boolean(pointer), busy, error, resolve, start, clearResolution };
 }

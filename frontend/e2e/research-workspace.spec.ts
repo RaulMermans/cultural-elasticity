@@ -8,7 +8,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const legacy = JSON.parse(readFileSync(new URL("../../backend/tests/fixtures/synthetic/brand-baseline-e2e.json", import.meta.url), "utf8")) as { result: { scanId: string } };
 const v2 = JSON.parse(readFileSync(new URL("../../backend/tests/fixtures/synthetic/brand-baseline-e2e-v2.json", import.meta.url), "utf8")) as { results: Record<"hypotheses" | "zeroTerritory" | "insufficient" | "partialProvider", { scanId: string; scanStatus: string }> };
-const shots = fileURLToPath(new URL("../../docs/sprint-9d/screenshots/", import.meta.url));
+const shots = fileURLToPath(new URL("../../docs/sprint-9f/screenshots/", import.meta.url));
 mkdirSync(shots, { recursive: true });
 /** Never allowed in the ordinary research view (methodology and source disclosures are removed first). */
 const INTERNAL = /urn:|mcp-|correlation|entity_tags|QUERY_SCOPED|OBSERVED_ASSOCIATION|PARTIAL_EVIDENCE|ce-brand-baseline|ADMISSIONS_PAUSED|BRAND_CLASSIFICATION|AUDIENCE_TASTE|undefined|null|\[object/u;
@@ -168,7 +168,7 @@ test("Living Atlas stays available and opens the recorded Jacquemus investigatio
   await expect(page.getByRole("note").filter({ hasText: "Recorded example" })).toBeVisible();
   await expect(page.getByTestId("atlas-canvas")).toBeVisible();
   await page.screenshot({ path: `${shots}desktop-1440-atlas-jacquemus.png` });
-  await page.getByRole("navigation", { name: "Product views" }).getByRole("link", { name: "Brand research" }).click();
+  await page.getByRole("navigation", { name: "Research navigation" }).getByRole("link", { name: "Back to brand research" }).click();
   await expect(page.getByTestId("brand-discovery")).toBeVisible();
   await page.goBack();
   await expect(page.getByRole("heading", { name: "See where a brand can stretch." })).toBeVisible();
@@ -228,7 +228,7 @@ test("SYNTHETIC user direction previews a single question on desktop and mobile 
   expect(requested.length).toBeGreaterThan(0);
   expect(requested.every((entry) => (entry as { proposedDirection?: string }).proposedDirection === "Ritual hospitality")).toBe(true);
   expect(paid.filter((entry) => entry.includes("/api/agent/jobs"))).toEqual([]);
-  const dir = fileURLToPath(new URL("../../docs/sprint-9e/screenshots/", import.meta.url));
+  const dir = fileURLToPath(new URL("../../docs/sprint-9f/screenshots/", import.meta.url));
   mkdirSync(dir, { recursive: true });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.screenshot({ path: `${dir}/desktop-proposed-direction.png`, fullPage: true });
@@ -244,7 +244,7 @@ test("SYNTHETIC live research: ambiguity, confirmation, progress, then a fingerp
   await page.getByLabel("Brand name").fill("Northwind Atelier");
   await page.getByRole("button", { name: "Find brand" }).click();
   await expect(page.getByText("Qloo found more than one brand with this name.")).toBeVisible();
-  await page.getByRole("button", { name: "Northwind Atelier", exact: true }).click();
+  await page.getByRole("button", { name: /Northwind Atelier · brand · ID syn-brand-21/u }).click();
   await page.getByRole("button", { name: "Start research on SYNTHETIC House" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "SYNTHETIC House" })).toBeVisible();
   // The badge follows the result's own canonical origin field (this SYNTHETIC fixture says "recorded"), never the route taken.
@@ -253,6 +253,62 @@ test("SYNTHETIC live research: ambiguity, confirmation, progress, then a fingerp
   expect(page.url()).toContain("research=session");
   expect(resolves()).toBe(2);
   expect(await mainText(page)).not.toMatch(INTERNAL);
+});
+
+test("SYNTHETIC late brand lookup cannot replace a newer Qloo identity", async ({ page }) => {
+  await stub(page, { brands: "available", result: v2.results.hypotheses });
+  let releaseFirst: (() => void) | undefined;
+  await page.route("**/api/brands/resolve", async (route) => {
+    const name = (route.request().postDataJSON() as { name: string }).name;
+    if (name === "First Brand") await new Promise<void>((resolve) => { releaseFirst = resolve; });
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ resolutionId: "00000000-0000-4000-8000-000000000030", accessToken: "syn-token", status: "RESOLVED", entity: { qlooId: `syn-${name}`, label: name } }) });
+  });
+  await page.goto("/");
+  await page.getByLabel("Brand name").fill("First Brand");
+  await page.getByRole("button", { name: "Find brand" }).click();
+  await page.getByLabel("Brand name").fill("Second Brand");
+  await page.getByRole("button", { name: "Find brand" }).click();
+  await expect(page.getByRole("button", { name: "Start research on Second Brand" })).toBeVisible();
+  releaseFirst?.();
+  await expect(page.getByRole("button", { name: "Start research on Second Brand" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start research on First Brand" })).toHaveCount(0);
+});
+
+test("SYNTHETIC failed preview stops loading and never enables a paid start", async ({ page }) => {
+  const { paid } = await stub(page, { brands: "available", agent: "accepting", result: v2.results.hypotheses });
+  await page.route("**/api/research/handoff/preview", (route) => route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "baseline_unavailable" }) }));
+  await page.goto("/");
+  await page.getByLabel("Brand name").fill("SYNTHETIC House");
+  await page.getByRole("button", { name: "Find brand" }).click();
+  await page.getByRole("button", { name: /Start research/u }).click();
+  await page.getByRole("link", { name: /Directions/u }).click();
+  await page.getByRole("button", { name: /Prepare investigation of/u }).first().click();
+  await expect(page.getByTestId("deep-investigation").getByRole("alert")).toContainText("This direction cannot be prepared");
+  await expect(page.getByText("Checking the selected research direction…")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Start live investigation" })).toHaveCount(0);
+  expect(paid.filter((entry) => entry.includes("/api/agent/jobs"))).toEqual([]);
+});
+
+test("SYNTHETIC uncertain job start cannot be repeated from the same preview", async ({ page }) => {
+  await stub(page, { brands: "available", agent: "accepting", result: v2.results.hypotheses });
+  const territory = v2.results.hypotheses.territories[0]!;
+  await page.route("**/api/research/handoff/preview", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({
+    version: "ce-deep-investigation/0.1", objective: "SYNTHETIC research question", brand: { name: "SYNTHETIC House", qlooId: "syn-brand-21" },
+    territory: { id: territory.id, name: territory.name }, limitations: [], evidence: [],
+  }) }));
+  let starts = 0;
+  await page.route("**/api/research/handoff/jobs", (route) => { starts += 1; return route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: "unknown_outcome" }) }); });
+  await page.goto("/");
+  await page.getByLabel("Brand name").fill("SYNTHETIC House");
+  await page.getByRole("button", { name: "Find brand" }).click();
+  await page.getByRole("button", { name: /Start research/u }).click();
+  await page.getByRole("link", { name: /Directions/u }).click();
+  await page.getByRole("button", { name: /Prepare investigation of/u }).first().click();
+  const start = page.getByRole("button", { name: "Start live investigation" });
+  await start.click();
+  await expect(page.getByTestId("deep-investigation").getByRole("alert")).toContainText("could not be confirmed");
+  await expect(start).toBeDisabled();
+  expect(starts).toBe(1);
 });
 
 test("SYNTHETIC zero-direction result stays useful and says why", async ({ page }) => {
@@ -335,7 +391,7 @@ test("provider secrets never reach the research pages", async ({ page }) => {
   expect(joined).not.toContain(["SENTINEL", "MODEL", "NOT", "IN", "BROWSER"].join("_"));
 });
 
-for (const [width, height] of [[1440, 900], [1920, 1080], [768, 1024], [390, 844], [320, 700]] as const) {
+for (const [width, height] of [[1440, 900], [1920, 1080], [768, 1024], [390, 844], [375, 812], [320, 700]] as const) {
   test(`viewport ${width}x${height}: no horizontal overflow, CTA above the fold, screenshots`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await stub(page);

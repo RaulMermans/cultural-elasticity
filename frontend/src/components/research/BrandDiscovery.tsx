@@ -65,7 +65,7 @@ export function BrandDiscovery({ catalog, availability, resolution, busy, error,
             <button type="submit" className={live ? "primary" : "rw-secondary"} disabled={busy}>{busy ? "Searching…" : live ? "Find brand" : "Find recorded research"}</button>
           </div>
         </form>
-        <p className="rw-availability" role="status" data-testid="research-availability"><strong>{copy.label}</strong> {copy.detail}</p>
+        <p className="rw-availability" role="status" data-testid="research-availability"><strong>{copy.label}</strong> {copy.detail} {live ? "Search is submitted explicitly and Qloo checks the brand identity before any scan starts." : "These examples are recorded, not a complete list of Qloo brands."}</p>
         {hasSessionScan ? <p><button type="button" className="ghost" onClick={onOpenSession}>Return to the research you started in this tab</button></p> : null}
 
         {lookup?.match ? (
@@ -83,7 +83,7 @@ export function BrandDiscovery({ catalog, availability, resolution, busy, error,
           <fieldset className="rw-candidates">
             <legend>{RESOLUTION_COPY.AMBIGUOUS}</legend>
             {(resolution.candidates ?? []).map((candidate) => (
-              <button type="button" className="rw-secondary" key={candidate.qlooId} disabled={busy} onClick={() => onResolve(name.trim(), candidate.qlooId)}>{candidate.label}</button>
+              <button type="button" className="rw-secondary" key={candidate.qlooId} disabled={busy} onClick={() => onResolve(name.trim(), candidate.qlooId)}>{candidate.label}{candidate.type ? ` · ${candidate.type.replace(/^urn:entity:/u, "")}` : ""} · ID {candidate.qlooId}</button>
             ))}
           </fieldset>
         ) : null}
@@ -107,11 +107,11 @@ export function BrandDiscovery({ catalog, availability, resolution, busy, error,
                 <p className="quiet">
                   {entry.kind === "baseline"
                     ? `Cultural fingerprint · captured ${formatDate(entry.recordedAt)} · ${entry.connections} connections, ${entry.directions} possible ${entry.directions === 1 ? "direction" : "directions"}`
-                    : `Deep investigation${entry.question ? ` of “${entry.question}”` : ""} · captured ${formatDate(entry.recordedAt)} · opens in the Living Atlas`}
+                    : `Archived deep investigation${entry.question ? ` of “${entry.question}”` : ""} · captured ${formatDate(entry.recordedAt)} · historical Atlas view`}
                 </p>
               </div>
               <button type="button" className="rw-secondary" data-testid={entry.kind === "baseline" ? `recorded-${entry.key}` : "recorded-investigation"} onClick={() => open(entry)}>
-                {entry.kind === "baseline" ? "Open research" : "Open in the Living Atlas"}
+                {entry.kind === "baseline" ? "Open research" : "Open archived investigation"}
               </button>
             </li>
           ))}
