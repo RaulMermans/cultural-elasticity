@@ -230,7 +230,9 @@ GitHub Actions on `main` has failed in about 3 s on every recent merge: jobs do 
 
 ## 14. PR and merge status
 
-PR_PLACEHOLDER
+- PR **#35** (`sprint/9i-cross-domain-cultural-intelligence` → `main`): **open, not merged.**
+- Three commits: the feature; a test-only repair of the #33 regression; these docs.
+- Merging needs owner review: Railway builds from `main`, and GitHub Actions jobs do not start.
 
 ## 15. Sprint 9J production-readiness blockers
 
