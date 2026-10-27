@@ -191,6 +191,15 @@ export async function baselineHandoff(mode: "preview" | "jobs", body: unknown, t
   return backendFetch(`/api/agent/handoff/${mode}`, { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": token }, body: JSON.stringify(body) }, 15_000, visitorId);
 }
 
+/** Sprint 9I comparative handoff. The browser sends identifiers and its two tokens; evidence stays on the server. */
+export async function comparativeHandoff(mode: "options" | "preview" | "jobs", body: unknown, scanToken: string, jobToken: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/handoff/compare/${mode}`, { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": scanToken, "x-job-token": jobToken }, body: JSON.stringify(body) }, 15_000, visitorId);
+}
+
+export async function comparativeReport(id: string, jobToken: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/handoff/compare/${encodeURIComponent(id)}/report`, { headers: { "x-job-token": jobToken } }, 10_000, visitorId);
+}
+
 export async function readJob(id: string, token: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
   return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}`, { headers: { "x-job-token": token } }, 10_000, visitorId);
 }

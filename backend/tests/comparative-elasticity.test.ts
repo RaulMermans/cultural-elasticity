@@ -30,232 +30,105 @@ import {
   assessComparisonEligibility,
   buildComparativeHandoffRequest,
   projectComparativeStrategicReport,
-  suggestReferenceTerritories,
+  collectReferenceCandidates,
+  representationProblem,
+  validateComparativeOutcome,
   QueryAlreadyExecutedError,
 } from "../src/agent/comparative-bridge.js";
 import { validateClaims } from "../src/agent/claim-validator.js";
 import { parseMethodologyInput, type MethodologyInputRaw } from "../src/methodology/contracts.js";
 import { analyzeElasticity } from "../src/methodology/elasticity.js";
-import { buildComparativeBaselineInvestigationRequest, HandoffError } from "../src/api/baseline-handoff.js";
-import type { AgentAnalysisResult, AgentTerritoryResult, AnyBrandBaselineResult } from "@cultural-elasticity/shared";
+import type { AgentAnalysisResult, AgentTerritoryResult, AnyBrandBaselineResult, ComparativeReferenceCandidate } from "@cultural-elasticity/shared";
 
 const liveTracePath = path.resolve(import.meta.dirname, "../../docs/sprint-9g/evidence/loewe-boutique-hospitality.live.json");
+const recordedBaselinesPath = path.resolve(import.meta.dirname, "../../frontend/src/demo/recorded-baselines.json");
 const liveBenchmarkPath = path.resolve(import.meta.dirname, "../../evals/benchmarks/cultural-elasticity-v0/evidence/jacquemus.live.json");
+
+const SYN_BRAND = { id: "SYN-BR-9001", label: "SYNTHETIC Brand", resolution: "confirmed" };
+
+/** SYNTHETIC investigated territory with a validated place representation (two distinct exemplars). */
+function territory(overrides: Partial<AgentTerritoryResult> = {}): AgentTerritoryResult {
+  return {
+    key: "syn_target", label: "SYNTHETIC Target", role: "target", origin: "user", rationale: "target",
+    resolvedConcept: { id: "urn:tag:syn:target", label: "SYNTHETIC Target", type: "tag" },
+    representation: {
+      strategy: "PLACE_PANEL", entityType: "place",
+      exemplars: [
+        { id: "SYN-PL-1", label: "SYNTHETIC Place 1", type: "place", role: "primary", selectionReason: "test", conceptSupport: "tag_member", popularity: 0.9 },
+        { id: "SYN-PL-2", label: "SYNTHETIC Place 2", type: "place", role: "alternate", selectionReason: "test", conceptSupport: "tag_member", popularity: 0.8 },
+      ],
+      rejectedExemplars: [], diversity: "adequate", diversityDetail: "ok", attempts: 1, summary: "ok", failure: null,
+    },
+    analysisRoute: "PARTIAL_CULTURAL_ANALYSIS",
+    capabilities: { representation: "SUPPORTED", relativePosition: "UNAVAILABLE", robustness: "UNAVAILABLE", coherence: "AVAILABLE", conditionedEvidence: "AVAILABLE", classification: "UNAVAILABLE" },
+    comparisonSet: null, relativePosition: null, robustness: null, coherence: null, conditionedEvidence: null,
+    evidenceQuality: { level: "MEDIUM", drivers: [] }, classification: null,
+    keyEvidence: ["Observed relationship in single hypothesis."], limitations: [],
+    provenance: { correlationIds: ["syn-call-1"], sources: ["synthetic"] },
+    ...overrides,
+  };
+}
+
+/** SYNTHETIC server-held reference candidate (type known from a validated representation unless overridden). */
+function reference(id: string, overrides: Partial<ComparativeReferenceCandidate> = {}): ComparativeReferenceCandidate {
+  return {
+    id, label: `SYNTHETIC ${id}`, conceptId: `urn:tag:syn:${id}`, source: "completed_investigation",
+    typeEvidence: { entityType: "place", basis: "VALIDATED_REPRESENTATION", memberIds: [`SYN-PL-${id}-a`, `SYN-PL-${id}-b`], correlationIds: [`syn-${id}`] },
+    exemplarIds: [`SYN-PL-${id}-a`, `SYN-PL-${id}-b`], sourceStatus: "ok", correlationIds: [`syn-${id}`], rationale: "test", blocked: null,
+    ...overrides,
+  };
+}
 
 describe("Sprint 9H: Comparative Cultural Elasticity Suite", () => {
   // 1. Valid three-territory comparison
   it("1. Valid three-territory comparison meets eligibility gate and produces relative positions", () => {
-    const brand = { id: "628AFDF5-16D7-4AE5-B727-AF5AE5CE12F2", label: "Loewe", resolution: "confirmed" };
-    const target: AgentTerritoryResult = {
-      key: "boutique_hospitality",
-      label: "Boutique hospitality",
-      role: "target",
-      origin: "user",
-      rationale: "target",
-      resolvedConcept: { id: "urn:tag:interests:qloo:boutique_hospitality", label: "Boutique Hospitality", type: "urn:tag:interests:qloo" },
-      representation: {
-        strategy: "PLACE_PANEL",
-        entityType: "place",
-        exemplars: [{ id: "EX-1", label: "Hotel Ritta Höppner", type: "place", role: "primary", selectionReason: "test", conceptSupport: "tag_member", popularity: 0.9 }],
-        rejectedExemplars: [],
-        diversity: "adequate",
-        diversityDetail: "ok",
-        attempts: 1,
-        summary: "ok",
-        failure: null,
-      },
-      analysisRoute: "PARTIAL_CULTURAL_ANALYSIS",
-      capabilities: { representation: "SUPPORTED", relativePosition: "UNAVAILABLE", robustness: "UNAVAILABLE", coherence: "AVAILABLE", conditionedEvidence: "AVAILABLE", classification: "UNAVAILABLE" },
-      comparisonSet: null,
-      relativePosition: null,
-      robustness: null,
-      coherence: null,
-      conditionedEvidence: null,
-      evidenceQuality: { level: "MEDIUM", drivers: [] },
-      classification: null,
-      keyEvidence: ["Observed relationship in single hypothesis."],
-      limitations: [],
-      provenance: { correlationIds: ["mcp-call-1"], sources: ["qloo"] },
-    };
-
-    const references = [
-      { key: "luxury_resorts", label: "Luxury Resorts", entityType: "place", conceptId: "urn:tag:interests:qloo:luxury_resorts" },
-      { key: "art_galleries", label: "Art Galleries", entityType: "place", conceptId: "urn:tag:interests:qloo:art_galleries" },
-    ];
-
-    const eligibility = assessComparisonEligibility(brand, target, references);
-    expect(eligibility.eligible).toBe(true);
-    expect(eligibility.code).toBe("ELIGIBLE");
-    expect(eligibility.candidateSet).toEqual(["Boutique hospitality", "Luxury Resorts", "Art Galleries"]);
-
-    const handoff = buildComparativeHandoffRequest(brand, target, references);
+    const references = [reference("resorts"), reference("galleries")];
+    const eligibility = assessComparisonEligibility(SYN_BRAND, territory(), references);
+    expect(eligibility).toMatchObject({ eligible: true, code: "ELIGIBLE", candidateSet: ["SYNTHETIC Target", "SYNTHETIC resorts", "SYNTHETIC galleries"] });
+    const handoff = buildComparativeHandoffRequest(SYN_BRAND, territory(), references);
     expect(handoff.ok).toBe(true);
     if (handoff.ok) {
       expect(handoff.request.intent).toBe("compare_territories");
-      expect(handoff.request.territories).toEqual(["Boutique hospitality", "Luxury Resorts", "Art Galleries"]);
+      expect(handoff.request.territories).toEqual(["SYNTHETIC Target", "SYNTHETIC resorts", "SYNTHETIC galleries"]);
     }
   });
 
   // 2. Incompatible entity types
   it("2. Incompatible entity types are rejected by the comparison eligibility gate", () => {
-    const brand = { id: "BRAND-1", label: "Loewe", resolution: "confirmed" };
-    const target: AgentTerritoryResult = {
-      key: "boutique_hospitality",
-      label: "Boutique hospitality",
-      role: "target",
-      origin: "user",
-      rationale: "target",
-      resolvedConcept: { id: "urn:tag:test:1", label: "Concept 1", type: "tag" },
-      representation: {
-        strategy: "PLACE_PANEL",
-        entityType: "place",
-        exemplars: [{ id: "EX-1", label: "Place 1", type: "place", role: "primary", selectionReason: "test", conceptSupport: "tag_member", popularity: 0.9 }],
-        rejectedExemplars: [],
-        diversity: "adequate",
-        diversityDetail: "ok",
-        attempts: 1,
-        summary: "ok",
-        failure: null,
-      },
-      analysisRoute: "PARTIAL_CULTURAL_ANALYSIS",
-      capabilities: { representation: "SUPPORTED", relativePosition: "UNAVAILABLE", robustness: "UNAVAILABLE", coherence: "AVAILABLE", conditionedEvidence: "AVAILABLE", classification: "UNAVAILABLE" },
-      comparisonSet: null,
-      relativePosition: null,
-      robustness: null,
-      coherence: null,
-      conditionedEvidence: null,
-      evidenceQuality: null,
-      classification: null,
-      keyEvidence: [],
-      limitations: [],
-      provenance: { correlationIds: ["c1"], sources: [] },
-    };
-
-    const references = [
-      { key: "fine_dining", label: "Fine Dining", entityType: "place" },
-      { key: "fashion_labels", label: "Fashion Labels", entityType: "brand" }, // Mismatched!
-    ];
-
-    const eligibility = assessComparisonEligibility(brand, target, references);
+    const brandTyped = reference("labels", { typeEvidence: { entityType: "brand", basis: "VALIDATED_REPRESENTATION", memberIds: ["SYN-BR-1"], correlationIds: ["syn-labels"] } });
+    const eligibility = assessComparisonEligibility(SYN_BRAND, territory(), [reference("dining"), brandTyped]);
     expect(eligibility.eligible).toBe(false);
     expect(eligibility.code).toBe("INCOMPATIBLE_ENTITY_TYPES");
-    expect(eligibility.reason).toContain("incompatible with target entity type");
+    expect(eligibility.reason).toContain("one entity type in one rank panel");
+  });
+
+  it("2b. Sprint 9I: a caller-declared or missing type is never accepted or copied from the target", () => {
+    const untyped = reference("unverified", { typeEvidence: null });
+    const eligibility = assessComparisonEligibility(SYN_BRAND, territory(), [reference("dining"), untyped]);
+    expect(eligibility).toMatchObject({ eligible: false, code: "REFERENCE_TYPE_UNVERIFIED" });
+    expect(eligibility.validatedReferences).toBeUndefined();
   });
 
   // 3. Missing exemplar profiles
   it("3. Missing exemplar profiles fail representation validation", () => {
-    const brand = { id: "BRAND-1", label: "Loewe", resolution: "confirmed" };
-    const targetWithoutExemplars: AgentTerritoryResult = {
-      key: "unrepresented",
-      label: "Unrepresented",
-      role: "target",
-      origin: "user",
-      rationale: "target",
-      resolvedConcept: { id: "urn:tag:test:1", label: "Concept 1", type: "tag" },
-      representation: {
-        strategy: "PLACE_PANEL",
-        entityType: "place",
-        exemplars: [], // EMPTY!
-        rejectedExemplars: [],
-        diversity: "unknown",
-        diversityDetail: "none",
-        attempts: 1,
-        summary: "none",
-        failure: { code: "INSUFFICIENT_EXEMPLARS", detail: "no exemplars found" },
-      },
-      analysisRoute: "INSUFFICIENT_EVIDENCE",
-      capabilities: { representation: "UNSUPPORTED", relativePosition: "UNAVAILABLE", robustness: "UNAVAILABLE", coherence: "UNAVAILABLE", conditionedEvidence: "UNAVAILABLE", classification: "UNAVAILABLE" },
-      comparisonSet: null,
-      relativePosition: null,
-      robustness: null,
-      coherence: null,
-      conditionedEvidence: null,
-      evidenceQuality: null,
-      classification: null,
-      keyEvidence: [],
-      limitations: [],
-      provenance: { correlationIds: [], sources: [] },
-    };
-
-    const references = [
-      { label: "Ref 1", entityType: "place" },
-      { label: "Ref 2", entityType: "place" },
-    ];
-
-    const eligibility = assessComparisonEligibility(brand, targetWithoutExemplars, references);
-    expect(eligibility.eligible).toBe(false);
-    expect(eligibility.code).toBe("INVALID_TARGET_REPRESENTATION");
+    const empty = territory({ representation: { ...territory().representation, exemplars: [], failure: { code: "INSUFFICIENT_EXEMPLARS", detail: "no exemplars found" } }, analysisRoute: "INSUFFICIENT_EVIDENCE" });
+    expect(assessComparisonEligibility(SYN_BRAND, empty, [reference("a"), reference("b")]).code).toBe("INVALID_TARGET_REPRESENTATION");
+    const single = territory({ representation: { ...territory().representation, exemplars: territory().representation.exemplars.slice(0, 1) } });
+    expect(assessComparisonEligibility(SYN_BRAND, single, [reference("a"), reference("b")]).reason).toMatch(/at least 2 are needed/u);
+    const unsourced = territory({ provenance: { correlationIds: [], sources: [] } });
+    expect(assessComparisonEligibility(SYN_BRAND, unsourced, [reference("a"), reference("b")]).code).toBe("INVALID_TARGET_REPRESENTATION");
   });
 
   // 4. Duplicate references
-  it("4. Duplicate references are rejected by comparison eligibility gate and baseline handoff", () => {
-    const brand = { id: "BRAND-1", label: "Loewe", resolution: "confirmed" };
-    const target: AgentTerritoryResult = {
-      key: "boutique_hospitality",
-      label: "Boutique Hospitality",
-      role: "target",
-      origin: "user",
-      rationale: "target",
-      resolvedConcept: { id: "urn:tag:1", label: "Boutique Hospitality", type: "tag" },
-      representation: {
-        strategy: "PLACE_PANEL",
-        entityType: "place",
-        exemplars: [{ id: "EX-1", label: "Hotel 1", type: "place", role: "primary", selectionReason: "test", conceptSupport: "tag_member", popularity: 0.9 }],
-        rejectedExemplars: [],
-        diversity: "adequate",
-        diversityDetail: "ok",
-        attempts: 1,
-        summary: "ok",
-        failure: null,
-      },
-      analysisRoute: "PARTIAL_CULTURAL_ANALYSIS",
-      capabilities: { representation: "SUPPORTED", relativePosition: "UNAVAILABLE", robustness: "UNAVAILABLE", coherence: "AVAILABLE", conditionedEvidence: "AVAILABLE", classification: "UNAVAILABLE" },
-      comparisonSet: null,
-      relativePosition: null,
-      robustness: null,
-      coherence: null,
-      conditionedEvidence: null,
-      evidenceQuality: null,
-      classification: null,
-      keyEvidence: [],
-      limitations: [],
-      provenance: { correlationIds: ["c1"], sources: [] },
-    };
-
-    // Duplicate by label
-    const referencesWithDuplicate = [
-      { label: "Luxury Resorts", entityType: "place", conceptId: "urn:tag:2" },
-      { label: "Boutique Hospitality", entityType: "place", conceptId: "urn:tag:3" }, // Duplicate of target!
-    ];
-
-    const eligibility = assessComparisonEligibility(brand, target, referencesWithDuplicate);
-    expect(eligibility.eligible).toBe(false);
-    expect(eligibility.code).toBe("DUPLICATE_TERRITORIES");
-
-    const mockBaselineScan = {
-      schemaVersion: "ce-brand-baseline/0.2",
-      scanId: "scan-123",
-      scanStatus: "COMPLETE",
-      scannedAt: "2026-10-26T12:00:00Z",
-      brand: { id: "B1", qlooId: "BRAND-1", name: "Loewe", resolutionStatus: "RESOLVED" },
-      fingerprint: { signals: [], excluded: [], themes: [], hypotheses: [], limitations: [], audit: {} },
-      territories: [
-        { id: "t1", name: "Boutique Hospitality", canonicalConcept: "c1", evidenceStatus: "OBSERVED_ASSOCIATION", discoveryBasis: "b", supportingReferences: [], limitations: [], availableActions: ["inspect_evidence"] },
-        { id: "r1", name: "Luxury Resorts", canonicalConcept: "c2", evidenceStatus: "OBSERVED_ASSOCIATION", discoveryBasis: "b", supportingReferences: [], limitations: [], availableActions: ["inspect_evidence"] },
-        { id: "r2", name: "Boutique Hospitality", canonicalConcept: "c3", evidenceStatus: "OBSERVED_ASSOCIATION", discoveryBasis: "b", supportingReferences: [], limitations: [], availableActions: ["inspect_evidence"] },
-      ],
-      directions: [],
-      execution: { totalQlooCalls: 7, correlationIds: ["c1"] },
-      limitations: [],
-    } as unknown as AnyBrandBaselineResult;
-
-    expect(() =>
-      buildComparativeBaselineInvestigationRequest(
-        mockBaselineScan,
-        "t1",
-        ["r1", "r2"],
-      ),
-    ).toThrow(HandoffError);
+  it("4. Duplicate references are rejected by comparison eligibility gate", () => {
+    const sameLabel = reference("dup", { label: "SYNTHETIC Target" });
+    expect(assessComparisonEligibility(SYN_BRAND, territory(), [reference("a"), sameLabel]).code).toBe("DUPLICATE_TERRITORIES");
+    const sameConcept = reference("concept", { conceptId: "urn:tag:syn:target" });
+    expect(assessComparisonEligibility(SYN_BRAND, territory(), [reference("a"), sameConcept]).code).toBe("DUPLICATE_TERRITORIES");
+    const sharedExemplar = reference("shared", { exemplarIds: ["SYN-PL-1", "SYN-PL-shared-b"] });
+    expect(assessComparisonEligibility(SYN_BRAND, territory(), [reference("a"), sharedExemplar]).code).toBe("DUPLICATE_EXEMPLARS");
+    const repeated = reference("repeat", { exemplarIds: ["SYN-PL-x", "SYN-PL-x"] });
+    expect(assessComparisonEligibility(SYN_BRAND, territory(), [reference("a"), repeated]).code).toBe("DUPLICATE_EXEMPLARS");
   });
 
   // 5. Missing rank panels
@@ -313,70 +186,26 @@ describe("Sprint 9H: Comparative Cultural Elasticity Suite", () => {
 
   // 8. Insufficient evidence
   it("8. Cardinality below three territories returns INSUFFICIENT_REFERENCES", () => {
-    const brand = { id: "B1", label: "Loewe", resolution: "confirmed" };
-    const target: AgentTerritoryResult = {
-      key: "target",
-      label: "Target",
-      role: "target",
-      origin: "user",
-      rationale: "test",
-      resolvedConcept: { id: "tag:1", label: "Target", type: "tag" },
-      representation: {
-        strategy: "PLACE_PANEL",
-        entityType: "place",
-        exemplars: [{ id: "E1", label: "E1", type: "place", role: "primary", selectionReason: "test", conceptSupport: "tag_member", popularity: 0.8 }],
-        rejectedExemplars: [],
-        diversity: "adequate",
-        diversityDetail: "ok",
-        attempts: 1,
-        summary: "ok",
-        failure: null,
-      },
-      analysisRoute: "PARTIAL_CULTURAL_ANALYSIS",
-      capabilities: { representation: "SUPPORTED", relativePosition: "UNAVAILABLE", robustness: "UNAVAILABLE", coherence: "AVAILABLE", conditionedEvidence: "AVAILABLE", classification: "UNAVAILABLE" },
-      comparisonSet: null,
-      relativePosition: null,
-      robustness: null,
-      coherence: null,
-      conditionedEvidence: null,
-      evidenceQuality: null,
-      classification: null,
-      keyEvidence: [],
-      limitations: [],
-      provenance: { correlationIds: ["c1"], sources: [] },
-    };
-
-    // Only 1 reference -> total count 2 < 3
-    const eligibility = assessComparisonEligibility(brand, target, [{ label: "Ref 1", entityType: "place" }]);
-    expect(eligibility.eligible).toBe(false);
-    expect(eligibility.code).toBe("INSUFFICIENT_REFERENCES");
+    const eligibility = assessComparisonEligibility(SYN_BRAND, territory(), [reference("one")]);
+    expect(eligibility).toMatchObject({ eligible: false, code: "INSUFFICIENT_REFERENCES" });
+    expect(assessComparisonEligibility(SYN_BRAND, territory(), ["a", "b", "c", "d", "e", "f"].map((id) => reference(id))).code).toBe("TOO_MANY_TERRITORIES");
   });
 
   // 9. Inconclusive hypothesis escalation
-  it("9. Inconclusive single-hypothesis result can be escalated to comparative assessment", () => {
-    const liveTrace = JSON.parse(fs.readFileSync(liveTracePath, "utf8"));
-    const brand = liveTrace.brand;
-    const target = liveTrace.territories[0] as AgentTerritoryResult;
-    expect(liveTrace.hypothesisAssessment.outcome).toBe("INCONCLUSIVE");
-
-    const suggestions = suggestReferenceTerritories({
-      targetEntityType: target.representation.entityType!,
-      targetKey: target.key,
-      targetLabel: target.label,
-      targetConceptId: target.resolvedConcept?.id,
-      exemplarTags: [
-        { id: "urn:tag:luxury_stays", label: "Luxury Stays" },
-        { id: "urn:tag:art_design", label: "Art Design" },
-      ],
-      baselineDirections: [
-        { name: "Fine Dining", categoryLabel: "Gastronomy" },
-      ],
-    });
-
-    expect(suggestions.length).toBeGreaterThanOrEqual(2);
-    const eligibility = assessComparisonEligibility(brand, target, suggestions);
-    expect(eligibility.eligible).toBe(true);
-    expect(eligibility.candidateSet).toContain(target.label);
+  it("9. The recorded live Loewe hypothesis cannot be escalated without server-verified references", () => {
+    // Real recorded evidence: the Sprint 9G live investigation and the recorded live Loewe baseline.
+    const liveTrace = JSON.parse(fs.readFileSync(liveTracePath, "utf8")) as AgentAnalysisResult;
+    const recorded = JSON.parse(fs.readFileSync(recordedBaselinesPath, "utf8")) as { items: { key: string; result: AnyBrandBaselineResult }[] };
+    const baseline = recorded.items.find((item) => item.key === "loewe")!.result;
+    const target = liveTrace.territories[0]!;
+    expect(liveTrace.hypothesisAssessment?.outcome).toBe("INCONCLUSIVE");
+    expect(representationProblem(target)).toBeNull();
+    // The recorded result keeps no exemplar tag profiles and there is no other completed investigation.
+    const candidates = collectReferenceCandidates({ brandId: liveTrace.brand!.id, target, exemplarProfiles: [], siblings: [], baseline });
+    expect(candidates.map((c) => c.label)).toEqual(["Model", "Fashion"]);
+    expect(candidates.every((c) => c.typeEvidence === null && c.blocked?.code === "REFERENCE_TYPE_UNVERIFIED")).toBe(true);
+    const eligibility = assessComparisonEligibility(liveTrace.brand, target, candidates, { expectedBrandId: baseline.brand.qlooId });
+    expect(eligibility).toMatchObject({ eligible: false, code: "REFERENCE_TYPE_UNVERIFIED" });
   });
 
   // 10. No unsupported affinity calculations
@@ -473,102 +302,25 @@ describe("Sprint 9H: Comparative Cultural Elasticity Suite", () => {
 
   // 14. Candidate-set-relative interpretation
   it("14. Strategic report projection includes candidate set and explicit relative limitations", () => {
-    const mockComparativeResult: AgentAnalysisResult = {
-      schemaVersion: "ce-agent-result/0.3",
-      runId: "run-comp-1",
-      status: "COMPLETE",
-      finalSufficiency: "SUFFICIENT",
-      intent: "compare_territories",
-      userQuery: "Compare Boutique hospitality against Luxury Resorts and Art Galleries for Loewe.",
-      brand: { id: "BRAND-1", label: "Loewe", type: "brand", resolution: "confirmed" },
-      territories: [
-        {
-          key: "boutique_hospitality",
-          label: "Boutique hospitality",
-          role: "target",
-          origin: "user",
-          rationale: "target",
-          resolvedConcept: { id: "tag:1", label: "Boutique hospitality", type: "tag" },
-          representation: {
-            strategy: "PLACE_PANEL",
-            entityType: "place",
-            exemplars: [{ id: "E1", label: "Hotel 1", type: "place", role: "primary", selectionReason: "test", conceptSupport: "tag_member", popularity: 0.9 }],
-            rejectedExemplars: [],
-            diversity: "adequate",
-            diversityDetail: "ok",
-            attempts: 1,
-            summary: "ok",
-            failure: null,
-          },
-          analysisRoute: "FULL_RELATIVE_ANALYSIS",
-          capabilities: { representation: "SUPPORTED", relativePosition: "AVAILABLE", robustness: "AVAILABLE", coherence: "AVAILABLE", conditionedEvidence: "AVAILABLE", classification: "AVAILABLE" },
-          comparisonSet: { territoryKeys: ["boutique_hospitality", "luxury_resorts", "art_galleries"], labels: ["Boutique hospitality", "Luxury Resorts", "Art Galleries"], methodologyVersion: "v0" },
-          relativePosition: { position: 1, of: 3, medianPercentile: 0.8, medianRank: 1 },
-          robustness: { level: "HIGH", percentileSpread: 0, panelledExemplars: 2, declaredExemplars: 2, reasons: [] },
-          coherence: { rawSharedMedian: 4, filteredSharedMedian: 2, filteredBand: "MODERATE", exemplarsCompared: 2, consistentlyShared: [{ id: "t1", label: "Luxury Design" }] },
-          conditionedEvidence: { support: "SUPPORTED", entityCount: 20, topEntities: [{ label: "Hotel Capri", rank: 1 }], correlationId: "mcp-c1" },
-          evidenceQuality: { level: "HIGH", drivers: [] },
-          classification: { label: "NATURAL_ADJACENCY", status: "PROVISIONAL", reasons: ["Rank position 1 of 3"] },
-          keyEvidence: ["Position 1 of 3."],
-          limitations: [{ code: "RELATIVE_TO_COMPARISON_SET", detail: "positions and classes are relative to this candidate set" }],
-          provenance: { correlationIds: ["c1"], sources: ["qloo"] },
-        },
-        {
-          key: "luxury_resorts",
-          label: "Luxury Resorts",
-          role: "reference",
-          origin: "qloo_evidence",
-          rationale: "ref",
-          resolvedConcept: { id: "tag:2", label: "Luxury Resorts", type: "tag" },
-          representation: {
-            strategy: "PLACE_PANEL",
-            entityType: "place",
-            exemplars: [{ id: "E2", label: "Resort 1", type: "place", role: "primary", selectionReason: "test", conceptSupport: "tag_member", popularity: 0.85 }],
-            rejectedExemplars: [],
-            diversity: "adequate",
-            diversityDetail: "ok",
-            attempts: 1,
-            summary: "ok",
-            failure: null,
-          },
-          analysisRoute: "FULL_RELATIVE_ANALYSIS",
-          capabilities: { representation: "SUPPORTED", relativePosition: "AVAILABLE", robustness: "AVAILABLE", coherence: "AVAILABLE", conditionedEvidence: "AVAILABLE", classification: "AVAILABLE" },
-          comparisonSet: { territoryKeys: ["boutique_hospitality", "luxury_resorts", "art_galleries"], labels: ["Boutique hospitality", "Luxury Resorts", "Art Galleries"], methodologyVersion: "v0" },
-          relativePosition: { position: 2, of: 3, medianPercentile: 0.5, medianRank: 2 },
-          robustness: { level: "MEDIUM", percentileSpread: 0.1, panelledExemplars: 2, declaredExemplars: 2, reasons: [] },
-          coherence: null,
-          conditionedEvidence: null,
-          evidenceQuality: null,
-          classification: { label: "CREDIBLE_STRETCH", status: "PROVISIONAL", reasons: [] },
-          keyEvidence: [],
-          limitations: [],
-          provenance: { correlationIds: ["c2"], sources: ["qloo"] },
-        },
-      ],
-      methodologyRuns: [],
-      summary: { text: "Comparative summary.", source: "deterministic_template", claimValidation: { passed: true, violations: [] } },
-      followUpOptions: ["Test alternative exemplars."],
-      limitations: [],
-      evidenceOrigin: "live",
-      model: { id: "claude-haiku-5-5", kind: "llm", live: true, effort: "high" },
-      trace: {} as never,
-      metrics: {} as never,
-      skillsUsed: [],
-      comparisonSetConstruction: {} as never,
-      layers: {} as never,
-      failureCategory: null,
-    };
-
-    const report = projectComparativeStrategicReport(mockComparativeResult, "boutique_hospitality", "INCONCLUSIVE");
-    expect(report.schemaVersion).toBe("ce-comparative-report/0.1");
-    expect(report.targetTerritory.name).toBe("Boutique hospitality");
-    expect(report.evidenceOrigin).toBe("live");
-    expect(projectComparativeStrategicReport({ ...mockComparativeResult, evidenceOrigin: "recorded" }, "boutique_hospitality").evidenceOrigin).toBe("recorded");
-    expect(projectComparativeStrategicReport({ ...mockComparativeResult, evidenceOrigin: "synthetic" }, "boutique_hospitality").evidenceOrigin).toBe("synthetic");
-    expect(report.targetTerritory.singleHypothesisOutcome).toBe("INCONCLUSIVE");
-    expect(report.targetTerritory.candidateSet).toEqual(["Boutique hospitality", "Luxury Resorts", "Art Galleries"]);
-    expect(report.targetTerritory.provisionalClassification?.label).toBe("NATURAL_ADJACENCY");
+    const set = { territoryKeys: ["syn_target", "syn_resorts", "syn_galleries"], labels: ["SYNTHETIC Target", "SYNTHETIC resorts", "SYNTHETIC galleries"], methodologyVersion: "v0" };
+    const ranked = (key: string, label: string, position: number, percentile: number, label2: "NATURAL_ADJACENCY" | "CREDIBLE_STRETCH" | "CULTURAL_BREAK") => territory({
+      key, label, role: key === "syn_target" ? "target" : "reference", resolvedConcept: { id: `urn:tag:syn:${key}`, label, type: "tag" }, analysisRoute: "FULL_RELATIVE_ANALYSIS", comparisonSet: set,
+      relativePosition: { position, of: 3, medianPercentile: percentile, medianRank: position }, robustness: { level: "HIGH", percentileSpread: 0, panelledExemplars: 2, declaredExemplars: 2, reasons: [] },
+      classification: { label: label2, status: "PROVISIONAL", reasons: [`Rank position ${position} of 3`] }, keyEvidence: [`Position ${position} of 3.`], provenance: { correlationIds: [`syn-${key}`], sources: ["synthetic"] },
+    });
+    const result = comparativeResult([ranked("syn_target", "SYNTHETIC Target", 1, 1, "NATURAL_ADJACENCY"), ranked("syn_resorts", "SYNTHETIC resorts", 2, 0.5, "CREDIBLE_STRETCH"), ranked("syn_galleries", "SYNTHETIC galleries", 3, 0, "CULTURAL_BREAK")]);
+    const plan = { brandId: SYN_BRAND.id, brandLabel: SYN_BRAND.label, target: { label: "SYNTHETIC Target", conceptId: "urn:tag:syn:syn_target", entityType: "place", singleHypothesisOutcome: "INCONCLUSIVE" }, references: [] };
+    const verdict = validateComparativeOutcome(plan, result);
+    expect(verdict.outcome).toBe("RELATIVE_POSITION_ESTABLISHED");
+    const report = projectComparativeStrategicReport(result, plan, verdict);
+    expect(report.schemaVersion).toBe("ce-comparative-report/0.2");
+    expect(report.targetTerritory).toMatchObject({ name: "SYNTHETIC Target", singleHypothesisOutcome: "INCONCLUSIVE", candidateSet: set.labels, provisionalClassification: { label: "NATURAL_ADJACENCY" } });
     expect(report.whatRemainsUnknown.some((u) => u.includes("No absolute cultural distance"))).toBe(true);
+    // Evidence origin passes through unchanged for every label (kept from the PR #33 regression).
+    for (const origin of ["live", "recorded", "synthetic"] as const) {
+      const labelled = comparativeResult(result.territories, { evidenceOrigin: origin });
+      expect(projectComparativeStrategicReport(labelled, plan, validateComparativeOutcome(plan, labelled)).evidenceOrigin).toBe(origin);
+    }
   });
 
   // 15. Claim validation
@@ -648,49 +400,7 @@ describe("Sprint 9H: Comparative Cultural Elasticity Suite", () => {
 
   // 17. Permission and admission refusal
   it("17. Paid execution is refused when admission authorization is paused", () => {
-    const brand = { id: "B1", label: "Loewe", resolution: "confirmed" };
-    const target: AgentTerritoryResult = {
-      key: "target",
-      label: "Target",
-      role: "target",
-      origin: "user",
-      rationale: "target",
-      resolvedConcept: null,
-      representation: {
-        strategy: "PLACE_PANEL",
-        entityType: "place",
-        exemplars: [{ id: "E1", label: "Hotel 1", type: "place", role: "primary", selectionReason: "test", conceptSupport: "tag_member", popularity: 0.9 }],
-        rejectedExemplars: [],
-        diversity: "adequate",
-        diversityDetail: "ok",
-        attempts: 1,
-        summary: "ok",
-        failure: null,
-      },
-      analysisRoute: "PARTIAL_CULTURAL_ANALYSIS",
-      capabilities: {} as never,
-      comparisonSet: null,
-      relativePosition: null,
-      robustness: null,
-      coherence: null,
-      conditionedEvidence: null,
-      evidenceQuality: null,
-      classification: null,
-      keyEvidence: [],
-      limitations: [],
-      provenance: { correlationIds: ["c1"], sources: [] },
-    };
-
-    const references = [
-      { label: "Ref 1", entityType: "place" },
-      { label: "Ref 2", entityType: "place" },
-    ];
-
-    const eligibility = assessComparisonEligibility(brand, target, references, {
-      requirePaidAuthorization: true,
-      paidAuthorized: false,
-    });
-
+    const eligibility = assessComparisonEligibility(SYN_BRAND, territory(), [reference("a"), reference("b")], { requirePaidAuthorization: true, paidAuthorized: false });
     expect(eligibility.eligible).toBe(false);
     expect(eligibility.code).toBe("PAID_ADMISSION_PAUSED");
   });
@@ -753,3 +463,17 @@ describe("Sprint 9H: Comparative Cultural Elasticity Suite", () => {
     expect(elasticityResult.limitations.some((l) => l.code === "NOT_A_SUCCESS_PREDICTION")).toBe(true);
   });
 });
+
+/** SYNTHETIC comparative run result around the given territories. */
+function comparativeResult(territories: AgentTerritoryResult[], overrides: Partial<AgentAnalysisResult> = {}): AgentAnalysisResult {
+  return {
+    schemaVersion: "ce-agent-result/0.3", runId: "syn-run-comp", status: "COMPLETE", finalSufficiency: "SUFFICIENT", intent: "compare_territories",
+    userQuery: "SYNTHETIC comparison", brand: { id: SYN_BRAND.id, label: SYN_BRAND.label, type: "urn:entity:brand", resolution: "confirmed" },
+    territories, methodologyRuns: [],
+    summary: { text: "SYNTHETIC summary.", source: "deterministic_template", claimValidation: { passed: true, violations: [] } },
+    followUpOptions: ["Test alternative exemplars."], limitations: [], evidenceOrigin: "synthetic",
+    model: { id: "baseline-policy", kind: "scripted", live: false }, trace: {} as never, metrics: {} as never, skillsUsed: [],
+    comparisonSetConstruction: {} as never, layers: {} as never, failureCategory: null,
+    ...overrides,
+  } as AgentAnalysisResult;
+}

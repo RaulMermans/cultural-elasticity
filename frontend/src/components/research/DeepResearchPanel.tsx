@@ -5,6 +5,7 @@ import type { QueryResponse } from "@cultural-elasticity/shared";
 import { parseJobEnvelope, type JobEnvelope } from "@/lib/job-envelope";
 import { buildResearchFinding } from "@/lib/research-findings";
 import { hypothesisOutcomeCopy } from "@/lib/research-copy";
+import { ComparativeResearchPanel, type ComparativeFinding } from "./ComparativeResearchPanel";
 
 type Prepared = {
   version: "ce-deep-investigation/0.1" | "ce-deep-investigation/0.2";
@@ -24,7 +25,7 @@ function isPrepared(value: unknown): value is Prepared {
 const stopped = new Set(["completed", "failed", "cancelled", "expired"]);
 
 /** Shows only the job's actual stage and validated result, never a reasoning stream. */
-export function DeepResearchPanel({ scanId, territoryId, proposedDirection, token, onClose, onFinding, onOpenSummary }: { scanId: string; territoryId?: string; proposedDirection?: string; token: string; onClose: () => void; onFinding: (response: QueryResponse) => void; onOpenSummary: () => void }) {
+export function DeepResearchPanel({ scanId, territoryId, proposedDirection, token, onClose, onFinding, onComparative, onOpenSummary }: { scanId: string; territoryId?: string; proposedDirection?: string; token: string; onClose: () => void; onFinding: (response: QueryResponse) => void; onComparative: (finding: ComparativeFinding) => void; onOpenSummary: () => void }) {
   const [prepared, setPrepared] = useState<Prepared | null>(null);
   const [job, setJob] = useState<JobEnvelope | null>(null);
   const [error, setError] = useState("");
@@ -142,13 +143,8 @@ export function DeepResearchPanel({ scanId, territoryId, proposedDirection, toke
             This assesses comparative proximity within the observed candidate set. It does not measure universal distance, demand, or commercial outcome.
           </p>
         </div>
-      ) : result.hypothesisAssessment ? (
-        <div className="rw-compare-bridge" data-testid="compare-bridge">
-          <h4>Comparative Research Handoff (Optional)</h4>
-          <p className="quiet">
-            Compare this target against alternative territories of the same entity type ({result.territories[0]?.representation?.entityType ?? "compatible domain"}).
-          </p>
-        </div>
+      ) : result.hypothesisAssessment && job?.accessToken ? (
+        <ComparativeResearchPanel scanId={scanId} scanToken={token} parentJob={{ jobId: job.jobId, accessToken: job.accessToken }} onReport={onComparative} />
       ) : null}
       <p>{result.summary.claimValidation.passed ? result.summary.text : "The investigation did not produce a validated interpretation."}</p>
       {findings.map((item) => <article key={item.territory.key}>

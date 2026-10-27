@@ -22,3 +22,4 @@ export * from "./agent.js";
 export * from "./query.js";
 export * from "./query-validate.js";
 export * from "./brand-baseline.js";
+export * from "./connections.js";

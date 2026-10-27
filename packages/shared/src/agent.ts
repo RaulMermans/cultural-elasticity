@@ -691,7 +691,7 @@ export function isAgentRunResponse(value: unknown): value is AgentRunResponse {
   return record.schemaVersion === AGENT_RESULT_SCHEMA_VERSION && typeof record.runId === "string" && typeof record.status === "string" && typeof record.trace === "object";
 }
 
-// ---- Sprint 9H: Comparative Cultural Elasticity Bridge & Report ----
+// ---- Sprint 9H/9I: Comparative Cultural Elasticity Bridge & Report ----
 
 export type ComparisonEligibilityCode =
   | "ELIGIBLE"
@@ -702,7 +702,39 @@ export type ComparisonEligibilityCode =
   | "DUPLICATE_TERRITORIES"
   | "INVALID_TARGET_REPRESENTATION"
   | "BRAND_NOT_CONFIRMED"
-  | "PAID_ADMISSION_PAUSED";
+  | "PAID_ADMISSION_PAUSED"
+  /** Sprint 9I: a reference has no server-held Qloo evidence that it has members of a rankable type. */
+  | "REFERENCE_TYPE_UNVERIFIED"
+  /** Sprint 9I: a reference has no source reference, or its source call was degraded. */
+  | "REFERENCE_UNGROUNDED"
+  /** Sprint 9I: the same exemplar entity would represent two territories, or a representation repeats one entity. */
+  | "DUPLICATE_EXEMPLARS"
+  /** Sprint 9I: the reference or target belongs to a different brand than the authorized scan. */
+  | "BRAND_MISMATCH";
+
+/** How the server knows a reference has members of a rankable entity type. Never assigned from the target. */
+export type ReferenceTypeBasis =
+  /** A completed investigation of the same brand validated a representation of this type. */
+  | "VALIDATED_REPRESENTATION"
+  /** Qloo returned this tag in the profile of an entity of this type (the entity is the observed member). */
+  | "OBSERVED_MEMBER";
+
+/** A reference territory the server can offer. Built only from server-held evidence; the browser sends its id back. */
+export type ComparativeReferenceCandidate = {
+  id: string;
+  label: string;
+  conceptId: string | null;
+  source: "completed_investigation" | "target_exemplar_profile" | "baseline_direction";
+  /** Null when no server-held evidence establishes a rankable type: such a reference is shown but cannot be selected. */
+  typeEvidence: { entityType: string; basis: ReferenceTypeBasis; memberIds: string[]; correlationIds: string[] } | null;
+  /** Present for completed investigations: the validated exemplar ids (checked for overlap before ranking). */
+  exemplarIds: string[];
+  sourceStatus: "ok" | "partial" | "degraded";
+  correlationIds: string[];
+  rationale: string;
+  /** Why it cannot be selected yet, and what to do instead. Null when selectable. */
+  blocked: { code: ComparisonEligibilityCode; reason: string; action: string } | null;
+};
 
 export type ComparisonEligibility = {
   eligible: boolean;
@@ -723,11 +755,38 @@ export type ComparisonEligibility = {
     entityType: string;
     conceptId?: string;
     origin: "user" | "evidence";
+    typeBasis?: ReferenceTypeBasis;
   }[];
 };
 
+/** Deterministic checks of a finished comparative run against the plan the server authorized. */
+export type ComparativeOutcomeCheck = {
+  code:
+    | "BRAND_MATCHES_SCAN"
+    | "TARGET_PRESENT"
+    | "SINGLE_RANKING_TYPE"
+    | "RANKED_TERRITORIES_REPRESENTED"
+    | "RANKED_TERRITORIES_SOURCED"
+    | "CONCEPT_ANCHOR_MATCHES"
+    | "CLASSIFICATION_HAS_POSITION";
+  passed: boolean;
+  detail: string;
+};
+
+export type ComparativeOutcome =
+  /** The target holds a relative position inside one validated single-call panel. */
+  | "RELATIVE_POSITION_ESTABLISHED"
+  /** The run completed but formed no valid panel for the target (for example, incompatible types): qualitative only. */
+  | "NO_RELATIVE_POSITION"
+  /** A consistency check failed: no ranking from this run is shown. */
+  | "INTEGRITY_FAILED"
+  /** The run did not complete (failed, cancelled, expired or no result). */
+  | "NOT_COMPLETED";
+
 export type ComparativeStrategicReport = {
-  schemaVersion: "ce-comparative-report/0.1";
+  schemaVersion: "ce-comparative-report/0.2";
+  outcome: ComparativeOutcome;
+  checks: ComparativeOutcomeCheck[];
   brand: { id: string; name: string };
   targetTerritory: {
     key: string;
@@ -739,21 +798,61 @@ export type ComparativeStrategicReport = {
     coherence: { band: string; consistentlyShared: { id: string; label: string }[] } | null;
     evidenceQuality: { level: string; drivers: string[] } | null;
     candidateSet: string[];
+    entityType: string | null;
   };
   alternativesEvaluated: {
     key: string;
     name: string;
-    role: "reference" | "frontier_candidate";
+    role: "reference" | "frontier_candidate" | "target";
     origin: "user" | "evidence";
+    entityType: string | null;
+    analysisRoute: string;
     relativePosition: { position: number | null; of: number; medianPercentile: number | null } | null;
     classification: { label: string } | null;
     robustness: { level: string } | null;
+    /** Why this territory has no relative position (e.g. another entity type). Null when ranked. */
+    comparisonLimitation: string | null;
   }[];
   whatEvidenceEstablishes: string[];
   whatRemainsUnknown: string[];
   strategicImplications: string[];
   nextResearchActions: string[];
+  /** Validated model synthesis, if any. Labelled interpretation, never evidence. */
+  interpretation: { text: string; validated: boolean } | null;
   evidenceOrigin: "live" | "recorded" | "synthetic";
-  provenance: { correlationIds: string[]; methodologyVersion: string };
+  provenance: { runId: string; correlationIds: string[]; methodologyVersion: string };
 };
 
+// ---- Sprint 9I: cross-domain cultural relationships ----
+
+/**
+ * DIRECT_QLOO_OBSERVATION: one Qloo call returned the target for a request that named the source.
+ * DERIVED_PROFILE_OVERLAP: deterministic overlap of separately observed profiles (not a Qloo edge).
+ * AGENT_INTERPRETATION: validated model wording about evidence; never evidence and never a graph edge.
+ */
+export type CulturalRelationshipKind = "DIRECT_QLOO_OBSERVATION" | "DERIVED_PROFILE_OVERLAP" | "AGENT_INTERPRETATION";
+
+export type CulturalNode = { kind: "brand" | "tag" | "entity" | "territory"; id: string; label: string; domain: string };
+
+export type CulturalRelationship = {
+  id: string;
+  kind: CulturalRelationshipKind;
+  from: CulturalNode;
+  to: CulturalNode;
+  /** How the relationship was obtained, in plain words. */
+  basis: string;
+  correlationIds: string[];
+  /** Cross-domain relationships explain; they never enter a relative ranking. */
+  rankable: false;
+  limitation: string | null;
+};
+
+export type CulturalConnectionMap = {
+  schemaVersion: "ce-cultural-connections/0.1";
+  brand: { id: string; name: string };
+  evidenceOrigin: "live" | "recorded" | "synthetic";
+  domains: string[];
+  relationships: CulturalRelationship[];
+  /** Explicit notes for empty or limited relationship kinds (an empty overlap is reported, not hidden). */
+  notes: string[];
+};

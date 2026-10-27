@@ -1,0 +1,2893 @@
+{
+  "fixtureType": "synthetic",
+  "notice": "SYNTHETIC: recorded from the real backend routes over the synthetic agent world (baseline policy, structural interpreter, scripted provider). Not Qloo evidence and not a model run.",
+  "baseline": {
+    "schemaVersion": "ce-brand-baseline/0.2",
+    "scanId": "00000000-0000-4000-8000-0000000009a1",
+    "scanStatus": "COMPLETE",
+    "brand": {
+      "id": "syn-internal-brand-9i",
+      "qlooId": "SYN-BR-3001",
+      "name": "Larkspur Velo",
+      "resolutionStatus": "RESOLVED",
+      "source": {
+        "operation": "describe",
+        "correlationId": "syn-describe",
+        "sourceId": "SYN-BR-3001",
+        "capturedAt": "2026-10-27T00:00:00.000Z",
+        "sourceStatus": "ok",
+        "scope": "identity"
+      }
+    },
+    "fingerprint": {
+      "signals": [
+        {
+          "id": "urn:tag:interests:syn:slow_touring",
+          "name": "Slow Touring",
+          "kind": "tag",
+          "domain": "tags",
+          "source": {
+            "operation": "entity_tags",
+            "correlationId": "syn-tags",
+            "sourceId": "urn:tag:interests:syn:slow_touring",
+            "capturedAt": "2026-10-25T00:00:00.000Z",
+            "sourceStatus": "ok",
+            "scope": "tags"
+          },
+          "rankWithinCall": 1,
+          "facet": "interests:syn",
+          "role": "AUDIENCE_TASTE"
+        }
+      ],
+      "excluded": [],
+      "themes": [],
+      "domainCoverage": [
+        {
+          "domain": "tags",
+          "status": "OBSERVED",
+          "entityCount": 1
+        }
+      ],
+      "provenance": [
+        {
+          "operation": "describe",
+          "correlationId": "syn-describe",
+          "sourceId": "SYN-BR-3001",
+          "capturedAt": "2026-10-27T00:00:00.000Z",
+          "sourceStatus": "ok",
+          "scope": "identity"
+        },
+        {
+          "operation": "entity_tags",
+          "correlationId": "syn-tags",
+          "sourceId": "urn:tag:interests:syn:slow_touring",
+          "capturedAt": "2026-10-25T00:00:00.000Z",
+          "sourceStatus": "ok",
+          "scope": "tags"
+        }
+      ],
+      "limitations": []
+    },
+    "territories": [
+      {
+        "id": "05e272e78de09e4903fb40b6",
+        "name": "Slow Touring",
+        "canonicalConcept": "urn:tag:interests:syn:slow_touring",
+        "level": "TERRITORY_HYPOTHESIS",
+        "validation": "UNVALIDATED",
+        "evidenceStatus": "OBSERVED_ASSOCIATION",
+        "discoveryBasis": "observed-cultural-tag/v2",
+        "facet": "interests:syn",
+        "observedDomains": [
+          "tags"
+        ],
+        "supportingReferences": [
+          {
+            "operation": "entity_tags",
+            "correlationId": "syn-tags",
+            "sourceId": "urn:tag:interests:syn:slow_touring",
+            "capturedAt": "2026-10-25T00:00:00.000Z",
+            "sourceStatus": "ok",
+            "scope": "tags"
+          }
+        ],
+        "explanation": "Qloo's tag profile for Larkspur Velo includes “Slow Touring” (syn interests), at position 1 of 1 in Qloo's returned order.",
+        "nextInvestigation": "Run a deep research comparison to test whether Larkspur Velo's audience over-indexes on “Slow Touring” against comparable references.",
+        "limitations": [
+          "One Qloo tag observation. Not corroborated by an independent call.",
+          "A brand association, not a validated relative analysis or a commercial opportunity."
+        ],
+        "availableActions": [
+          "inspect_evidence"
+        ]
+      }
+    ],
+    "discovery": {
+      "rule": "observed-cultural-tag/v2",
+      "themeRule": "tag-facet-group/v1",
+      "outcome": "HYPOTHESES_FOUND",
+      "reasons": [],
+      "nextSteps": [
+        "Test the strongest territory hypothesis with a deep research comparison before treating it as a finding."
+      ]
+    },
+    "audit": {
+      "returnedTags": 1,
+      "operationalTags": 0,
+      "culturalTags": 1,
+      "possibleDuplicateTags": 0,
+      "returnedEntities": 0,
+      "typeEvidence": {
+        "PROVIDER_CONFIRMED_TYPE": 0,
+        "QUERY_SCOPED": 0,
+        "GENERIC_TYPE_UNRESOLVED": 0,
+        "CONFLICTING_TYPE": 0
+      },
+      "retainedAssociations": 0,
+      "excludedEntities": 0,
+      "themes": 0,
+      "hypotheses": 1
+    },
+    "execution": {
+      "templateVersion": "ce-brand-baseline/v2",
+      "startedAt": "2026-10-27T00:00:00.000Z",
+      "finishedAt": "2026-10-27T00:01:00.000Z",
+      "providerCallCount": 2,
+      "completedStages": [
+        "identity",
+        "tags",
+        "normalize",
+        "discover",
+        "validate"
+      ],
+      "incompleteStages": [],
+      "recordedOrLive": "recorded",
+      "budgetStatus": "WITHIN_LIMIT"
+    }
+  },
+  "parent": {
+    "created": {
+      "jobId": "38c83367-b517-40fd-8091-98dc272d9f00",
+      "status": "running",
+      "stage": "interpreting",
+      "stageLabel": "Interpreting question",
+      "stopping": false,
+      "response": null,
+      "error": null,
+      "accessToken": "syn-parent-job-token"
+    },
+    "view": {
+      "jobId": "38c83367-b517-40fd-8091-98dc272d9f00",
+      "status": "completed",
+      "stage": "done",
+      "stageLabel": "Findings ready",
+      "stopping": false,
+      "response": {
+        "schemaVersion": "ce-query/0.1",
+        "queryId": "69f929e6-aa6d-41db-97ad-47519fa00c9b",
+        "state": "INVESTIGATION_COMPLETED",
+        "interpretation": {
+          "schemaVersion": "ce-query/0.1",
+          "rawQuery": "Investigate whether Qloo evidence supports Gravel Riding as a cultural research direction for Larkspur Velo.",
+          "primaryIntent": "analyze_move",
+          "secondaryIntents": [],
+          "brand": {
+            "name": "Larkspur Velo",
+            "source": "EXPLICIT"
+          },
+          "brandsNamed": [
+            "Larkspur Velo"
+          ],
+          "territories": [
+            {
+              "name": "Gravel Riding",
+              "source": "EXPLICIT"
+            }
+          ],
+          "references": {},
+          "constraints": [],
+          "unresolvedReferences": [],
+          "systemDirectives": [],
+          "confidence": "HIGH",
+          "disposition": "EXECUTABLE",
+          "unsupportedCapabilities": [],
+          "interpretationWarnings": [
+            "TEXT_NOT_INTERPRETED: no model is configured; only the structured fields and context were read"
+          ],
+          "reasonCodes": [],
+          "interpreter": {
+            "kind": "structural"
+          }
+        },
+        "reasons": [],
+        "handoff": {
+          "intent": "analyze_move",
+          "brand": "Larkspur Velo",
+          "territories": [
+            "Gravel Riding"
+          ],
+          "operation": "NEW_INVESTIGATION"
+        },
+        "supportedAlternative": null,
+        "context": null,
+        "investigation": {
+          "runId": "7478ba16-e9fd-46cf-bcc1-0cebc7aa097b",
+          "reused": false,
+          "link": {
+            "operation": "NEW_INVESTIGATION",
+            "parentRunId": null,
+            "selectedTerritoryKey": null,
+            "inheritedBrand": null,
+            "constraints": [],
+            "reason": "analyze_move",
+            "queryId": "69f929e6-aa6d-41db-97ad-47519fa00c9b"
+          },
+          "result": {
+            "schemaVersion": "ce-agent-result/0.3",
+            "runId": "7478ba16-e9fd-46cf-bcc1-0cebc7aa097b",
+            "status": "COMPLETE",
+            "finalSufficiency": "SUFFICIENT",
+            "intent": "analyze_move",
+            "userQuery": "Investigate whether Qloo evidence supports Gravel Riding as a cultural research direction for Larkspur Velo.",
+            "brand": {
+              "id": "SYN-BR-3001",
+              "label": "Larkspur Velo",
+              "type": "urn:entity:brand",
+              "resolution": "confirmed"
+            },
+            "territories": [
+              {
+                "key": "gravel_riding",
+                "label": "Gravel Riding",
+                "role": "target",
+                "origin": "user",
+                "rationale": "named by the user",
+                "resolvedConcept": {
+                  "id": "urn:tag:activity_type:syn:gravel_riding",
+                  "label": "Gravel Riding",
+                  "type": "urn:tag:activity_type:syn"
+                },
+                "representation": {
+                  "strategy": "PLACE_PANEL",
+                  "entityType": "place",
+                  "exemplars": [
+                    {
+                      "id": "SYN-PL-3001",
+                      "label": "Chalk Fork Bunkhouse",
+                      "type": "place",
+                      "role": "primary",
+                      "selectionReason": "Qloo tag member (popularity 0.78)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.78,
+                      "quality": "VALID"
+                    },
+                    {
+                      "id": "SYN-PL-3002",
+                      "label": "Loamline Station",
+                      "type": "place",
+                      "role": "alternate",
+                      "selectionReason": "Qloo tag member (popularity 0.76)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.76,
+                      "quality": "VALID"
+                    },
+                    {
+                      "id": "SYN-PL-3003",
+                      "label": "Washboard Depot",
+                      "type": "place",
+                      "role": "alternate",
+                      "selectionReason": "Qloo tag member (popularity 0.74)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.74,
+                      "quality": "VALID"
+                    }
+                  ],
+                  "rejectedExemplars": [],
+                  "diversity": "low",
+                  "diversityDetail": "near-identical tag profiles: Chalk Fork Bunkhouse / Loamline Station (1); Chalk Fork Bunkhouse / Washboard Depot (1); Loamline Station / Washboard Depot (1)",
+                  "attempts": 1,
+                  "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Gravel Riding (urn:tag:activity_type:syn:gravel_riding): Chalk Fork Bunkhouse, Loamline Station, Washboard Depot",
+                  "failure": null
+                },
+                "keyEvidence": [
+                  "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+                  "A brand-conditioned Qloo query for this concept returned 3 entities (SPARSE); top: Washboard Depot, Loamline Station, Chalk Fork Bunkhouse.",
+                  "Evidence quality MEDIUM."
+                ],
+                "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+                "capabilities": {
+                  "representation": "SUPPORTED",
+                  "relativePosition": "UNAVAILABLE",
+                  "robustness": "UNAVAILABLE",
+                  "coherence": "AVAILABLE",
+                  "conditionedEvidence": "AVAILABLE",
+                  "classification": "UNAVAILABLE"
+                },
+                "comparisonSet": null,
+                "relativePosition": null,
+                "robustness": null,
+                "coherence": {
+                  "rawSharedMedian": 0,
+                  "filteredSharedMedian": 0,
+                  "filteredBand": "NONE",
+                  "exemplarsCompared": 3,
+                  "consistentlyShared": []
+                },
+                "conditionedEvidence": {
+                  "support": "SPARSE",
+                  "entityCount": 3,
+                  "topEntities": [
+                    {
+                      "label": "Washboard Depot",
+                      "rank": 1
+                    },
+                    {
+                      "label": "Loamline Station",
+                      "rank": 2
+                    },
+                    {
+                      "label": "Chalk Fork Bunkhouse",
+                      "rank": 3
+                    }
+                  ],
+                  "correlationId": "syn-0009"
+                },
+                "evidenceQuality": {
+                  "level": "MEDIUM",
+                  "drivers": [
+                    "profileCoverage: limited"
+                  ]
+                },
+                "classification": null,
+                "limitations": [
+                  {
+                    "code": "COMPARISON_SET_TOO_SMALL",
+                    "detail": "only 1 rankable place territory in this analysis; a relative position needs ≥ 3 of one entity type"
+                  },
+                  {
+                    "code": "NO_RELATIVE_POSITION",
+                    "detail": "Gravel Riding: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+                  }
+                ],
+                "provenance": {
+                  "correlationIds": [
+                    "syn-0002",
+                    "syn-0005",
+                    "syn-0006",
+                    "syn-0007",
+                    "syn-0008",
+                    "syn-0009"
+                  ],
+                  "sources": [
+                    "synthetic-fixture"
+                  ]
+                },
+                "candidate": {
+                  "originalLabel": "Gravel Riding",
+                  "sourceTagId": null,
+                  "resolvedId": "urn:tag:activity_type:syn:gravel_riding",
+                  "canonicalConceptKey": "gravel_riding",
+                  "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+                  "candidateSource": "user",
+                  "anchorRelation": "NO_SOURCE_TAG",
+                  "uncertainty": null
+                },
+                "evidenceStatus": "PARTIAL_EVIDENCE",
+                "probes": [
+                  {
+                    "conceptKey": "urn:tag:activity_type:syn:gravel_riding",
+                    "label": "Gravel Riding",
+                    "namespace": "activity_type:syn",
+                    "attemptedTypes": [
+                      "brand",
+                      "place"
+                    ],
+                    "emptyTypes": [
+                      "brand"
+                    ],
+                    "successfulTypes": [
+                      "place"
+                    ],
+                    "unreliableTypes": [],
+                    "totalEmptyTypeProbes": 1,
+                    "probingExhausted": false,
+                    "exhaustionReason": null
+                  }
+                ]
+              }
+            ],
+            "hypothesisAssessment": {
+              "version": "single-hypothesis/v1",
+              "outcome": "INCONCLUSIVE",
+              "question": "Investigate whether Qloo evidence supports Gravel Riding as a cultural research direction for Larkspur Velo.",
+              "observed": [
+                "Qloo returned 3 distinct place entities in the brand-conditioned Gravel Riding query."
+              ],
+              "supports": [],
+              "limitations": [
+                "The observed relationship lacks a verified shared cultural signal in the available profiles."
+              ],
+              "unknowns": [
+                "Cultural association does not establish demand, purchase intent, commercial viability, or partnership feasibility."
+              ],
+              "nextStep": "Refine the Gravel Riding question or identify an alternative Qloo-resolvable concept before drawing a strategic conclusion.",
+              "correlationIds": [
+                "syn-0009",
+                "syn-0002",
+                "syn-0005",
+                "syn-0006",
+                "syn-0007",
+                "syn-0008"
+              ]
+            },
+            "methodologyRuns": [],
+            "summary": {
+              "text": "Larkspur Velo: 1 territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.\nGravel Riding: partial cultural analysis (brand-conditioned evidence and shared signals, no relative position).",
+              "source": "deterministic_template",
+              "claimValidation": {
+                "passed": true,
+                "violations": []
+              }
+            },
+            "followUpOptions": [
+              "Add represented reference territories of the same entity type so Gravel Riding can be placed in a comparison set.",
+              "Review the exemplar choices behind each territory before acting on any class."
+            ],
+            "limitations": [
+              {
+                "code": "NOT_A_SUCCESS_PREDICTION",
+                "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+              },
+              {
+                "code": "NO_APPROVED_SCORE",
+                "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+              },
+              {
+                "code": "SYNTHETIC_EVIDENCE",
+                "detail": "evidence came from the scripted SYNTHETIC world, not from Qloo; never cite it as Qloo evidence"
+              },
+              {
+                "code": "AGENT_POLICY_NOT_LLM",
+                "detail": "investigation decisions were made by the deterministic baseline policy \"baseline-policy-v2\", not by a live language model"
+              }
+            ],
+            "evidenceOrigin": "synthetic",
+            "model": {
+              "id": "baseline-policy-v2",
+              "kind": "baseline",
+              "live": false
+            },
+            "trace": {
+              "omitted": "SYNTHETIC browser fixture: trace not included"
+            },
+            "metrics": {
+              "agent_iterations": 7,
+              "qloo_calls": 9,
+              "tool_calls": 10,
+              "tool_success_rate": 1,
+              "invalid_actions": 0,
+              "representation_attempts": 1,
+              "territories_proposed": 1,
+              "territories_resolved": 1,
+              "territories_rejected": 0,
+              "full_analysis_count": 0,
+              "partial_analysis_count": 1,
+              "descriptive_analysis_count": 0,
+              "unsupported_count": 0,
+              "methodology_calls": 0,
+              "latency_ms": 68,
+              "model_input_tokens": 0,
+              "model_output_tokens": 0,
+              "retry_count": 0,
+              "budget_exhausted": false,
+              "model_turns": 7,
+              "model_attempts": 7,
+              "first_attempt_valid_turns": 7,
+              "valid_after_repair_turns": 7,
+              "repairs": 0,
+              "unknown_tool_attempts": 0,
+              "invalid_argument_attempts": 0,
+              "unsupported_state_actions": 0,
+              "synthesis_attempts": 0,
+              "calls_avoided": 0,
+              "avg_context_chars": 6995,
+              "max_context_chars": 11679,
+              "avg_context_tokens_estimate": 1749,
+              "model_latency_ms": 0,
+              "qloo_latency_ms": 13,
+              "model_cost_usd": null,
+              "model_id": "baseline-policy-v2",
+              "model_effort": null,
+              "synthesis_latency_ms": 0,
+              "analysis_latency_ms": 14,
+              "qloo_spacing_ms": 0,
+              "unattributed_ms": 41,
+              "span_covered_ms": 54,
+              "span_unattributed_ms": 14,
+              "span_coverage_ratio": 0.794,
+              "monotonic_elapsed_ms": 68,
+              "wall_clock_skew_ms": 0,
+              "synthesis_first_attempt_valid": null,
+              "synthesis_valid_after_repair": null,
+              "synthesis_fallback": true,
+              "reference_deferrals": 0,
+              "empty_type_probes": 1,
+              "max_empty_type_probes_per_concept": 1,
+              "probe_limit_refusals": 0,
+              "type_alignment_deferrals": 0,
+              "reference_namespace_refusals": 0,
+              "successful_type_probes": 1,
+              "namespace_type_refusals": 0,
+              "alternate_anchor_refusals": 0,
+              "source_evidence_anchors": 1,
+              "frontier_completion_refusals": 0
+            },
+            "skillsUsed": [
+              {
+                "id": "resolve_brand",
+                "version": 1
+              },
+              {
+                "id": "resolve_territory",
+                "version": 5
+              },
+              {
+                "id": "build_territory_representation",
+                "version": 4
+              },
+              {
+                "id": "analyze_territories",
+                "version": 3
+              }
+            ],
+            "comparisonSetConstruction": {
+              "intent": "analyze_move",
+              "proposed": [
+                {
+                  "key": "gravel_riding",
+                  "label": "Gravel Riding",
+                  "role": "target",
+                  "source": "user",
+                  "evidence": "named by the user"
+                }
+              ],
+              "rejected": [],
+              "final": [
+                {
+                  "key": "gravel_riding",
+                  "label": "Gravel Riding",
+                  "role": "target",
+                  "source": "user",
+                  "route": "PARTIAL_CULTURAL_ANALYSIS"
+                }
+              ],
+              "dedupDecisions": [],
+              "semanticAssessments": [],
+              "diversity": {
+                "assessment": "unknown",
+                "similarPairs": [],
+                "detail": "fewer than two non-target territories: diversity not assessed"
+              },
+              "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+            },
+            "layers": {
+              "qlooEvidence": {
+                "brand": {
+                  "id": "SYN-BR-3001",
+                  "label": "Larkspur Velo",
+                  "correlationId": "syn-0001"
+                },
+                "concepts": [
+                  {
+                    "territoryKey": "gravel_riding",
+                    "id": "urn:tag:activity_type:syn:gravel_riding",
+                    "label": "Gravel Riding",
+                    "correlationIds": [
+                      "syn-0002",
+                      "syn-0005",
+                      "syn-0006",
+                      "syn-0007"
+                    ]
+                  }
+                ],
+                "exemplars": [
+                  {
+                    "territoryKey": "gravel_riding",
+                    "id": "SYN-PL-3001",
+                    "label": "Chalk Fork Bunkhouse",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0004"
+                  },
+                  {
+                    "territoryKey": "gravel_riding",
+                    "id": "SYN-PL-3002",
+                    "label": "Loamline Station",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0004"
+                  },
+                  {
+                    "territoryKey": "gravel_riding",
+                    "id": "SYN-PL-3003",
+                    "label": "Washboard Depot",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0004"
+                  }
+                ],
+                "qlooCalls": 9
+              },
+              "systemAnalysis": {
+                "routes": [
+                  {
+                    "territoryKey": "gravel_riding",
+                    "route": "PARTIAL_CULTURAL_ANALYSIS",
+                    "classification": null,
+                    "position": null,
+                    "robustness": null
+                  }
+                ],
+                "methodologyRunIds": [],
+                "finalSufficiency": "SUFFICIENT",
+                "representationDecisions": {
+                  "valid": 3,
+                  "weak": 0,
+                  "rejected": 0
+                },
+                "semanticComparison": []
+              },
+              "agentInterpretation": {
+                "summary": "Larkspur Velo: 1 territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.\nGravel Riding: partial cultural analysis (brand-conditioned evidence and shared signals, no relative position).",
+                "source": "deterministic_template",
+                "claimValidationPassed": true,
+                "semanticJudgments": [],
+                "followUpOptions": [
+                  "Add represented reference territories of the same entity type so Gravel Riding can be placed in a comparison set.",
+                  "Review the exemplar choices behind each territory before acting on any class."
+                ],
+                "findings": []
+              }
+            },
+            "failureCategory": null
+          }
+        },
+        "territories": [
+          {
+            "name": "Gravel Riding",
+            "investigationState": "INVESTIGATED",
+            "territoryKey": "gravel_riding",
+            "evidenceStatus": "PARTIAL_EVIDENCE",
+            "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS"
+          }
+        ],
+        "nextOperations": [
+          "explore_frontier",
+          "analyze_move",
+          "compare_territories",
+          "refine_territory",
+          "switch_territory"
+        ],
+        "telemetry": {
+          "queryId": "69f929e6-aa6d-41db-97ad-47519fa00c9b",
+          "schemaVersion": "ce-query/0.1",
+          "intent": "analyze_move",
+          "secondaryIntents": [],
+          "explicitFields": [
+            "brand",
+            "intent",
+            "territories"
+          ],
+          "inheritedFieldNames": [],
+          "clarificationRequired": false,
+          "validationOutcome": "EXECUTABLE",
+          "selectedCapability": "analyze_move",
+          "routingOutcome": "INVESTIGATION_COMPLETED",
+          "parentRunId": null,
+          "childRunId": "7478ba16-e9fd-46cf-bcc1-0cebc7aa097b",
+          "interpretationLatencyMs": 0,
+          "interpretationTokens": {
+            "input": 0,
+            "output": 0
+          },
+          "interpretationCostUsd": null,
+          "repairAttempts": 0,
+          "executionHandOffStatus": "HANDED_OFF",
+          "errorCodes": [],
+          "queryChars": 108,
+          "queryHash": "f219b89e1bcd"
+        }
+      },
+      "error": null
+    }
+  },
+  "options": {
+    "version": "ce-comparative-options/0.1",
+    "brand": {
+      "name": "Larkspur Velo",
+      "qlooId": "SYN-BR-3001"
+    },
+    "target": {
+      "label": "Gravel Riding",
+      "conceptId": "urn:tag:activity_type:syn:gravel_riding",
+      "entityType": "place",
+      "exemplars": [
+        {
+          "label": "Chalk Fork Bunkhouse",
+          "type": "place"
+        },
+        {
+          "label": "Loamline Station",
+          "type": "place"
+        },
+        {
+          "label": "Washboard Depot",
+          "type": "place"
+        }
+      ],
+      "correlationIds": [
+        "syn-0002",
+        "syn-0005",
+        "syn-0006",
+        "syn-0007",
+        "syn-0008",
+        "syn-0009"
+      ],
+      "singleHypothesisOutcome": "INCONCLUSIVE",
+      "canAnchor": true,
+      "problem": null
+    },
+    "references": [
+      {
+        "id": "investigation:3159ddc6-a099-40f1-8e9b-f93923f6d384:alpine_hiking",
+        "label": "Alpine Hiking",
+        "conceptId": "urn:tag:activity_type:syn:alpine_hiking",
+        "source": "completed_investigation",
+        "typeEvidence": {
+          "entityType": "place",
+          "basis": "VALIDATED_REPRESENTATION",
+          "memberIds": [
+            "SYN-PL-3004",
+            "SYN-PL-3005",
+            "SYN-PL-3006"
+          ],
+          "correlationIds": [
+            "syn-0011",
+            "syn-0014",
+            "syn-0015",
+            "syn-0016",
+            "syn-0017",
+            "syn-0018"
+          ]
+        },
+        "exemplarIds": [
+          "SYN-PL-3004",
+          "SYN-PL-3005",
+          "SYN-PL-3006"
+        ],
+        "sourceStatus": "ok",
+        "correlationIds": [
+          "syn-0011",
+          "syn-0014",
+          "syn-0015",
+          "syn-0016",
+          "syn-0017",
+          "syn-0018"
+        ],
+        "rationale": "Investigated earlier in this research session; its validated representation uses place entities.",
+        "blocked": null
+      },
+      {
+        "id": "investigation:b6c57702-12f0-4129-bd82-92a7f3d42cf1:mountain_town",
+        "label": "Mountain Town",
+        "conceptId": "urn:tag:keyword:syn:mountain_town",
+        "source": "completed_investigation",
+        "typeEvidence": {
+          "entityType": "place",
+          "basis": "VALIDATED_REPRESENTATION",
+          "memberIds": [
+            "SYN-PL-3010",
+            "SYN-PL-3011",
+            "SYN-PL-3012"
+          ],
+          "correlationIds": [
+            "syn-0020",
+            "syn-0023",
+            "syn-0024",
+            "syn-0025",
+            "syn-0026",
+            "syn-0027"
+          ]
+        },
+        "exemplarIds": [
+          "SYN-PL-3010",
+          "SYN-PL-3011",
+          "SYN-PL-3012"
+        ],
+        "sourceStatus": "ok",
+        "correlationIds": [
+          "syn-0020",
+          "syn-0023",
+          "syn-0024",
+          "syn-0025",
+          "syn-0026",
+          "syn-0027"
+        ],
+        "rationale": "Investigated earlier in this research session; its validated representation uses place entities.",
+        "blocked": null
+      },
+      {
+        "id": "investigation:a01d262e-071f-44e0-a66a-f834d306256b:espresso",
+        "label": "Espresso",
+        "conceptId": "urn:tag:product_category:syn:espresso",
+        "source": "completed_investigation",
+        "typeEvidence": {
+          "entityType": "brand",
+          "basis": "VALIDATED_REPRESENTATION",
+          "memberIds": [
+            "SYN-BR-3002",
+            "SYN-BR-3003",
+            "SYN-BR-3004"
+          ],
+          "correlationIds": [
+            "syn-0029",
+            "syn-0032",
+            "syn-0033",
+            "syn-0034",
+            "syn-0035",
+            "syn-0036"
+          ]
+        },
+        "exemplarIds": [
+          "SYN-BR-3002",
+          "SYN-BR-3003",
+          "SYN-BR-3004"
+        ],
+        "sourceStatus": "ok",
+        "correlationIds": [
+          "syn-0029",
+          "syn-0032",
+          "syn-0033",
+          "syn-0034",
+          "syn-0035",
+          "syn-0036"
+        ],
+        "rationale": "Investigated earlier in this research session; its validated representation uses brand entities.",
+        "blocked": null
+      },
+      {
+        "id": "baseline:05e272e78de09e4903fb40b6",
+        "label": "Slow Touring",
+        "conceptId": "urn:tag:interests:syn:slow_touring",
+        "source": "baseline_direction",
+        "typeEvidence": null,
+        "exemplarIds": [],
+        "sourceStatus": "ok",
+        "correlationIds": [
+          "syn-tags"
+        ],
+        "rationale": "A baseline research direction from this brand scan.",
+        "blocked": {
+          "code": "REFERENCE_TYPE_UNVERIFIED",
+          "reason": "The scan observed it as a tag only; no Qloo evidence yet shows which entity type represents it.",
+          "action": "Investigate this direction first; its completed investigation becomes a selectable reference."
+        }
+      }
+    ],
+    "limits": {
+      "maxQlooCalls": 32,
+      "maxAgentTurns": 12,
+      "maxRunMinutes": 20,
+      "maxPanelOptions": 6,
+      "model": "claude-haiku-5-5",
+      "reservedUsd": 0.4,
+      "unknownOutcomes": "An uncertain provider call counts against the budget and is never replayed automatically."
+    },
+    "admission": {
+      "accepting": true
+    },
+    "connections": {
+      "schemaVersion": "ce-cultural-connections/0.1",
+      "brand": {
+        "id": "SYN-BR-3001",
+        "name": "Larkspur Velo"
+      },
+      "evidenceOrigin": "synthetic",
+      "domains": [
+        "place",
+        "territory",
+        "brand",
+        "tag"
+      ],
+      "relationships": [
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:gravel_riding",
+            "label": "Gravel Riding",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3001",
+            "label": "Chalk Fork Bunkhouse",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Gravel Riding.",
+          "correlationIds": [
+            "syn-0004"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:gravel_riding:SYN-PL-3001",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:gravel_riding",
+            "label": "Gravel Riding",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3002",
+            "label": "Loamline Station",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Gravel Riding.",
+          "correlationIds": [
+            "syn-0004"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:gravel_riding:SYN-PL-3002",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:gravel_riding",
+            "label": "Gravel Riding",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3003",
+            "label": "Washboard Depot",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Gravel Riding.",
+          "correlationIds": [
+            "syn-0004"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:gravel_riding:SYN-PL-3003",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:alpine_hiking",
+            "label": "Alpine Hiking",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3004",
+            "label": "Tarn Gate Hut",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Alpine Hiking.",
+          "correlationIds": [
+            "syn-0013"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:alpine_hiking:SYN-PL-3004",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:alpine_hiking",
+            "label": "Alpine Hiking",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3005",
+            "label": "Scree Saddle Refuge",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Alpine Hiking.",
+          "correlationIds": [
+            "syn-0013"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:alpine_hiking:SYN-PL-3005",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:alpine_hiking",
+            "label": "Alpine Hiking",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3006",
+            "label": "Cirque Hollow Hut",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Alpine Hiking.",
+          "correlationIds": [
+            "syn-0013"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:alpine_hiking:SYN-PL-3006",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:keyword:syn:mountain_town",
+            "label": "Mountain Town",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3010",
+            "label": "Switchback Inn",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Mountain Town.",
+          "correlationIds": [
+            "syn-0022"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:keyword:syn:mountain_town:SYN-PL-3010",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:keyword:syn:mountain_town",
+            "label": "Mountain Town",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3011",
+            "label": "Pinegrade Lodge",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Mountain Town.",
+          "correlationIds": [
+            "syn-0022"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:keyword:syn:mountain_town:SYN-PL-3011",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:keyword:syn:mountain_town",
+            "label": "Mountain Town",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3012",
+            "label": "Upper Ferry House",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Mountain Town.",
+          "correlationIds": [
+            "syn-0022"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:keyword:syn:mountain_town:SYN-PL-3012",
+          "rankable": false
+        },
+        {
+          "kind": "DERIVED_PROFILE_OVERLAP",
+          "from": {
+            "kind": "brand",
+            "id": "SYN-BR-3001",
+            "label": "Larkspur Velo",
+            "domain": "brand"
+          },
+          "to": {
+            "kind": "territory",
+            "id": "mountain_town",
+            "label": "Mountain Town",
+            "domain": "territory"
+          },
+          "basis": "The tag Mountain Town appears both in the Larkspur Velo profile and in every compared Mountain Town exemplar profile. Computed from separate Qloo calls; Qloo did not return this as a relationship.",
+          "correlationIds": [
+            "syn-0020",
+            "syn-0023",
+            "syn-0024",
+            "syn-0025",
+            "syn-0026",
+            "syn-0027"
+          ],
+          "limitation": "Shared tags indicate a common cultural signal, not a distance or a ranking.",
+          "id": "DERIVED_PROFILE_OVERLAP:SYN-BR-3001:mountain_town",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:product_category:syn:espresso",
+            "label": "Espresso",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-BR-3002",
+            "label": "Crema Works",
+            "domain": "brand"
+          },
+          "basis": "Qloo returned this brand as a member of the tag Espresso.",
+          "correlationIds": [
+            "syn-0031"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:product_category:syn:espresso:SYN-BR-3002",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:product_category:syn:espresso",
+            "label": "Espresso",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-BR-3003",
+            "label": "Portafilter Supply",
+            "domain": "brand"
+          },
+          "basis": "Qloo returned this brand as a member of the tag Espresso.",
+          "correlationIds": [
+            "syn-0031"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:product_category:syn:espresso:SYN-BR-3003",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:product_category:syn:espresso",
+            "label": "Espresso",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-BR-3004",
+            "label": "Ristretto House",
+            "domain": "brand"
+          },
+          "basis": "Qloo returned this brand as a member of the tag Espresso.",
+          "correlationIds": [
+            "syn-0031"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:product_category:syn:espresso:SYN-BR-3004",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "brand",
+            "id": "SYN-BR-3001",
+            "label": "Larkspur Velo",
+            "domain": "brand"
+          },
+          "to": {
+            "kind": "tag",
+            "id": "urn:tag:interests:syn:slow_touring",
+            "label": "Slow Touring",
+            "domain": "tag"
+          },
+          "basis": "Qloo returned this tag in the entity_tags profile of Larkspur Velo.",
+          "correlationIds": [
+            "syn-tags"
+          ],
+          "limitation": null,
+          "id": "DIRECT_QLOO_OBSERVATION:SYN-BR-3001:urn:tag:interests:syn:slow_touring",
+          "rankable": false
+        }
+      ],
+      "notes": [
+        "No cultural tag is shared by the Larkspur Velo profile and the Gravel Riding exemplar profiles (3 compared, venue metadata excluded).",
+        "No cultural tag is shared by the Larkspur Velo profile and the Alpine Hiking exemplar profiles (3 compared, venue metadata excluded).",
+        "No cultural tag is shared by the Larkspur Velo profile and the Espresso exemplar profiles (3 compared, venue metadata excluded).",
+        "No validated model interpretation is attached; only observations and computed overlaps are shown."
+      ]
+    }
+  },
+  "ids": [
+    "investigation:3159ddc6-a099-40f1-8e9b-f93923f6d384:alpine_hiking",
+    "investigation:b6c57702-12f0-4129-bd82-92a7f3d42cf1:mountain_town"
+  ],
+  "espresso": "investigation:a01d262e-071f-44e0-a66a-f834d306256b:espresso",
+  "preview": {
+    "version": "ce-comparative-preview/0.1",
+    "eligibility": {
+      "eligible": true,
+      "code": "ELIGIBLE",
+      "reason": "3 territories with server-verified place evidence can share one Qloo rank panel. The agent still re-validates every representation before ranking.",
+      "candidateSet": [
+        "Gravel Riding",
+        "Alpine Hiking",
+        "Mountain Town"
+      ],
+      "missingRequirements": [],
+      "target": {
+        "key": "gravel_riding",
+        "label": "Gravel Riding",
+        "entityType": "place",
+        "conceptId": "urn:tag:activity_type:syn:gravel_riding",
+        "exemplarCount": 3
+      },
+      "validatedReferences": [
+        {
+          "key": "investigation:3159ddc6-a099-40f1-8e9b-f93923f6d384:alpine_hiking",
+          "label": "Alpine Hiking",
+          "entityType": "place",
+          "conceptId": "urn:tag:activity_type:syn:alpine_hiking",
+          "origin": "evidence",
+          "typeBasis": "VALIDATED_REPRESENTATION"
+        },
+        {
+          "key": "investigation:b6c57702-12f0-4129-bd82-92a7f3d42cf1:mountain_town",
+          "label": "Mountain Town",
+          "entityType": "place",
+          "conceptId": "urn:tag:keyword:syn:mountain_town",
+          "origin": "evidence",
+          "typeBasis": "VALIDATED_REPRESENTATION"
+        }
+      ]
+    },
+    "territories": [
+      "Gravel Riding",
+      "Alpine Hiking",
+      "Mountain Town"
+    ],
+    "limits": {
+      "maxQlooCalls": 32,
+      "maxAgentTurns": 12,
+      "maxRunMinutes": 20,
+      "maxPanelOptions": 6,
+      "model": "claude-haiku-5-5",
+      "reservedUsd": 0.4,
+      "unknownOutcomes": "An uncertain provider call counts against the budget and is never replayed automatically."
+    },
+    "admission": {
+      "accepting": true
+    }
+  },
+  "incompatible": {
+    "version": "ce-comparative-preview/0.1",
+    "eligibility": {
+      "eligible": false,
+      "code": "INCOMPATIBLE_ENTITY_TYPES",
+      "reason": "\"Espresso\" is represented by brand entities and \"Gravel Riding\" by place entities. A relative position needs one entity type in one rank panel; read \"Espresso\" as qualitative cross-domain evidence instead.",
+      "candidateSet": [
+        "Gravel Riding",
+        "Alpine Hiking",
+        "Espresso"
+      ],
+      "missingRequirements": [
+        "shared_entity_type"
+      ],
+      "target": {
+        "key": "gravel_riding",
+        "label": "Gravel Riding",
+        "entityType": "place",
+        "conceptId": "urn:tag:activity_type:syn:gravel_riding",
+        "exemplarCount": 3
+      }
+    },
+    "territories": null,
+    "limits": {
+      "maxQlooCalls": 32,
+      "maxAgentTurns": 12,
+      "maxRunMinutes": 20,
+      "maxPanelOptions": 6,
+      "model": "claude-haiku-5-5",
+      "reservedUsd": 0.4,
+      "unknownOutcomes": "An uncertain provider call counts against the budget and is never replayed automatically."
+    },
+    "admission": {
+      "accepting": true
+    }
+  },
+  "compare": {
+    "created": {
+      "jobId": "590e90cf-a4f5-45fa-aa87-902fd746a756",
+      "status": "running",
+      "stage": "interpreting",
+      "stageLabel": "Interpreting question",
+      "stopping": false,
+      "response": null,
+      "error": null,
+      "accessToken": "syn-compare-job-token"
+    },
+    "view": {
+      "jobId": "590e90cf-a4f5-45fa-aa87-902fd746a756",
+      "status": "completed",
+      "stage": "done",
+      "stageLabel": "Findings ready",
+      "stopping": false,
+      "response": {
+        "schemaVersion": "ce-query/0.1",
+        "queryId": "944c0777-3d98-441c-b84c-cd75ea81711d",
+        "state": "INVESTIGATION_COMPLETED",
+        "interpretation": {
+          "schemaVersion": "ce-query/0.1",
+          "rawQuery": "Compare the proposed cultural direction \"Gravel Riding\" for Larkspur Velo with the reference territories \"Alpine Hiking\", \"Mountain Town\".",
+          "primaryIntent": "compare_territories",
+          "secondaryIntents": [],
+          "brand": {
+            "name": "Larkspur Velo",
+            "source": "EXPLICIT"
+          },
+          "brandsNamed": [
+            "Larkspur Velo"
+          ],
+          "territories": [
+            {
+              "name": "Gravel Riding",
+              "source": "EXPLICIT"
+            },
+            {
+              "name": "Alpine Hiking",
+              "source": "EXPLICIT"
+            },
+            {
+              "name": "Mountain Town",
+              "source": "EXPLICIT"
+            }
+          ],
+          "references": {},
+          "constraints": [],
+          "unresolvedReferences": [],
+          "systemDirectives": [],
+          "confidence": "HIGH",
+          "disposition": "EXECUTABLE",
+          "unsupportedCapabilities": [],
+          "interpretationWarnings": [
+            "TEXT_NOT_INTERPRETED: no model is configured; only the structured fields and context were read"
+          ],
+          "reasonCodes": [],
+          "interpreter": {
+            "kind": "structural"
+          }
+        },
+        "reasons": [],
+        "handoff": {
+          "intent": "compare_territories",
+          "brand": "Larkspur Velo",
+          "territories": [
+            "Gravel Riding",
+            "Alpine Hiking",
+            "Mountain Town"
+          ],
+          "operation": "NEW_INVESTIGATION"
+        },
+        "supportedAlternative": null,
+        "context": null,
+        "investigation": {
+          "runId": "0efbc4f3-041c-45c4-8d27-a9c16aba0cfc",
+          "reused": false,
+          "link": {
+            "operation": "NEW_INVESTIGATION",
+            "parentRunId": null,
+            "selectedTerritoryKey": null,
+            "inheritedBrand": null,
+            "constraints": [],
+            "reason": "compare_territories",
+            "queryId": "944c0777-3d98-441c-b84c-cd75ea81711d"
+          },
+          "result": {
+            "schemaVersion": "ce-agent-result/0.3",
+            "runId": "0efbc4f3-041c-45c4-8d27-a9c16aba0cfc",
+            "status": "COMPLETE",
+            "finalSufficiency": "SUFFICIENT",
+            "intent": "compare_territories",
+            "userQuery": "Compare the proposed cultural direction \"Gravel Riding\" for Larkspur Velo with the reference territories \"Alpine Hiking\", \"Mountain Town\".",
+            "brand": {
+              "id": "SYN-BR-3001",
+              "label": "Larkspur Velo",
+              "type": "urn:entity:brand",
+              "resolution": "confirmed"
+            },
+            "territories": [
+              {
+                "key": "mountain_town",
+                "label": "Mountain Town",
+                "role": "target",
+                "origin": "user",
+                "rationale": "named by the user",
+                "resolvedConcept": {
+                  "id": "urn:tag:keyword:syn:mountain_town",
+                  "label": "Mountain Town",
+                  "type": "urn:tag:keyword:syn"
+                },
+                "representation": {
+                  "strategy": "PLACE_PANEL",
+                  "entityType": "place",
+                  "exemplars": [
+                    {
+                      "id": "SYN-PL-3010",
+                      "label": "Switchback Inn",
+                      "type": "place",
+                      "role": "primary",
+                      "selectionReason": "Qloo tag member (popularity 0.72)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.72,
+                      "quality": "VALID"
+                    },
+                    {
+                      "id": "SYN-PL-3011",
+                      "label": "Pinegrade Lodge",
+                      "type": "place",
+                      "role": "alternate",
+                      "selectionReason": "Qloo tag member (popularity 0.71)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.71,
+                      "quality": "VALID"
+                    },
+                    {
+                      "id": "SYN-PL-3012",
+                      "label": "Upper Ferry House",
+                      "type": "place",
+                      "role": "alternate",
+                      "selectionReason": "Qloo tag member (popularity 0.7)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.7,
+                      "quality": "VALID"
+                    }
+                  ],
+                  "rejectedExemplars": [],
+                  "diversity": "low",
+                  "diversityDetail": "near-identical tag profiles: Switchback Inn / Pinegrade Lodge (1); Switchback Inn / Upper Ferry House (1); Pinegrade Lodge / Upper Ferry House (1)",
+                  "attempts": 1,
+                  "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Mountain Town (urn:tag:keyword:syn:mountain_town): Switchback Inn, Pinegrade Lodge, Upper Ferry House",
+                  "failure": null
+                },
+                "keyEvidence": [
+                  "Relative position 1 of 3 (median panel percentile 1) within the comparison set Gravel Riding, Alpine Hiking, Mountain Town.",
+                  "Representation robustness HIGH (3 of 3 exemplars panelled; percentile spread 0).",
+                  "Provisional class NATURAL_ADJACENCY, relative to this comparison set only.",
+                  "Shared cultural signals (operational tags filtered): median 1 across 3 exemplar(s) (SPARSE).",
+                  "A brand-conditioned Qloo query for this concept returned 3 entities (SPARSE); top: Switchback Inn, Pinegrade Lodge, Upper Ferry House.",
+                  "Evidence quality MEDIUM."
+                ],
+                "analysisRoute": "FULL_RELATIVE_ANALYSIS",
+                "capabilities": {
+                  "representation": "SUPPORTED",
+                  "relativePosition": "AVAILABLE",
+                  "robustness": "AVAILABLE",
+                  "coherence": "AVAILABLE",
+                  "conditionedEvidence": "AVAILABLE",
+                  "classification": "AVAILABLE"
+                },
+                "comparisonSet": {
+                  "territoryKeys": [
+                    "gravel_riding",
+                    "alpine_hiking",
+                    "mountain_town"
+                  ],
+                  "labels": [
+                    "Gravel Riding",
+                    "Alpine Hiking",
+                    "Mountain Town"
+                  ],
+                  "methodologyVersion": "elasticity-v0.1",
+                  "semanticStatus": "MEANINGFUL"
+                },
+                "relativePosition": {
+                  "position": 1,
+                  "of": 3,
+                  "medianPercentile": 1,
+                  "medianRank": 1
+                },
+                "robustness": {
+                  "level": "HIGH",
+                  "percentileSpread": 0,
+                  "panelledExemplars": 3,
+                  "declaredExemplars": 3,
+                  "reasons": [
+                    "3 exemplars across 3 panel(s); ranks 1–1; percentile spread 0"
+                  ]
+                },
+                "coherence": {
+                  "rawSharedMedian": 1,
+                  "filteredSharedMedian": 1,
+                  "filteredBand": "SPARSE",
+                  "exemplarsCompared": 3,
+                  "consistentlyShared": [
+                    {
+                      "id": "urn:tag:keyword:syn:mountain_town",
+                      "label": "Mountain Town"
+                    }
+                  ]
+                },
+                "conditionedEvidence": {
+                  "support": "SPARSE",
+                  "entityCount": 3,
+                  "topEntities": [
+                    {
+                      "label": "Switchback Inn",
+                      "rank": 1
+                    },
+                    {
+                      "label": "Pinegrade Lodge",
+                      "rank": 2
+                    },
+                    {
+                      "label": "Upper Ferry House",
+                      "rank": 3
+                    }
+                  ],
+                  "correlationId": "syn-0062"
+                },
+                "evidenceQuality": {
+                  "level": "MEDIUM",
+                  "drivers": [
+                    "profileCoverage: limited"
+                  ]
+                },
+                "classification": {
+                  "label": "NATURAL_ADJACENCY",
+                  "status": "PROVISIONAL",
+                  "reasons": [
+                    "median panel percentile 1 (ranks 1–1), robustness HIGH: consistently near the top of this candidate set"
+                  ]
+                },
+                "limitations": [
+                  {
+                    "code": "TERRITORY_APPROXIMATION",
+                    "detail": "mountain_town: exemplar diversity low: near-identical tag profiles: Switchback Inn / Pinegrade Lodge (1); Switchback Inn / Upper Ferry House (1); Pinegrade Lodge / Upper Ferry House (1)"
+                  }
+                ],
+                "provenance": {
+                  "correlationIds": [
+                    "syn-0040",
+                    "syn-0046",
+                    "syn-0053",
+                    "syn-0054",
+                    "syn-0055",
+                    "syn-0056",
+                    "syn-0057",
+                    "syn-0058",
+                    "syn-0059",
+                    "syn-0062"
+                  ],
+                  "sources": [
+                    "synthetic-fixture"
+                  ]
+                },
+                "candidate": {
+                  "originalLabel": "Mountain Town",
+                  "sourceTagId": null,
+                  "resolvedId": "urn:tag:keyword:syn:mountain_town",
+                  "canonicalConceptKey": "mountain_town",
+                  "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+                  "candidateSource": "user",
+                  "anchorRelation": "NO_SOURCE_TAG",
+                  "uncertainty": null
+                },
+                "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+                "probes": [
+                  {
+                    "conceptKey": "urn:tag:keyword:syn:mountain_town",
+                    "label": "Mountain Town",
+                    "namespace": "keyword:syn",
+                    "attemptedTypes": [
+                      "brand",
+                      "place"
+                    ],
+                    "emptyTypes": [
+                      "brand"
+                    ],
+                    "successfulTypes": [
+                      "place"
+                    ],
+                    "unreliableTypes": [],
+                    "totalEmptyTypeProbes": 1,
+                    "probingExhausted": false,
+                    "exhaustionReason": null
+                  }
+                ]
+              },
+              {
+                "key": "alpine_hiking",
+                "label": "Alpine Hiking",
+                "role": "target",
+                "origin": "user",
+                "rationale": "named by the user",
+                "resolvedConcept": {
+                  "id": "urn:tag:activity_type:syn:alpine_hiking",
+                  "label": "Alpine Hiking",
+                  "type": "urn:tag:activity_type:syn"
+                },
+                "representation": {
+                  "strategy": "PLACE_PANEL",
+                  "entityType": "place",
+                  "exemplars": [
+                    {
+                      "id": "SYN-PL-3004",
+                      "label": "Tarn Gate Hut",
+                      "type": "place",
+                      "role": "primary",
+                      "selectionReason": "Qloo tag member (popularity 0.77)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.77,
+                      "quality": "VALID"
+                    },
+                    {
+                      "id": "SYN-PL-3005",
+                      "label": "Scree Saddle Refuge",
+                      "type": "place",
+                      "role": "alternate",
+                      "selectionReason": "Qloo tag member (popularity 0.75)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.75,
+                      "quality": "VALID"
+                    },
+                    {
+                      "id": "SYN-PL-3006",
+                      "label": "Cirque Hollow Hut",
+                      "type": "place",
+                      "role": "alternate",
+                      "selectionReason": "Qloo tag member (popularity 0.73)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.73,
+                      "quality": "VALID"
+                    }
+                  ],
+                  "rejectedExemplars": [],
+                  "diversity": "low",
+                  "diversityDetail": "near-identical tag profiles: Tarn Gate Hut / Scree Saddle Refuge (1); Tarn Gate Hut / Cirque Hollow Hut (1); Scree Saddle Refuge / Cirque Hollow Hut (1)",
+                  "attempts": 1,
+                  "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Alpine Hiking (urn:tag:activity_type:syn:alpine_hiking): Tarn Gate Hut, Scree Saddle Refuge, Cirque Hollow Hut",
+                  "failure": null
+                },
+                "keyEvidence": [
+                  "Relative position 2 of 3 (median panel percentile 0.5) within the comparison set Gravel Riding, Alpine Hiking, Mountain Town.",
+                  "Representation robustness HIGH (3 of 3 exemplars panelled; percentile spread 0).",
+                  "Provisional class CREDIBLE_STRETCH, relative to this comparison set only.",
+                  "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+                  "A brand-conditioned Qloo query for this concept returned 3 entities (SPARSE); top: Cirque Hollow Hut, Scree Saddle Refuge, Tarn Gate Hut.",
+                  "Evidence quality MEDIUM."
+                ],
+                "analysisRoute": "FULL_RELATIVE_ANALYSIS",
+                "capabilities": {
+                  "representation": "SUPPORTED",
+                  "relativePosition": "AVAILABLE",
+                  "robustness": "AVAILABLE",
+                  "coherence": "AVAILABLE",
+                  "conditionedEvidence": "AVAILABLE",
+                  "classification": "AVAILABLE"
+                },
+                "comparisonSet": {
+                  "territoryKeys": [
+                    "gravel_riding",
+                    "alpine_hiking",
+                    "mountain_town"
+                  ],
+                  "labels": [
+                    "Gravel Riding",
+                    "Alpine Hiking",
+                    "Mountain Town"
+                  ],
+                  "methodologyVersion": "elasticity-v0.1",
+                  "semanticStatus": "MEANINGFUL"
+                },
+                "relativePosition": {
+                  "position": 2,
+                  "of": 3,
+                  "medianPercentile": 0.5,
+                  "medianRank": 2
+                },
+                "robustness": {
+                  "level": "HIGH",
+                  "percentileSpread": 0,
+                  "panelledExemplars": 3,
+                  "declaredExemplars": 3,
+                  "reasons": [
+                    "3 exemplars across 3 panel(s); ranks 2–2; percentile spread 0"
+                  ]
+                },
+                "coherence": {
+                  "rawSharedMedian": 0,
+                  "filteredSharedMedian": 0,
+                  "filteredBand": "NONE",
+                  "exemplarsCompared": 3,
+                  "consistentlyShared": []
+                },
+                "conditionedEvidence": {
+                  "support": "SPARSE",
+                  "entityCount": 3,
+                  "topEntities": [
+                    {
+                      "label": "Cirque Hollow Hut",
+                      "rank": 1
+                    },
+                    {
+                      "label": "Scree Saddle Refuge",
+                      "rank": 2
+                    },
+                    {
+                      "label": "Tarn Gate Hut",
+                      "rank": 3
+                    }
+                  ],
+                  "correlationId": "syn-0061"
+                },
+                "evidenceQuality": {
+                  "level": "MEDIUM",
+                  "drivers": [
+                    "profileCoverage: limited"
+                  ]
+                },
+                "classification": {
+                  "label": "CREDIBLE_STRETCH",
+                  "status": "PROVISIONAL",
+                  "reasons": [
+                    "median panel percentile 0.5 (ranks 2–2), robustness HIGH: consistently in the middle of this candidate set"
+                  ]
+                },
+                "limitations": [
+                  {
+                    "code": "TERRITORY_APPROXIMATION",
+                    "detail": "alpine_hiking: exemplar diversity low: near-identical tag profiles: Tarn Gate Hut / Scree Saddle Refuge (1); Tarn Gate Hut / Cirque Hollow Hut (1); Scree Saddle Refuge / Cirque Hollow Hut (1)"
+                  }
+                ],
+                "provenance": {
+                  "correlationIds": [
+                    "syn-0039",
+                    "syn-0045",
+                    "syn-0050",
+                    "syn-0051",
+                    "syn-0052",
+                    "syn-0057",
+                    "syn-0058",
+                    "syn-0059",
+                    "syn-0061"
+                  ],
+                  "sources": [
+                    "synthetic-fixture"
+                  ]
+                },
+                "candidate": {
+                  "originalLabel": "Alpine Hiking",
+                  "sourceTagId": null,
+                  "resolvedId": "urn:tag:activity_type:syn:alpine_hiking",
+                  "canonicalConceptKey": "alpine_hiking",
+                  "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+                  "candidateSource": "user",
+                  "anchorRelation": "NO_SOURCE_TAG",
+                  "uncertainty": null
+                },
+                "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+                "probes": [
+                  {
+                    "conceptKey": "urn:tag:activity_type:syn:alpine_hiking",
+                    "label": "Alpine Hiking",
+                    "namespace": "activity_type:syn",
+                    "attemptedTypes": [
+                      "brand",
+                      "place"
+                    ],
+                    "emptyTypes": [
+                      "brand"
+                    ],
+                    "successfulTypes": [
+                      "place"
+                    ],
+                    "unreliableTypes": [],
+                    "totalEmptyTypeProbes": 1,
+                    "probingExhausted": false,
+                    "exhaustionReason": null
+                  }
+                ]
+              },
+              {
+                "key": "gravel_riding",
+                "label": "Gravel Riding",
+                "role": "target",
+                "origin": "user",
+                "rationale": "named by the user",
+                "resolvedConcept": {
+                  "id": "urn:tag:activity_type:syn:gravel_riding",
+                  "label": "Gravel Riding",
+                  "type": "urn:tag:activity_type:syn"
+                },
+                "representation": {
+                  "strategy": "PLACE_PANEL",
+                  "entityType": "place",
+                  "exemplars": [
+                    {
+                      "id": "SYN-PL-3001",
+                      "label": "Chalk Fork Bunkhouse",
+                      "type": "place",
+                      "role": "primary",
+                      "selectionReason": "Qloo tag member (popularity 0.78)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.78,
+                      "quality": "VALID"
+                    },
+                    {
+                      "id": "SYN-PL-3002",
+                      "label": "Loamline Station",
+                      "type": "place",
+                      "role": "alternate",
+                      "selectionReason": "Qloo tag member (popularity 0.76)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.76,
+                      "quality": "VALID"
+                    },
+                    {
+                      "id": "SYN-PL-3003",
+                      "label": "Washboard Depot",
+                      "type": "place",
+                      "role": "alternate",
+                      "selectionReason": "Qloo tag member (popularity 0.74)",
+                      "conceptSupport": "tag_member",
+                      "popularity": 0.74,
+                      "quality": "VALID"
+                    }
+                  ],
+                  "rejectedExemplars": [],
+                  "diversity": "low",
+                  "diversityDetail": "near-identical tag profiles: Chalk Fork Bunkhouse / Loamline Station (1); Chalk Fork Bunkhouse / Washboard Depot (1); Loamline Station / Washboard Depot (1)",
+                  "attempts": 1,
+                  "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Gravel Riding (urn:tag:activity_type:syn:gravel_riding): Chalk Fork Bunkhouse, Loamline Station, Washboard Depot",
+                  "failure": null
+                },
+                "keyEvidence": [
+                  "Relative position 3 of 3 (median panel percentile 0) within the comparison set Gravel Riding, Alpine Hiking, Mountain Town.",
+                  "Representation robustness HIGH (3 of 3 exemplars panelled; percentile spread 0).",
+                  "Provisional class CULTURAL_BREAK, relative to this comparison set only.",
+                  "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+                  "A brand-conditioned Qloo query for this concept returned 3 entities (SPARSE); top: Washboard Depot, Loamline Station, Chalk Fork Bunkhouse.",
+                  "Evidence quality MEDIUM."
+                ],
+                "analysisRoute": "FULL_RELATIVE_ANALYSIS",
+                "capabilities": {
+                  "representation": "SUPPORTED",
+                  "relativePosition": "AVAILABLE",
+                  "robustness": "AVAILABLE",
+                  "coherence": "AVAILABLE",
+                  "conditionedEvidence": "AVAILABLE",
+                  "classification": "AVAILABLE"
+                },
+                "comparisonSet": {
+                  "territoryKeys": [
+                    "gravel_riding",
+                    "alpine_hiking",
+                    "mountain_town"
+                  ],
+                  "labels": [
+                    "Gravel Riding",
+                    "Alpine Hiking",
+                    "Mountain Town"
+                  ],
+                  "methodologyVersion": "elasticity-v0.1",
+                  "semanticStatus": "MEANINGFUL"
+                },
+                "relativePosition": {
+                  "position": 3,
+                  "of": 3,
+                  "medianPercentile": 0,
+                  "medianRank": 3
+                },
+                "robustness": {
+                  "level": "HIGH",
+                  "percentileSpread": 0,
+                  "panelledExemplars": 3,
+                  "declaredExemplars": 3,
+                  "reasons": [
+                    "3 exemplars across 3 panel(s); ranks 3–3; percentile spread 0"
+                  ]
+                },
+                "coherence": {
+                  "rawSharedMedian": 0,
+                  "filteredSharedMedian": 0,
+                  "filteredBand": "NONE",
+                  "exemplarsCompared": 3,
+                  "consistentlyShared": []
+                },
+                "conditionedEvidence": {
+                  "support": "SPARSE",
+                  "entityCount": 3,
+                  "topEntities": [
+                    {
+                      "label": "Washboard Depot",
+                      "rank": 1
+                    },
+                    {
+                      "label": "Loamline Station",
+                      "rank": 2
+                    },
+                    {
+                      "label": "Chalk Fork Bunkhouse",
+                      "rank": 3
+                    }
+                  ],
+                  "correlationId": "syn-0060"
+                },
+                "evidenceQuality": {
+                  "level": "MEDIUM",
+                  "drivers": [
+                    "profileCoverage: limited"
+                  ]
+                },
+                "classification": {
+                  "label": "CULTURAL_BREAK",
+                  "status": "PROVISIONAL",
+                  "reasons": [
+                    "median panel percentile 0 (ranks 3–3), robustness HIGH: consistently near the bottom of this candidate set"
+                  ]
+                },
+                "limitations": [
+                  {
+                    "code": "TERRITORY_APPROXIMATION",
+                    "detail": "gravel_riding: exemplar diversity low: near-identical tag profiles: Chalk Fork Bunkhouse / Loamline Station (1); Chalk Fork Bunkhouse / Washboard Depot (1); Loamline Station / Washboard Depot (1)"
+                  }
+                ],
+                "provenance": {
+                  "correlationIds": [
+                    "syn-0038",
+                    "syn-0044",
+                    "syn-0047",
+                    "syn-0048",
+                    "syn-0049",
+                    "syn-0057",
+                    "syn-0058",
+                    "syn-0059",
+                    "syn-0060"
+                  ],
+                  "sources": [
+                    "synthetic-fixture"
+                  ]
+                },
+                "candidate": {
+                  "originalLabel": "Gravel Riding",
+                  "sourceTagId": null,
+                  "resolvedId": "urn:tag:activity_type:syn:gravel_riding",
+                  "canonicalConceptKey": "gravel_riding",
+                  "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+                  "candidateSource": "user",
+                  "anchorRelation": "NO_SOURCE_TAG",
+                  "uncertainty": null
+                },
+                "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+                "probes": [
+                  {
+                    "conceptKey": "urn:tag:activity_type:syn:gravel_riding",
+                    "label": "Gravel Riding",
+                    "namespace": "activity_type:syn",
+                    "attemptedTypes": [
+                      "brand",
+                      "place"
+                    ],
+                    "emptyTypes": [
+                      "brand"
+                    ],
+                    "successfulTypes": [
+                      "place"
+                    ],
+                    "unreliableTypes": [],
+                    "totalEmptyTypeProbes": 1,
+                    "probingExhausted": false,
+                    "exhaustionReason": null
+                  }
+                ]
+              }
+            ],
+            "methodologyRuns": [],
+            "summary": {
+              "text": "Larkspur Velo: 3 territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.\nMountain Town: position 1 of 3 within Gravel Riding, Alpine Hiking, Mountain Town; provisional class natural adjacency relative to that set, with high robustness.\nAlpine Hiking: position 2 of 3 within Gravel Riding, Alpine Hiking, Mountain Town; provisional class credible stretch relative to that set, with high robustness.\nGravel Riding: position 3 of 3 within Gravel Riding, Alpine Hiking, Mountain Town; provisional class cultural break relative to that set, with high robustness.",
+              "source": "deterministic_template",
+              "claimValidation": {
+                "passed": true,
+                "violations": []
+              }
+            },
+            "followUpOptions": [
+              "Review the exemplar choices behind each territory before acting on any class."
+            ],
+            "limitations": [
+              {
+                "code": "NOT_A_SUCCESS_PREDICTION",
+                "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+              },
+              {
+                "code": "NO_APPROVED_SCORE",
+                "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+              },
+              {
+                "code": "RELATIVE_TO_COMPARISON_SET",
+                "detail": "positions and classes hold only for the comparison set shown with each territory"
+              },
+              {
+                "code": "SYNTHETIC_EVIDENCE",
+                "detail": "evidence came from the scripted SYNTHETIC world, not from Qloo; never cite it as Qloo evidence"
+              },
+              {
+                "code": "AGENT_POLICY_NOT_LLM",
+                "detail": "investigation decisions were made by the deterministic baseline policy \"baseline-policy-v2\", not by a live language model"
+              }
+            ],
+            "evidenceOrigin": "synthetic",
+            "model": {
+              "id": "baseline-policy-v2",
+              "kind": "baseline",
+              "live": false
+            },
+            "trace": {
+              "omitted": "SYNTHETIC browser fixture: trace not included"
+            },
+            "metrics": {
+              "agent_iterations": 7,
+              "qloo_calls": 26,
+              "tool_calls": 26,
+              "tool_success_rate": 1,
+              "invalid_actions": 0,
+              "representation_attempts": 3,
+              "territories_proposed": 3,
+              "territories_resolved": 3,
+              "territories_rejected": 0,
+              "full_analysis_count": 3,
+              "partial_analysis_count": 0,
+              "descriptive_analysis_count": 0,
+              "unsupported_count": 0,
+              "methodology_calls": 1,
+              "latency_ms": 85,
+              "model_input_tokens": 0,
+              "model_output_tokens": 0,
+              "retry_count": 0,
+              "budget_exhausted": false,
+              "model_turns": 7,
+              "model_attempts": 7,
+              "first_attempt_valid_turns": 7,
+              "valid_after_repair_turns": 7,
+              "repairs": 0,
+              "unknown_tool_attempts": 0,
+              "invalid_argument_attempts": 0,
+              "unsupported_state_actions": 0,
+              "synthesis_attempts": 0,
+              "calls_avoided": 0,
+              "avg_context_chars": 9637,
+              "max_context_chars": 16325,
+              "avg_context_tokens_estimate": 2410,
+              "model_latency_ms": 0,
+              "qloo_latency_ms": 0,
+              "model_cost_usd": null,
+              "model_id": "baseline-policy-v2",
+              "model_effort": null,
+              "synthesis_latency_ms": 0,
+              "analysis_latency_ms": 15,
+              "qloo_spacing_ms": 0,
+              "unattributed_ms": 70,
+              "span_covered_ms": 61,
+              "span_unattributed_ms": 24,
+              "span_coverage_ratio": 0.718,
+              "monotonic_elapsed_ms": 85,
+              "wall_clock_skew_ms": 0,
+              "synthesis_first_attempt_valid": null,
+              "synthesis_valid_after_repair": null,
+              "synthesis_fallback": true,
+              "reference_deferrals": 0,
+              "empty_type_probes": 3,
+              "max_empty_type_probes_per_concept": 1,
+              "probe_limit_refusals": 0,
+              "type_alignment_deferrals": 0,
+              "reference_namespace_refusals": 0,
+              "successful_type_probes": 3,
+              "namespace_type_refusals": 0,
+              "alternate_anchor_refusals": 0,
+              "source_evidence_anchors": 3,
+              "frontier_completion_refusals": 0
+            },
+            "skillsUsed": [
+              {
+                "id": "resolve_brand",
+                "version": 1
+              },
+              {
+                "id": "resolve_territory",
+                "version": 5
+              },
+              {
+                "id": "build_territory_representation",
+                "version": 4
+              },
+              {
+                "id": "analyze_territories",
+                "version": 3
+              }
+            ],
+            "comparisonSetConstruction": {
+              "intent": "compare_territories",
+              "proposed": [
+                {
+                  "key": "gravel_riding",
+                  "label": "Gravel Riding",
+                  "role": "target",
+                  "source": "user",
+                  "evidence": "named by the user"
+                },
+                {
+                  "key": "alpine_hiking",
+                  "label": "Alpine Hiking",
+                  "role": "target",
+                  "source": "user",
+                  "evidence": "named by the user"
+                },
+                {
+                  "key": "mountain_town",
+                  "label": "Mountain Town",
+                  "role": "target",
+                  "source": "user",
+                  "evidence": "named by the user"
+                }
+              ],
+              "rejected": [],
+              "final": [
+                {
+                  "key": "gravel_riding",
+                  "label": "Gravel Riding",
+                  "role": "target",
+                  "source": "user",
+                  "route": "FULL_RELATIVE_ANALYSIS"
+                },
+                {
+                  "key": "alpine_hiking",
+                  "label": "Alpine Hiking",
+                  "role": "target",
+                  "source": "user",
+                  "route": "FULL_RELATIVE_ANALYSIS"
+                },
+                {
+                  "key": "mountain_town",
+                  "label": "Mountain Town",
+                  "role": "target",
+                  "source": "user",
+                  "route": "FULL_RELATIVE_ANALYSIS"
+                }
+              ],
+              "dedupDecisions": [],
+              "semanticAssessments": [
+                {
+                  "targetTerritoryKey": "gravel_riding",
+                  "referenceTerritoryKeys": [],
+                  "memberTerritoryKeys": [
+                    "gravel_riding",
+                    "alpine_hiking",
+                    "mountain_town"
+                  ],
+                  "entityType": "place",
+                  "structuralStatus": "VALID",
+                  "structuralIssues": [],
+                  "semanticStatus": "MEANINGFUL",
+                  "acceptedReferences": [],
+                  "rejectedReferences": [],
+                  "modelAssessed": false,
+                  "evidenceReferences": [],
+                  "usedForFull": true,
+                  "rulesVersion": "semantic-comparison-v1"
+                }
+              ],
+              "diversity": {
+                "assessment": "unknown",
+                "similarPairs": [],
+                "detail": "fewer than two non-target territories: diversity not assessed"
+              },
+              "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+            },
+            "layers": {
+              "qlooEvidence": {
+                "brand": {
+                  "id": "SYN-BR-3001",
+                  "label": "Larkspur Velo",
+                  "correlationId": "syn-0037"
+                },
+                "concepts": [
+                  {
+                    "territoryKey": "gravel_riding",
+                    "id": "urn:tag:activity_type:syn:gravel_riding",
+                    "label": "Gravel Riding",
+                    "correlationIds": [
+                      "syn-0038",
+                      "syn-0047",
+                      "syn-0048",
+                      "syn-0049"
+                    ]
+                  },
+                  {
+                    "territoryKey": "alpine_hiking",
+                    "id": "urn:tag:activity_type:syn:alpine_hiking",
+                    "label": "Alpine Hiking",
+                    "correlationIds": [
+                      "syn-0039",
+                      "syn-0050",
+                      "syn-0051",
+                      "syn-0052"
+                    ]
+                  },
+                  {
+                    "territoryKey": "mountain_town",
+                    "id": "urn:tag:keyword:syn:mountain_town",
+                    "label": "Mountain Town",
+                    "correlationIds": [
+                      "syn-0040",
+                      "syn-0053",
+                      "syn-0054",
+                      "syn-0055",
+                      "syn-0056"
+                    ]
+                  }
+                ],
+                "exemplars": [
+                  {
+                    "territoryKey": "gravel_riding",
+                    "id": "SYN-PL-3001",
+                    "label": "Chalk Fork Bunkhouse",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0044"
+                  },
+                  {
+                    "territoryKey": "gravel_riding",
+                    "id": "SYN-PL-3002",
+                    "label": "Loamline Station",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0044"
+                  },
+                  {
+                    "territoryKey": "gravel_riding",
+                    "id": "SYN-PL-3003",
+                    "label": "Washboard Depot",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0044"
+                  },
+                  {
+                    "territoryKey": "alpine_hiking",
+                    "id": "SYN-PL-3004",
+                    "label": "Tarn Gate Hut",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0045"
+                  },
+                  {
+                    "territoryKey": "alpine_hiking",
+                    "id": "SYN-PL-3005",
+                    "label": "Scree Saddle Refuge",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0045"
+                  },
+                  {
+                    "territoryKey": "alpine_hiking",
+                    "id": "SYN-PL-3006",
+                    "label": "Cirque Hollow Hut",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0045"
+                  },
+                  {
+                    "territoryKey": "mountain_town",
+                    "id": "SYN-PL-3010",
+                    "label": "Switchback Inn",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0046"
+                  },
+                  {
+                    "territoryKey": "mountain_town",
+                    "id": "SYN-PL-3011",
+                    "label": "Pinegrade Lodge",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0046"
+                  },
+                  {
+                    "territoryKey": "mountain_town",
+                    "id": "SYN-PL-3012",
+                    "label": "Upper Ferry House",
+                    "conceptSupport": "tag_member",
+                    "supportCorrelationId": "syn-0046"
+                  }
+                ],
+                "qlooCalls": 26
+              },
+              "systemAnalysis": {
+                "routes": [
+                  {
+                    "territoryKey": "mountain_town",
+                    "route": "FULL_RELATIVE_ANALYSIS",
+                    "classification": "NATURAL_ADJACENCY",
+                    "position": 1,
+                    "robustness": "HIGH"
+                  },
+                  {
+                    "territoryKey": "alpine_hiking",
+                    "route": "FULL_RELATIVE_ANALYSIS",
+                    "classification": "CREDIBLE_STRETCH",
+                    "position": 2,
+                    "robustness": "HIGH"
+                  },
+                  {
+                    "territoryKey": "gravel_riding",
+                    "route": "FULL_RELATIVE_ANALYSIS",
+                    "classification": "CULTURAL_BREAK",
+                    "position": 3,
+                    "robustness": "HIGH"
+                  }
+                ],
+                "methodologyRunIds": [
+                  "methodology-1"
+                ],
+                "finalSufficiency": "SUFFICIENT",
+                "representationDecisions": {
+                  "valid": 9,
+                  "weak": 0,
+                  "rejected": 0
+                },
+                "semanticComparison": [
+                  {
+                    "semanticStatus": "MEANINGFUL",
+                    "structuralStatus": "VALID",
+                    "usedForFull": true,
+                    "memberTerritoryKeys": [
+                      "gravel_riding",
+                      "alpine_hiking",
+                      "mountain_town"
+                    ]
+                  }
+                ]
+              },
+              "agentInterpretation": {
+                "summary": "Larkspur Velo: 3 territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.\nMountain Town: position 1 of 3 within Gravel Riding, Alpine Hiking, Mountain Town; provisional class natural adjacency relative to that set, with high robustness.\nAlpine Hiking: position 2 of 3 within Gravel Riding, Alpine Hiking, Mountain Town; provisional class credible stretch relative to that set, with high robustness.\nGravel Riding: position 3 of 3 within Gravel Riding, Alpine Hiking, Mountain Town; provisional class cultural break relative to that set, with high robustness.",
+                "source": "deterministic_template",
+                "claimValidationPassed": true,
+                "semanticJudgments": [],
+                "followUpOptions": [
+                  "Review the exemplar choices behind each territory before acting on any class."
+                ],
+                "findings": []
+              }
+            },
+            "failureCategory": null
+          }
+        },
+        "territories": [
+          {
+            "name": "Gravel Riding",
+            "investigationState": "INVESTIGATED",
+            "territoryKey": "gravel_riding",
+            "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+            "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+          },
+          {
+            "name": "Alpine Hiking",
+            "investigationState": "INVESTIGATED",
+            "territoryKey": "alpine_hiking",
+            "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+            "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+          },
+          {
+            "name": "Mountain Town",
+            "investigationState": "INVESTIGATED",
+            "territoryKey": "mountain_town",
+            "evidenceStatus": "EVIDENCE_SUPPORTED_TERRITORY",
+            "analysisRoute": "FULL_RELATIVE_ANALYSIS"
+          }
+        ],
+        "nextOperations": [
+          "explore_frontier",
+          "analyze_move",
+          "compare_territories",
+          "refine_territory",
+          "switch_territory"
+        ],
+        "telemetry": {
+          "queryId": "944c0777-3d98-441c-b84c-cd75ea81711d",
+          "schemaVersion": "ce-query/0.1",
+          "intent": "compare_territories",
+          "secondaryIntents": [],
+          "explicitFields": [
+            "brand",
+            "intent",
+            "territories"
+          ],
+          "inheritedFieldNames": [],
+          "clarificationRequired": false,
+          "validationOutcome": "EXECUTABLE",
+          "selectedCapability": "compare_territories",
+          "routingOutcome": "INVESTIGATION_COMPLETED",
+          "parentRunId": null,
+          "childRunId": "0efbc4f3-041c-45c4-8d27-a9c16aba0cfc",
+          "interpretationLatencyMs": 0,
+          "interpretationTokens": {
+            "input": 0,
+            "output": 0
+          },
+          "interpretationCostUsd": null,
+          "repairAttempts": 0,
+          "executionHandOffStatus": "HANDED_OFF",
+          "errorCodes": [],
+          "queryChars": 138,
+          "queryHash": "4aa1e9a4a3bf"
+        }
+      },
+      "error": null
+    }
+  },
+  "report": {
+    "version": "ce-comparative-report-envelope/0.1",
+    "status": "completed",
+    "error": null,
+    "report": {
+      "schemaVersion": "ce-comparative-report/0.2",
+      "outcome": "RELATIVE_POSITION_ESTABLISHED",
+      "checks": [
+        {
+          "code": "BRAND_MATCHES_SCAN",
+          "passed": true,
+          "detail": "The run resolved Larkspur Velo to the scan's Qloo brand."
+        },
+        {
+          "code": "TARGET_PRESENT",
+          "passed": true,
+          "detail": "\"Gravel Riding\" is in the result."
+        },
+        {
+          "code": "SINGLE_RANKING_TYPE",
+          "passed": true,
+          "detail": "All ranked territories share one place panel."
+        },
+        {
+          "code": "RANKED_TERRITORIES_REPRESENTED",
+          "passed": true,
+          "detail": "Every ranked territory has exemplar entities."
+        },
+        {
+          "code": "RANKED_TERRITORIES_SOURCED",
+          "passed": true,
+          "detail": "Every ranked territory cites its Qloo calls."
+        },
+        {
+          "code": "CLASSIFICATION_HAS_POSITION",
+          "passed": true,
+          "detail": "Every classification rests on a relative position."
+        },
+        {
+          "code": "CONCEPT_ANCHOR_MATCHES",
+          "passed": true,
+          "detail": "\"Gravel Riding\" kept its investigated Qloo concept."
+        }
+      ],
+      "brand": {
+        "id": "SYN-BR-3001",
+        "name": "Larkspur Velo"
+      },
+      "targetTerritory": {
+        "key": "gravel_riding",
+        "name": "Gravel Riding",
+        "singleHypothesisOutcome": "INCONCLUSIVE",
+        "relativePosition": {
+          "position": 3,
+          "of": 3,
+          "medianPercentile": 0
+        },
+        "provisionalClassification": {
+          "label": "CULTURAL_BREAK",
+          "statement": "Provisional class CULTURAL_BREAK relative to [Gravel Riding, Alpine Hiking, Mountain Town]."
+        },
+        "robustness": {
+          "level": "HIGH",
+          "sensitivityDetail": "3 exemplars across 3 panel(s); ranks 3–3; percentile spread 0"
+        },
+        "coherence": {
+          "band": "NONE",
+          "consistentlyShared": []
+        },
+        "evidenceQuality": {
+          "level": "MEDIUM",
+          "drivers": [
+            "profileCoverage: limited"
+          ]
+        },
+        "candidateSet": [
+          "Gravel Riding",
+          "Alpine Hiking",
+          "Mountain Town"
+        ],
+        "entityType": "place"
+      },
+      "alternativesEvaluated": [
+        {
+          "key": "mountain_town",
+          "name": "Mountain Town",
+          "role": "target",
+          "origin": "user",
+          "entityType": "place",
+          "analysisRoute": "FULL_RELATIVE_ANALYSIS",
+          "relativePosition": {
+            "position": 1,
+            "of": 3,
+            "medianPercentile": 1
+          },
+          "classification": {
+            "label": "NATURAL_ADJACENCY"
+          },
+          "robustness": {
+            "level": "HIGH"
+          },
+          "comparisonLimitation": null
+        },
+        {
+          "key": "alpine_hiking",
+          "name": "Alpine Hiking",
+          "role": "target",
+          "origin": "user",
+          "entityType": "place",
+          "analysisRoute": "FULL_RELATIVE_ANALYSIS",
+          "relativePosition": {
+            "position": 2,
+            "of": 3,
+            "medianPercentile": 0.5
+          },
+          "classification": {
+            "label": "CREDIBLE_STRETCH"
+          },
+          "robustness": {
+            "level": "HIGH"
+          },
+          "comparisonLimitation": null
+        }
+      ],
+      "whatEvidenceEstablishes": [
+        "Larkspur Velo is resolved to Qloo brand SYN-BR-3001.",
+        "\"Gravel Riding\" was represented by 3 place exemplar(s): Chalk Fork Bunkhouse, Loamline Station, Washboard Depot.",
+        "Relative position 3 of 3 (median panel percentile 0) within the comparison set Gravel Riding, Alpine Hiking, Mountain Town.",
+        "Representation robustness HIGH (3 of 3 exemplars panelled; percentile spread 0).",
+        "Provisional class CULTURAL_BREAK, relative to this comparison set only.",
+        "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+        "A brand-conditioned Qloo query for this concept returned 3 entities (SPARSE); top: Washboard Depot, Loamline Station, Chalk Fork Bunkhouse.",
+        "Evidence quality MEDIUM.",
+        "Within [Gravel Riding, Alpine Hiking, Mountain Town], \"Gravel Riding\" holds position 3 of 3 in one Qloo rank call."
+      ],
+      "whatRemainsUnknown": [
+        "Commercial success, revenue, purchase intent and audience demand are not measured by cultural association.",
+        "No absolute cultural distance is implied; relative positions hold only within the evaluated candidate set.",
+        "Partnerships or collaborations are not established by co-occurrence.",
+        "gravel_riding: exemplar diversity low: near-identical tag profiles: Chalk Fork Bunkhouse / Loamline Station (1); Chalk Fork Bunkhouse / Washboard Depot (1); Loamline Station / Washboard Depot (1)"
+      ],
+      "strategicImplications": [
+        "Provisional class CULTURAL_BREAK relative to [Gravel Riding, Alpine Hiking, Mountain Town]. median panel percentile 0 (ranks 3–3), robustness HIGH: consistently near the bottom of this candidate set"
+      ],
+      "nextResearchActions": [
+        "Review the exemplar choices behind each territory before acting on any class."
+      ],
+      "interpretation": {
+        "text": "Larkspur Velo: 3 territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.\nMountain Town: position 1 of 3 within Gravel Riding, Alpine Hiking, Mountain Town; provisional class natural adjacency relative to that set, with high robustness.\nAlpine Hiking: position 2 of 3 within Gravel Riding, Alpine Hiking, Mountain Town; provisional class credible stretch relative to that set, with high robustness.\nGravel Riding: position 3 of 3 within Gravel Riding, Alpine Hiking, Mountain Town; provisional class cultural break relative to that set, with high robustness.",
+        "validated": true
+      },
+      "evidenceOrigin": "synthetic",
+      "provenance": {
+        "runId": "0efbc4f3-041c-45c4-8d27-a9c16aba0cfc",
+        "correlationIds": [
+          "syn-0040",
+          "syn-0046",
+          "syn-0053",
+          "syn-0054",
+          "syn-0055",
+          "syn-0056",
+          "syn-0057",
+          "syn-0058",
+          "syn-0059",
+          "syn-0062",
+          "syn-0039",
+          "syn-0045",
+          "syn-0050",
+          "syn-0051",
+          "syn-0052",
+          "syn-0061",
+          "syn-0038",
+          "syn-0044",
+          "syn-0047",
+          "syn-0048",
+          "syn-0049",
+          "syn-0060"
+        ],
+        "methodologyVersion": "elasticity-v0.1"
+      }
+    },
+    "connections": {
+      "schemaVersion": "ce-cultural-connections/0.1",
+      "brand": {
+        "id": "SYN-BR-3001",
+        "name": "Larkspur Velo"
+      },
+      "evidenceOrigin": "synthetic",
+      "domains": [
+        "place",
+        "territory",
+        "tag"
+      ],
+      "relationships": [
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:keyword:syn:mountain_town",
+            "label": "Mountain Town",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3010",
+            "label": "Switchback Inn",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Mountain Town.",
+          "correlationIds": [
+            "syn-0046"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:keyword:syn:mountain_town:SYN-PL-3010",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:keyword:syn:mountain_town",
+            "label": "Mountain Town",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3011",
+            "label": "Pinegrade Lodge",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Mountain Town.",
+          "correlationIds": [
+            "syn-0046"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:keyword:syn:mountain_town:SYN-PL-3011",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:keyword:syn:mountain_town",
+            "label": "Mountain Town",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3012",
+            "label": "Upper Ferry House",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Mountain Town.",
+          "correlationIds": [
+            "syn-0046"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:keyword:syn:mountain_town:SYN-PL-3012",
+          "rankable": false
+        },
+        {
+          "kind": "DERIVED_PROFILE_OVERLAP",
+          "from": {
+            "kind": "brand",
+            "id": "SYN-BR-3001",
+            "label": "Larkspur Velo",
+            "domain": "brand"
+          },
+          "to": {
+            "kind": "territory",
+            "id": "mountain_town",
+            "label": "Mountain Town",
+            "domain": "territory"
+          },
+          "basis": "The tag Mountain Town appears both in the Larkspur Velo profile and in every compared Mountain Town exemplar profile. Computed from separate Qloo calls; Qloo did not return this as a relationship.",
+          "correlationIds": [
+            "syn-0040",
+            "syn-0046",
+            "syn-0053",
+            "syn-0054",
+            "syn-0055",
+            "syn-0056",
+            "syn-0057",
+            "syn-0058",
+            "syn-0059",
+            "syn-0062"
+          ],
+          "limitation": "Shared tags indicate a common cultural signal, not a distance or a ranking.",
+          "id": "DERIVED_PROFILE_OVERLAP:SYN-BR-3001:mountain_town",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:alpine_hiking",
+            "label": "Alpine Hiking",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3004",
+            "label": "Tarn Gate Hut",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Alpine Hiking.",
+          "correlationIds": [
+            "syn-0045"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:alpine_hiking:SYN-PL-3004",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:alpine_hiking",
+            "label": "Alpine Hiking",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3005",
+            "label": "Scree Saddle Refuge",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Alpine Hiking.",
+          "correlationIds": [
+            "syn-0045"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:alpine_hiking:SYN-PL-3005",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:alpine_hiking",
+            "label": "Alpine Hiking",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3006",
+            "label": "Cirque Hollow Hut",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Alpine Hiking.",
+          "correlationIds": [
+            "syn-0045"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:alpine_hiking:SYN-PL-3006",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:gravel_riding",
+            "label": "Gravel Riding",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3001",
+            "label": "Chalk Fork Bunkhouse",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Gravel Riding.",
+          "correlationIds": [
+            "syn-0044"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:gravel_riding:SYN-PL-3001",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:gravel_riding",
+            "label": "Gravel Riding",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3002",
+            "label": "Loamline Station",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Gravel Riding.",
+          "correlationIds": [
+            "syn-0044"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:gravel_riding:SYN-PL-3002",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "tag",
+            "id": "urn:tag:activity_type:syn:gravel_riding",
+            "label": "Gravel Riding",
+            "domain": "tag"
+          },
+          "to": {
+            "kind": "entity",
+            "id": "SYN-PL-3003",
+            "label": "Washboard Depot",
+            "domain": "place"
+          },
+          "basis": "Qloo returned this place as a member of the tag Gravel Riding.",
+          "correlationIds": [
+            "syn-0044"
+          ],
+          "limitation": "Membership of a tag is not an affinity to the brand.",
+          "id": "DIRECT_QLOO_OBSERVATION:urn:tag:activity_type:syn:gravel_riding:SYN-PL-3003",
+          "rankable": false
+        },
+        {
+          "kind": "DIRECT_QLOO_OBSERVATION",
+          "from": {
+            "kind": "brand",
+            "id": "SYN-BR-3001",
+            "label": "Larkspur Velo",
+            "domain": "brand"
+          },
+          "to": {
+            "kind": "tag",
+            "id": "urn:tag:interests:syn:slow_touring",
+            "label": "Slow Touring",
+            "domain": "tag"
+          },
+          "basis": "Qloo returned this tag in the entity_tags profile of Larkspur Velo.",
+          "correlationIds": [
+            "syn-tags"
+          ],
+          "limitation": null,
+          "id": "DIRECT_QLOO_OBSERVATION:SYN-BR-3001:urn:tag:interests:syn:slow_touring",
+          "rankable": false
+        }
+      ],
+      "notes": [
+        "No cultural tag is shared by the Larkspur Velo profile and the Alpine Hiking exemplar profiles (3 compared, venue metadata excluded).",
+        "No cultural tag is shared by the Larkspur Velo profile and the Gravel Riding exemplar profiles (3 compared, venue metadata excluded).",
+        "No validated model interpretation is attached; only observations and computed overlaps are shown."
+      ]
+    }
+  }
+}

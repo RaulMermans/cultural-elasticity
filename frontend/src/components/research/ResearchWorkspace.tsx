@@ -10,6 +10,8 @@ import { DirectionList } from "./DirectionList";
 import { FingerprintOverview } from "./FingerprintOverview";
 import { ResearchSummaryView } from "./ResearchSummaryView";
 import { DeepResearchPanel } from "./DeepResearchPanel";
+import type { ComparativeFinding } from "./ComparativeResearchPanel";
+import { RecordedComparativeDemo } from "./RecordedComparativeDemo";
 
 const contextKey = (scanId: string) => `ce.research.context.${scanId}`;
 
@@ -54,6 +56,7 @@ export function ResearchWorkspace({ researchKey, result, section, item, deepRese
   const [context, setUserContext] = useUserContext(result.scanId);
   const [investigation, setInvestigation] = useState<{ territoryId?: string; proposedDirection?: string } | null>(null);
   const [finding, setFinding] = useState<QueryResponse | null>(null);
+  const [comparative, setComparative] = useState<ComparativeFinding | null>(null);
   const view = useMemo(() => buildResearchView(result, context), [result, context]);
   const counts = { connections: view.connections.length, directions: view.directions.length };
 
@@ -100,11 +103,12 @@ export function ResearchWorkspace({ researchKey, result, section, item, deepRese
             onPropose={(proposedDirection) => setInvestigation({ proposedDirection })}
           />
         ) : (
-          <ResearchSummaryView view={view} investigation={finding} />
+          <ResearchSummaryView view={view} investigation={finding} comparative={comparative} />
         )}
+        {section === "directions" && view.origin === "recorded" ? <RecordedComparativeDemo brandQlooId={view.brand.qlooId} /> : null}
       </div>
 
-      {investigation && scanToken ? <DeepResearchPanel key={investigation.territoryId ?? investigation.proposedDirection} scanId={result.scanId} {...investigation} token={scanToken} onClose={() => setInvestigation(null)} onFinding={setFinding} onOpenSummary={() => { setInvestigation(null); onNavigate("summary", null); }} /> : null}
+      {investigation && scanToken ? <DeepResearchPanel key={investigation.territoryId ?? investigation.proposedDirection} scanId={result.scanId} {...investigation} token={scanToken} onClose={() => setInvestigation(null)} onFinding={setFinding} onComparative={setComparative} onOpenSummary={() => { setInvestigation(null); onNavigate("summary", null); }} /> : null}
 
       <details className="rw-method">
         <summary>Methodology details</summary>

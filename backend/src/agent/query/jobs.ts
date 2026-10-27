@@ -120,7 +120,7 @@ export class JobManager {
     this.maxQueued = options.maxQueued ?? 4;
     this.ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
     this.maxRunMs = options.maxRunMs ?? DEFAULT_MAX_RUN_MS;
-    this.now = options.now ?? Date.now;
+    this.now = options.now ?? (() => Date.now());
     if (!options.now) {
       const timer = setInterval(() => this.sweep(), 60_000);
       timer.unref?.();
@@ -194,6 +194,16 @@ export class JobManager {
     const current = this.jobs.get(id);
     if (!current || !tokenMatches(current.tokenHash, token)) return null;
     return this.view(current);
+  }
+
+  /**
+   * Server-side read without a token. Only for jobs the server itself linked to a caller's authorized scope
+   * (for example, investigations started from the same baseline scan); never for a client-supplied id alone.
+   */
+  peek(id: string): JobView | null {
+    this.sweep();
+    const job = this.jobs.get(id);
+    return job ? this.view(job) : null;
   }
 
   cancel(id: string, token: string): JobView | null {

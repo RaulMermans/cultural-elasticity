@@ -4,13 +4,14 @@ import { useMemo } from "react";
 import { buildSummary, renderSummaryHtml } from "@/lib/research-summary";
 import type { ResearchView } from "@/lib/research-view";
 import type { QueryResponse } from "@cultural-elasticity/shared";
+import type { ComparativeFinding } from "./ComparativeResearchPanel";
 
-export function ResearchSummaryView({ view, investigation = null }: { view: ResearchView; investigation?: QueryResponse | null }) {
+export function ResearchSummaryView({ view, investigation = null, comparative = null }: { view: ResearchView; investigation?: QueryResponse | null; comparative?: ComparativeFinding | null }) {
   const { summary, ms } = useMemo(() => {
     const started = performance.now();
-    const built = buildSummary(view, investigation);
+    const built = buildSummary(view, investigation, comparative);
     return { summary: built, ms: performance.now() - started };
-  }, [view, investigation]);
+  }, [view, investigation, comparative]);
 
   const download = () => {
     const html = renderSummaryHtml(summary, new Date().toISOString());
