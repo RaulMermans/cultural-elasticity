@@ -1,5 +1,5 @@
 import Fastify, { type FastifyInstance } from "fastify";
-import { agentRoutes, type AgentRuntimeFactory, type QueryInterpreterFactory } from "./api/agent.js";
+import { agentRoutes, type AgentRuntimeFactory, type BaselineReader, type QueryInterpreterFactory } from "./api/agent.js";
 import { analysisRoutes } from "./api/analysis.js";
 import { healthRoutes } from "./api/health.js";
 import { methodologyRoutes } from "./api/methodology.js";
@@ -12,6 +12,8 @@ export type BuildAppOptions = {
   agentRuntimeFactory?: AgentRuntimeFactory;
   /** Sprint 5B.1 query interpreter; defaults to Haiku (structural for the baseline policy), created on first use. */
   queryInterpreterFactory?: QueryInterpreterFactory;
+  /** Baseline scan reader for the research handoff routes; PostgreSQL by default. Injected in tests. */
+  baselineReader?: BaselineReader;
 };
 
 export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
@@ -49,7 +51,7 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
   app.register(opsRoutes);
   app.register(analysisRoutes);
   app.register(methodologyRoutes);
-  app.register(agentRoutes(options.agentRuntimeFactory, options.queryInterpreterFactory));
+  app.register(agentRoutes(options.agentRuntimeFactory, options.queryInterpreterFactory, { ...(options.baselineReader ? { baselines: options.baselineReader } : {}) }));
   app.register(brandBaselineRoutes);
   return app;
 }

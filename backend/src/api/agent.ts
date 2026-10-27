@@ -1,11 +1,17 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+import { projectCulturalConnections, type AgentAnalysisResult, type AgentRunResponse, type AgentTerritoryResult, type AnyBrandBaselineResult, type ComparativeReferenceCandidate } from "@cultural-elasticity/shared";
 import { createBaselinePool } from "../brand-baseline/db.js";
 import { BaselineRepository } from "../brand-baseline/repository.js";
 import { buildDeepInvestigationRequest, buildProposedInvestigationRequest, HandoffError } from "./baseline-handoff.js";
 import { admit, globalJobLimit, jobCreateLimit } from "./admission.js";
 import { baselineAllowed, developmentRoutesOpen } from "./exposure.js";
+import { buildComparativeHandoffRequest, collectReferenceCandidates, projectComparativeStrategicReport, representationProblem, validateComparativeOutcome, type ComparativePlan, type ExemplarProfileEvidence } from "../agent/comparative-bridge.js";
+import { defaultLimits } from "../agent/contracts.js";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../agent/errors.js";
+import { DEFAULT_AGENT_MODEL } from "../agent/model/anthropic.js";
+import { MAX_PANEL_OPTIONS } from "../methodology/contracts.js";
+import { conservativeReserveUsd } from "../ops/pricing.js";
 import { createAgentModel, createLiveToolProvider, createQueryInterpreter, type ModelChoice } from "../agent/factory.js";
 import { confirmBody, queryBody } from "../agent/query/contracts.js";
 import type { QueryInterpreter } from "../agent/query/interpreter.js";
@@ -26,6 +32,8 @@ import type { ObservedUsage } from "../ops/usage.js";
 export type AgentRuntimeFactory = (model: ModelChoice) => AgentRuntime;
 /** Sprint 5B.1: the query interpreter for a model choice. Injected in tests; Haiku (or structural for baseline) otherwise. */
 export type QueryInterpreterFactory = (model: ModelChoice) => QueryInterpreter;
+/** Reads an authorized baseline scan. PostgreSQL in production; injected in tests. */
+export type BaselineReader = Pick<BaselineRepository, "readScan">;
 
 export function liveRuntimeFactory(): AgentRuntimeFactory {
   const store = new RunStore();
@@ -53,6 +61,14 @@ const analyzeBody = z.strictObject({
 const continueBody = z.strictObject({ runId: z.string().uuid(), clarification: z.string().trim().min(1).max(1_000), model: z.enum(["auto", "baseline"]).optional() });
 const continueJobBody = z.strictObject({ continueRunId: z.string().uuid(), clarification: z.string().trim().min(1).max(1_000), model: z.enum(["auto", "baseline"]).optional() });
 const handoffBody = z.strictObject({ scanId: z.uuid(), territoryId: z.string().trim().min(1).max(120).optional(), proposedDirection: z.string().trim().min(1).max(120).optional(), idempotencyKey: z.uuid() }).refine((value) => Boolean(value.territoryId) !== Boolean(value.proposedDirection));
+/** Sprint 9I comparative handoff. Identifiers only: target, references, evidence, types and budgets come from the server. */
+const compareBody = z.strictObject({
+  scanId: z.uuid(),
+  parentJobId: z.uuid(),
+  referenceIds: z.array(z.string().trim().min(1).max(240)).max(MAX_PANEL_OPTIONS).optional(),
+  idempotencyKey: z.uuid().optional(),
+});
+const MAX_RUN_MINUTES = 20;
 
 type ErrorBody = { error: string; message?: string; issues?: EvidenceIssue[] };
 
@@ -76,7 +92,7 @@ function issues(error: z.ZodError): EvidenceIssue[] {
  *   POST /api/agent/jobs/:id/cancel
  * A live run makes real Qloo calls (spaced to respect rate limits) and can take minutes.
  */
-export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(), interpreters: QueryInterpreterFactory = createQueryInterpreter) {
+export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(), interpreters: QueryInterpreterFactory = createQueryInterpreter, injected: { baselines?: BaselineReader } = {}) {
   const queries = new QueryStore();
   const services = new Map<ModelChoice, QueryService>();
   const service = (choice: ModelChoice, log: (t: unknown) => void) => {
@@ -92,8 +108,13 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
     const log = (telemetry: unknown) => app.log.info({ queryTelemetry: telemetry }, "query");
     const reservations = new Map<string, { id: string; started: boolean }>();
     const handoffJobs = new Map<string, { directionKey: string; pending: Promise<unknown> }>();
-    const baselinePool = process.env.CE_BASELINE_ENABLED === "1" && process.env.DATABASE_URL ? createBaselinePool(process.env.DATABASE_URL) : null;
-    const baselines = baselinePool ? new BaselineRepository(baselinePool) : null;
+    /** Investigations started from a baseline scan (job id → scan). Scan ownership is how siblings are found. */
+    const handoffOrigins = new Map<string, { scanId: string }>();
+    /** Comparative jobs and the plan the server authorized for each (in memory, like the jobs themselves). */
+    const comparativeJobs = new Map<string, { scanId: string; plan: ComparativePlan; baseline: AnyBrandBaselineResult; parentRunId: string }>();
+    const comparativeKeys = new Map<string, { referenceKey: string; pending: Promise<unknown> }>();
+    const baselinePool = !injected.baselines && process.env.CE_BASELINE_ENABLED === "1" && process.env.DATABASE_URL ? createBaselinePool(process.env.DATABASE_URL) : null;
+    const baselines: BaselineReader | null = injected.baselines ?? (baselinePool ? new BaselineRepository(baselinePool) : null);
     const jobs = new JobManager({
       runnerFor: (model) => service(model === "baseline" ? "baseline" : "auto", log),
       log: (event) => {
@@ -291,8 +312,154 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       if (handoffJobs.size > 200) handoffJobs.delete(handoffJobs.keys().next().value!);
       const created = await pending;
       if (!created || typeof created !== "object" || !("jobId" in created)) handoffJobs.delete(key);
+      else remember(handoffOrigins, String(created.jobId), { scanId: parsed.data.scanId });
       return created;
     };
+
+    // ---- Sprint 9I: comparative handoff from a completed single-direction investigation ----
+
+    const remember = <V>(map: Map<string, V>, key: string, value: V) => {
+      map.set(key, value);
+      if (map.size > 200) map.delete(map.keys().next().value!);
+    };
+    const completedResult = (view: { status: string; response: { investigation: { runId: string; result: unknown } | null } | null } | null): AgentAnalysisResult | null => {
+      const result = view?.status === "completed" ? view.response?.investigation?.result : null;
+      return result && typeof result === "object" && (result as AgentAnalysisResult).status === "COMPLETE" ? (result as AgentAnalysisResult) : null;
+    };
+    /** Tag profiles the parent run fetched for the target's exemplars, read from server-held run state. */
+    const exemplarProfiles = (runId: string, target: AgentTerritoryResult): ExemplarProfileEvidence[] => {
+      let state;
+      try { state = factory("auto").store.get(runId); } catch { return []; }
+      if (!state) return [];
+      return target.representation.exemplars.flatMap((exemplar) => {
+        const profile = state.profiles.get(exemplar.id);
+        if (!profile) return [];
+        const status = profile.call.envelope.status === "ok" ? "ok" as const : profile.call.envelope.status === "partial" ? "partial" as const : "degraded" as const;
+        const tags = profile.tagIds.flatMap((id) => { const tag = state.tags.get(id); return tag ? [{ id, label: tag.label }] : []; });
+        return [{ subjectId: exemplar.id, subjectType: exemplar.type, tags, correlationId: profile.call.envelope.execution.correlation_id, status }];
+      });
+    };
+    const limits = () => {
+      const base = defaultLimits("compare_territories");
+      return { maxQlooCalls: base.maxQlooCalls, maxAgentTurns: base.maxAgentIterations, maxRunMinutes: MAX_RUN_MINUTES, maxPanelOptions: MAX_PANEL_OPTIONS, model: DEFAULT_AGENT_MODEL, reservedUsd: conservativeReserveUsd(), unknownOutcomes: "An uncertain provider call counts against the budget and is never replayed automatically." };
+    };
+    type CompareContext = { scan: AnyBrandBaselineResult; parentRunId: string; parent: AgentAnalysisResult; target: AgentTerritoryResult; candidates: ComparativeReferenceCandidate[]; siblings: AgentAnalysisResult[] };
+    /** Everything is re-read on the server: the scan by its token, the parent job by its token, siblings by scan ownership. */
+    const compareContext = async (request: FastifyRequest<{ Body: unknown }>, reply: FastifyReply): Promise<{ body: z.output<typeof compareBody>; context: CompareContext } | null> => {
+      if (rejectUnauthenticated(request, reply)) return null;
+      const parsed = compareBody.safeParse(request.body);
+      if (!parsed.success) { void reply.code(400).send({ error: "invalid_comparison_request" }); return null; }
+      const scanToken = tokenOf(request.headers["x-baseline-token"]);
+      const jobToken = tokenOf(request.headers["x-job-token"]);
+      if (!baselines || !scanToken || !jobToken) { void reply.code(404).send({ error: "investigation_not_found" }); return null; }
+      const scan = await baselines.readScan(parsed.data.scanId, scanToken);
+      const origin = handoffOrigins.get(parsed.data.parentJobId);
+      const view = jobs.get(parsed.data.parentJobId, jobToken);
+      // Unknown scan, wrong token, a job from another scan or a job that is gone all look the same.
+      if (!scan?.result || !view || origin?.scanId !== parsed.data.scanId) { void reply.code(404).send({ error: "investigation_not_found" }); return null; }
+      const parent = completedResult(view);
+      if (!parent) { void reply.code(409).send({ error: "investigation_not_complete", status: view.status, message: "Only a completed investigation can start a comparison." }); return null; }
+      if (parent.brand?.id !== scan.result.brand.qlooId) { void reply.code(409).send({ error: "brand_mismatch", message: "The investigation resolved a different Qloo brand than this research scan." }); return null; }
+      const target = parent.territories.find((t) => t.role === "target") ?? null;
+      if (!target) { void reply.code(409).send({ error: "target_not_found" }); return null; }
+      const siblings = [...handoffOrigins.entries()].filter(([jobId, item]) => item.scanId === parsed.data.scanId && jobId !== parsed.data.parentJobId).flatMap(([jobId]) => {
+        const result = completedResult(jobs.peek(jobId));
+        return result ? [{ jobId, result }] : [];
+      });
+      const parentRunId = view.response!.investigation!.runId;
+      const candidates = collectReferenceCandidates({ brandId: scan.result.brand.qlooId, target, exemplarProfiles: exemplarProfiles(parentRunId, target), siblings, baseline: scan.result });
+      return { body: parsed.data, context: { scan: scan.result, parentRunId, parent, target, candidates, siblings: siblings.map((s) => s.result) } };
+    };
+    const selected = (context: CompareContext, ids: readonly string[]) => {
+      const unknown = ids.filter((id) => !context.candidates.some((c) => c.id === id));
+      return unknown.length ? null : ids.map((id) => context.candidates.find((c) => c.id === id)!);
+    };
+    const planFor = (context: CompareContext, request: ReturnType<typeof buildComparativeHandoffRequest> & { ok: true }): ComparativePlan => ({
+      brandId: context.scan.brand.qlooId,
+      brandLabel: context.parent.brand!.label,
+      target: { label: context.target.label, conceptId: context.target.resolvedConcept?.id ?? null, entityType: request.eligibility.target!.entityType, ...(context.parent.hypothesisAssessment ? { singleHypothesisOutcome: context.parent.hypothesisAssessment.outcome } : {}) },
+      references: (request.eligibility.validatedReferences ?? []).map((ref) => ({ id: ref.key, label: ref.label, conceptId: ref.conceptId ?? null, entityType: ref.entityType, typeBasis: ref.typeBasis ?? "UNKNOWN" })),
+    });
+
+    app.post<{ Body: unknown }>("/api/agent/handoff/compare/options", { bodyLimit: 4096 }, async (request, reply) => {
+      const loaded = await compareContext(request, reply);
+      if (!loaded) return;
+      const { context } = loaded;
+      const problem = representationProblem(context.target);
+      return {
+        version: "ce-comparative-options/0.1",
+        brand: { name: context.scan.brand.name, qlooId: context.scan.brand.qlooId },
+        target: {
+          label: context.target.label,
+          conceptId: context.target.resolvedConcept?.id ?? null,
+          entityType: context.target.representation.entityType,
+          exemplars: context.target.representation.exemplars.map((e) => ({ label: e.label, type: e.type })),
+          correlationIds: context.target.provenance.correlationIds,
+          singleHypothesisOutcome: context.parent.hypothesisAssessment?.outcome ?? null,
+          canAnchor: problem === null,
+          problem,
+        },
+        references: context.candidates,
+        limits: limits(),
+        admission: { accepting: canAcceptInvestigations() },
+        connections: projectCulturalConnections({ brand: { id: context.scan.brand.qlooId, name: context.scan.brand.name }, evidenceOrigin: context.parent.evidenceOrigin, baseline: context.scan, runs: [context.parent, ...context.siblings] }),
+      };
+    });
+
+    const compare = async (request: FastifyRequest<{ Body: unknown }>, reply: FastifyReply, execute: boolean) => {
+      const loaded = await compareContext(request, reply);
+      if (!loaded) return;
+      const { body, context } = loaded;
+      const references = selected(context, body.referenceIds ?? []);
+      if (!references) return reply.code(422).send({ error: "reference_not_offered", message: "A selected reference is not one the server offered for this investigation." });
+      const handoff = buildComparativeHandoffRequest(context.parent.brand, context.target, references, { expectedBrandId: context.scan.brand.qlooId });
+      if (!execute) return { version: "ce-comparative-preview/0.1", eligibility: handoff.eligibility, territories: handoff.ok ? handoff.request.territories : null, limits: limits(), admission: { accepting: canAcceptInvestigations() } };
+      if (!body.idempotencyKey) return reply.code(400).send({ error: "invalid_comparison_request", message: "A start needs an idempotency key." });
+      // A repeated start returns the job it already created; the key never authorizes a different request.
+      const key = `${body.scanId}:${body.parentJobId}:${body.idempotencyKey}`;
+      const referenceKey = references.map((r) => r.id).sort().join("|");
+      const existing = comparativeKeys.get(key);
+      if (existing) {
+        if (existing.referenceKey !== referenceKey) return reply.code(409).send({ error: "idempotency_conflict" });
+        const prior = await existing.pending;
+        if (!prior || typeof prior !== "object" || !("jobId" in prior)) return reply.code(409).send({ error: "idempotency_unavailable" });
+        return reply.code(200).send(prior);
+      }
+      if (!handoff.ok) return reply.code(422).send({ error: "comparison_not_eligible", eligibility: handoff.eligibility });
+      // Paid admission is decided here, at dispatch, never by the eligibility gate or the browser.
+      if (!admitCreate(request, reply)) return;
+      const plan = planFor(context, handoff);
+      const queryBodyValue = queryBody.parse({ query: handoff.request.userQuery, brand: handoff.request.brand, intent: "compare_territories", territories: handoff.request.territories });
+      const pending = Promise.resolve(enqueue({ kind: "execute", body: queryBodyValue, model: "auto", expectedBrandId: context.scan.brand.qlooId }, reply));
+      remember(comparativeKeys, key, { referenceKey, pending });
+      const created = await pending;
+      if (!created || typeof created !== "object" || !("jobId" in created)) comparativeKeys.delete(key);
+      else remember(comparativeJobs, String(created.jobId), { scanId: body.scanId, plan, baseline: context.scan, parentRunId: context.parentRunId });
+      return created;
+    };
+    app.post<{ Body: unknown }>("/api/agent/handoff/compare/preview", { bodyLimit: 4096 }, (request, reply) => compare(request, reply, false));
+    app.post<{ Body: unknown }>("/api/agent/handoff/compare/jobs", { bodyLimit: 4096 }, (request, reply) => compare(request, reply, true));
+
+    /** The validated comparative report for a comparative job. Recomputed from the held result on every read. */
+    app.get<{ Params: { id: string } }>("/api/agent/handoff/compare/:id/report", async (request, reply) => {
+      if (rejectUnauthenticated(request, reply)) return;
+      const view = jobs.get(request.params.id, tokenOf(request.headers["x-job-token"]));
+      const entry = comparativeJobs.get(request.params.id);
+      if (!view || !entry) return reply.code(404).send({ error: "job_not_found", message: "This comparison is not available. It may have expired, or the server may have restarted." });
+      const result = view.response?.investigation?.result;
+      const analysis = result && typeof result === "object" && (result as AgentRunResponse).status !== "NEEDS_INPUT" ? (result as AgentAnalysisResult) : null;
+      if (view.status !== "completed" || !analysis) {
+        return { version: "ce-comparative-report-envelope/0.1", status: view.status, error: view.error, report: null, connections: null };
+      }
+      const verdict = validateComparativeOutcome(entry.plan, analysis);
+      return {
+        version: "ce-comparative-report-envelope/0.1",
+        status: view.status,
+        error: view.error,
+        report: projectComparativeStrategicReport(analysis, entry.plan, verdict),
+        connections: projectCulturalConnections({ brand: { id: entry.plan.brandId, name: entry.plan.brandLabel }, evidenceOrigin: analysis.evidenceOrigin, baseline: entry.baseline, runs: [analysis] }),
+      };
+    });
     app.post<{ Body: unknown }>("/api/agent/handoff/preview", { bodyLimit: 4096 }, (request, reply) => handoff(request, reply, false));
     app.post<{ Body: unknown }>("/api/agent/handoff/jobs", { bodyLimit: 4096 }, (request, reply) => handoff(request, reply, true));
     app.get<{ Params: { id: string } }>("/api/agent/jobs/:id", async (request, reply) => {

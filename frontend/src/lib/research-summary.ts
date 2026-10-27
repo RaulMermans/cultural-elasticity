@@ -4,7 +4,8 @@
  * No model call, no new numbers, no recommendation added to fill space.
  */
 import { domainWords, hypothesisOutcomeCopy } from "./research-copy.ts";
-import type { QueryResponse } from "@cultural-elasticity/shared";
+import { outcomeCopy, relationshipKindCopy } from "./comparative.ts";
+import type { ComparativeStrategicReport, CulturalConnectionMap, QueryResponse } from "@cultural-elasticity/shared";
 import type { ResearchView } from "./research-view.ts";
 
 export type SummaryItem = { text: string; detail?: string };
@@ -23,9 +24,17 @@ export type ResearchSummary = {
 
 export const formatDate = (iso: string) => new Date(iso).toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short", timeZone: "UTC" }) + " UTC";
 
-export function buildSummary(view: ResearchView, investigation: QueryResponse | null = null): ResearchSummary {
+/** Sprint 9I: a server-validated comparative report and its relationship map, for the same brand only. */
+export type ComparativeInput = { report: ComparativeStrategicReport; connections: CulturalConnectionMap | null };
+
+const positionText = (position: { position: number | null; of: number; medianPercentile: number | null } | null) =>
+  position?.position != null ? `position ${position.position} of ${position.of}${position.medianPercentile !== null ? ` (${Math.round(position.medianPercentile * 100)}th percentile)` : ""}` : "not ranked";
+
+export function buildSummary(view: ResearchView, investigation: QueryResponse | null = null, comparativeInput: ComparativeInput | null = null): ResearchSummary {
   const brand = view.brand.name;
   const sections: SummarySection[] = [];
+  const comparative = comparativeInput && comparativeInput.report.brand.id === view.brand.qlooId ? comparativeInput : null;
+  const report = comparative?.report ?? null;
   const run = investigation?.investigation?.result;
   const matched = run && run.status !== "NEEDS_INPUT" && run.status === "COMPLETE" && run.brand?.id === view.brand.qlooId && (run.evidenceOrigin === "live" || run.evidenceOrigin === "recorded") ? run : null;
   const targets = matched?.territories.filter((item) => item.role === "target") ?? [];
@@ -67,7 +76,22 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
 
   sections.push({ id: "observations", title: "Key Observations", items: targets.length ? targets.flatMap((target) => target.keyEvidence.map((text) => ({ text, detail: `From the ${target.label} investigation.` }))) : [{ text: "No completed, matching deep investigation is attached to this brief. The cultural connections above remain baseline observations." }] });
   sections.push({ id: "interpretations", title: "Supported Interpretations", items: matched && matched.summary.claimValidation.passed ? [{ text: matched.summary.text, detail: `Validated against the ${brand} investigation result.` }] : [{ text: "No validated agent interpretation is available for this brand in this brief." }] });
-  if (fullComparative.length >= 2) {
+  if (report) {
+    const outcome = outcomeCopy[report.outcome];
+    const target = report.targetTerritory;
+    sections.push({
+      id: "comparison",
+      title: "Comparative Cultural Elasticity Assessment",
+      intro: `${outcome.headline}. ${outcome.detail} Candidate set: [${target.candidateSet.join(", ")}]. Evidence: ${report.evidenceOrigin === "synthetic" ? "SYNTHETIC test world, not Qloo" : report.evidenceOrigin}.`,
+      items: [
+        { text: `${target.name} (proposed): ${positionText(target.relativePosition)}. Classification: ${target.provisionalClassification?.label ?? "none"}.`, detail: [target.robustness ? `Robustness ${target.robustness.level}: ${target.robustness.sensitivityDetail}` : null, target.coherence ? `Coherence ${target.coherence.band}.` : null, target.evidenceQuality ? `Evidence quality ${target.evidenceQuality.level}.` : null].filter(Boolean).join(" ") || undefined },
+        ...report.alternativesEvaluated.map((alt) => ({ text: `${alt.name}: ${positionText(alt.relativePosition)}. Classification: ${alt.classification?.label ?? "none"}.`, detail: alt.comparisonLimitation ?? (alt.robustness ? `Robustness ${alt.robustness.level}.` : undefined) })),
+        ...report.whatEvidenceEstablishes.map((text) => ({ text, detail: "Established by Qloo evidence or deterministic analysis." })),
+        ...report.strategicImplications.map((text) => ({ text, detail: "Deterministic reading of the relative result." })),
+        ...(report.interpretation ? [{ text: report.interpretation.text, detail: "Validated interpretation; not evidence." }] : []),
+      ],
+    });
+  } else if (fullComparative.length >= 2) {
     const candidateSet = fullComparative[0]!.comparisonSet?.labels.join(", ") ?? fullComparative.map((t) => t.label).join(", ");
     sections.push({
       id: "comparison",
@@ -88,6 +112,22 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
     });
   }
 
+  if (comparative?.connections && comparative.connections.relationships.length) {
+    const map = comparative.connections;
+    sections.push({
+      id: "relationships",
+      title: "Cultural Relationships Across Domains",
+      intro: "Grouped by how each relationship was obtained. None of them enters a relative ranking.",
+      items: [
+        ...(["DIRECT_QLOO_OBSERVATION", "DERIVED_PROFILE_OVERLAP", "AGENT_INTERPRETATION"] as const).flatMap((kind) => {
+          const items = map.relationships.filter((item) => item.kind === kind);
+          return items.length ? [{ text: `${relationshipKindCopy[kind].label} (${items.length}): ${items.slice(0, 8).map((item) => `${item.from.label} → ${item.to.label} (${item.to.domain})`).join("; ")}`, detail: relationshipKindCopy[kind].note }] : [];
+        }),
+        ...map.notes.map((text) => ({ text, detail: "Limitation." })),
+      ],
+    });
+  }
+
   const marked = view.directions.filter((direction) => direction.categoryBasis === "user");
   if (marked.length) {
     sections.push({
@@ -104,7 +144,7 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
     items: view.unresolved.length ? view.unresolved.map((item) => ({ text: item.title, detail: item.detail })) : [{ text: "No open question was recorded beyond the limitations below." }],
   });
 
-  const limitations = [...view.uncertainties, ...targets.flatMap((target) => target.limitations.map((item) => item.detail))];
+  const limitations = [...view.uncertainties, ...targets.flatMap((target) => target.limitations.map((item) => item.detail)), ...(report?.whatRemainsUnknown ?? [])];
   if (view.setAside.length) limitations.push(`${view.setAside.length} returned tags described store or venue listings and were set aside as operational metadata, not culture.`);
   limitations.push("Nothing here measures commercial potential, cultural distance or audience size.");
   sections.push({ id: "limitations", title: "Limitations and Missing Evidence", items: limitations.map((text) => ({ text })) });
@@ -112,7 +152,7 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
   sections.push({
     id: "next",
     title: "Recommended Next Research Steps",
-    items: [...(matched?.followUpOptions ?? []), ...(view.nextSteps.length ? view.nextSteps : [`Repeat the research for ${brand} with the current method when new research is available.`])].map((text) => ({ text })),
+    items: [...new Set([...(report?.nextResearchActions ?? []), ...(matched?.followUpOptions ?? []), ...(view.nextSteps.length ? view.nextSteps : [`Repeat the research for ${brand} with the current method when new research is available.`])])].map((text) => ({ text })),
   });
 
   sections.push({ id: "method", title: "Research Date and Methodology Version", items: [{ text: `Baseline captured ${formatDate(view.capturedAt)}. Baseline method ${view.method.templateVersion}. ${matched ? `Deep investigation run ${matched.runId}; method ${matched.schemaVersion}.` : "No matching deep investigation is included."}` }] });
@@ -126,6 +166,9 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
   for (const target of targets) for (const reference of target.provenance.correlationIds) {
     if (!sources.some((source) => source.reference === reference)) sources.push({ label: `${target.label} investigation`, capturedAt: "Investigation session", status: "agent result", reference });
   }
+  for (const reference of report?.provenance.correlationIds ?? []) {
+    if (!sources.some((source) => source.reference === reference)) sources.push({ label: "Comparative investigation", capturedAt: `Run ${report!.provenance.runId}`, status: `${report!.evidenceOrigin} result`, reference });
+  }
 
   return {
     title: `${brand}: strategic research brief`,
@@ -137,7 +180,9 @@ export function buildSummary(view: ResearchView, investigation: QueryResponse | 
       ? "Recorded Qloo research. It was captured earlier and is not a new live run."
       : "Live Qloo research from this session.",
     researchDate: formatDate(view.capturedAt),
-    outcome: fullComparative.length >= 2
+    outcome: report
+      ? { headline: `Comparative assessment: ${outcomeCopy[report.outcome].headline}`, detail: report.targetTerritory.provisionalClassification ? `${report.targetTerritory.name} holds ${positionText(report.targetTerritory.relativePosition)} within [${report.targetTerritory.candidateSet.join(", ")}]; provisional class ${report.targetTerritory.provisionalClassification.label}. Relative to this set only.` : outcomeCopy[report.outcome].detail }
+      : fullComparative.length >= 2
       ? {
           headline: `Comparative Assessment: ${fullComparative[0]!.label} (${fullComparative[0]!.classification!.label})`,
           detail: `Rank position ${fullComparative[0]!.relativePosition!.position} of ${fullComparative[0]!.relativePosition!.of} within candidate set [${fullComparative.map((t) => t.label).join(", ")}]. Position and provisional classification are relative strictly to this set.`,

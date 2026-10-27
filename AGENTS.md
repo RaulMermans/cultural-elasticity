@@ -102,6 +102,15 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 2. **The research finding and brief are projections.** They preserve source scope, validated claims and recorded/live origin. Comparison reads completed same-brand results only and makes no provider call or cross-call numerical ranking. Canonical record: `docs/sprint-9d/AGENTIC_INTELLIGENCE_AND_STRATEGIC_DECISION.md`.
 3. **Agent jobs are still in process.** Handoff idempotency and job results disappear on backend restart. Public paid investigations remain disabled pending separate readiness and durability decisions. The Sprint 9D benchmark has no LLM-only arm yet; do not claim measured comparative Qloo value.
 
+## Comparative handoff and cross-domain relationships (Sprint 9I)
+
+1. **A comparison starts only from a completed investigation, through the server.** `/api/agent/handoff/compare/{options,preview,jobs}` re-read the scan by its token, the parent job by its token, and sibling investigations by scan ownership. The browser sends identifiers only. Target, references, types, evidence and budgets come from the server. The run is the existing `compare_territories` runtime.
+2. **A reference type is evidence, never a declaration** (`comparative-bridge.ts`). It needs a validated representation from a completed investigation, or Qloo returning the tag in the profile of an entity of that type. A missing type is `REFERENCE_TYPE_UNVERIFIED`. It is never copied from the target. Baseline tag directions are shown but cannot be selected until investigated.
+3. **Eligibility is not authorization.** Paid admission is decided at job dispatch (`admitCreate`, spend reservation) and per call by the runtime, never by the gate or the browser.
+4. **The finished run is checked against the authorized plan** (`validateComparativeOutcome`). A brand change, missing target, mixed panel, unsourced or unrepresented ranked territory, or a target concept drift is `INTEGRITY_FAILED` and shows no position. Only a numeric `position` counts as ranked, and `INSUFFICIENT_EVIDENCE` is not a relative class.
+5. **Cross-domain relationships explain; they never rank** (`packages/shared/src/connections.ts`). `DIRECT_QLOO_OBSERVATION`, `DERIVED_PROFILE_OVERLAP` and `AGENT_INTERPRETATION` stay separate, and every relationship is `rankable: false`. A reference of another entity type is qualitative evidence with an explicit comparison limitation, never a cross-type score.
+6. **The recorded comparative demo is built, not written** (`backend/scripts/demo/build-recorded-comparative.ts`) from live-origin evidence with source checksums. It must not contain a ranking that no recorded run produced. Canonical record: `docs/sprint-9i/CROSS_DOMAIN_COMPARATIVE_RESEARCH_REPORT.md`.
+
 ## Deployment provenance (permanent, from Sprint 8F)
 
 1. **GitHub is the canonical source.** `RaulMermans/cultural-elasticity` is the only release repository. Do not deploy from copied archives as the ordinary process.
