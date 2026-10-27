@@ -562,6 +562,9 @@ describe("Sprint 9H: Comparative Cultural Elasticity Suite", () => {
     const report = projectComparativeStrategicReport(mockComparativeResult, "boutique_hospitality", "INCONCLUSIVE");
     expect(report.schemaVersion).toBe("ce-comparative-report/0.1");
     expect(report.targetTerritory.name).toBe("Boutique hospitality");
+    expect(report.evidenceOrigin).toBe("live");
+    expect(projectComparativeStrategicReport({ ...mockComparativeResult, evidenceOrigin: "recorded" }, "boutique_hospitality").evidenceOrigin).toBe("recorded");
+    expect(projectComparativeStrategicReport({ ...mockComparativeResult, evidenceOrigin: "synthetic" }, "boutique_hospitality").evidenceOrigin).toBe("synthetic");
     expect(report.targetTerritory.singleHypothesisOutcome).toBe("INCONCLUSIVE");
     expect(report.targetTerritory.candidateSet).toEqual(["Boutique hospitality", "Luxury Resorts", "Art Galleries"]);
     expect(report.targetTerritory.provisionalClassification?.label).toBe("NATURAL_ADJACENCY");
