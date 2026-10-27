@@ -21,7 +21,7 @@ export function publicRuntime(env: NodeJS.ProcessEnv = process.env): boolean {
 }
 
 export function investigationsAccepted(env: NodeJS.ProcessEnv = process.env): boolean {
-  return env.CE_ACCEPT_INVESTIGATIONS !== "0";
+  return env.CE_ACCEPT_INVESTIGATIONS === "1";
 }
 
 export function configuredSecret(env: NodeJS.ProcessEnv = process.env): string | undefined {
