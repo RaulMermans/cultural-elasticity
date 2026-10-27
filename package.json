@@ -16,6 +16,7 @@
     "lint": "eslint .",
     "typecheck": "pnpm -r --filter=!@cultural-elasticity/vercel-feasibility typecheck",
     "check:secrets": "node scripts/check-secrets.mjs",
+    "check:deployment-config": "node --test scripts/check-deployment-contract.test.mjs && node scripts/check-deployment-contract.mjs",
     "eval:methodology": "pnpm --filter backend eval:methodology",
     "eval:live": "pnpm --filter backend eval:live",
     "eval:elasticity": "pnpm --filter backend eval:elasticity",
