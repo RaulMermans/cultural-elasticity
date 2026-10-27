@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-27
 **Branch:** `sprint/9i-cross-domain-cultural-intelligence`
-**Starting SHA:** `fc93750c3e909178bd641ca77723394ee95b7817` (`origin/main`, Sprint 9H merged as PR #32)
+**Starting SHA:** `fc93750c3e909178bd641ca77723394ee95b7817` (`origin/main`, Sprint 9H merged as PR #32). Rebased before the PR onto `c9293c3` (PRs #33 fail-closed admission and #34 release guardrails).
 
 **Evidence posture:**
 
@@ -21,7 +21,8 @@ The complete journey is proven end to end on the synthetic world through the rea
 
 ## 1. Starting SHA and branch
 
-- Starting SHA: `fc93750`.
+- Starting SHA: `fc93750`. Rebased onto `c9293c3`.
+- Conflicts were in `comparative-bridge.ts` and its 9H test. #33's evidence-origin fix is subsumed by the rewrite, and its three-origin assertions are kept in test 14.
 - Development branch: `sprint/9i-cross-domain-cultural-intelligence`.
 - Working copy: a fresh clone outside iCloud. The iCloud copy on Desktop had been evicted and could not be read; see the open risks.
 
@@ -159,12 +160,14 @@ All runs are offline, with no provider calls (Node 22.23.2).
 
 | Suite | Result | Scope |
 | --- | --- | --- |
-| `pnpm lint`, `pnpm typecheck`, `pnpm build` | pass | whole monorepo |
-| Backend `vitest` | **871 / 871** in 71 files | includes the new suites below |
+| `pnpm lint`, `pnpm typecheck`, `pnpm build` | pass | whole monorepo (after rebase onto `c9293c3`) |
+| `pnpm check:deployment-config` | `OFFLINE_DEPLOYMENT_CONFIG_PASS` | remote platform state not verified (by design) |
+| Backend `vitest` | **873 / 873** | includes the new suites below |
 | Frontend unit (`node --test`) | **75 / 75** | includes `comparative.test.ts` |
 | Browser (`playwright`, synthetic job API) | **54 / 54** | includes the 3 new `comparative-research.spec.ts` tests |
 | `pnpm check:secrets` | pass | 596 repo files and 19 browser bundle files; no leakage |
 | `pnpm eval:methodology` | 19 / 19 checks | SYNTHETIC fixtures |
+| `pnpm eval:elasticity` | 27 / 27 | offline |
 | `pnpm eval:agent` | 53 / 53 scenarios | SYNTHETIC world |
 | `pnpm eval:query` | all acceptance criteria PASS; 57 / 57 handoffs | ADVERSARIAL handoff 9/10 and category M 2/3, **identical on `origin/main`** (pre-existing) |
 
@@ -188,6 +191,20 @@ New tests, mapped to the sprint's mandatory scenarios:
 | 14 | Summary and export fidelity | `comparative.test.ts`; browser test checks the downloaded HTML |
 
 The browser stubs are not hand-written. They were recorded from the real backend routes over the synthetic world (`backend/scripts/synthetic/build-comparative-e2e.ts`).
+
+**Regression on main repaired in tests only.**
+
+- PR #33 made paid admission opt-in (`CE_ACCEPT_INVESTIGATIONS === "1"`). That left 10 existing backend tests on `origin/main` failing (850/860 there). They exercise behaviour behind an open admission: agent API, job API, query API, and the 5B3 and 7B public guards.
+- They now opt in explicitly, per file or block, and restore the env afterwards.
+- No production code changed for this, and #33's own fail-closed tests still pass.
+- This is a separate commit, so the owner can review it on its own.
+
+Two other failures predate this sprint and are **identical on `origin/main`**. They are not fixed here:
+
+- `pnpm eval:live`: 19/21 cases. Both `evals/fixtures/live/loewe-baseline-canary-*.live.json` fail the live-packet schema.
+- `qloo-value-benchmark.test.ts` needs gitignored `backend/feasibility-output/` artifacts. A fresh clone fails 2 tests until they are copied in; the counts above include them.
+
+GitHub Actions on `main` has failed in about 3 s on every recent merge: jobs do not start (billing, per AGENTS.md). CI is therefore not an effective gate, and the results above are local.
 
 ## 11. Telemetry and costs
 
@@ -221,4 +238,5 @@ PR_PLACEHOLDER
 2. Durability of agent jobs, comparative plans and job-to-scan ownership. These are in memory today; a restart loses them.
 3. A public spend budget and admission decision for comparisons. A comparison holds a full reservation, while single directions hold a smaller one.
 4. Pinning the comparative run to the investigated concept ids, to avoid re-resolution drift.
-5. Vercel protection gate and Railway single-replica constraints (unchanged from 8F), plus `smoke:remote` with admissions paused.
+5. Vercel protection gate and Railway single-replica constraints (unchanged from 8F), plus `smoke:remote` with admissions paused. Railway builds from `main`, so merging this PR changes the running backend: the added routes stay inert while `CE_ACCEPT_INVESTIGATIONS` is not `1`.
+6. A CI that actually runs (GitHub Actions billing), and fixes for the pre-existing `eval:live` schema failures and the benchmark artifact dependency.
