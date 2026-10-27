@@ -1,5 +1,6 @@
 /** Sprint 5B.3: clarification continuity, navigation, comparison, refinement, jobs and public guards. SYNTHETIC world. */
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { resetLifecycle } from "../src/ops/lifecycle.js";
 import { parseQueryResponse } from "@cultural-elasticity/shared";
 import { buildApp } from "../src/app.js";
 import { resetAdmission } from "../src/api/admission.js";
@@ -13,6 +14,19 @@ import { AgentRuntime } from "../src/agent/runtime.js";
 import { named, proposal } from "../scripts/synthetic/query-proposals.js";
 import { scripted } from "./fixtures/synthetic/agent.js";
 import type { QueryResponse } from "@cultural-elasticity/shared";
+
+// PR #33 made paid investigation admission opt-in (CE_ACCEPT_INVESTIGATIONS=1). These tests exercise behaviour
+// behind an open admission, so they opt in explicitly; the fail-closed default is covered by its own tests.
+const previousAccept = process.env.CE_ACCEPT_INVESTIGATIONS;
+beforeEach(() => {
+  process.env.CE_ACCEPT_INVESTIGATIONS = "1";
+  resetLifecycle();
+});
+afterEach(() => {
+  if (previousAccept === undefined) delete process.env.CE_ACCEPT_INVESTIGATIONS;
+  else process.env.CE_ACCEPT_INVESTIGATIONS = previousAccept;
+  resetLifecycle();
+});
 
 function harness(answer: (input: InterpretInput) => unknown) {
   const provider = scripted();

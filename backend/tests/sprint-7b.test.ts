@@ -1,6 +1,6 @@
 /** Sprint 7B: spend overage, visitor-adjacent backend identity, readiness semantics, runtime spend. SYNTHETIC. */
 import { readFileSync } from "node:fs";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { parseQueryResponse, type QueryResponse } from "@cultural-elasticity/shared";
 import { buildApp } from "../src/app.js";
 import { resetAdmission } from "../src/api/admission.js";
@@ -251,6 +251,11 @@ describe("latency reconciliation", () => {
 });
 
 describe("public job still refuses unsupported models", () => {
+  // PR #33 made paid admission opt-in; this guard is checked behind an open admission.
+  beforeEach(() => {
+    process.env.CE_ACCEPT_INVESTIGATIONS = "1";
+    resetLifecycle();
+  });
   it("rejects baseline on the public job route", async () => {
     process.env.CE_PUBLIC_DEPLOYMENT = "1";
     process.env.CE_INTERNAL_API_SECRET = SECRET;

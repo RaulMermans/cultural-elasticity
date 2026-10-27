@@ -1,7 +1,8 @@
 /** Sprint 5B.1 query layer: gate, interpreters, context, runtime handoff, follow-ups and API (SYNTHETIC world). */
 import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { resetLifecycle } from "../src/ops/lifecycle.js";
 import { buildApp } from "../src/app.js";
 import { BaselinePolicyModel } from "../src/agent/model/baseline.js";
 import { QUERY_PROPOSAL_JSON_SCHEMA, queryProposalSchema, type QueryProposal } from "../src/agent/query/contracts.js";
@@ -12,6 +13,19 @@ import { RunStore } from "../src/agent/run-store.js";
 import { AgentRuntime } from "../src/agent/runtime.js";
 import { inherited, named, proposal } from "../scripts/synthetic/query-proposals.js";
 import { scripted } from "./fixtures/synthetic/agent.js";
+
+// PR #33 made paid investigation admission opt-in (CE_ACCEPT_INVESTIGATIONS=1). These tests exercise behaviour
+// behind an open admission, so they opt in explicitly; the fail-closed default is covered by its own tests.
+const previousAccept = process.env.CE_ACCEPT_INVESTIGATIONS;
+beforeEach(() => {
+  process.env.CE_ACCEPT_INVESTIGATIONS = "1";
+  resetLifecycle();
+});
+afterEach(() => {
+  if (previousAccept === undefined) delete process.env.CE_ACCEPT_INVESTIGATIONS;
+  else process.env.CE_ACCEPT_INVESTIGATIONS = previousAccept;
+  resetLifecycle();
+});
 
 const LLM = { kind: "llm" as const, model: "test" };
 

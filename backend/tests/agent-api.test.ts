@@ -1,5 +1,6 @@
 /** POST /api/agent/analyze and /api/agent/continue with an injected scripted runtime (SYNTHETIC world). */
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { resetLifecycle } from "../src/ops/lifecycle.js";
 import { buildApp } from "../src/app.js";
 import type { AgentRuntimeFactory } from "../src/api/agent.js";
 import { AgentNotConfiguredError } from "../src/agent/errors.js";
@@ -7,6 +8,19 @@ import { BaselinePolicyModel } from "../src/agent/model/baseline.js";
 import { RunStore } from "../src/agent/run-store.js";
 import { AgentRuntime } from "../src/agent/runtime.js";
 import { scripted } from "./fixtures/synthetic/agent.js";
+
+// PR #33 made paid investigation admission opt-in (CE_ACCEPT_INVESTIGATIONS=1). These tests exercise behaviour
+// behind an open admission, so they opt in explicitly; the fail-closed default is covered by its own tests.
+const previousAccept = process.env.CE_ACCEPT_INVESTIGATIONS;
+beforeEach(() => {
+  process.env.CE_ACCEPT_INVESTIGATIONS = "1";
+  resetLifecycle();
+});
+afterEach(() => {
+  if (previousAccept === undefined) delete process.env.CE_ACCEPT_INVESTIGATIONS;
+  else process.env.CE_ACCEPT_INVESTIGATIONS = previousAccept;
+  resetLifecycle();
+});
 
 function app(factory?: AgentRuntimeFactory) {
   const store = new RunStore();
