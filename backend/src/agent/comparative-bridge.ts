@@ -491,7 +491,7 @@ export function projectComparativeStrategicReport(
     whatRemainsUnknown,
     strategicImplications,
     nextResearchActions,
-    evidenceOrigin: comparativeResult.evidenceOrigin === "live" ? "live" : "synthetic",
+    evidenceOrigin: comparativeResult.evidenceOrigin,
     provenance: {
       correlationIds,
       methodologyVersion: target.comparisonSet?.methodologyVersion ?? "ce-methodology/0.1",
