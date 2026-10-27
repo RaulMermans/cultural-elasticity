@@ -445,7 +445,8 @@ const server = createServer((request, response) => {
       return;
     }
     if (request.method === "GET" && url.pathname === "/ready") {
-      send(200, { status: "ready", acceptingInvestigations: true, reasons: [] });
+      // Sprint 9J: a private synthetic process with no operator token does not require one.
+      send(200, { status: "ready", acceptingInvestigations: true, reasons: [], dependencies: { paidOperatorRequired: false } });
       return;
     }
     send(404, { error: "not_found", message: "This investigation is no longer available. You can start a new one." });
