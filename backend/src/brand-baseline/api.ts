@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { verifyInternalAuth, admitVisitor, verifyOperator } from "../ops/identity.js";
+import { verifyInternalAuth, admitVisitor, verifyOperator, verifyPaidOperator } from "../ops/identity.js";
 import { operatorToken } from "../config/production.js";
 import { createBaselinePool, databaseReady } from "./db.js";
 import { BaselineRepository, BaselineRepositoryError, payloadHash } from "./repository.js";
@@ -38,6 +38,12 @@ export async function brandBaselineRoutes(app: FastifyInstance): Promise<void> {
     }
     if (!enabled || !repository || (needsLive && !liveEnabled)) {
       void reply.code(503).send({ error: "baseline_paused" });
+      return false;
+    }
+    // Resolution and scans dispatch Qloo calls: the same operator authorization as an agent start.
+    const operator = needsLive ? verifyPaidOperator(request.headers as Record<string, unknown>) : { ok: true as const };
+    if (!operator.ok) {
+      void reply.code(403).send({ error: operator.code });
       return false;
     }
     return true;

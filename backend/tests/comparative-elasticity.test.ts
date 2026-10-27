@@ -309,7 +309,11 @@ describe("Sprint 9H: Comparative Cultural Elasticity Suite", () => {
       classification: { label: label2, status: "PROVISIONAL", reasons: [`Rank position ${position} of 3`] }, keyEvidence: [`Position ${position} of 3.`], provenance: { correlationIds: [`syn-${key}`], sources: ["synthetic"] },
     });
     const result = comparativeResult([ranked("syn_target", "SYNTHETIC Target", 1, 1, "NATURAL_ADJACENCY"), ranked("syn_resorts", "SYNTHETIC resorts", 2, 0.5, "CREDIBLE_STRETCH"), ranked("syn_galleries", "SYNTHETIC galleries", 3, 0, "CULTURAL_BREAK")]);
-    const plan = { brandId: SYN_BRAND.id, brandLabel: SYN_BRAND.label, target: { label: "SYNTHETIC Target", conceptId: "urn:tag:syn:syn_target", entityType: "place", singleHypothesisOutcome: "INCONCLUSIVE" }, references: [] };
+    const plan = { brandId: SYN_BRAND.id, brandLabel: SYN_BRAND.label, target: { label: "SYNTHETIC Target", conceptId: "urn:tag:syn:syn_target", entityType: "place", singleHypothesisOutcome: "INCONCLUSIVE" }, references: [
+      // Sprint 9J: the authorized plan names the references the panel ranks (COMPARISON_SET_AUTHORIZED).
+      { id: "syn_resorts", label: "SYNTHETIC resorts", conceptId: "urn:tag:syn:syn_resorts", entityType: "place", typeBasis: "VALIDATED_REPRESENTATION" },
+      { id: "syn_galleries", label: "SYNTHETIC galleries", conceptId: "urn:tag:syn:syn_galleries", entityType: "place", typeBasis: "VALIDATED_REPRESENTATION" },
+    ] };
     const verdict = validateComparativeOutcome(plan, result);
     expect(verdict.outcome).toBe("RELATIVE_POSITION_ESTABLISHED");
     const report = projectComparativeStrategicReport(result, plan, verdict);
@@ -461,6 +465,55 @@ describe("Sprint 9H: Comparative Cultural Elasticity Suite", () => {
     expect(elasticityResult.territories.length).toBe(6);
     expect(elasticityResult.limitations.some((l) => l.code === "RELATIVE_TO_COMPARISON_SET")).toBe(true);
     expect(elasticityResult.limitations.some((l) => l.code === "NOT_A_SUCCESS_PREDICTION")).toBe(true);
+  });
+
+  // Sprint 9J: a ranked reference must be the authorized concept, and the panel must be the authorized set.
+  describe("9J comparison identity", () => {
+    const set = { territoryKeys: ["syn_target", "syn_resorts", "syn_galleries"], labels: ["SYNTHETIC Target", "SYNTHETIC resorts", "SYNTHETIC galleries"], methodologyVersion: "v0" };
+    const ranked = (key: string, label: string, position: number, conceptId: string | null = `urn:tag:syn:${key}`) => territory({
+      key, label, role: key === "syn_target" ? "target" : "reference", resolvedConcept: conceptId ? { id: conceptId, label, type: "tag" } : null, analysisRoute: "FULL_RELATIVE_ANALYSIS", comparisonSet: set,
+      relativePosition: { position, of: 3, medianPercentile: 1 - (position - 1) / 2, medianRank: position }, robustness: { level: "HIGH", percentileSpread: 0, panelledExemplars: 2, declaredExemplars: 2, reasons: [] },
+      classification: { label: "CREDIBLE_STRETCH", status: "PROVISIONAL", reasons: [] }, keyEvidence: [], provenance: { correlationIds: [`syn-${key}`], sources: ["synthetic"] },
+    });
+    const ref = (key: string, label: string) => ({ id: key, label, conceptId: `urn:tag:syn:${key}`, entityType: "place", typeBasis: "VALIDATED_REPRESENTATION" });
+    const plan = { brandId: SYN_BRAND.id, brandLabel: SYN_BRAND.label, target: { label: "SYNTHETIC Target", conceptId: "urn:tag:syn:syn_target", entityType: "place" }, references: [ref("syn_resorts", "SYNTHETIC resorts"), ref("syn_galleries", "SYNTHETIC galleries")] };
+    const blocked = (result: AgentAnalysisResult) => {
+      const verdict = validateComparativeOutcome(plan, result);
+      const report = projectComparativeStrategicReport(result, plan, verdict);
+      expect(verdict.outcome).toBe("INTEGRITY_FAILED");
+      expect(report.targetTerritory.relativePosition).toBeNull();
+      expect(report.alternativesEvaluated.every((a) => a.relativePosition === null && a.classification === null)).toBe(true);
+      return verdict;
+    };
+
+    it("the authorized panel establishes a position", () => {
+      const result = comparativeResult([ranked("syn_target", "SYNTHETIC Target", 1), ranked("syn_resorts", "SYNTHETIC resorts", 2), ranked("syn_galleries", "SYNTHETIC galleries", 3)]);
+      expect(validateComparativeOutcome(plan, result).outcome).toBe("RELATIVE_POSITION_ESTABLISHED");
+    });
+
+    it("a ranked reference anchored to another concept withholds every position", () => {
+      const verdict = blocked(comparativeResult([ranked("syn_target", "SYNTHETIC Target", 1), ranked("syn_resorts", "SYNTHETIC resorts", 2, "urn:tag:syn:other_resorts"), ranked("syn_galleries", "SYNTHETIC galleries", 3)]));
+      expect(verdict.checks.find((c) => c.code === "CONCEPT_ANCHOR_MATCHES" && c.blocking && !c.passed)?.detail).toMatch(/SYNTHETIC resorts/u);
+    });
+
+    it("a ranked reference whose concept can no longer be verified withholds every position", () => {
+      blocked(comparativeResult([ranked("syn_target", "SYNTHETIC Target", 1), ranked("syn_resorts", "SYNTHETIC resorts", 2, null), ranked("syn_galleries", "SYNTHETIC galleries", 3)]));
+    });
+
+    it("a drifted reference left out of the panel only limits the report", () => {
+      const twoSet = { ...set, territoryKeys: ["syn_target", "syn_galleries"], labels: ["SYNTHETIC Target", "SYNTHETIC galleries"] };
+      const target = { ...ranked("syn_target", "SYNTHETIC Target", 1), comparisonSet: twoSet, relativePosition: { position: 1, of: 2, medianPercentile: 1, medianRank: 1 } };
+      const galleries = { ...ranked("syn_galleries", "SYNTHETIC galleries", 2), comparisonSet: twoSet, relativePosition: { position: 2, of: 2, medianPercentile: 0, medianRank: 2 } };
+      const resorts = territory({ key: "syn_resorts", label: "SYNTHETIC resorts", role: "reference", resolvedConcept: { id: "urn:tag:syn:other_resorts", label: "SYNTHETIC resorts", type: "tag" }, analysisRoute: "INSUFFICIENT_EVIDENCE" });
+      const verdict = validateComparativeOutcome(plan, comparativeResult([target, galleries, resorts]));
+      expect(verdict.outcome).toBe("RELATIVE_POSITION_ESTABLISHED");
+      expect(verdict.checks.some((c) => c.code === "CONCEPT_ANCHOR_MATCHES" && !c.passed && !c.blocking)).toBe(true);
+    });
+
+    it("a panel that ranks an unauthorized territory is never shown as the authorized comparison", () => {
+      const verdict = blocked(comparativeResult([ranked("syn_target", "SYNTHETIC Target", 1), ranked("syn_resorts", "SYNTHETIC resorts", 2), ranked("syn_substitute", "SYNTHETIC substitute", 3)]));
+      expect(verdict.checks.find((c) => c.code === "COMPARISON_SET_AUTHORIZED")?.passed).toBe(false);
+    });
   });
 });
 

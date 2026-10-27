@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { ZodError } from "zod";
 import { HarnessQlooClient, type QlooClient } from "../qloo/client.js";
 import { harnessChildEnv, LIVE_QLOO_HOST_VERIFIED, requireHackathonBaseUrl, verifyHarnessHost } from "../qloo/environment.js";
+import { withProcessDispatchLimit } from "../qloo/dispatch-limit.js";
 import { HarnessMcpTransport } from "../qloo/mcp-transport.js";
 import { parseEnvelope } from "../qloo/normalize.js";
 import { defaultHarnessBinPath, type QlooTransport, type TransportResult } from "../qloo/transport.js";
@@ -73,7 +74,7 @@ export function createLiveBaselineCallGate(repository: BaselineRepository, env: 
   const verified = verifyHarnessHost(defaultHarnessBinPath(), childEnv, origin);
   if (verified.status !== LIVE_QLOO_HOST_VERIFIED) throw new Error("QLOO_HOST_NOT_VERIFIED");
   const spacing = Number(env.QLOO_CALL_SPACING_MS ?? DEFAULT_QLOO_SPACING_MS);
-  return new BaselineCallGate(repository, new HarnessMcpTransport({ env: childEnv, timeoutMs: 90_000 }), spacing);
+  return new BaselineCallGate(repository, withProcessDispatchLimit(new HarnessMcpTransport({ env: childEnv, timeoutMs: 90_000 }), env), spacing);
 }
 
 export class BaselineWorker {

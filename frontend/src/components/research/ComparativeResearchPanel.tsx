@@ -110,6 +110,7 @@ export function ComparativeResearchPanel({ scanId, scanToken, parentJob, onRepor
       const parsed = parseJobEnvelope(await response.json());
       if (response.ok && parsed.ok && parsed.job.accessToken) setJob(parsed.job);
       else if (response.status === 503) setError("Live comparisons are paused. No paid call was started.");
+      else if (response.status === 403) setError("Live comparisons are restricted to an authorized research operator. No paid call was started.");
       else if (response.status === 429) setError("The investigation budget or rate limit does not allow another comparison now. No paid call was started.");
       else if (response.status === 422) setError("The server no longer considers this comparison eligible. Check it again.");
       else { setStartUnknown(true); setError("The start request could not be confirmed. It may have reached the provider, so this page will not send it again."); }

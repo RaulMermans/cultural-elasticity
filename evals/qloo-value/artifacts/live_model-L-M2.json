@@ -1,0 +1,2204 @@
+{
+ "schemaVersion": "ce-agent-result/0.3",
+ "runId": "62980055-d511-4db0-a43a-dd5db38a31fc",
+ "status": "COMPLETE",
+ "finalSufficiency": "SUFFICIENT",
+ "intent": "analyze_move",
+ "userQuery": "Could Yeti move into fly fishing?",
+ "brand": {
+  "id": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+  "label": "YETI",
+  "type": "urn:entity:brand",
+  "resolution": "confirmed"
+ },
+ "territories": [
+  {
+   "key": "fly_fishing",
+   "label": "Fly Fishing",
+   "role": "target",
+   "origin": "user",
+   "rationale": "named by the user",
+   "resolvedConcept": {
+    "id": "urn:tag:activity_type:qloo:fly_fishing",
+    "label": "Fly Fishing",
+    "type": "urn:tag:activity_type:qloo"
+   },
+   "representation": {
+    "strategy": "PLACE_PANEL",
+    "entityType": "place",
+    "exemplars": [
+     {
+      "id": "00C6F229-AA0E-42B8-AF0C-7FA4D1A01E3E",
+      "label": "Critchley Hackle Lodge",
+      "type": "place",
+      "role": "primary",
+      "selectionReason": "Fly-fishing lodge that Qloo links to the concept through brand-independent evidence.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.7110589461539518,
+      "quality": "VALID"
+     },
+     {
+      "id": "048D843D-53E8-4A2A-9D60-B15494A8C914",
+      "label": "Montusi Mountain Lodge",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Mountain lodge that Qloo links to fly fishing through brand-independent evidence.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9043769160220958,
+      "quality": "VALID"
+     },
+     {
+      "id": "00E8EE65-DBF7-4F99-9EA5-7B558772C851",
+      "label": "Old Toccoa Farm Resort",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Resort that Qloo links to fly fishing through brand-independent evidence.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.801068756335665,
+      "quality": "VALID"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "unknown",
+    "diversityDetail": "not every exemplar's tag profile is known, so distinctness is not established",
+    "attempts": 1,
+    "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Fly Fishing (urn:tag:activity_type:qloo:fly_fishing): Critchley Hackle Lodge, Montusi Mountain Lodge, Old Toccoa Farm Resort",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median 0 across 2 exemplar(s) (NONE).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Rainbow Trout Ranch, Blackberry Farm, The Ranch at Rock Creek, Pine Creek Cookhouse, Triple Creek Ranch | Relais & Châteaux.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "AVAILABLE",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 1,
+    "filteredSharedMedian": 0,
+    "filteredBand": "NONE",
+    "exemplarsCompared": 2,
+    "consistentlyShared": []
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "Rainbow Trout Ranch",
+      "rank": 1
+     },
+     {
+      "label": "Blackberry Farm",
+      "rank": 2
+     },
+     {
+      "label": "The Ranch at Rock Creek",
+      "rank": 3
+     },
+     {
+      "label": "Pine Creek Cookhouse",
+      "rank": 4
+     },
+     {
+      "label": "Triple Creek Ranch | Relais & Châteaux",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-eddbc342-ef32-4436-a247-cae743f7065d"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 1 rankable place territory in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:activity_type:qloo:fly_fishing: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Fly Fishing: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-328c2f12-639f-4f90-b1c5-2bbda71c0899",
+     "mcp-598a34f6-c195-4241-872f-0b4d6a6c5f0b",
+     "mcp-81d153e5-86a8-48d9-b0d5-348441fa1615",
+     "mcp-84379974-bae5-4c42-9b40-6dd1235610ba",
+     "mcp-eddbc342-ef32-4436-a247-cae743f7065d",
+     "mcp-f307cde3-045a-44f0-96a5-3137899b7b92"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Fly Fishing",
+    "sourceTagId": null,
+    "resolvedId": "urn:tag:activity_type:qloo:fly_fishing",
+    "canonicalConceptKey": "fly_fishing",
+    "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+    "candidateSource": "user",
+    "anchorRelation": "NO_SOURCE_TAG",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:activity_type:qloo:fly_fishing",
+     "label": "Fly Fishing",
+     "namespace": "activity_type:qloo",
+     "attemptedTypes": [
+      "place"
+     ],
+     "emptyTypes": [],
+     "successfulTypes": [
+      "place"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 0,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  }
+ ],
+ "methodologyRuns": [],
+ "summary": {
+  "text": "For whether Yeti could move into fly fishing, the results offer only a partial cultural analysis of the fly fishing territory. The place exemplars share no filtered cultural signal at a consistent level, and no relative position or robustness could be established against a comparison set. A brand-conditioned query does return a supported set of associated entities, but the evidence cannot say how a move would be positioned relative to other territories or whether it is viable.\nFly Fishing: Fly fishing is represented by a small place panel of exemplars that Qloo links to the concept, so this read rests on those place examples rather than a full comparison set. Filtered shared cultural signals across the exemplars fall in no band and none are consistently shared, so the place examples show little common cultural signal in this analysis. The brand-conditioned query returned supported entities led by names such as Rainbow Trout Ranch and Blackberry Farm, an association within the returned list only, with evidence quality at medium and the list truncated.",
+  "source": "model",
+  "claimValidation": {
+   "passed": true,
+   "violations": []
+  }
+ },
+ "followUpOptions": [
+  "Add reference territories with a larger comparison set so a relative position and robustness can be assessed for fly fishing.",
+  "Pull additional fly fishing exemplars beyond the current place panel to broaden the shared-signal read.",
+  "Run brand-conditioned queries on adjacent outdoor activity territories to create a comparison set for the fly fishing result.",
+  "Investigate other entity types linked to fly fishing, such as brands or products, to see whether the association holds beyond places."
+ ],
+ "limitations": [
+  {
+   "code": "NOT_A_SUCCESS_PREDICTION",
+   "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+  },
+  {
+   "code": "NO_APPROVED_SCORE",
+   "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+  }
+ ],
+ "evidenceOrigin": "live",
+ "model": {
+  "id": "claude-haiku-5-5",
+  "kind": "llm",
+  "live": true,
+  "effort": "high"
+ },
+ "trace": {
+  "runId": "62980055-d511-4db0-a43a-dd5db38a31fc",
+  "intent": "analyze_move",
+  "userQuery": "Could Yeti move into fly fishing?",
+  "interpretedRequest": {
+   "intent": "analyze_move",
+   "brand": "Yeti",
+   "territories": [
+    "Fly Fishing"
+   ]
+  },
+  "model": {
+   "id": "claude-haiku-5-5",
+   "kind": "llm",
+   "live": true,
+   "effort": "high"
+  },
+  "toolProvider": {
+   "name": "qloo-mcp",
+   "mode": "live"
+  },
+  "limits": {
+   "maxAgentIterations": 12,
+   "maxRepresentationAttemptsPerTerritory": 3,
+   "maxCandidateTerritories": 6,
+   "maxExemplarsPerTerritory": 3,
+   "maxRetryPerToolCall": 1,
+   "maxActionsPerTurn": 12,
+   "maxInvalidTurns": 2,
+   "toolTimeoutMs": 300000,
+   "maxQlooCalls": 24
+  },
+  "statusTransitions": [
+   {
+    "iteration": 0,
+    "from": "INTAKE",
+    "to": "PLANNING",
+    "reason": "request validated"
+   },
+   {
+    "iteration": 1,
+    "from": "PLANNING",
+    "to": "RESOLVING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 2,
+    "from": "RESOLVING",
+    "to": "INVESTIGATING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 9,
+    "from": "INVESTIGATING",
+    "to": "ANALYZING",
+    "reason": "analyze fly_fishing"
+   },
+   {
+    "iteration": 9,
+    "from": "ANALYZING",
+    "to": "INVESTIGATING",
+    "reason": "analysis step done"
+   },
+   {
+    "iteration": 10,
+    "from": "INVESTIGATING",
+    "to": "COMPLETE",
+    "reason": "agent finished"
+   }
+  ],
+  "planRevisions": [
+   {
+    "iteration": 1,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[ ] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Fly Fishing: anchor to a Qloo concept",
+     "[ ] Fly Fishing: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Fly Fishing: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The user asks whether the brand Yeti could move into one named territory, fly fishing."
+   },
+   {
+    "iteration": 2,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Fly Fishing: anchor to a Qloo concept",
+     "[ ] Fly Fishing: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Fly Fishing: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The brand Yeti must be resolved to a Qloo entity before territory analysis can proceed."
+   },
+   {
+    "iteration": 4,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Fly Fishing: anchor to a Qloo concept",
+     "[ ] Fly Fishing: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Fly Fishing: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Test whether the Fly Fishing activity-type concept carries place members, as the next ranked probe for this territory."
+   },
+   {
+    "iteration": 5,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Fly Fishing: anchor to a Qloo concept",
+     "[x] Fly Fishing: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Fly Fishing: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Proposing three place exemplars Qloo links to the fly fishing concept, with semantic judgments."
+   },
+   {
+    "iteration": 9,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Fly Fishing: anchor to a Qloo concept",
+     "[x] Fly Fishing: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Fly Fishing: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Sufficiency marks analyze for fly_fishing HIGH with no material evidence gap; references cannot reach FULL, so a partial result is expected."
+   },
+   {
+    "iteration": 10,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Fly Fishing: anchor to a Qloo concept",
+     "[x] Fly Fishing: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Fly Fishing: analyze",
+     "[x] finish when deterministic sufficiency allows"
+    ],
+    "note": "The only in-scope territory is analyzed and sufficiency is SUFFICIENT, so the investigation finishes with a PARTIAL cultural analysis."
+   }
+  ],
+  "turns": [
+   {
+    "iteration": 1,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Yeti",
+       "territories": [
+        "Fly Fishing"
+       ]
+      },
+      "reasonSummary": "The user asks whether the brand Yeti could move into one named territory, fly fishing.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 733,
+     "outputTokens": 162,
+     "cacheReadTokens": 1569,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 1342,
+    "skills": [
+     {
+      "id": "interpret_request",
+      "version": 1
+     },
+     {
+      "id": "resolve_brand",
+      "version": 1
+     }
+    ],
+    "toolsExposed": [
+     "interpret_request",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2331,
+    "contextTokensEstimate": 583
+   },
+   {
+    "iteration": 2,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Yeti",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "The brand Yeti must be resolved to a Qloo entity before territory analysis can proceed.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1044,
+     "outputTokens": 157,
+     "cacheReadTokens": 1547,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 1121,
+    "skills": [
+     {
+      "id": "resolve_brand",
+      "version": 1
+     },
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_resolve_entity",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2832,
+    "contextTokensEstimate": 708
+   },
+   {
+    "iteration": 3,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "fly fishing",
+       "limit": 8
+      },
+      "reasonSummary": "The fly_fishing territory needs a Qloo concept tag before any representation can be built.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1704,
+     "outputTokens": 228,
+     "cacheReadTokens": 2788,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 1515,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 7234,
+    "contextTokensEstimate": 1809
+   },
+   {
+    "iteration": 4,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:activity_type:qloo:fly_fishing"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Test whether the Fly Fishing activity-type concept carries place members, as the next ranked probe for this territory.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 2988,
+     "outputTokens": 451,
+     "cacheReadTokens": 2788,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 2472,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 9749,
+    "contextTokensEstimate": 2438
+   },
+   {
+    "iteration": 5,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "fly_fishing",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "00C6F229-AA0E-42B8-AF0C-7FA4D1A01E3E",
+         "reason": "Fly-fishing lodge that Qloo links to the concept through brand-independent evidence.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Name and category point to a dedicated fly-fishing lodge, a direct expression of the activity."
+         }
+        },
+        {
+         "id": "048D843D-53E8-4A2A-9D60-B15494A8C914",
+         "reason": "Mountain lodge that Qloo links to fly fishing through brand-independent evidence.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Remote mountain lodge with a fly-fishing-oriented guest experience."
+         }
+        },
+        {
+         "id": "00E8EE65-DBF7-4F99-9EA5-7B558772C851",
+         "reason": "Resort that Qloo links to fly fishing through brand-independent evidence.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Farm resort with fly-fishing offerings; adjacent to the outdoor-lodging end of the activity."
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Proposing three place exemplars Qloo links to the fly fishing concept, with semantic judgments.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B"
+      },
+      "reasonSummary": "Fetching the YETI brand tag profile needed for analysis and reference discovery.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4392,
+     "outputTokens": 1157,
+     "cacheReadTokens": 3919,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 5573,
+    "skills": [
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     },
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 15468,
+    "contextTokensEstimate": 3867
+   },
+   {
+    "iteration": 6,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:americana"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the Americana reference candidate.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:california"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the California reference candidate.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:country"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the Country reference candidate.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 5149,
+     "outputTokens": 891,
+     "cacheReadTokens": 5087,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 3673,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 19951,
+    "contextTokensEstimate": 4988
+   },
+   {
+    "iteration": 7,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:american_football"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the american football reference candidate.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:media:cooking"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the cooking reference candidate.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "reasonSummary": "Probe the brand-independent place pool for the friendship reference candidate.",
+      "accepted": false,
+      "rejection": "REFERENCE_NAMESPACE_BARREN: tag namespace keyword:media returned no eligible place member in 2 reference probes this run; choose a referenceCandidate from a productive or untested namespace, or analyze and accept a PARTIAL result",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:friendship"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      }
+     }
+    ],
+    "usage": {
+     "inputTokens": 4112,
+     "outputTokens": 797,
+     "cacheReadTokens": 5087,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 3667,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": false,
+    "contextChars": 17721,
+    "contextTokensEstimate": 4431
+   },
+   {
+    "iteration": 8,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "00C6F229-AA0E-42B8-AF0C-7FA4D1A01E3E"
+      },
+      "reasonSummary": "Collect Critchley Hackle Lodge's tag profile to find place reference candidates.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "048D843D-53E8-4A2A-9D60-B15494A8C914"
+      },
+      "reasonSummary": "Collect Montusi Mountain Lodge's tag profile to find place reference candidates.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "00E8EE65-DBF7-4F99-9EA5-7B558772C851"
+      },
+      "reasonSummary": "Collect Old Toccoa Farm Resort's tag profile to find place reference candidates.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 3701,
+     "outputTokens": 509,
+     "cacheReadTokens": 5087,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 2410,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 16552,
+    "contextTokensEstimate": 4138
+   },
+   {
+    "iteration": 9,
+    "decisions": [
+     {
+      "action": "analyze",
+      "reasonSummary": "Sufficiency marks analyze for fly_fishing HIGH with no material evidence gap; references cannot reach FULL, so a partial result is expected.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 3878,
+     "outputTokens": 243,
+     "cacheReadTokens": 1938,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 1642,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 8928,
+    "contextTokensEstimate": 2232
+   },
+   {
+    "iteration": 10,
+    "decisions": [
+     {
+      "action": "finish",
+      "reasonSummary": "The only in-scope territory is analyzed and sufficiency is SUFFICIENT, so the investigation finishes with a PARTIAL cultural analysis.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1633,
+     "outputTokens": 265,
+     "cacheReadTokens": 1938,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 1770,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 4436,
+    "contextTokensEstimate": 1109
+   }
+  ],
+  "toolCalls": [
+   {
+    "id": "tc-1",
+    "iteration": 1,
+    "tool": "interpret_request",
+    "permission": "local_computation",
+    "arguments": {
+     "intent": "analyze_move",
+     "brand": "Yeti",
+     "territories": [
+      "Fly Fishing"
+     ]
+    },
+    "status": "ok",
+    "summary": "intent analyze_move; brand \"Yeti\"; 1 named territory(ies)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    }
+   },
+   {
+    "id": "tc-2",
+    "iteration": 2,
+    "tool": "qloo_resolve_entity",
+    "permission": "read_only_external",
+    "arguments": {
+     "name": "Yeti",
+     "type": "brand",
+     "role": "brand"
+    },
+    "status": "ok",
+    "summary": "YETI (AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B, urn:entity:brand, match exact)",
+    "qlooOperations": [
+     "describe"
+    ],
+    "correlationIds": [
+     "mcp-64ea7633-3a14-40fd-9a4a-0253bc18eea9"
+    ],
+    "attempts": 1,
+    "latencyMs": 439,
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-3",
+    "iteration": 3,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "fly fishing",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-f307cde3-045a-44f0-96a5-3137899b7b92"
+    ],
+    "attempts": 1,
+    "latencyMs": 5506,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-4",
+    "iteration": 4,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:activity_type:qloo:fly_fishing"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "ok",
+    "summary": "20 place entities (brand-independent pool); fly_fishing anchored to this tag (its own concept; next: validate_territory_representation with place)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-efd80da0-cb7f-478f-99b9-21e2feb2d12f"
+    ],
+    "attempts": 1,
+    "latencyMs": 4729,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-5",
+    "iteration": 5,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "fly_fishing",
+     "entityType": "place",
+     "exemplars": [
+      {
+       "id": "00C6F229-AA0E-42B8-AF0C-7FA4D1A01E3E",
+       "reason": "Fly-fishing lodge that Qloo links to the concept through brand-independent evidence.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Name and category point to a dedicated fly-fishing lodge, a direct expression of the activity."
+       }
+      },
+      {
+       "id": "048D843D-53E8-4A2A-9D60-B15494A8C914",
+       "reason": "Mountain lodge that Qloo links to fly fishing through brand-independent evidence.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Remote mountain lodge with a fly-fishing-oriented guest experience."
+       }
+      },
+      {
+       "id": "00E8EE65-DBF7-4F99-9EA5-7B558772C851",
+       "reason": "Resort that Qloo links to fly fishing through brand-independent evidence.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Farm resort with fly-fishing offerings; adjacent to the outdoor-lodging end of the activity."
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "fly_fishing: accepted Critchley Hackle Lodge, Montusi Mountain Lodge, Old Toccoa Farm Resort; diversity unknown",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-6",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-328c2f12-639f-4f90-b1c5-2bbda71c0899"
+    ],
+    "attempts": 1,
+    "latencyMs": 1398,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-7",
+    "iteration": 6,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:americana"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:music:americana",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-97ac4c47-363b-4d04-a0d2-41011c790cdf"
+    ],
+    "attempts": 1,
+    "latencyMs": 3077,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-8",
+    "iteration": 6,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:california"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:keyword:media:california",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-d76b13d2-03dc-4d5a-adba-98b22988dca8"
+    ],
+    "attempts": 1,
+    "latencyMs": 7235,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-9",
+    "iteration": 6,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:country"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:music:country",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-acbec83e-43ce-4ad6-bbdb-b931325bd45d"
+    ],
+    "attempts": 1,
+    "latencyMs": 6902,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-10",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:american_football"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:keyword:media:american_football",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-a0c3dbe3-facd-43f4-a878-b6298ed24aac"
+    ],
+    "attempts": 1,
+    "latencyMs": 3286,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-11",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:media:cooking"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:media:cooking",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-9ae2b354-3003-4977-b083-b338e8cd6921"
+    ],
+    "attempts": 1,
+    "latencyMs": 6916,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-12",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "local_computation",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:friendship"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "rejected",
+    "summary": "REFERENCE_NAMESPACE_BARREN: tag namespace keyword:media returned no eligible place member in 2 reference probes this run; choose a referenceCandidate from a productive or untested namespace, or analyze and accept a PARTIAL result",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "error": "REFERENCE_NAMESPACE_BARREN"
+   },
+   {
+    "id": "tc-13",
+    "iteration": 8,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "00C6F229-AA0E-42B8-AF0C-7FA4D1A01E3E"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-598a34f6-c195-4241-872f-0b4d6a6c5f0b"
+    ],
+    "attempts": 1,
+    "latencyMs": 4673,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-14",
+    "iteration": 8,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "048D843D-53E8-4A2A-9D60-B15494A8C914"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-84379974-bae5-4c42-9b40-6dd1235610ba"
+    ],
+    "attempts": 1,
+    "latencyMs": 6951,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-15",
+    "iteration": 8,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "00E8EE65-DBF7-4F99-9EA5-7B558772C851"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-81d153e5-86a8-48d9-b0d5-348441fa1615"
+    ],
+    "attempts": 1,
+    "latencyMs": 7203,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-16",
+    "iteration": 9,
+    "tool": "analyze_evidence",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "fly_fishing"
+     ]
+    },
+    "status": "ok",
+    "summary": "brand profile 20 tags; 3 exemplar/other profiles in run; 1 brand-conditioned list(s)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-eddbc342-ef32-4436-a247-cae743f7065d"
+    ],
+    "attempts": 1,
+    "latencyMs": 0
+   },
+   {
+    "id": "tc-17",
+    "iteration": 9,
+    "tool": "build_candidate_panel",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "fly_fishing"
+     ]
+    },
+    "status": "ok",
+    "summary": "no comparison set of ≥ 3 rankable territories of one type",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0
+   }
+  ],
+  "resolvedEntities": [
+   {
+    "role": "brand",
+    "id": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+    "label": "YETI",
+    "type": "urn:entity:brand",
+    "match": "exact",
+    "resolution": "confirmed"
+   }
+  ],
+  "territoryHypotheses": [
+   {
+    "key": "fly_fishing",
+    "label": "Fly Fishing",
+    "role": "target",
+    "origin": "user",
+    "status": "analyzed",
+    "rationale": "named by the user"
+   }
+  ],
+  "representations": [
+   {
+    "territoryKey": "fly_fishing",
+    "attempt": 1,
+    "accepted": [
+     "Critchley Hackle Lodge",
+     "Montusi Mountain Lodge",
+     "Old Toccoa Farm Resort"
+    ],
+    "rejected": []
+   }
+  ],
+  "sufficiency": [
+   {
+    "iteration": 0,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "interpret the request (interpret_request)"
+    ],
+    "nextActions": [
+     {
+      "action": "interpret_request",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the goal is not interpreted yet"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 1,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "resolve the brand (qloo_resolve_entity, role brand)"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_resolve_entity",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the brand is not resolved"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 2,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "fly_fishing: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "fly_fishing",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 3,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "fly_fishing: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "fly_fishing",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 4,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "fly_fishing: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "fly_fishing",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "fly_fishing",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 5,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "fly_fishing: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "fly_fishing",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "2 more meaningful place reference territories are required for a relative position (have 1 of 3). Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent place pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "fly_fishing",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 6,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "fly_fishing: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "fly_fishing",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "2 more meaningful place reference territories are required for a relative position (have 1 of 3). Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent place pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "fly_fishing",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 7,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "fly_fishing: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "fly_fishing",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "Reference candidates are found on tag profiles that are not collected yet: fetch Critchley Hackle Lodge, Montusi Mountain Lodge, Old Toccoa Farm Resort with qloo_get_entity_tags, then choose 2 meaningful place reference(s) from referenceCandidates. If none is meaningful, analyze and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "fly_fishing",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 8,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "fly_fishing: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "fly_fishing",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "NONE",
+      "reason": "FULL is not feasible: only 0 semantically meaningful reference candidate(s) with possible place members; 2 needed; analysis will be partial"
+     },
+     {
+      "action": "analyze",
+      "target": "fly_fishing",
+      "value": "HIGH",
+      "reason": "no material evidence gap remains: analyze"
+     }
+    ],
+    "materialGap": false
+   },
+   {
+    "iteration": 9,
+    "verdict": "SUFFICIENT",
+    "reasons": [
+     "all 1 in-scope territories have analysis results"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "NONE",
+      "reason": "the targets are already analyzed"
+     },
+     {
+      "action": "finish",
+      "target": null,
+      "value": "HIGH",
+      "reason": "every in-scope territory is analyzed"
+     }
+    ],
+    "materialGap": false
+   }
+  ],
+  "representationQuality": [
+   {
+    "territoryKey": "fly_fishing",
+    "attempt": 1,
+    "candidateId": "00C6F229-AA0E-42B8-AF0C-7FA4D1A01E3E",
+    "label": "Critchley Hackle Lodge",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.7110589461539518,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Name and category point to a dedicated fly-fishing lodge, a direct expression of the activity.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "fly_fishing",
+    "attempt": 1,
+    "candidateId": "048D843D-53E8-4A2A-9D60-B15494A8C914",
+    "label": "Montusi Mountain Lodge",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9043769160220958,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Remote mountain lodge with a fly-fishing-oriented guest experience.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "fly_fishing",
+    "attempt": 1,
+    "candidateId": "00E8EE65-DBF7-4F99-9EA5-7B558772C851",
+    "label": "Old Toccoa Farm Resort",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.801068756335665,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Farm resort with fly-fishing offerings; adjacent to the outdoor-lodging end of the activity.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   }
+  ],
+  "conceptDedup": [],
+  "earlyStops": [
+   {
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "code": "REFERENCE_NAMESPACE_BARREN",
+    "reason": "tag namespace keyword:media returned no eligible place member in 2 reference probes this run; choose a referenceCandidate from a productive or untested namespace, or analyze and accept a PARTIAL result",
+    "callsAvoided": 1
+   }
+  ],
+  "skillUsage": [
+   {
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 0,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 1,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "turns": 2,
+    "qlooCalls": 2,
+    "toolCalls": 2
+   },
+   {
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "turns": 1,
+    "qlooCalls": 0,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "turns": 3,
+    "qlooCalls": 9,
+    "toolCalls": 9
+   },
+   {
+    "skill": {
+     "id": "analyze_territories",
+     "version": 2
+    },
+    "turns": 5,
+    "qlooCalls": 0,
+    "toolCalls": 0
+   }
+  ],
+  "methodologyInvocations": [],
+  "synthesis": {
+   "source": "model",
+   "attempts": 1,
+   "violations": [],
+   "attemptDetails": [
+    {
+     "attempt": 1,
+     "accepted": true,
+     "categories": {},
+     "violations": []
+    }
+   ]
+  },
+  "errors": [],
+  "userClarifications": [],
+  "representationPlans": [],
+  "completion": [
+   {
+    "iteration": 5,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 12,
+    "remainingTurns": 7,
+    "remainingQlooCalls": 20,
+    "turnsNeeded": 3,
+    "callsNeeded": 8,
+    "fullAnalysisFeasible": true,
+    "reason": "FULL is feasible: 2 reference(s) needed, 12 meaningful candidate(s) (0 already probed with members), 20 Qloo call(s) and 7 turn(s) left (needs 3 turn(s), about 8 call(s))"
+   },
+   {
+    "iteration": 6,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 6,
+    "remainingTurns": 6,
+    "remainingQlooCalls": 17,
+    "turnsNeeded": 3,
+    "callsNeeded": 8,
+    "fullAnalysisFeasible": true,
+    "reason": "FULL is feasible: 2 reference(s) needed, 6 meaningful candidate(s) (0 already probed with members), 17 Qloo call(s) and 6 turn(s) left (needs 3 turn(s), about 8 call(s))"
+   },
+   {
+    "iteration": 7,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 0,
+    "remainingTurns": 5,
+    "remainingQlooCalls": 15,
+    "turnsNeeded": 4,
+    "callsNeeded": 11,
+    "fullAnalysisFeasible": true,
+    "reason": "reference discovery pending: 3 tag profile(s) not yet collected"
+   },
+   {
+    "iteration": 8,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 0,
+    "remainingTurns": 4,
+    "remainingQlooCalls": 12,
+    "turnsNeeded": 3,
+    "callsNeeded": 7,
+    "fullAnalysisFeasible": false,
+    "reason": "FULL is not feasible: only 0 semantically meaningful reference candidate(s) with possible place members; 2 needed; analysis will be partial"
+   }
+  ],
+  "probeRecommendations": [
+   {
+    "iteration": 3,
+    "territoryKey": "fly_fishing",
+    "conceptKey": "urn:tag:activity_type:qloo:fly_fishing",
+    "namespace": "activity_type:qloo",
+    "type": "place",
+    "priority": "EXPLORATION",
+    "reason": "untested in activity_type:qloo"
+   }
+  ],
+  "anchorDecisions": [
+   {
+    "iteration": 4,
+    "territoryKey": "fly_fishing",
+    "sourceTagId": null,
+    "anchoredTagId": "urn:tag:activity_type:qloo:fly_fishing",
+    "relation": "NO_SOURCE_TAG",
+    "basis": "LABEL_TAG_MEMBERS",
+    "decidedBy": "runtime",
+    "reasonCode": null,
+    "evidence": "the territory's own same-named tag returned 20 place member(s) (brand-independent pool)",
+    "correlationIds": [
+     "mcp-efd80da0-cb7f-478f-99b9-21e2feb2d12f"
+    ]
+   }
+  ],
+  "stopReason": {
+   "code": "AGENT_FINISHED",
+   "detail": "agent finished"
+  },
+  "semanticAssessments": []
+ },
+ "metrics": {
+  "agent_iterations": 10,
+  "qloo_calls": 13,
+  "tool_calls": 17,
+  "tool_success_rate": 1,
+  "invalid_actions": 1,
+  "representation_attempts": 1,
+  "territories_proposed": 1,
+  "territories_resolved": 1,
+  "territories_rejected": 0,
+  "full_analysis_count": 0,
+  "partial_analysis_count": 1,
+  "descriptive_analysis_count": 0,
+  "unsupported_count": 0,
+  "methodology_calls": 0,
+  "latency_ms": 101559,
+  "model_input_tokens": 63309,
+  "model_output_tokens": 7893,
+  "retry_count": 0,
+  "budget_exhausted": false,
+  "model_turns": 10,
+  "model_attempts": 10,
+  "first_attempt_valid_turns": 9,
+  "valid_after_repair_turns": 10,
+  "repairs": 0,
+  "unknown_tool_attempts": 0,
+  "invalid_argument_attempts": 0,
+  "unsupported_state_actions": 0,
+  "synthesis_attempts": 1,
+  "calls_avoided": 1,
+  "avg_context_chars": 10520,
+  "max_context_chars": 19951,
+  "avg_context_tokens_estimate": 2630,
+  "model_latency_ms": 25185,
+  "qloo_latency_ms": 63789,
+  "model_cost_usd": 0.0074,
+  "model_id": "claude-haiku-5-5",
+  "model_effort": "high",
+  "synthesis_latency_ms": 12459,
+  "analysis_latency_ms": 5485,
+  "qloo_spacing_ms": 56236,
+  "synthesis_first_attempt_valid": true,
+  "synthesis_valid_after_repair": true,
+  "synthesis_fallback": false,
+  "reference_deferrals": 0,
+  "empty_type_probes": 5,
+  "max_empty_type_probes_per_concept": 1,
+  "probe_limit_refusals": 0,
+  "type_alignment_deferrals": 0,
+  "reference_namespace_refusals": 1,
+  "successful_type_probes": 1,
+  "namespace_type_refusals": 0,
+  "alternate_anchor_refusals": 0,
+  "source_evidence_anchors": 1,
+  "frontier_completion_refusals": 0
+ },
+ "skillsUsed": [
+  {
+   "id": "interpret_request",
+   "version": 1
+  },
+  {
+   "id": "resolve_brand",
+   "version": 1
+  },
+  {
+   "id": "resolve_territory",
+   "version": 5
+  },
+  {
+   "id": "build_territory_representation",
+   "version": 4
+  },
+  {
+   "id": "build_comparison_set",
+   "version": 3
+  },
+  {
+   "id": "analyze_territories",
+   "version": 2
+  }
+ ],
+ "comparisonSetConstruction": {
+  "intent": "analyze_move",
+  "proposed": [
+   {
+    "key": "fly_fishing",
+    "label": "Fly Fishing",
+    "role": "target",
+    "source": "user",
+    "evidence": "named by the user"
+   }
+  ],
+  "rejected": [],
+  "final": [
+   {
+    "key": "fly_fishing",
+    "label": "Fly Fishing",
+    "role": "target",
+    "source": "user",
+    "route": "PARTIAL_CULTURAL_ANALYSIS"
+   }
+  ],
+  "dedupDecisions": [],
+  "semanticAssessments": [],
+  "diversity": {
+   "assessment": "unknown",
+   "similarPairs": [],
+   "detail": "fewer than two non-target territories: diversity not assessed"
+  },
+  "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+ },
+ "layers": {
+  "qlooEvidence": {
+   "brand": {
+    "id": "AA9DBB9A-DEE1-4D84-BC26-0FEBB34BB41B",
+    "label": "YETI",
+    "correlationId": "mcp-64ea7633-3a14-40fd-9a4a-0253bc18eea9"
+   },
+   "concepts": [
+    {
+     "territoryKey": "fly_fishing",
+     "id": "urn:tag:activity_type:qloo:fly_fishing",
+     "label": "Fly Fishing",
+     "correlationIds": [
+      "mcp-f307cde3-045a-44f0-96a5-3137899b7b92"
+     ]
+    }
+   ],
+   "exemplars": [
+    {
+     "territoryKey": "fly_fishing",
+     "id": "00C6F229-AA0E-42B8-AF0C-7FA4D1A01E3E",
+     "label": "Critchley Hackle Lodge",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-efd80da0-cb7f-478f-99b9-21e2feb2d12f"
+    },
+    {
+     "territoryKey": "fly_fishing",
+     "id": "048D843D-53E8-4A2A-9D60-B15494A8C914",
+     "label": "Montusi Mountain Lodge",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-efd80da0-cb7f-478f-99b9-21e2feb2d12f"
+    },
+    {
+     "territoryKey": "fly_fishing",
+     "id": "00E8EE65-DBF7-4F99-9EA5-7B558772C851",
+     "label": "Old Toccoa Farm Resort",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-efd80da0-cb7f-478f-99b9-21e2feb2d12f"
+    }
+   ],
+   "qlooCalls": 13
+  },
+  "systemAnalysis": {
+   "routes": [
+    {
+     "territoryKey": "fly_fishing",
+     "route": "PARTIAL_CULTURAL_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    }
+   ],
+   "methodologyRunIds": [],
+   "finalSufficiency": "SUFFICIENT",
+   "representationDecisions": {
+    "valid": 3,
+    "weak": 0,
+    "rejected": 0
+   },
+   "semanticComparison": []
+  },
+  "agentInterpretation": {
+   "summary": "For whether Yeti could move into fly fishing, the results offer only a partial cultural analysis of the fly fishing territory. The place exemplars share no filtered cultural signal at a consistent level, and no relative position or robustness could be established against a comparison set. A brand-conditioned query does return a supported set of associated entities, but the evidence cannot say how a move would be positioned relative to other territories or whether it is viable.\nFly Fishing: Fly fishing is represented by a small place panel of exemplars that Qloo links to the concept, so this read rests on those place examples rather than a full comparison set. Filtered shared cultural signals across the exemplars fall in no band and none are consistently shared, so the place examples show little common cultural signal in this analysis. The brand-conditioned query returned supported entities led by names such as Rainbow Trout Ranch and Blackberry Farm, an association within the returned list only, with evidence quality at medium and the list truncated.",
+   "source": "model",
+   "claimValidationPassed": true,
+   "semanticJudgments": [
+    {
+     "territoryKey": "fly_fishing",
+     "label": "Critchley Hackle Lodge",
+     "relevance": "STRONG",
+     "reason": "Name and category point to a dedicated fly-fishing lodge, a direct expression of the activity."
+    },
+    {
+     "territoryKey": "fly_fishing",
+     "label": "Montusi Mountain Lodge",
+     "relevance": "STRONG",
+     "reason": "Remote mountain lodge with a fly-fishing-oriented guest experience."
+    },
+    {
+     "territoryKey": "fly_fishing",
+     "label": "Old Toccoa Farm Resort",
+     "relevance": "ADEQUATE",
+     "reason": "Farm resort with fly-fishing offerings; adjacent to the outdoor-lodging end of the activity."
+    }
+   ],
+   "followUpOptions": [
+    "Add reference territories with a larger comparison set so a relative position and robustness can be assessed for fly fishing.",
+    "Pull additional fly fishing exemplars beyond the current place panel to broaden the shared-signal read.",
+    "Run brand-conditioned queries on adjacent outdoor activity territories to create a comparison set for the fly fishing result.",
+    "Investigate other entity types linked to fly fishing, such as brands or products, to see whether the association holds beyond places."
+   ],
+   "findings": [
+    {
+     "territoryKey": "fly_fishing",
+     "claimType": "representation",
+     "supportingFields": [
+      "representation",
+      "capabilities.representation"
+     ],
+     "interpretation": "Fly fishing is represented by a small place panel of exemplars that Qloo links to the concept, so this read rests on those place examples rather than a full comparison set.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL"
+     ]
+    },
+    {
+     "territoryKey": "fly_fishing",
+     "claimType": "shared_signals",
+     "supportingFields": [
+      "coherence.band",
+      "coherence.filteredSharedMedian",
+      "coherence.consistentlyShared"
+     ],
+     "interpretation": "Filtered shared cultural signals across the exemplars fall in no band and none are consistently shared, so the place examples show little common cultural signal in this analysis.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL"
+     ]
+    },
+    {
+     "territoryKey": "fly_fishing",
+     "claimType": "conditioned_evidence",
+     "supportingFields": [
+      "conditionedEvidence.support",
+      "conditionedEvidence.top",
+      "evidenceQuality"
+     ],
+     "interpretation": "The brand-conditioned query returned supported entities led by names such as Rainbow Trout Ranch and Blackberry Farm, an association within the returned list only, with evidence quality at medium and the list truncated.",
+     "limitationCodes": [
+      "CONDITIONED_LIST_TRUNCATED"
+     ]
+    }
+   ]
+  }
+ },
+ "failureCategory": null
+}

@@ -13,7 +13,7 @@ export function evaluate(manifest: Manifest, read: (path: string) => Buffer) {
   if (manifest.schemaVersion !== "ce-qloo-value-benchmark/0.1" || manifest.fixtureType !== "recorded_live" || manifest.cases.length < 6 || manifest.cases.length > 10) throw new Error("BENCHMARK_MANIFEST_INVALID");
   const ids = new Set<string>();
   const cases = manifest.cases.map((entry) => {
-    if (ids.has(entry.id) || entry.conditionA.status !== "NOT_RUN" || !/^backend\/feasibility-output\/sprint5a2-live\/final\/live_model-L-[A-Z][0-9]\.json$/u.test(entry.conditionB.artifact)) throw new Error("BENCHMARK_CASE_INVALID");
+    if (ids.has(entry.id) || entry.conditionA.status !== "NOT_RUN" || !/^evals\/qloo-value\/artifacts\/live_model-L-[A-Z][0-9]\.json$/u.test(entry.conditionB.artifact)) throw new Error("BENCHMARK_CASE_INVALID");
     ids.add(entry.id);
     const bytes = read(entry.conditionB.artifact);
     if (createHash("sha256").update(bytes).digest("hex") !== entry.conditionB.sha256) throw new Error(`ARTIFACT_CHECKSUM_MISMATCH:${entry.id}`);

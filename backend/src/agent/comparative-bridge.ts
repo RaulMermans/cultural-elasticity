@@ -342,12 +342,21 @@ export function validateComparativeOutcome(plan: ComparativePlan, result: AgentA
     const same = target.resolvedConcept?.id === plan.target.conceptId;
     check("CONCEPT_ANCHOR_MATCHES", same, same ? `"${plan.target.label}" kept its investigated Qloo concept.` : `The comparison anchored "${plan.target.label}" to ${target.resolvedConcept?.id ?? "no concept"}, not the investigated ${plan.target.conceptId}.`);
   }
+  // Sprint 9J: a ranked reference must be the concept that was authorized. A drifted or unverifiable reference
+  // inside the panel changes what the target was ranked against, so it withholds every position; one left out of
+  // the panel only limits the report.
   const drifted = plan.references.filter((ref) => {
     if (!ref.conceptId) return false;
     const found = result.territories.find((t) => norm(t.label) === norm(ref.label));
-    return found?.resolvedConcept && found.resolvedConcept.id !== ref.conceptId;
+    return found ? found.resolvedConcept?.id !== ref.conceptId : false;
   });
-  if (drifted.length) check("CONCEPT_ANCHOR_MATCHES", false, `References anchored to a different Qloo concept than selected: ${drifted.map((r) => r.label).join(", ")}. Their positions describe the concept actually ranked.`, false);
+  const driftedRanked = drifted.filter((ref) => ranked.some((t) => norm(t.label) === norm(ref.label)));
+  if (driftedRanked.length) check("CONCEPT_ANCHOR_MATCHES", false, `Ranked references are not the Qloo concept that was authorized: ${driftedRanked.map((r) => r.label).join(", ")}. No position from this panel is shown.`);
+  const driftedUnranked = drifted.filter((ref) => !driftedRanked.includes(ref));
+  if (driftedUnranked.length) check("CONCEPT_ANCHOR_MATCHES", false, `References anchored to a different Qloo concept than selected and were not ranked: ${driftedUnranked.map((r) => r.label).join(", ")}.`, false);
+  const authorized = new Set([plan.target.label, ...plan.references.map((r) => r.label)].map(norm));
+  const substituted = ranked.filter((t) => !authorized.has(norm(t.label))).map((t) => t.label);
+  check("COMPARISON_SET_AUTHORIZED", substituted.length === 0, substituted.length ? `The panel ranked territories that were not authorized for this comparison: ${substituted.join(", ")}.` : "Every ranked territory was authorized for this comparison.");
 
   if (checks.some((c) => c.blocking && !c.passed)) return { outcome: "INTEGRITY_FAILED", checks, target };
   if (target && isRanked(target) && target.analysisRoute === "FULL_RELATIVE_ANALYSIS") return { outcome: "RELATIVE_POSITION_ESTABLISHED", checks, target };

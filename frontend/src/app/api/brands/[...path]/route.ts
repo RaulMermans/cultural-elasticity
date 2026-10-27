@@ -1,5 +1,5 @@
 import { brandBaselineFetch } from "@/lib/backend";
-import { visitorIdOf, withVisitor } from "@/lib/job-route";
+import { operatorOf, visitorIdOf, withVisitor } from "@/lib/job-route";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +21,7 @@ async function proxy(request: Request, context: { params: Promise<{ path: string
     if (body.length > 4096) return Response.json({ error: "request_too_large" }, { status: 413 });
     headers.set("content-type", "application/json");
   }
-  const upstream = await brandBaselineFetch(path, { method, headers, ...(body !== undefined ? { body } : {}) }, visitorIdOf(request));
+  const upstream = await brandBaselineFetch(path, { method, headers, ...(body !== undefined ? { body } : {}) }, visitorIdOf(request), operatorOf(request));
   if (!upstream) return withVisitor(request, Response.json({ error: "baseline_unavailable" }, { status: 503 }));
   return withVisitor(request, Response.json(upstream.body, { status: upstream.status }));
 }

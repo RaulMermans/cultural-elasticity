@@ -1,3 +1,4 @@
+import { readOperatorCredential } from "./operator";
 import { visitorFromRequest } from "./visitor";
 
 export function withVisitor(request: Request, response: Response): Response {
@@ -10,4 +11,9 @@ export function withVisitor(request: Request, response: Response): Response {
 
 export function visitorIdOf(request: Request): string {
   return visitorFromRequest(request).id;
+}
+
+/** The paid-research operator credential from the HttpOnly cookie, or null. Forwarded only on paid starts. */
+export function operatorOf(request: Request): string | null {
+  return readOperatorCredential(request.headers.get("cookie"));
 }

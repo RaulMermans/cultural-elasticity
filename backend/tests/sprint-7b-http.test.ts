@@ -16,6 +16,8 @@ import { scripted } from "./fixtures/synthetic/agent.js";
 
 const SECRET = "ce-public-internal-auth-secret-32ch";
 const OPERATOR = "ce-operator-token-value-32chars-xx";
+const PAID_OPERATOR = "ce-paid-operator-token-value-32ch-x";
+const PAID_EXPIRY = "2999-01-01T00:00:00Z";
 const KEYS = [
   "CE_PUBLIC_DEPLOYMENT",
   "CE_INTERNAL_API_SECRET",
@@ -23,6 +25,8 @@ const KEYS = [
   "CE_INVESTIGATION_RESERVE_USD",
   "CE_ACCEPT_INVESTIGATIONS",
   "CE_OPERATOR_TOKEN",
+  "CE_PAID_OPERATOR_TOKEN",
+  "CE_PAID_OPERATOR_EXPIRES_AT",
   "QLOO_API_KEY",
   "ANTHROPIC_API_KEY",
   "QLOO_API_BASE_URL",
@@ -52,6 +56,9 @@ function publicEnv(): void {
   process.env.CE_INVESTIGATION_RESERVE_USD = "1";
   process.env.CE_ACCEPT_INVESTIGATIONS = "1";
   process.env.CE_OPERATOR_TOKEN = OPERATOR;
+  // Sprint 9J: a public paid dispatch also needs the scoped operator credential.
+  process.env.CE_PAID_OPERATOR_TOKEN = PAID_OPERATOR;
+  process.env.CE_PAID_OPERATOR_EXPIRES_AT = PAID_EXPIRY;
   process.env.QLOO_API_KEY = "present";
   process.env.ANTHROPIC_API_KEY = "present";
   process.env.QLOO_API_BASE_URL = "https://hackathon.api.qloo.com";
@@ -110,6 +117,7 @@ describe("production HTTP integration", () => {
     const auth = {
       "x-ce-internal-auth": SECRET,
       "x-ce-visitor": "visitor-http-7b-aaaaaa01",
+      "x-ce-paid-operator": PAID_OPERATOR,
     };
     try {
       const created = await fetch(`${origin}/api/agent/jobs`, {
@@ -160,6 +168,7 @@ describe("production HTTP integration", () => {
           "content-type": "application/json",
           "x-ce-internal-auth": SECRET,
           "x-ce-visitor": "visitor-http-7b-bbbbbb01",
+          "x-ce-paid-operator": PAID_OPERATOR,
         },
         body: JSON.stringify({ query: "Where could Northwind Atelier expand?" }),
       });

@@ -768,7 +768,8 @@ export type ComparativeOutcomeCheck = {
     | "RANKED_TERRITORIES_REPRESENTED"
     | "RANKED_TERRITORIES_SOURCED"
     | "CONCEPT_ANCHOR_MATCHES"
-    | "CLASSIFICATION_HAS_POSITION";
+    | "CLASSIFICATION_HAS_POSITION"
+    | "COMPARISON_SET_AUTHORIZED";
   passed: boolean;
   detail: string;
 };

@@ -73,6 +73,7 @@ export function DeepResearchPanel({ scanId, territoryId, proposedDirection, toke
       const parsed = parseJobEnvelope(await response.json());
       if (response.ok && parsed.ok && parsed.job.accessToken) setJob(parsed.job);
       else if (response.status === 503) setError("Live investigations are paused.");
+      else if (response.status === 403) setError("Live research is restricted to an authorized research operator. No paid call was started.");
       else { setStartUnknown(true); setError("The start request could not be confirmed. It may have reached the provider, so this page will not send it again. Check with the research operator before starting another investigation."); }
     } catch { setStartUnknown(true); setError("The start request could not be confirmed. It may have reached the provider, so this page will not send it again. Check with the research operator before starting another investigation."); }
     finally { setBusy(false); }

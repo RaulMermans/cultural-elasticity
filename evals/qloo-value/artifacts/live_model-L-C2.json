@@ -1,0 +1,3579 @@
+{
+ "schemaVersion": "ce-agent-result/0.3",
+ "runId": "8d0e5e0e-4155-4c56-9731-9b8dac7dd1ee",
+ "status": "COMPLETE",
+ "finalSufficiency": "SUFFICIENT",
+ "intent": "compare_territories",
+ "userQuery": "For Liquid Death, compare heavy metal and moonlit gastronomy.",
+ "brand": {
+  "id": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+  "label": "Liquid Death",
+  "type": "urn:entity:brand",
+  "resolution": "confirmed"
+ },
+ "territories": [
+  {
+   "key": "heavy_metal",
+   "label": "Heavy Metal",
+   "role": "target",
+   "origin": "user",
+   "rationale": "named by the user",
+   "resolvedConcept": {
+    "id": "urn:tag:interests:qloo:heavy_metal",
+    "label": "Heavy Metal",
+    "type": "urn:tag:interests:qloo"
+   },
+   "representation": {
+    "strategy": "PLACE_PANEL",
+    "entityType": "place",
+    "exemplars": [
+     {
+      "id": "0AB5B984-DF52-4D9F-A5E3-E804F1D80B81",
+      "label": "The Underworld",
+      "type": "place",
+      "role": "primary",
+      "selectionReason": "Top-popularity Heavy Metal tag member; a dedicated metal venue",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9972770338111386,
+      "quality": "VALID"
+     },
+     {
+      "id": "003542F4-2262-4F28-BF3C-866D5A861228",
+      "label": "Robot",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Heavy Metal tag member with high popularity; a rock and metal venue",
+      "conceptSupport": "tag_member",
+      "popularity": 0.946590785412583,
+      "quality": "VALID"
+     },
+     {
+      "id": "0558492C-35B9-4CFA-B8BB-178D273179F3",
+      "label": "Absoluto Rock Bar",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Heavy Metal tag member; a rock bar with strong popularity",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9360053727553312,
+      "quality": "VALID"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "unknown",
+    "diversityDetail": "not every exemplar's tag profile is known, so distinctness is not established",
+    "attempts": 1,
+    "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Heavy Metal (urn:tag:interests:qloo:heavy_metal): The Underworld, Robot, Absoluto Rock Bar",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median 0 across 2 exemplar(s) (NONE).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Les Foufounes Électriques, Dragon Rojo Rock Bar, Foro Hendrix, L'ANTI Bar & Spectacles, Underground Bar.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "AVAILABLE",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 2,
+    "filteredSharedMedian": 0,
+    "filteredBand": "NONE",
+    "exemplarsCompared": 2,
+    "consistentlyShared": []
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "Les Foufounes Électriques",
+      "rank": 1
+     },
+     {
+      "label": "Dragon Rojo Rock Bar",
+      "rank": 2
+     },
+     {
+      "label": "Foro Hendrix",
+      "rank": 3
+     },
+     {
+      "label": "L'ANTI Bar & Spectacles",
+      "rank": 4
+     },
+     {
+      "label": "Underground Bar",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-121a2fd1-2d4b-4bf9-a39b-0f425a4ba3b6"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 2 rankable place territories in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:interests:qloo:heavy_metal: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Heavy Metal: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-121a2fd1-2d4b-4bf9-a39b-0f425a4ba3b6",
+     "mcp-2bbaf35e-1178-425c-93f5-69cc47872de7",
+     "mcp-2f71d878-dec0-4f5f-a40e-471e098bed1c",
+     "mcp-403dec99-0653-489e-8d6d-6fd51dececeb",
+     "mcp-9ed6417b-3b17-406f-99b6-78c93a59d1a5",
+     "mcp-eaf6e0fd-054f-4bb2-8c1b-e286d2af6488"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Heavy Metal",
+    "sourceTagId": null,
+    "resolvedId": "urn:tag:interests:qloo:heavy_metal",
+    "canonicalConceptKey": "heavy_metal",
+    "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+    "candidateSource": "user",
+    "anchorRelation": "NO_SOURCE_TAG",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:interests:qloo:heavy_metal",
+     "label": "Heavy Metal",
+     "namespace": "interests:qloo",
+     "attemptedTypes": [
+      "place"
+     ],
+     "emptyTypes": [],
+     "successfulTypes": [
+      "place"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 0,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    },
+    {
+     "conceptKey": "urn:tag:genre:music:heavy_metal",
+     "label": "heavy  metal",
+     "namespace": "genre:music",
+     "attemptedTypes": [
+      "place",
+      "brand"
+     ],
+     "emptyTypes": [
+      "place",
+      "brand"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 2,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    },
+    {
+     "conceptKey": "urn:tag:genre:qloo:heavy_metal",
+     "label": "Heavy Metal",
+     "namespace": "genre:qloo",
+     "attemptedTypes": [
+      "place"
+     ],
+     "emptyTypes": [
+      "place"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 1,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    },
+    {
+     "conceptKey": "urn:tag:genre:music:metal",
+     "label": "metal",
+     "namespace": "genre:music",
+     "attemptedTypes": [
+      "place"
+     ],
+     "emptyTypes": [
+      "place"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 1,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    },
+    {
+     "conceptKey": "urn:tag:subgenre:qloo:heavy_metal",
+     "label": "Heavy Metal",
+     "namespace": "subgenre:qloo",
+     "attemptedTypes": [
+      "place"
+     ],
+     "emptyTypes": [
+      "place"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 1,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    },
+    {
+     "conceptKey": "urn:tag:keyword:media:heavy_metal",
+     "label": "heavy metal",
+     "namespace": "keyword:media",
+     "attemptedTypes": [
+      "place"
+     ],
+     "emptyTypes": [
+      "place"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 1,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  },
+  {
+   "key": "moonlit_gastronomy",
+   "label": "Moonlit Gastronomy",
+   "role": "target",
+   "origin": "user",
+   "rationale": "named by the user",
+   "resolvedConcept": {
+    "id": "urn:tag:cuisine:qloo:terang_bulan",
+    "label": "Terang Bulan",
+    "type": "urn:tag:cuisine:qloo"
+   },
+   "representation": {
+    "strategy": "PLACE_PANEL",
+    "entityType": "place",
+    "exemplars": [
+     {
+      "id": "06A12AC0-4D1E-4E47-B759-7A253C7BA5CE",
+      "label": "Martabak Shima",
+      "type": "place",
+      "role": "primary",
+      "selectionReason": "Martabak Shima is a tag member of Terang Bulan, a late-night martabak concept.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.5305571744893672,
+      "quality": "VALID"
+     },
+     {
+      "id": "204CA392-F564-42FA-9FA3-911C16F0E334",
+      "label": "Terang Bulan MERDEKA",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Terang Bulan MERDEKA is a tag member of Terang Bulan.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.43898984473465147,
+      "quality": "VALID"
+     },
+     {
+      "id": "171CB7F4-78D2-44C8-9A8F-95B06C50EF40",
+      "label": "Martabak Jakarta 1994",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Martabak Jakarta 1994 is a tag member of Terang Bulan.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.27989217343628636,
+      "quality": "VALID"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "unknown",
+    "diversityDetail": "not every exemplar's tag profile is known, so distinctness is not established",
+    "attempts": 1,
+    "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Terang Bulan (urn:tag:cuisine:qloo:terang_bulan): Martabak Shima, Terang Bulan MERDEKA, Martabak Jakarta 1994",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median n/a across 3 exemplar(s).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Holandia \"97\" Martabak & Terang Bulan, Martabak TOP BANDUNG \"BEN\", Martabak Alim, Martabak Pecenongan 78, LBS TEGAL MARTABAK DAN TERANG BULAN.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "DESCRIPTIVE_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "NOT_COLLECTED",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 2,
+    "filteredSharedMedian": null,
+    "filteredBand": null,
+    "exemplarsCompared": 3,
+    "consistentlyShared": []
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "Holandia \"97\" Martabak & Terang Bulan",
+      "rank": 1
+     },
+     {
+      "label": "Martabak TOP BANDUNG \"BEN\"",
+      "rank": 2
+     },
+     {
+      "label": "Martabak Alim",
+      "rank": 3
+     },
+     {
+      "label": "Martabak Pecenongan 78",
+      "rank": 4
+     },
+     {
+      "label": "LBS TEGAL MARTABAK DAN TERANG BULAN",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-431979a2-531e-4297-bb7e-ed947d3b9742"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 2 rankable place territories in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:cuisine:qloo:terang_bulan: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Moonlit Gastronomy: route DESCRIPTIVE_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-2b80a17c-df65-42bf-966a-93299d652987",
+     "mcp-403dec99-0653-489e-8d6d-6fd51dececeb",
+     "mcp-431979a2-531e-4297-bb7e-ed947d3b9742",
+     "mcp-5d205ea3-7121-4ffa-9dad-030cc5453fcd",
+     "mcp-7d116c54-a3c1-493b-a24e-1e1640540192",
+     "mcp-d48496b5-d578-492b-b997-eaeb80f79bed"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Moonlit Gastronomy",
+    "sourceTagId": null,
+    "resolvedId": "urn:tag:cuisine:qloo:terang_bulan",
+    "canonicalConceptKey": "terang_bulan",
+    "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+    "candidateSource": "user",
+    "anchorRelation": "NO_SOURCE_TAG",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:cuisine:qloo:terang_bulan",
+     "label": "Terang Bulan",
+     "namespace": "cuisine:qloo",
+     "attemptedTypes": [
+      "place"
+     ],
+     "emptyTypes": [],
+     "successfulTypes": [
+      "place"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 0,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  }
+ ],
+ "methodologyRuns": [],
+ "summary": {
+  "text": "For Liquid Death, neither territory can be compared on relative position because neither has a comparison set or relative position result. Heavy Metal's route is partial and its exemplars show no consistently shared signals, while Moonlit Gastronomy's route is descriptive and its shared-signal coherence was not collected. Both have supported brand-conditioned entity lists, but these are truncated and show associated places and entities rather than a ranking, so the evidence cannot establish how either territory sits relative to the other or to any reference set.\nHeavy Metal: The Heavy Metal route is partial and its relative position is unavailable, so no comparative position against a comparison set can be stated. The filtered shared-signal band is NONE and no signals are consistently shared across the Heavy Metal exemplars. The brand-conditioned query for Heavy Metal is supported and its leading entities include Les Foufounes Électriques, Dragon Rojo Rock Bar and Foro Hendrix, though the list is truncated.\nMoonlit Gastronomy: Moonlit Gastronomy is represented by place exemplars linked to Terang Bulan, including Martabak Shima, Terang Bulan MERDEKA and Martabak Jakarta 1994. The brand-conditioned query for Moonlit Gastronomy is supported and its leading entities include Martabak TOP BANDUNG \"BEN\", Martabak Alim and Martabak Pecenongan 78, though the list is truncated. The Moonlit Gastronomy route is descriptive and shared-signal coherence was not collected, so no shared-signal reading is available for this territory.",
+  "source": "model",
+  "claimValidation": {
+   "passed": true,
+   "violations": []
+  }
+ },
+ "followUpOptions": [
+  "Expand the Heavy Metal comparison set with additional exemplars to enable a relative position reading.",
+  "Collect shared-signal coherence for Moonlit Gastronomy exemplars so the two territories can be read on the same signals.",
+  "Add reference territories beyond these two to contextualize both positions.",
+  "Retrieve the full brand-conditioned entity lists for both territories rather than the truncated top results."
+ ],
+ "limitations": [
+  {
+   "code": "NOT_A_SUCCESS_PREDICTION",
+   "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+  },
+  {
+   "code": "NO_APPROVED_SCORE",
+   "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+  }
+ ],
+ "evidenceOrigin": "live",
+ "model": {
+  "id": "claude-haiku-5-5",
+  "kind": "llm",
+  "live": true,
+  "effort": "high"
+ },
+ "trace": {
+  "runId": "8d0e5e0e-4155-4c56-9731-9b8dac7dd1ee",
+  "intent": "compare_territories",
+  "userQuery": "For Liquid Death, compare heavy metal and moonlit gastronomy.",
+  "interpretedRequest": {
+   "intent": "compare_territories",
+   "brand": "Liquid Death",
+   "territories": [
+    "Heavy Metal",
+    "Moonlit Gastronomy"
+   ]
+  },
+  "model": {
+   "id": "claude-haiku-5-5",
+   "kind": "llm",
+   "live": true,
+   "effort": "high"
+  },
+  "toolProvider": {
+   "name": "qloo-mcp",
+   "mode": "live"
+  },
+  "limits": {
+   "maxAgentIterations": 12,
+   "maxRepresentationAttemptsPerTerritory": 3,
+   "maxCandidateTerritories": 6,
+   "maxExemplarsPerTerritory": 3,
+   "maxRetryPerToolCall": 1,
+   "maxActionsPerTurn": 12,
+   "maxInvalidTurns": 2,
+   "toolTimeoutMs": 300000,
+   "maxQlooCalls": 32
+  },
+  "statusTransitions": [
+   {
+    "iteration": 0,
+    "from": "INTAKE",
+    "to": "PLANNING",
+    "reason": "request validated"
+   },
+   {
+    "iteration": 1,
+    "from": "PLANNING",
+    "to": "RESOLVING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 2,
+    "from": "RESOLVING",
+    "to": "INVESTIGATING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 11,
+    "from": "INVESTIGATING",
+    "to": "ANALYZING",
+    "reason": "analyze heavy_metal, moonlit_gastronomy"
+   },
+   {
+    "iteration": 11,
+    "from": "ANALYZING",
+    "to": "INVESTIGATING",
+    "reason": "analysis step done"
+   },
+   {
+    "iteration": 12,
+    "from": "INVESTIGATING",
+    "to": "COMPLETE",
+    "reason": "agent finished"
+   }
+  ],
+  "planRevisions": [
+   {
+    "iteration": 1,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[ ] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Heavy Metal: anchor to a Qloo concept",
+     "[ ] Heavy Metal: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Heavy Metal: analyze",
+     "[ ] Moonlit Gastronomy: anchor to a Qloo concept",
+     "[ ] Moonlit Gastronomy: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Moonlit Gastronomy: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The user asks to compare two named territories, Heavy Metal and Moonlit Gastronomy, for the brand Liquid Death."
+   },
+   {
+    "iteration": 2,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Heavy Metal: anchor to a Qloo concept",
+     "[ ] Heavy Metal: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Heavy Metal: analyze",
+     "[ ] Moonlit Gastronomy: anchor to a Qloo concept",
+     "[ ] Moonlit Gastronomy: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Moonlit Gastronomy: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The brand must be resolved to a single Qloo entity before territory evidence can be gathered."
+   },
+   {
+    "iteration": 5,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Heavy Metal: anchor to a Qloo concept",
+     "[ ] Heavy Metal: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Heavy Metal: analyze",
+     "[x] Moonlit Gastronomy: anchor to a Qloo concept",
+     "[ ] Moonlit Gastronomy: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Moonlit Gastronomy: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Terang Bulan returned 20 place members on a brand-independent probe, so it anchors Moonlit Gastronomy."
+   },
+   {
+    "iteration": 7,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Heavy Metal: anchor to a Qloo concept",
+     "[ ] Heavy Metal: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Heavy Metal: analyze",
+     "[x] Moonlit Gastronomy: anchor to a Qloo concept",
+     "[x] Moonlit Gastronomy: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Moonlit Gastronomy: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Test whether the shared place type has members for the metal music tag, the comparison's shared type."
+   },
+   {
+    "iteration": 8,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Heavy Metal: anchor to a Qloo concept",
+     "[ ] Heavy Metal: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Heavy Metal: analyze",
+     "[x] Moonlit Gastronomy: anchor to a Qloo concept",
+     "[x] Moonlit Gastronomy: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Moonlit Gastronomy: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The brand tag profile is needed to find meaningful place reference candidates."
+   },
+   {
+    "iteration": 9,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Heavy Metal: anchor to a Qloo concept",
+     "[x] Heavy Metal: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Heavy Metal: analyze",
+     "[x] Moonlit Gastronomy: anchor to a Qloo concept",
+     "[x] Moonlit Gastronomy: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Moonlit Gastronomy: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Validate three Qloo-returned place exemplars for Heavy Metal, the available strategy."
+   },
+   {
+    "iteration": 11,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Heavy Metal: anchor to a Qloo concept",
+     "[x] Heavy Metal: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Heavy Metal: analyze",
+     "[x] Moonlit Gastronomy: anchor to a Qloo concept",
+     "[x] Moonlit Gastronomy: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Moonlit Gastronomy: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Both territories are ready with valid place exemplars, and sufficiency reports no material evidence gap, so the analysis can run."
+   },
+   {
+    "iteration": 12,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Heavy Metal: anchor to a Qloo concept",
+     "[x] Heavy Metal: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Heavy Metal: analyze",
+     "[x] Moonlit Gastronomy: anchor to a Qloo concept",
+     "[x] Moonlit Gastronomy: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Moonlit Gastronomy: analyze",
+     "[x] finish when deterministic sufficiency allows"
+    ],
+    "note": "Both in-scope territories are analyzed, sufficiency is SUFFICIENT, and no turns remain."
+   }
+  ],
+  "turns": [
+   {
+    "iteration": 1,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "compare_territories",
+       "brand": "Liquid Death",
+       "territories": [
+        "Heavy Metal",
+        "Moonlit Gastronomy"
+       ]
+      },
+      "reasonSummary": "The user asks to compare two named territories, Heavy Metal and Moonlit Gastronomy, for the brand Liquid Death.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 765,
+     "outputTokens": 193,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1569
+    },
+    "latencyMs": 1324,
+    "skills": [
+     {
+      "id": "interpret_request",
+      "version": 1
+     },
+     {
+      "id": "resolve_brand",
+      "version": 1
+     }
+    ],
+    "toolsExposed": [
+     "interpret_request",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2388,
+    "contextTokensEstimate": 597
+   },
+   {
+    "iteration": 2,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Liquid Death",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "The brand must be resolved to a single Qloo entity before territory evidence can be gathered.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1231,
+     "outputTokens": 243,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1547
+    },
+    "latencyMs": 2223,
+    "skills": [
+     {
+      "id": "resolve_brand",
+      "version": 1
+     },
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_resolve_entity",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 3243,
+    "contextTokensEstimate": 811
+   },
+   {
+    "iteration": 3,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "heavy metal",
+       "limit": 8
+      },
+      "reasonSummary": "Heavy Metal needs a Qloo concept tag before it can be anchored.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "moonlit gastronomy",
+       "limit": 8
+      },
+      "reasonSummary": "Moonlit Gastronomy needs a Qloo concept tag before it can be anchored.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1976,
+     "outputTokens": 356,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 2788
+    },
+    "latencyMs": 1968,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 7917,
+    "contextTokensEstimate": 1980
+   },
+   {
+    "iteration": 4,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:heavy_metal"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Heavy Metal has candidate concepts but no probed members yet; the next-ranked probe tests place members on the genre tag.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:cuisine:qloo:terang_bulan"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Moonlit Gastronomy has candidate concepts but no probed members yet; the next-ranked probe tests place members on the Terang Bulan cuisine tag.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4656,
+     "outputTokens": 544,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 2788
+    },
+    "latencyMs": 2811,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 13360,
+    "contextTokensEstimate": 3340
+   },
+   {
+    "iteration": 5,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "moonlit_gastronomy",
+       "tagId": "urn:tag:cuisine:qloo:terang_bulan"
+      },
+      "reasonSummary": "Terang Bulan returned 20 place members on a brand-independent probe, so it anchors Moonlit Gastronomy.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:qloo:heavy_metal"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Type-alignment probe: test place members for the Heavy Metal genre concept to match Moonlit Gastronomy's place type.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "reasonSummary": "Type-alignment probe: test place members for the metal genre tag as an alternate Heavy Metal concept.",
+      "accepted": false,
+      "rejection": "NO_VALUE_ACTION: place probes of Heavy Metal's Qloo concepts returned no members ≥ 2 times; probe an untried supported entity type instead (brand, artist, book), anchor a concept with members, or declare_concept_only",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:metal"
+       ],
+       "conditionOnBrand": false
+      }
+     },
+     {
+      "action": "call_tool",
+      "reasonSummary": "Type-alignment probe: test place members for the Heavy Metal subgenre tag as an alternate concept.",
+      "accepted": false,
+      "rejection": "NO_VALUE_ACTION: place probes of Heavy Metal's Qloo concepts returned no members ≥ 2 times; probe an untried supported entity type instead (brand, artist, book), anchor a concept with members, or declare_concept_only",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:subgenre:qloo:heavy_metal"
+       ],
+       "conditionOnBrand": false
+      }
+     }
+    ],
+    "usage": {
+     "inputTokens": 5389,
+     "outputTokens": 1093,
+     "cacheReadTokens": 2788,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 4336,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": false,
+    "contextChars": 14648,
+    "contextTokensEstimate": 3662
+   },
+   {
+    "iteration": 6,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:genre:music:heavy_metal"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "Heavy metal's music-genre tag is untested for brand members, the declared next probe.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "06A12AC0-4D1E-4E47-B759-7A253C7BA5CE"
+      },
+      "reasonSummary": "Profile a leading Terang Bulan place candidate to check it against peers before validation.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "204CA392-F564-42FA-9FA3-911C16F0E334"
+      },
+      "reasonSummary": "Profile a second Terang Bulan place candidate to compare peers.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "171CB7F4-78D2-44C8-9A8F-95B06C50EF40"
+      },
+      "reasonSummary": "Profile a third Terang Bulan place candidate from a different name family.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 5373,
+     "outputTokens": 1395,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 4050
+    },
+    "latencyMs": 6038,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 18683,
+    "contextTokensEstimate": 4671
+   },
+   {
+    "iteration": 7,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:metal"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Test whether the shared place type has members for the metal music tag, the comparison's shared type.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "moonlit_gastronomy",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "06A12AC0-4D1E-4E47-B759-7A253C7BA5CE",
+         "reason": "Martabak Shima is a tag member of Terang Bulan, a late-night martabak concept.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Martabak Terang Bulan restaurant, directly the moonlit street-food concept."
+         }
+        },
+        {
+         "id": "204CA392-F564-42FA-9FA3-911C16F0E334",
+         "reason": "Terang Bulan MERDEKA is a tag member of Terang Bulan.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Named Terang Bulan outlet, same concept."
+         }
+        },
+        {
+         "id": "171CB7F4-78D2-44C8-9A8F-95B06C50EF40",
+         "reason": "Martabak Jakarta 1994 is a tag member of Terang Bulan.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Martabak outlet within the Terang Bulan concept, a little less specific by name."
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Validate the three best-profiled Terang Bulan place members as exemplars for Moonlit Gastronomy.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 6828,
+     "outputTokens": 1349,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 4050
+    },
+    "latencyMs": 7783,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     },
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 21418,
+    "contextTokensEstimate": 5355
+   },
+   {
+    "iteration": 8,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "4DF7C265-52D9-4A99-8803-F62C2302D561"
+      },
+      "reasonSummary": "The brand tag profile is needed to find meaningful place reference candidates.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:subgenre:qloo:heavy_metal"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Checks whether place members exist for the Heavy Metal subgenre concept, as required before switching type.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:interests:qloo:heavy_metal"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Checks whether place members exist for the Heavy Metal interests concept, as required before switching type.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:heavy_metal"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Checks whether place members exist for the heavy metal keyword concept, as required before switching type.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 3585,
+     "outputTokens": 875,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5087
+    },
+    "latencyMs": 3401,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 16338,
+    "contextTokensEstimate": 4085
+   },
+   {
+    "iteration": 9,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "heavy_metal",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "0AB5B984-DF52-4D9F-A5E3-E804F1D80B81",
+         "reason": "Top-popularity Heavy Metal tag member; a dedicated metal venue",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Core metal club culture, directly on the concept"
+         }
+        },
+        {
+         "id": "003542F4-2262-4F28-BF3C-866D5A861228",
+         "reason": "Heavy Metal tag member with high popularity; a rock and metal venue",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Rock-oriented venue, close to the metal scene"
+         }
+        },
+        {
+         "id": "0558492C-35B9-4CFA-B8BB-178D273179F3",
+         "reason": "Heavy Metal tag member; a rock bar with strong popularity",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Rock bar culture around heavy metal"
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Validate three Qloo-returned place exemplars for Heavy Metal, the available strategy.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:media:comics"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Probe the place pool of the Comics reference candidate to test a meaningful place comparison.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:superhero"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Probe the place pool of the Superhero reference candidate as a second meaningful place reference.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 6829,
+     "outputTokens": 2371,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5663
+    },
+    "latencyMs": 11899,
+    "skills": [
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     },
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 24844,
+    "contextTokensEstimate": 6211
+   },
+   {
+    "iteration": 10,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:person:musician"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "Probing the only untested meaningful reference candidate (Musician) on the brand-independent place pool to fill the third place reference.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4623,
+     "outputTokens": 1561,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5087
+    },
+    "latencyMs": 1340480,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 18564,
+    "contextTokensEstimate": 4641
+   },
+   {
+    "iteration": 11,
+    "decisions": [
+     {
+      "action": "analyze",
+      "reasonSummary": "Both territories are ready with valid place exemplars, and sufficiency reports no material evidence gap, so the analysis can run.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 3572,
+     "outputTokens": 291,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5087
+    },
+    "latencyMs": 2445,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 16003,
+    "contextTokensEstimate": 4001
+   },
+   {
+    "iteration": 12,
+    "decisions": [
+     {
+      "action": "finish",
+      "reasonSummary": "Both in-scope territories are analyzed, sufficiency is SUFFICIENT, and no turns remain.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 2055,
+     "outputTokens": 230,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1938
+    },
+    "latencyMs": 955954,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 5215,
+    "contextTokensEstimate": 1304
+   }
+  ],
+  "toolCalls": [
+   {
+    "id": "tc-1",
+    "iteration": 1,
+    "tool": "interpret_request",
+    "permission": "local_computation",
+    "arguments": {
+     "intent": "compare_territories",
+     "brand": "Liquid Death",
+     "territories": [
+      "Heavy Metal",
+      "Moonlit Gastronomy"
+     ]
+    },
+    "status": "ok",
+    "summary": "intent compare_territories; brand \"Liquid Death\"; 2 named territory(ies)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    }
+   },
+   {
+    "id": "tc-2",
+    "iteration": 2,
+    "tool": "qloo_resolve_entity",
+    "permission": "read_only_external",
+    "arguments": {
+     "name": "Liquid Death",
+     "type": "brand",
+     "role": "brand"
+    },
+    "status": "ok",
+    "summary": "Liquid Death (4DF7C265-52D9-4A99-8803-F62C2302D561, urn:entity:brand, match exact)",
+    "qlooOperations": [
+     "describe"
+    ],
+    "correlationIds": [
+     "mcp-69e6a980-ea1d-4a1c-9b24-91dfb70939d7"
+    ],
+    "attempts": 1,
+    "latencyMs": 643,
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-3",
+    "iteration": 3,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "heavy metal",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-9ed6417b-3b17-406f-99b6-78c93a59d1a5"
+    ],
+    "attempts": 1,
+    "latencyMs": 4854,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-4",
+    "iteration": 3,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "moonlit gastronomy",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-7d116c54-a3c1-493b-a24e-1e1640540192"
+    ],
+    "attempts": 1,
+    "latencyMs": 361359,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-5",
+    "iteration": 4,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:heavy_metal"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:music:heavy_metal",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-d9d6fc88-a9e1-4584-a69e-e6844d3f3f56"
+    ],
+    "attempts": 1,
+    "latencyMs": 415,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-6",
+    "iteration": 4,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:cuisine:qloo:terang_bulan"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "ok",
+    "summary": "20 place entities (brand-independent pool)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-f3866551-65fa-4875-a642-19c60c6f220c"
+    ],
+    "attempts": 1,
+    "latencyMs": 7266,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-7",
+    "iteration": 5,
+    "tool": "anchor_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "moonlit_gastronomy",
+     "tagId": "urn:tag:cuisine:qloo:terang_bulan"
+    },
+    "status": "ok",
+    "summary": "moonlit_gastronomy anchored to Terang Bulan (urn:tag:cuisine:qloo:terang_bulan)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    }
+   },
+   {
+    "id": "tc-8",
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:qloo:heavy_metal"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:qloo:heavy_metal",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-f3125633-c0ac-4fc6-86d3-37b61f4bf571"
+    ],
+    "attempts": 1,
+    "latencyMs": 700,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-9",
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "permission": "local_computation",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:metal"
+     ],
+     "conditionOnBrand": false
+    },
+    "status": "rejected",
+    "summary": "NO_VALUE_ACTION: place probes of Heavy Metal's Qloo concepts returned no members ≥ 2 times; probe an untried supported entity type instead (brand, artist, book), anchor a concept with members, or declare_concept_only",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "error": "NO_VALUE_ACTION"
+   },
+   {
+    "id": "tc-10",
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "permission": "local_computation",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:subgenre:qloo:heavy_metal"
+     ],
+     "conditionOnBrand": false
+    },
+    "status": "rejected",
+    "summary": "NO_VALUE_ACTION: place probes of Heavy Metal's Qloo concepts returned no members ≥ 2 times; probe an untried supported entity type instead (brand, artist, book), anchor a concept with members, or declare_concept_only",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "error": "NO_VALUE_ACTION"
+   },
+   {
+    "id": "tc-11",
+    "iteration": 6,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "brand",
+     "tagIds": [
+      "urn:tag:genre:music:heavy_metal"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no brand entities for urn:tag:genre:music:heavy_metal",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-ef7db7d1-534c-4a18-b825-d05686ca0480"
+    ],
+    "attempts": 1,
+    "latencyMs": 368,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-12",
+    "iteration": 6,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "06A12AC0-4D1E-4E47-B759-7A253C7BA5CE"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-5d205ea3-7121-4ffa-9dad-030cc5453fcd"
+    ],
+    "attempts": 1,
+    "latencyMs": 6946,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-13",
+    "iteration": 6,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "204CA392-F564-42FA-9FA3-911C16F0E334"
+    },
+    "status": "failed",
+    "summary": "TOOL_TIMEOUT: TOOL_TIMEOUT after 300000 ms",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-d48496b5-d578-492b-b997-eaeb80f79bed"
+    ],
+    "attempts": 1,
+    "latencyMs": 654127,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM",
+    "error": "TOOL_TIMEOUT"
+   },
+   {
+    "id": "tc-14",
+    "iteration": 6,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "171CB7F4-78D2-44C8-9A8F-95B06C50EF40"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-2b80a17c-df65-42bf-966a-93299d652987"
+    ],
+    "attempts": 1,
+    "latencyMs": 7034,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-15",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:metal"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:music:metal",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-4bbd4dc3-adeb-480d-ac29-72f419aadbeb"
+    ],
+    "attempts": 1,
+    "latencyMs": 397,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-16",
+    "iteration": 7,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "moonlit_gastronomy",
+     "entityType": "place",
+     "exemplars": [
+      {
+       "id": "06A12AC0-4D1E-4E47-B759-7A253C7BA5CE",
+       "reason": "Martabak Shima is a tag member of Terang Bulan, a late-night martabak concept.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Martabak Terang Bulan restaurant, directly the moonlit street-food concept."
+       }
+      },
+      {
+       "id": "204CA392-F564-42FA-9FA3-911C16F0E334",
+       "reason": "Terang Bulan MERDEKA is a tag member of Terang Bulan.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Named Terang Bulan outlet, same concept."
+       }
+      },
+      {
+       "id": "171CB7F4-78D2-44C8-9A8F-95B06C50EF40",
+       "reason": "Martabak Jakarta 1994 is a tag member of Terang Bulan.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Martabak outlet within the Terang Bulan concept, a little less specific by name."
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "moonlit_gastronomy: accepted Martabak Shima, Terang Bulan MERDEKA, Martabak Jakarta 1994; diversity unknown",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-17",
+    "iteration": 8,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "4DF7C265-52D9-4A99-8803-F62C2302D561"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-403dec99-0653-489e-8d6d-6fd51dececeb"
+    ],
+    "attempts": 1,
+    "latencyMs": 2597,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-18",
+    "iteration": 8,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:subgenre:qloo:heavy_metal"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:subgenre:qloo:heavy_metal",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-ed9e89d7-96df-4ddd-8665-7b0d628faae1"
+    ],
+    "attempts": 1,
+    "latencyMs": 6610,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-19",
+    "iteration": 8,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:interests:qloo:heavy_metal"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "failed",
+    "summary": "TOOL_TIMEOUT: TOOL_TIMEOUT after 300000 ms",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-958b2614-53bd-48b8-8356-dae9f3e98a79"
+    ],
+    "attempts": 1,
+    "latencyMs": 386274,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM",
+    "error": "TOOL_TIMEOUT"
+   },
+   {
+    "id": "tc-20",
+    "iteration": 8,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:heavy_metal"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:keyword:media:heavy_metal",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-3e58e25c-f5e7-4c2b-845a-13f09a979130"
+    ],
+    "attempts": 1,
+    "latencyMs": 7456,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-21",
+    "iteration": 9,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "heavy_metal",
+     "entityType": "place",
+     "exemplars": [
+      {
+       "id": "0AB5B984-DF52-4D9F-A5E3-E804F1D80B81",
+       "reason": "Top-popularity Heavy Metal tag member; a dedicated metal venue",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Core metal club culture, directly on the concept"
+       }
+      },
+      {
+       "id": "003542F4-2262-4F28-BF3C-866D5A861228",
+       "reason": "Heavy Metal tag member with high popularity; a rock and metal venue",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Rock-oriented venue, close to the metal scene"
+       }
+      },
+      {
+       "id": "0558492C-35B9-4CFA-B8BB-178D273179F3",
+       "reason": "Heavy Metal tag member; a rock bar with strong popularity",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Rock bar culture around heavy metal"
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "heavy_metal: accepted The Underworld, Robot, Absoluto Rock Bar; diversity unknown",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-22",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:media:comics"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:media:comics",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-c3f8580a-cb1b-43af-aa75-bbc6d5ddfbbf"
+    ],
+    "attempts": 1,
+    "latencyMs": 850,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-23",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:superhero"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:keyword:media:superhero",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-c53fa804-2b2d-4e7b-92ac-d40e6e2350e7"
+    ],
+    "attempts": 1,
+    "latencyMs": 6559,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-24",
+    "iteration": 10,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:person:musician"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:person:musician",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-ab3bcda0-7e0b-4737-a76a-a52e859275fe"
+    ],
+    "attempts": 1,
+    "latencyMs": 479,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-25",
+    "iteration": 11,
+    "tool": "analyze_evidence",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "heavy_metal",
+      "moonlit_gastronomy"
+     ]
+    },
+    "status": "ok",
+    "summary": "brand profile 20 tags; 6 exemplar/other profiles in run; 2 brand-conditioned list(s)",
+    "qlooOperations": [
+     "entity_tags",
+     "recommend",
+     "recommend",
+     "entity_tags",
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-2f71d878-dec0-4f5f-a40e-471e098bed1c",
+     "mcp-121a2fd1-2d4b-4bf9-a39b-0f425a4ba3b6",
+     "mcp-431979a2-531e-4297-bb7e-ed947d3b9742",
+     "mcp-2bbaf35e-1178-425c-93f5-69cc47872de7",
+     "mcp-eaf6e0fd-054f-4bb2-8c1b-e286d2af6488"
+    ],
+    "attempts": 5,
+    "latencyMs": 0
+   },
+   {
+    "id": "tc-26",
+    "iteration": 11,
+    "tool": "build_candidate_panel",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "heavy_metal",
+      "moonlit_gastronomy"
+     ]
+    },
+    "status": "ok",
+    "summary": "no comparison set of ≥ 3 rankable territories of one type",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0
+   }
+  ],
+  "resolvedEntities": [
+   {
+    "role": "brand",
+    "id": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+    "label": "Liquid Death",
+    "type": "urn:entity:brand",
+    "match": "exact",
+    "resolution": "confirmed"
+   }
+  ],
+  "territoryHypotheses": [
+   {
+    "key": "heavy_metal",
+    "label": "Heavy Metal",
+    "role": "target",
+    "origin": "user",
+    "status": "analyzed",
+    "rationale": "named by the user"
+   },
+   {
+    "key": "moonlit_gastronomy",
+    "label": "Moonlit Gastronomy",
+    "role": "target",
+    "origin": "user",
+    "status": "analyzed",
+    "rationale": "named by the user"
+   }
+  ],
+  "representations": [
+   {
+    "territoryKey": "moonlit_gastronomy",
+    "attempt": 1,
+    "accepted": [
+     "Martabak Shima",
+     "Terang Bulan MERDEKA",
+     "Martabak Jakarta 1994"
+    ],
+    "rejected": []
+   },
+   {
+    "territoryKey": "heavy_metal",
+    "attempt": 1,
+    "accepted": [
+     "The Underworld",
+     "Robot",
+     "Absoluto Rock Bar"
+    ],
+    "rejected": []
+   }
+  ],
+  "sufficiency": [
+   {
+    "iteration": 0,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "interpret the request (interpret_request)"
+    ],
+    "nextActions": [
+     {
+      "action": "interpret_request",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the goal is not interpreted yet"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 1,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "resolve the brand (qloo_resolve_entity, role brand)"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_resolve_entity",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the brand is not resolved"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 2,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "2 in-scope territory(ies) not yet analyzed",
+     "heavy_metal: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "moonlit_gastronomy: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "heavy_metal",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "moonlit_gastronomy",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 3,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "2 in-scope territory(ies) not yet analyzed",
+     "heavy_metal: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "moonlit_gastronomy: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "heavy_metal",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "moonlit_gastronomy",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 4,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "2 in-scope territory(ies) not yet analyzed",
+     "heavy_metal: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "moonlit_gastronomy: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "heavy_metal",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "moonlit_gastronomy",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 5,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "2 in-scope territory(ies) not yet analyzed",
+     "heavy_metal: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "moonlit_gastronomy: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "heavy_metal",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "moonlit_gastronomy",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "moonlit_gastronomy",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 6,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "2 in-scope territory(ies) not yet analyzed",
+     "heavy_metal: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "moonlit_gastronomy: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "heavy_metal",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "moonlit_gastronomy",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 7,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "2 in-scope territory(ies) not yet analyzed",
+     "heavy_metal: ready to analyze (territory resolution budget spent without a Qloo concept)",
+     "moonlit_gastronomy: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "investigate",
+      "target": "heavy_metal",
+      "value": "NONE",
+      "reason": "territory resolution budget spent without a Qloo concept; report it as unsupported"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "moonlit_gastronomy",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "Reference candidates are found on tag profiles that are not collected yet: fetch the brand Liquid Death with qloo_get_entity_tags, then choose 2 meaningful place reference(s) from referenceCandidates. If none is meaningful, analyze and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "heavy_metal,moonlit_gastronomy",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 8,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "2 in-scope territory(ies) not yet analyzed",
+     "heavy_metal: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only",
+     "moonlit_gastronomy: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "heavy_metal",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "heavy_metal",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "moonlit_gastronomy",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "2 more meaningful place reference territories are required for a relative position (have 1 of 3). Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent place pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "moonlit_gastronomy",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 9,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "2 in-scope territory(ies) not yet analyzed",
+     "heavy_metal: ready to analyze (3 validated exemplar(s))",
+     "moonlit_gastronomy: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "heavy_metal",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "moonlit_gastronomy",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "1 more meaningful place reference territory is required for a relative position (have 2 of 3). Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent place pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "heavy_metal,moonlit_gastronomy",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 10,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "2 in-scope territory(ies) not yet analyzed",
+     "heavy_metal: ready to analyze (3 validated exemplar(s))",
+     "moonlit_gastronomy: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "heavy_metal",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "moonlit_gastronomy",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "NONE",
+      "reason": "FULL is not feasible: only 2 turn(s) left; references and analysis need 4; analysis will be partial"
+     },
+     {
+      "action": "analyze",
+      "target": "heavy_metal,moonlit_gastronomy",
+      "value": "HIGH",
+      "reason": "no material evidence gap remains: analyze"
+     }
+    ],
+    "materialGap": false
+   },
+   {
+    "iteration": 11,
+    "verdict": "SUFFICIENT",
+    "reasons": [
+     "all 2 in-scope territories have analysis results"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "NONE",
+      "reason": "the targets are already analyzed"
+     },
+     {
+      "action": "finish",
+      "target": null,
+      "value": "HIGH",
+      "reason": "every in-scope territory is analyzed"
+     }
+    ],
+    "materialGap": false
+   }
+  ],
+  "representationQuality": [
+   {
+    "territoryKey": "moonlit_gastronomy",
+    "attempt": 1,
+    "candidateId": "06A12AC0-4D1E-4E47-B759-7A253C7BA5CE",
+    "label": "Martabak Shima",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": true,
+      "profileTags": 20,
+      "popularity": 0.5305571744893672,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 2,
+      "maxSharedWithPeer": 0,
+      "conceptInProfile": false,
+      "peersCarryingConcept": 0
+     },
+     "reasons": []
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Martabak Terang Bulan restaurant, directly the moonlit street-food concept.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "moonlit_gastronomy",
+    "attempt": 1,
+    "candidateId": "204CA392-F564-42FA-9FA3-911C16F0E334",
+    "label": "Terang Bulan MERDEKA",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": true,
+      "profileTags": 20,
+      "popularity": 0.43898984473465147,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 2,
+      "maxSharedWithPeer": 0,
+      "conceptInProfile": false,
+      "peersCarryingConcept": 0
+     },
+     "reasons": []
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Named Terang Bulan outlet, same concept.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "moonlit_gastronomy",
+    "attempt": 1,
+    "candidateId": "171CB7F4-78D2-44C8-9A8F-95B06C50EF40",
+    "label": "Martabak Jakarta 1994",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": true,
+      "profileTags": 20,
+      "popularity": 0.27989217343628636,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 2,
+      "maxSharedWithPeer": 0,
+      "conceptInProfile": false,
+      "peersCarryingConcept": 0
+     },
+     "reasons": []
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Martabak outlet within the Terang Bulan concept, a little less specific by name.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "heavy_metal",
+    "attempt": 1,
+    "candidateId": "0AB5B984-DF52-4D9F-A5E3-E804F1D80B81",
+    "label": "The Underworld",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9972770338111386,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Core metal club culture, directly on the concept",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "heavy_metal",
+    "attempt": 1,
+    "candidateId": "003542F4-2262-4F28-BF3C-866D5A861228",
+    "label": "Robot",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.946590785412583,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Rock-oriented venue, close to the metal scene",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "heavy_metal",
+    "attempt": 1,
+    "candidateId": "0558492C-35B9-4CFA-B8BB-178D273179F3",
+    "label": "Absoluto Rock Bar",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9360053727553312,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Rock bar culture around heavy metal",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   }
+  ],
+  "conceptDedup": [],
+  "earlyStops": [
+   {
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "code": "NO_VALUE_ACTION",
+    "reason": "place probes of Heavy Metal's Qloo concepts returned no members ≥ 2 times; probe an untried supported entity type instead (brand, artist, book), anchor a concept with members, or declare_concept_only",
+    "callsAvoided": 1
+   },
+   {
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "code": "NO_VALUE_ACTION",
+    "reason": "place probes of Heavy Metal's Qloo concepts returned no members ≥ 2 times; probe an untried supported entity type instead (brand, artist, book), anchor a concept with members, or declare_concept_only",
+    "callsAvoided": 1
+   }
+  ],
+  "skillUsage": [
+   {
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 0,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 1,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "turns": 5,
+    "qlooCalls": 7,
+    "toolCalls": 8
+   },
+   {
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "turns": 3,
+    "qlooCalls": 2,
+    "toolCalls": 5
+   },
+   {
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "turns": 4,
+    "qlooCalls": 6,
+    "toolCalls": 7
+   },
+   {
+    "skill": {
+     "id": "analyze_territories",
+     "version": 2
+    },
+    "turns": 5,
+    "qlooCalls": 0,
+    "toolCalls": 0
+   }
+  ],
+  "methodologyInvocations": [],
+  "synthesis": {
+   "source": "model",
+   "attempts": 1,
+   "violations": [],
+   "attemptDetails": [
+    {
+     "attempt": 1,
+     "accepted": true,
+     "categories": {},
+     "violations": []
+    }
+   ]
+  },
+  "errors": [
+   {
+    "iteration": 6,
+    "code": "TOOL_TIMEOUT",
+    "detail": "qloo_get_entity_tags: TOOL_TIMEOUT after 300000 ms"
+   },
+   {
+    "iteration": 8,
+    "code": "TOOL_TIMEOUT",
+    "detail": "qloo_recommend: TOOL_TIMEOUT after 300000 ms"
+   }
+  ],
+  "userClarifications": [],
+  "representationPlans": [
+   {
+    "iteration": 2,
+    "plan": {
+     "territoryKeys": [
+      "heavy_metal",
+      "moonlit_gastronomy"
+     ],
+     "candidateEntityTypes": [],
+     "preferredCommonType": null,
+     "supportedTerritoriesByType": {},
+     "possibleTerritoriesByType": {},
+     "feasibility": "POSSIBLE",
+     "required": 2,
+     "missingRequirements": [
+      "no territory has returned Qloo members yet: probe the concepts first"
+     ],
+     "reasonCodes": [
+      "NO_TYPE_OBSERVED"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 4,
+    "plan": {
+     "territoryKeys": [
+      "heavy_metal",
+      "moonlit_gastronomy"
+     ],
+     "candidateEntityTypes": [
+      "place"
+     ],
+     "preferredCommonType": "place",
+     "supportedTerritoriesByType": {
+      "place": [
+       "moonlit_gastronomy"
+      ]
+     },
+     "possibleTerritoriesByType": {
+      "place": [
+       "heavy_metal"
+      ]
+     },
+     "feasibility": "POSSIBLE",
+     "required": 2,
+     "missingRequirements": [
+      "heavy_metal: no place members observed yet; probe place on Heavy Metal [urn:tag:genre:qloo:heavy_metal], metal [urn:tag:genre:music:metal], Heavy Metal [urn:tag:subgenre:qloo:heavy_metal] before switching to another type"
+     ],
+     "reasonCodes": [
+      "COMMON_TYPE_POSSIBLE",
+      "TYPE_PROBE_PATH:heavy_metal"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 5,
+    "plan": {
+     "territoryKeys": [
+      "heavy_metal",
+      "moonlit_gastronomy"
+     ],
+     "candidateEntityTypes": [
+      "place"
+     ],
+     "preferredCommonType": "place",
+     "supportedTerritoriesByType": {
+      "place": [
+       "moonlit_gastronomy"
+      ]
+     },
+     "possibleTerritoriesByType": {},
+     "feasibility": "UNSUPPORTED",
+     "required": 2,
+     "missingRequirements": [
+      "heavy_metal: cannot be represented as place with the concepts observed (no untested concept left); it will not join the place comparison set"
+     ],
+     "reasonCodes": [
+      "NO_COMMON_TYPE",
+      "TYPE_MISMATCH:heavy_metal"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 6,
+    "plan": {
+     "territoryKeys": [
+      "heavy_metal",
+      "moonlit_gastronomy"
+     ],
+     "candidateEntityTypes": [
+      "place"
+     ],
+     "preferredCommonType": "place",
+     "supportedTerritoriesByType": {
+      "place": [
+       "moonlit_gastronomy"
+      ]
+     },
+     "possibleTerritoriesByType": {
+      "place": [
+       "heavy_metal"
+      ]
+     },
+     "feasibility": "POSSIBLE",
+     "required": 2,
+     "missingRequirements": [
+      "heavy_metal: no place members observed yet; probe place on metal [urn:tag:genre:music:metal], Heavy Metal [urn:tag:subgenre:qloo:heavy_metal], Heavy Metal [urn:tag:interests:qloo:heavy_metal] before switching to another type"
+     ],
+     "reasonCodes": [
+      "COMMON_TYPE_POSSIBLE",
+      "TYPE_PROBE_PATH:heavy_metal"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 7,
+    "plan": {
+     "territoryKeys": [
+      "heavy_metal",
+      "moonlit_gastronomy"
+     ],
+     "candidateEntityTypes": [
+      "place"
+     ],
+     "preferredCommonType": "place",
+     "supportedTerritoriesByType": {
+      "place": [
+       "moonlit_gastronomy"
+      ]
+     },
+     "possibleTerritoriesByType": {
+      "place": [
+       "heavy_metal"
+      ]
+     },
+     "feasibility": "POSSIBLE",
+     "required": 2,
+     "missingRequirements": [
+      "heavy_metal: no place members observed yet; probe place on Heavy Metal [urn:tag:subgenre:qloo:heavy_metal], Heavy Metal [urn:tag:interests:qloo:heavy_metal], heavy metal [urn:tag:keyword:media:heavy_metal] before switching to another type"
+     ],
+     "reasonCodes": [
+      "COMMON_TYPE_POSSIBLE",
+      "TYPE_PROBE_PATH:heavy_metal"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 8,
+    "plan": {
+     "territoryKeys": [
+      "heavy_metal",
+      "moonlit_gastronomy"
+     ],
+     "candidateEntityTypes": [
+      "place"
+     ],
+     "preferredCommonType": "place",
+     "supportedTerritoriesByType": {
+      "place": [
+       "heavy_metal",
+       "moonlit_gastronomy"
+      ]
+     },
+     "possibleTerritoriesByType": {},
+     "feasibility": "SUPPORTED",
+     "required": 2,
+     "missingRequirements": [],
+     "reasonCodes": [
+      "COMMON_TYPE_SUPPORTED"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   }
+  ],
+  "completion": [
+   {
+    "iteration": 7,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 0,
+    "remainingTurns": 5,
+    "remainingQlooCalls": 21,
+    "turnsNeeded": 4,
+    "callsNeeded": 9,
+    "fullAnalysisFeasible": true,
+    "reason": "reference discovery pending: 1 tag profile(s) not yet collected"
+   },
+   {
+    "iteration": 8,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 9,
+    "remainingTurns": 4,
+    "remainingQlooCalls": 17,
+    "turnsNeeded": 3,
+    "callsNeeded": 7,
+    "fullAnalysisFeasible": true,
+    "reason": "FULL is feasible: 2 reference(s) needed, 9 meaningful candidate(s) (0 already probed with members), 17 Qloo call(s) and 4 turn(s) left (needs 3 turn(s), about 7 call(s))"
+   },
+   {
+    "iteration": 9,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 2,
+    "missingReferenceCount": 1,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 1,
+    "remainingTurns": 3,
+    "remainingQlooCalls": 15,
+    "turnsNeeded": 3,
+    "callsNeeded": 6,
+    "fullAnalysisFeasible": true,
+    "reason": "FULL is feasible: 1 reference(s) needed, 1 meaningful candidate(s) (0 already probed with members), 15 Qloo call(s) and 3 turn(s) left (needs 3 turn(s), about 6 call(s))"
+   },
+   {
+    "iteration": 10,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 2,
+    "missingReferenceCount": 1,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 0,
+    "remainingTurns": 2,
+    "remainingQlooCalls": 14,
+    "turnsNeeded": 4,
+    "callsNeeded": 9,
+    "fullAnalysisFeasible": false,
+    "reason": "FULL is not feasible: only 2 turn(s) left; references and analysis need 4; analysis will be partial"
+   }
+  ],
+  "probeRecommendations": [
+   {
+    "iteration": 3,
+    "territoryKey": "heavy_metal",
+    "conceptKey": "urn:tag:genre:music:heavy_metal",
+    "namespace": "genre:music",
+    "type": "place",
+    "priority": "EXPLORATION",
+    "reason": "untested in genre:music"
+   },
+   {
+    "iteration": 3,
+    "territoryKey": "moonlit_gastronomy",
+    "conceptKey": "urn:tag:cuisine:qloo:terang_bulan",
+    "namespace": "cuisine:qloo",
+    "type": "place",
+    "priority": "EXPLORATION",
+    "reason": "untested in cuisine:qloo"
+   },
+   {
+    "iteration": 4,
+    "territoryKey": "heavy_metal",
+    "conceptKey": "urn:tag:genre:qloo:heavy_metal",
+    "namespace": "genre:qloo",
+    "type": "place",
+    "priority": "COMPARISON_TYPE",
+    "reason": "the comparison's shared entity type"
+   },
+   {
+    "iteration": 5,
+    "territoryKey": "heavy_metal",
+    "conceptKey": "urn:tag:genre:music:heavy_metal",
+    "namespace": "genre:music",
+    "type": "brand",
+    "priority": "EXPLORATION",
+    "reason": "untested in genre:music"
+   },
+   {
+    "iteration": 6,
+    "territoryKey": "heavy_metal",
+    "conceptKey": "urn:tag:genre:music:metal",
+    "namespace": "genre:music",
+    "type": "place",
+    "priority": "COMPARISON_TYPE",
+    "reason": "the comparison's shared entity type"
+   },
+   {
+    "iteration": 7,
+    "territoryKey": "heavy_metal",
+    "conceptKey": "urn:tag:subgenre:qloo:heavy_metal",
+    "namespace": "subgenre:qloo",
+    "type": "place",
+    "priority": "COMPARISON_TYPE",
+    "reason": "the comparison's shared entity type"
+   }
+  ],
+  "anchorDecisions": [
+   {
+    "iteration": 8,
+    "territoryKey": "heavy_metal",
+    "sourceTagId": null,
+    "anchoredTagId": "urn:tag:interests:qloo:heavy_metal",
+    "relation": "NO_SOURCE_TAG",
+    "basis": "LABEL_TAG_MEMBERS",
+    "decidedBy": "runtime",
+    "reasonCode": null,
+    "evidence": "the territory's own same-named tag returned 20 place member(s) (brand-independent pool)",
+    "correlationIds": [
+     "mcp-958b2614-53bd-48b8-8356-dae9f3e98a79"
+    ]
+   }
+  ],
+  "stopReason": {
+   "code": "AGENT_FINISHED",
+   "detail": "agent finished"
+  },
+  "semanticAssessments": []
+ },
+ "metrics": {
+  "agent_iterations": 12,
+  "qloo_calls": 23,
+  "tool_calls": 26,
+  "tool_success_rate": 0.917,
+  "invalid_actions": 2,
+  "representation_attempts": 2,
+  "territories_proposed": 2,
+  "territories_resolved": 2,
+  "territories_rejected": 0,
+  "full_analysis_count": 0,
+  "partial_analysis_count": 1,
+  "descriptive_analysis_count": 1,
+  "unsupported_count": 0,
+  "methodology_calls": 0,
+  "latency_ms": 6484269,
+  "model_input_tokens": 92247,
+  "model_output_tokens": 13374,
+  "retry_count": 0,
+  "budget_exhausted": false,
+  "model_turns": 12,
+  "model_attempts": 12,
+  "first_attempt_valid_turns": 11,
+  "valid_after_repair_turns": 12,
+  "repairs": 0,
+  "unknown_tool_attempts": 0,
+  "invalid_argument_attempts": 0,
+  "unsupported_state_actions": 2,
+  "synthesis_attempts": 1,
+  "calls_avoided": 2,
+  "avg_context_chars": 13552,
+  "max_context_chars": 24844,
+  "avg_context_tokens_estimate": 3388,
+  "model_latency_ms": 2340662,
+  "qloo_latency_ms": 1488992,
+  "model_cost_usd": 0.0167,
+  "model_id": "claude-haiku-5-5",
+  "model_effort": "high",
+  "synthesis_latency_ms": 2628545,
+  "analysis_latency_ms": 32981,
+  "qloo_spacing_ms": 106684,
+  "synthesis_first_attempt_valid": true,
+  "synthesis_valid_after_repair": true,
+  "synthesis_fallback": false,
+  "reference_deferrals": 0,
+  "empty_type_probes": 9,
+  "max_empty_type_probes_per_concept": 2,
+  "probe_limit_refusals": 0,
+  "type_alignment_deferrals": 0,
+  "reference_namespace_refusals": 0,
+  "successful_type_probes": 2,
+  "namespace_type_refusals": 0,
+  "alternate_anchor_refusals": 0,
+  "source_evidence_anchors": 1,
+  "frontier_completion_refusals": 0
+ },
+ "skillsUsed": [
+  {
+   "id": "interpret_request",
+   "version": 1
+  },
+  {
+   "id": "resolve_brand",
+   "version": 1
+  },
+  {
+   "id": "resolve_territory",
+   "version": 5
+  },
+  {
+   "id": "build_territory_representation",
+   "version": 4
+  },
+  {
+   "id": "build_comparison_set",
+   "version": 3
+  },
+  {
+   "id": "analyze_territories",
+   "version": 2
+  }
+ ],
+ "comparisonSetConstruction": {
+  "intent": "compare_territories",
+  "proposed": [
+   {
+    "key": "heavy_metal",
+    "label": "Heavy Metal",
+    "role": "target",
+    "source": "user",
+    "evidence": "named by the user"
+   },
+   {
+    "key": "moonlit_gastronomy",
+    "label": "Moonlit Gastronomy",
+    "role": "target",
+    "source": "user",
+    "evidence": "named by the user"
+   }
+  ],
+  "rejected": [],
+  "final": [
+   {
+    "key": "heavy_metal",
+    "label": "Heavy Metal",
+    "role": "target",
+    "source": "user",
+    "route": "PARTIAL_CULTURAL_ANALYSIS"
+   },
+   {
+    "key": "moonlit_gastronomy",
+    "label": "Moonlit Gastronomy",
+    "role": "target",
+    "source": "user",
+    "route": "DESCRIPTIVE_ANALYSIS"
+   }
+  ],
+  "dedupDecisions": [],
+  "semanticAssessments": [],
+  "diversity": {
+   "assessment": "unknown",
+   "similarPairs": [],
+   "detail": "fewer than two non-target territories: diversity not assessed"
+  },
+  "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+ },
+ "layers": {
+  "qlooEvidence": {
+   "brand": {
+    "id": "4DF7C265-52D9-4A99-8803-F62C2302D561",
+    "label": "Liquid Death",
+    "correlationId": "mcp-69e6a980-ea1d-4a1c-9b24-91dfb70939d7"
+   },
+   "concepts": [
+    {
+     "territoryKey": "heavy_metal",
+     "id": "urn:tag:interests:qloo:heavy_metal",
+     "label": "Heavy Metal",
+     "correlationIds": [
+      "mcp-9ed6417b-3b17-406f-99b6-78c93a59d1a5"
+     ]
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "id": "urn:tag:cuisine:qloo:terang_bulan",
+     "label": "Terang Bulan",
+     "correlationIds": [
+      "mcp-7d116c54-a3c1-493b-a24e-1e1640540192"
+     ]
+    }
+   ],
+   "exemplars": [
+    {
+     "territoryKey": "heavy_metal",
+     "id": "0AB5B984-DF52-4D9F-A5E3-E804F1D80B81",
+     "label": "The Underworld",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-958b2614-53bd-48b8-8356-dae9f3e98a79"
+    },
+    {
+     "territoryKey": "heavy_metal",
+     "id": "003542F4-2262-4F28-BF3C-866D5A861228",
+     "label": "Robot",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-958b2614-53bd-48b8-8356-dae9f3e98a79"
+    },
+    {
+     "territoryKey": "heavy_metal",
+     "id": "0558492C-35B9-4CFA-B8BB-178D273179F3",
+     "label": "Absoluto Rock Bar",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-958b2614-53bd-48b8-8356-dae9f3e98a79"
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "id": "06A12AC0-4D1E-4E47-B759-7A253C7BA5CE",
+     "label": "Martabak Shima",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-f3866551-65fa-4875-a642-19c60c6f220c"
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "id": "204CA392-F564-42FA-9FA3-911C16F0E334",
+     "label": "Terang Bulan MERDEKA",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-f3866551-65fa-4875-a642-19c60c6f220c"
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "id": "171CB7F4-78D2-44C8-9A8F-95B06C50EF40",
+     "label": "Martabak Jakarta 1994",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-f3866551-65fa-4875-a642-19c60c6f220c"
+    }
+   ],
+   "qlooCalls": 23
+  },
+  "systemAnalysis": {
+   "routes": [
+    {
+     "territoryKey": "heavy_metal",
+     "route": "PARTIAL_CULTURAL_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "route": "DESCRIPTIVE_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    }
+   ],
+   "methodologyRunIds": [],
+   "finalSufficiency": "SUFFICIENT",
+   "representationDecisions": {
+    "valid": 6,
+    "weak": 0,
+    "rejected": 0
+   },
+   "semanticComparison": []
+  },
+  "agentInterpretation": {
+   "summary": "For Liquid Death, neither territory can be compared on relative position because neither has a comparison set or relative position result. Heavy Metal's route is partial and its exemplars show no consistently shared signals, while Moonlit Gastronomy's route is descriptive and its shared-signal coherence was not collected. Both have supported brand-conditioned entity lists, but these are truncated and show associated places and entities rather than a ranking, so the evidence cannot establish how either territory sits relative to the other or to any reference set.\nHeavy Metal: The Heavy Metal route is partial and its relative position is unavailable, so no comparative position against a comparison set can be stated. The filtered shared-signal band is NONE and no signals are consistently shared across the Heavy Metal exemplars. The brand-conditioned query for Heavy Metal is supported and its leading entities include Les Foufounes Électriques, Dragon Rojo Rock Bar and Foro Hendrix, though the list is truncated.\nMoonlit Gastronomy: Moonlit Gastronomy is represented by place exemplars linked to Terang Bulan, including Martabak Shima, Terang Bulan MERDEKA and Martabak Jakarta 1994. The brand-conditioned query for Moonlit Gastronomy is supported and its leading entities include Martabak TOP BANDUNG \"BEN\", Martabak Alim and Martabak Pecenongan 78, though the list is truncated. The Moonlit Gastronomy route is descriptive and shared-signal coherence was not collected, so no shared-signal reading is available for this territory.",
+   "source": "model",
+   "claimValidationPassed": true,
+   "semanticJudgments": [
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "label": "Martabak Shima",
+     "relevance": "STRONG",
+     "reason": "Martabak Terang Bulan restaurant, directly the moonlit street-food concept."
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "label": "Terang Bulan MERDEKA",
+     "relevance": "STRONG",
+     "reason": "Named Terang Bulan outlet, same concept."
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "label": "Martabak Jakarta 1994",
+     "relevance": "ADEQUATE",
+     "reason": "Martabak outlet within the Terang Bulan concept, a little less specific by name."
+    },
+    {
+     "territoryKey": "heavy_metal",
+     "label": "The Underworld",
+     "relevance": "STRONG",
+     "reason": "Core metal club culture, directly on the concept"
+    },
+    {
+     "territoryKey": "heavy_metal",
+     "label": "Robot",
+     "relevance": "ADEQUATE",
+     "reason": "Rock-oriented venue, close to the metal scene"
+    },
+    {
+     "territoryKey": "heavy_metal",
+     "label": "Absoluto Rock Bar",
+     "relevance": "ADEQUATE",
+     "reason": "Rock bar culture around heavy metal"
+    }
+   ],
+   "followUpOptions": [
+    "Expand the Heavy Metal comparison set with additional exemplars to enable a relative position reading.",
+    "Collect shared-signal coherence for Moonlit Gastronomy exemplars so the two territories can be read on the same signals.",
+    "Add reference territories beyond these two to contextualize both positions.",
+    "Retrieve the full brand-conditioned entity lists for both territories rather than the truncated top results."
+   ],
+   "findings": [
+    {
+     "territoryKey": "heavy_metal",
+     "claimType": "route_limitation",
+     "supportingFields": [
+      "route",
+      "capabilities.relativePosition"
+     ],
+     "interpretation": "The Heavy Metal route is partial and its relative position is unavailable, so no comparative position against a comparison set can be stated.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL",
+      "NO_RELATIVE_POSITION"
+     ]
+    },
+    {
+     "territoryKey": "heavy_metal",
+     "claimType": "shared_signals",
+     "supportingFields": [
+      "coherence.band",
+      "coherence.consistentlyShared"
+     ],
+     "interpretation": "The filtered shared-signal band is NONE and no signals are consistently shared across the Heavy Metal exemplars.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL"
+     ]
+    },
+    {
+     "territoryKey": "heavy_metal",
+     "claimType": "conditioned_evidence",
+     "supportingFields": [
+      "conditionedEvidence.support",
+      "conditionedEvidence.top"
+     ],
+     "interpretation": "The brand-conditioned query for Heavy Metal is supported and its leading entities include Les Foufounes Électriques, Dragon Rojo Rock Bar and Foro Hendrix, though the list is truncated.",
+     "limitationCodes": [
+      "CONDITIONED_LIST_TRUNCATED"
+     ]
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "claimType": "representation",
+     "supportingFields": [
+      "representation",
+      "capabilities.representation"
+     ],
+     "interpretation": "Moonlit Gastronomy is represented by place exemplars linked to Terang Bulan, including Martabak Shima, Terang Bulan MERDEKA and Martabak Jakarta 1994.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL"
+     ]
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "claimType": "conditioned_evidence",
+     "supportingFields": [
+      "conditionedEvidence.support",
+      "conditionedEvidence.top"
+     ],
+     "interpretation": "The brand-conditioned query for Moonlit Gastronomy is supported and its leading entities include Martabak TOP BANDUNG \"BEN\", Martabak Alim and Martabak Pecenongan 78, though the list is truncated.",
+     "limitationCodes": [
+      "CONDITIONED_LIST_TRUNCATED"
+     ]
+    },
+    {
+     "territoryKey": "moonlit_gastronomy",
+     "claimType": "route_limitation",
+     "supportingFields": [
+      "route",
+      "capabilities.coherence"
+     ],
+     "interpretation": "The Moonlit Gastronomy route is descriptive and shared-signal coherence was not collected, so no shared-signal reading is available for this territory.",
+     "limitationCodes": [
+      "NO_RELATIVE_POSITION",
+      "COMPARISON_SET_TOO_SMALL"
+     ]
+    }
+   ]
+  }
+ },
+ "failureCategory": null
+}

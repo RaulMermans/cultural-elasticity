@@ -1,0 +1,4432 @@
+{
+ "schemaVersion": "ce-agent-result/0.3",
+ "runId": "a7a23bae-a3c8-416c-bf1f-1648a8267e3d",
+ "status": "COMPLETE",
+ "finalSufficiency": "SUFFICIENT",
+ "intent": "explore_frontier",
+ "userQuery": "Where could Allbirds credibly expand culturally?",
+ "brand": {
+  "id": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+  "label": "Allbirds",
+  "type": "urn:entity:brand",
+  "resolution": "confirmed"
+ },
+ "territories": [
+  {
+   "key": "female_led_stories",
+   "label": "Female-led stories",
+   "role": "frontier_candidate",
+   "origin": "qloo_evidence",
+   "rationale": "Female protagonist recurs across related-brand profiles (4 of 6), a media-narrative territory around women-centred storytelling.",
+   "resolvedConcept": {
+    "id": "urn:tag:keyword:media:female_protagonist",
+    "label": "female protagonist",
+    "type": "urn:tag:keyword:media"
+   },
+   "representation": {
+    "strategy": "TAG_DERIVED_ENTITY_PANEL",
+    "entityType": "movie",
+    "exemplars": [
+     {
+      "id": "DBB1D776-295F-45A7-86E2-E70A91295F9A",
+      "label": "Mermaids",
+      "type": "movie",
+      "role": "primary",
+      "selectionReason": "Mermaids: coming-of-age story centred on women and female identity.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9718244454523856,
+      "quality": "VALID"
+     },
+     {
+      "id": "9809041B-D47E-4407-87CF-4EFE884C2B28",
+      "label": "D.E.B.S.",
+      "type": "movie",
+      "role": "alternate",
+      "selectionReason": "D.E.B.S.: female-led ensemble story tagged to female protagonist.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9803775459513164,
+      "quality": "VALID"
+     },
+     {
+      "id": "5440F185-12BD-45C0-90A9-A55E094876ED",
+      "label": "Crossroads",
+      "type": "movie",
+      "role": "alternate",
+      "selectionReason": "Crossroads: road-trip story led by young women.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9618998250502171,
+      "quality": "VALID"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "adequate",
+    "diversityDetail": "no exemplar pair shares ≥ 0.8 of its cultural tags",
+    "attempts": 1,
+    "summary": "TAG_DERIVED_ENTITY_PANEL: 3 movie exemplar(s) linked by Qloo to female protagonist (urn:tag:keyword:media:female_protagonist): Mermaids, D.E.B.S., Crossroads",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Lady Bird, The Farewell, Little Women, Eighth Grade, Booksmart.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "AVAILABLE",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 0,
+    "filteredSharedMedian": 0,
+    "filteredBand": "NONE",
+    "exemplarsCompared": 3,
+    "consistentlyShared": []
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "Lady Bird",
+      "rank": 1
+     },
+     {
+      "label": "The Farewell",
+      "rank": 2
+     },
+     {
+      "label": "Little Women",
+      "rank": 3
+     },
+     {
+      "label": "Eighth Grade",
+      "rank": 4
+     },
+     {
+      "label": "Booksmart",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-5373a919-fd3f-49e9-bc06-0de69f4b9243"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 1 rankable movie territory in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:keyword:media:female_protagonist: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Female-led stories: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-4c7a8ac2-3812-414a-ac6c-71aa72ee2534",
+     "mcp-5373a919-fd3f-49e9-bc06-0de69f4b9243",
+     "mcp-79c86f86-a8df-40be-b95b-9b9f0b481296",
+     "mcp-7aa839be-dbd0-4aa0-bb08-b68af4e12d03",
+     "mcp-7c19f854-cb0e-405f-a62c-d8293a11dff9",
+     "mcp-883008c1-da6e-4359-bf62-6c7bcdae2fe5",
+     "mcp-88bdb338-7a19-49c9-b2ad-6ed24dee97ef",
+     "mcp-d3bd362b-c176-456c-a224-f56ede40b318",
+     "mcp-e20c6931-848d-46e4-8bbc-ea390fbeabde",
+     "mcp-eacebdc3-1191-4cf0-a208-ccf616a97b5d",
+     "mcp-fa3279fd-167b-4fb4-87a4-89d69828a032"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Female-led stories",
+    "sourceTagId": "urn:tag:keyword:media:female_protagonist",
+    "resolvedId": "urn:tag:keyword:media:female_protagonist",
+    "canonicalConceptKey": "female_protagonist",
+    "normalizationReason": "SOURCE_TAG_CANONICAL_NAME",
+    "candidateSource": "qloo_grounded",
+    "anchorRelation": "SAME_CONCEPT",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:keyword:media:female_protagonist",
+     "label": "female protagonist",
+     "namespace": "keyword:media",
+     "attemptedTypes": [
+      "movie"
+     ],
+     "emptyTypes": [],
+     "successfulTypes": [
+      "movie"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 0,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  },
+  {
+   "key": "self_help_and_personal_growth",
+   "label": "Self-help and personal growth",
+   "role": "frontier_candidate",
+   "origin": "qloo_evidence",
+   "rationale": "Self-help appears across related-brand profiles, pointing to a wellbeing and self-improvement territory adjacent to the brand's comfort and everyday-wellness positioning.",
+   "resolvedConcept": {
+    "id": "urn:tag:genre:media:self_help",
+    "label": "Self Help",
+    "type": "urn:tag:genre:media"
+   },
+   "representation": {
+    "strategy": "TAG_DERIVED_ENTITY_PANEL",
+    "entityType": "book",
+    "exemplars": [
+     {
+      "id": "FE95A446-1913-437F-91BB-9DC2DEC6A805",
+      "label": "Tao Te Ching",
+      "type": "book",
+      "role": "primary",
+      "selectionReason": "Tao Te Ching: enduring self-cultivation text, a classic of personal growth.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9967291816834174,
+      "quality": "VALID"
+     },
+     {
+      "id": "C0679E48-F35B-460B-8D9D-E98670E10520",
+      "label": "You Can Heal Your Life",
+      "type": "book",
+      "role": "alternate",
+      "selectionReason": "You Can Heal Your Life: widely read self-help title tagged to the concept.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9893953406139074,
+      "quality": "VALID"
+     },
+     {
+      "id": "A59748F8-17F2-4816-810F-10DE9432D74D",
+      "label": "Ikigai: The Japanese Secret to a Long and Happy Life / The Little Book of Lykke / Lagom: The Swedish Art of Balanced Living",
+      "type": "book",
+      "role": "alternate",
+      "selectionReason": "Ikigai / Lykke / Lagom: well-being and balanced-living guide, tagged to the concept.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9922547566266371,
+      "quality": "VALID"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "adequate",
+    "diversityDetail": "no exemplar pair shares ≥ 0.8 of its cultural tags",
+    "attempts": 1,
+    "summary": "TAG_DERIVED_ENTITY_PANEL: 3 book exemplar(s) linked by Qloo to Self Help (urn:tag:genre:media:self_help): Tao Te Ching, You Can Heal Your Life, Ikigai: The Japanese Secret to a Long and Happy Life / The Little Book of Lykke / Lagom: The Swedish Art of Balanced Living",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Untamed, Get Out of Your Head: Stopping the Spiral of Toxic Thoughts, Boundaries: When to Say Yes, How to Say No to Take Control of Your Life, Girl, Stop Apologizing: A Shame-Free Plan for Embracing and Achieving Your Goals, The 5 Love Languages: The Secret to Love that Lasts.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "AVAILABLE",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 0,
+    "filteredSharedMedian": 0,
+    "filteredBand": "NONE",
+    "exemplarsCompared": 3,
+    "consistentlyShared": []
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "Untamed",
+      "rank": 1
+     },
+     {
+      "label": "Get Out of Your Head: Stopping the Spiral of Toxic Thoughts",
+      "rank": 2
+     },
+     {
+      "label": "Boundaries: When to Say Yes, How to Say No to Take Control of Your Life",
+      "rank": 3
+     },
+     {
+      "label": "Girl, Stop Apologizing: A Shame-Free Plan for Embracing and Achieving Your Goals",
+      "rank": 4
+     },
+     {
+      "label": "The 5 Love Languages: The Secret to Love that Lasts",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-bd410fa4-51b8-4ed4-acf1-58efcde9bf7b"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 1 rankable book territory in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:genre:media:self_help: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Self-help and personal growth: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-3b0b927e-6e76-4c3c-8a1b-ac6d12909fa6",
+     "mcp-7aa839be-dbd0-4aa0-bb08-b68af4e12d03",
+     "mcp-88bdb338-7a19-49c9-b2ad-6ed24dee97ef",
+     "mcp-a8a48560-a8a1-473d-92e0-2cd1c34c0958",
+     "mcp-bd410fa4-51b8-4ed4-acf1-58efcde9bf7b",
+     "mcp-e20c6931-848d-46e4-8bbc-ea390fbeabde",
+     "mcp-eb12fe2d-bcd5-4534-99d0-43a6ddf2bbd7"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Self-help and personal growth",
+    "sourceTagId": "urn:tag:genre:media:self_help",
+    "resolvedId": "urn:tag:genre:media:self_help",
+    "canonicalConceptKey": "self_help",
+    "normalizationReason": "SOURCE_TAG_CANONICAL_NAME",
+    "candidateSource": "qloo_grounded",
+    "anchorRelation": "SAME_CONCEPT",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:genre:media:self_help",
+     "label": "Self Help",
+     "namespace": "genre:media",
+     "attemptedTypes": [
+      "book"
+     ],
+     "emptyTypes": [],
+     "successfulTypes": [
+      "book"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 0,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  },
+  {
+   "key": "social_responsibility_and_conscious_cons",
+   "label": "Social responsibility and conscious consumption",
+   "role": "frontier_candidate",
+   "origin": "qloo_evidence",
+   "rationale": "Social responsibility and socially conscious consumers recur across related-brand profiles, matching the brand's sustainability and eco-conscious identity.",
+   "resolvedConcept": {
+    "id": "urn:tag:cultural_relevance:qloo:social_responsibility",
+    "label": "Social Responsibility",
+    "type": "urn:tag:cultural_relevance:qloo"
+   },
+   "representation": {
+    "strategy": "TAG_DERIVED_ENTITY_PANEL",
+    "entityType": "brand",
+    "exemplars": [
+     {
+      "id": "D651F503-5244-416D-A55B-7D5DAFC7B680",
+      "label": "Lemlem",
+      "type": "brand",
+      "role": "primary",
+      "selectionReason": "Lemlem: ethically made apparel brand with a socially conscious mission.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.8140648573511213,
+      "quality": "VALID"
+     },
+     {
+      "id": "8C4FEA65-9DFD-4DBF-8DAE-6DC63E377AA5",
+      "label": "Feed the Children",
+      "type": "brand",
+      "role": "alternate",
+      "selectionReason": "Feed the Children: humanitarian charity tagged to social responsibility.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.6055754267600142,
+      "quality": "VALID"
+     },
+     {
+      "id": "00287006-ECBC-4C55-8D7D-9ECA6535152E",
+      "label": "GoFundMe",
+      "type": "brand",
+      "role": "alternate",
+      "selectionReason": "GoFundMe: social-impact crowdfunding platform tagged to social responsibility.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9569256327236358,
+      "quality": "VALID"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "adequate",
+    "diversityDetail": "no exemplar pair shares ≥ 0.8 of its cultural tags",
+    "attempts": 1,
+    "summary": "TAG_DERIVED_ENTITY_PANEL: 3 brand exemplar(s) linked by Qloo to Social Responsibility (urn:tag:cultural_relevance:qloo:social_responsibility): Lemlem, Feed the Children, GoFundMe",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Attn, Munchkin, Lemlem, Liverpool F.C., Feed the Children.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "AVAILABLE",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 2,
+    "filteredSharedMedian": 0,
+    "filteredBand": "NONE",
+    "exemplarsCompared": 3,
+    "consistentlyShared": []
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "Attn",
+      "rank": 1
+     },
+     {
+      "label": "Munchkin",
+      "rank": 2
+     },
+     {
+      "label": "Lemlem",
+      "rank": 3
+     },
+     {
+      "label": "Liverpool F.C.",
+      "rank": 4
+     },
+     {
+      "label": "Feed the Children",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-8e1389bb-8d09-485b-8a6f-16921819a3cb"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 1 rankable brand territory in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:cultural_relevance:qloo:social_responsibility: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Social responsibility and conscious consumption: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-3b0b927e-6e76-4c3c-8a1b-ac6d12909fa6",
+     "mcp-79c86f86-a8df-40be-b95b-9b9f0b481296",
+     "mcp-7aa839be-dbd0-4aa0-bb08-b68af4e12d03",
+     "mcp-8e1389bb-8d09-485b-8a6f-16921819a3cb",
+     "mcp-bd1792ec-6459-4789-8b4e-fdac63aac0f6",
+     "mcp-d3bd362b-c176-456c-a224-f56ede40b318",
+     "mcp-ea3ebfea-b785-4aca-9889-9ac4adbd78ee"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Social responsibility and conscious consumption",
+    "sourceTagId": "urn:tag:cultural_relevance:qloo:social_responsibility",
+    "resolvedId": "urn:tag:cultural_relevance:qloo:social_responsibility",
+    "canonicalConceptKey": "social_responsibility",
+    "normalizationReason": "SOURCE_TAG_CANONICAL_NAME",
+    "candidateSource": "qloo_grounded",
+    "anchorRelation": "SAME_CONCEPT",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:cultural_relevance:qloo:social_responsibility",
+     "label": "Social Responsibility",
+     "namespace": "cultural_relevance:qloo",
+     "attemptedTypes": [
+      "brand"
+     ],
+     "emptyTypes": [],
+     "successfulTypes": [
+      "brand"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 0,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  },
+  {
+   "key": "folk_music",
+   "label": "Folk music",
+   "role": "frontier_candidate",
+   "origin": "qloo_evidence",
+   "rationale": "Folk is carried by the related-brand evidence base (3 of 6 profiles) and shares the warm, unpretentious, natural-feeling register of the brand.",
+   "resolvedConcept": null,
+   "representation": {
+    "strategy": "UNSUPPORTED",
+    "entityType": null,
+    "exemplars": [],
+    "rejectedExemplars": [],
+    "diversity": "unknown",
+    "diversityDetail": "no exemplars",
+    "attempts": 0,
+    "summary": "no Qloo concept anchors this territory",
+    "failure": {
+     "code": "QLOO_EMPTY",
+     "detail": "Six probes across its Qloo concepts (music, music characteristic, genre) returned no members for any movie or other tested type; no untested concept remains, so it is unsupported."
+    }
+   },
+   "keyEvidence": [
+    "No measurable evidence: Six probes across its Qloo concepts (music, music characteristic, genre) returned no members for any movie or other tested type; no untested concept remains, so it is unsupported.."
+   ],
+   "analysisRoute": "INSUFFICIENT_EVIDENCE",
+   "capabilities": {
+    "representation": "UNSUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "UNAVAILABLE",
+    "conditionedEvidence": "UNAVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": null,
+   "conditionedEvidence": null,
+   "evidenceQuality": null,
+   "classification": null,
+   "limitations": [
+    {
+     "code": "QLOO_EMPTY",
+     "detail": "Folk music: Six probes across its Qloo concepts (music, music characteristic, genre) returned no members for any movie or other tested type; no untested concept remains, so it is unsupported."
+    }
+   ],
+   "provenance": {
+    "correlationIds": [],
+    "sources": []
+   },
+   "candidate": {
+    "originalLabel": "Folk music",
+    "sourceTagId": "urn:tag:genre:music:folk",
+    "resolvedId": null,
+    "canonicalConceptKey": "folk",
+    "normalizationReason": "SOURCE_TAG_CANONICAL_NAME",
+    "candidateSource": "qloo_grounded",
+    "anchorRelation": "NOT_ANCHORED",
+    "uncertainty": null
+   },
+   "evidenceStatus": "UNSUPPORTED",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:genre:music:folk",
+     "label": "folk",
+     "namespace": "genre:music",
+     "attemptedTypes": [
+      "artist",
+      "movie",
+      "brand"
+     ],
+     "emptyTypes": [
+      "artist",
+      "movie",
+      "brand"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 3,
+     "probingExhausted": true,
+     "exhaustionReason": "folk: 3 entity types (artist, movie, brand) returned no members; probing it with further types has no expected value"
+    },
+    {
+     "conceptKey": "urn:tag:music:qloo:folk",
+     "label": "Folk",
+     "namespace": "music:qloo",
+     "attemptedTypes": [
+      "movie"
+     ],
+     "emptyTypes": [
+      "movie"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 1,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    },
+    {
+     "conceptKey": "urn:tag:music_characteristic:qloo:folk",
+     "label": "Folk",
+     "namespace": "music_characteristic:qloo",
+     "attemptedTypes": [
+      "movie"
+     ],
+     "emptyTypes": [
+      "movie"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 1,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    },
+    {
+     "conceptKey": "urn:tag:genre:qloo:folk",
+     "label": "Folk",
+     "namespace": "genre:qloo",
+     "attemptedTypes": [
+      "movie"
+     ],
+     "emptyTypes": [
+      "movie"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 1,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  }
+ ],
+ "methodologyRuns": [],
+ "summary": {
+  "text": "For where Allbirds could expand culturally, none of the territories has a relative position, a robustness estimate, or a provisional class, so none can be placed against a comparison set. Three candidates have only partial cultural analysis: female-led stories, self-help and personal growth, and social responsibility and conscious consumption. Each shows no consistently shared signals and only brand-conditioned association lists, while folk music has no supporting Qloo evidence. The results describe cultural association only and cannot establish how close any candidate sits to the brand's existing cultural profile.\nFemale-led stories: This territory is represented by a tag-derived panel of movie exemplars linked by Qloo to a female protagonist tag, not by a comparison set. A brand-conditioned query for this concept returned supported entities, led by titles such as Lady Bird and The Farewell; this is association only and the list is truncated.\nSelf-help and personal growth: This territory is represented by a tag-derived panel of book exemplars linked by Qloo to the self-help genre tag. After filtering operational tags, no cultural signals are shared at a consistent level across the exemplars, so the panel shows no common signal pattern.\nSocial responsibility and conscious consumption: After filtering operational tags, no cultural signals are consistently shared across the brand exemplars, so the panel does not establish a common signal pattern. The brand-conditioned list includes entities such as Attn and Lemlem, indicating association within a truncated list only.\nFolk music: No Qloo concept anchors folk music, so no cultural evidence or position can be described for it on these results.",
+  "source": "model",
+  "claimValidation": {
+   "passed": true,
+   "violations": []
+  }
+ },
+ "followUpOptions": [
+  "Build a comparison set of brands within the female-led stories territory to test whether a relative position can be established.",
+  "Probe folk music through entity types beyond the tested music, music characteristic and genre concepts, such as artists or albums.",
+  "Add further self-help book exemplars and brand exemplars for social responsibility to see whether consistently shared signals emerge."
+ ],
+ "limitations": [
+  {
+   "code": "NOT_A_SUCCESS_PREDICTION",
+   "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+  },
+  {
+   "code": "NO_APPROVED_SCORE",
+   "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+  },
+  {
+   "code": "COMPARISON_SET_DEPENDENT",
+   "detail": "relative position depends on the comparison set; see comparisonSetConstruction for how it was assembled and what was rejected"
+  }
+ ],
+ "evidenceOrigin": "live",
+ "model": {
+  "id": "claude-haiku-5-5",
+  "kind": "llm",
+  "live": true,
+  "effort": "high"
+ },
+ "trace": {
+  "runId": "a7a23bae-a3c8-416c-bf1f-1648a8267e3d",
+  "intent": "explore_frontier",
+  "userQuery": "Where could Allbirds credibly expand culturally?",
+  "interpretedRequest": {
+   "intent": "explore_frontier",
+   "brand": "Allbirds",
+   "territories": []
+  },
+  "model": {
+   "id": "claude-haiku-5-5",
+   "kind": "llm",
+   "live": true,
+   "effort": "high"
+  },
+  "toolProvider": {
+   "name": "qloo-mcp",
+   "mode": "live"
+  },
+  "limits": {
+   "maxAgentIterations": 12,
+   "maxRepresentationAttemptsPerTerritory": 3,
+   "maxCandidateTerritories": 6,
+   "maxExemplarsPerTerritory": 3,
+   "maxRetryPerToolCall": 1,
+   "maxActionsPerTurn": 12,
+   "maxInvalidTurns": 2,
+   "toolTimeoutMs": 300000,
+   "maxQlooCalls": 32
+  },
+  "statusTransitions": [
+   {
+    "iteration": 0,
+    "from": "INTAKE",
+    "to": "PLANNING",
+    "reason": "request validated"
+   },
+   {
+    "iteration": 1,
+    "from": "PLANNING",
+    "to": "RESOLVING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 2,
+    "from": "RESOLVING",
+    "to": "INVESTIGATING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 10,
+    "from": "INVESTIGATING",
+    "to": "ANALYZING",
+    "reason": "analyze self_help_and_personal_growth, social_responsibility_and_conscious_cons, female_led_stories"
+   },
+   {
+    "iteration": 10,
+    "from": "ANALYZING",
+    "to": "INVESTIGATING",
+    "reason": "analysis step done"
+   },
+   {
+    "iteration": 11,
+    "from": "INVESTIGATING",
+    "to": "COMPLETE",
+    "reason": "agent finished"
+   }
+  ],
+  "planRevisions": [
+   {
+    "iteration": 1,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[ ] resolve the brand",
+     "[ ] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[ ] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The user asks where Allbirds could credibly expand culturally, with no territories named, so territories must be discovered."
+   },
+   {
+    "iteration": 2,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[ ] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Resolve the analysis subject Allbirds to a Qloo brand entity before exploring territories."
+   },
+   {
+    "iteration": 3,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[ ] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Fetch the Allbirds brand tag profile as the fixed evidence base for frontier discovery."
+   },
+   {
+    "iteration": 5,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[x] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[ ] Folk music: anchor to a Qloo concept",
+     "[ ] Folk music: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Folk music: analyze",
+     "[x] Self-help and personal growth: anchor to a Qloo concept",
+     "[ ] Self-help and personal growth: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Self-help and personal growth: analyze",
+     "[x] Social responsibility and conscious consumption: anchor to a Qloo concept",
+     "[ ] Social responsibility and conscious consumption: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Social responsibility and conscious consumption: analyze",
+     "[x] Female-led stories: anchor to a Qloo concept",
+     "[ ] Female-led stories: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Female-led stories: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Qloo-grounded frontier candidate from the related-brand tag pool."
+   },
+   {
+    "iteration": 6,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[x] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[ ] Folk music: anchor to a Qloo concept",
+     "[ ] Folk music: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Folk music: analyze",
+     "[x] Self-help and personal growth: anchor to a Qloo concept",
+     "[x] Self-help and personal growth: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Self-help and personal growth: analyze",
+     "[x] Social responsibility and conscious consumption: anchor to a Qloo concept",
+     "[x] Social responsibility and conscious consumption: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Social responsibility and conscious consumption: analyze",
+     "[x] Female-led stories: anchor to a Qloo concept",
+     "[x] Female-led stories: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Female-led stories: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Folk has no artist members; probing movies, the comparison's shared type, before trying another concept or dropping it."
+   },
+   {
+    "iteration": 10,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[x] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[-] Folk music: dropped (QLOO_EMPTY)",
+     "[x] Self-help and personal growth: anchor to a Qloo concept",
+     "[x] Self-help and personal growth: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Self-help and personal growth: analyze",
+     "[x] Social responsibility and conscious consumption: anchor to a Qloo concept",
+     "[x] Social responsibility and conscious consumption: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Social responsibility and conscious consumption: analyze",
+     "[x] Female-led stories: anchor to a Qloo concept",
+     "[x] Female-led stories: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Female-led stories: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Folk music has six empty probes and no untested concept, so it is out of scope."
+   },
+   {
+    "iteration": 11,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[x] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[-] Folk music: dropped (QLOO_EMPTY)",
+     "[x] Self-help and personal growth: anchor to a Qloo concept",
+     "[x] Self-help and personal growth: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Self-help and personal growth: analyze",
+     "[x] Social responsibility and conscious consumption: anchor to a Qloo concept",
+     "[x] Social responsibility and conscious consumption: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Social responsibility and conscious consumption: analyze",
+     "[x] Female-led stories: anchor to a Qloo concept",
+     "[x] Female-led stories: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Female-led stories: analyze",
+     "[x] finish when deterministic sufficiency allows"
+    ],
+    "note": "Sufficiency is SUFFICIENT with all three in-scope territories analyzed, and no Qloo calls remain."
+   }
+  ],
+  "turns": [
+   {
+    "iteration": 1,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Allbirds",
+       "territories": []
+      },
+      "reasonSummary": "The user asks where Allbirds could credibly expand culturally, with no territories named, so territories must be discovered.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 733,
+     "outputTokens": 246,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1569
+    },
+    "latencyMs": 1376,
+    "skills": [
+     {
+      "id": "interpret_request",
+      "version": 1
+     },
+     {
+      "id": "resolve_brand",
+      "version": 1
+     }
+    ],
+    "toolsExposed": [
+     "interpret_request",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2337,
+    "contextTokensEstimate": 585
+   },
+   {
+    "iteration": 2,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Allbirds",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "Resolve the analysis subject Allbirds to a Qloo brand entity before exploring territories.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 883,
+     "outputTokens": 159,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1547
+    },
+    "latencyMs": 1416,
+    "skills": [
+     {
+      "id": "resolve_brand",
+      "version": 1
+     },
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_resolve_entity",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2461,
+    "contextTokensEstimate": 616
+   },
+   {
+    "iteration": 3,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "78A44C09-E691-42DA-A553-5CDE6EE9B18A"
+      },
+      "reasonSummary": "Fetch the Allbirds brand tag profile as the fixed evidence base for frontier discovery.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_related_entities",
+      "arguments": {
+       "entityId": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+       "targetType": "brand",
+       "limit": 8
+      },
+      "reasonSummary": "Find Qloo-related brands to ground frontier concepts in brand-level evidence.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1859,
+     "outputTokens": 372,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5046
+    },
+    "latencyMs": 2301,
+    "skills": [
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "qloo_related_entities",
+     "propose_territory",
+     "anchor_territory",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 12343,
+    "contextTokensEstimate": 3086
+   },
+   {
+    "iteration": 4,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "011DFDA5-F5A7-461A-9D96-E28E4964E7FB"
+      },
+      "reasonSummary": "Fetch tag profile of first related brand (Outdoor Voices) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "C0048DBC-BDED-46D6-9331-49B3A47275A3"
+      },
+      "reasonSummary": "Fetch tag profile of second related brand (Bombas) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "B8F0B7D9-0FF8-4E38-9DEF-C88D976272BF"
+      },
+      "reasonSummary": "Fetch tag profile of third related brand (Marine Layer) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "AB8D769A-CCEB-4C2D-A3D8-21641E0EC664"
+      },
+      "reasonSummary": "Fetch tag profile of fourth related brand (Warby Parker) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "FF8BB83C-AC0D-46AF-9410-9563636DF431"
+      },
+      "reasonSummary": "Fetch tag profile of fifth related brand (ClassPass) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "701F94F7-0892-4C17-8BFC-6B7CF3BBF568"
+      },
+      "reasonSummary": "Fetch tag profile of sixth related brand (Parachute) to build the frontier concept pool.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4178,
+     "outputTokens": 973,
+     "cacheReadTokens": 5046,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 3534,
+    "skills": [
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "qloo_related_entities",
+     "propose_territory",
+     "anchor_territory",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 16763,
+    "contextTokensEstimate": 4191
+   },
+   {
+    "iteration": 5,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Folk music",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "rationale": "Folk is carried by the related-brand evidence base (3 of 6 profiles) and shares the warm, unpretentious, natural-feeling register of the brand.",
+       "evidenceTagIds": [
+        "urn:tag:genre:music:folk"
+       ]
+      },
+      "reasonSummary": "Qloo-grounded frontier candidate from the related-brand tag pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Self-help and personal growth",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "rationale": "Self-help appears across related-brand profiles, pointing to a wellbeing and self-improvement territory adjacent to the brand's comfort and everyday-wellness positioning.",
+       "evidenceTagIds": [
+        "urn:tag:genre:media:self_help"
+       ]
+      },
+      "reasonSummary": "Qloo-grounded frontier candidate from the related-brand tag pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Social responsibility and conscious consumption",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "rationale": "Social responsibility and socially conscious consumers recur across related-brand profiles, matching the brand's sustainability and eco-conscious identity.",
+       "evidenceTagIds": [
+        "urn:tag:cultural_relevance:qloo:social_responsibility"
+       ]
+      },
+      "reasonSummary": "Qloo-grounded frontier candidate from the related-brand tag pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Female-led stories",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "rationale": "Female protagonist recurs across related-brand profiles (4 of 6), a media-narrative territory around women-centred storytelling.",
+       "evidenceTagIds": [
+        "urn:tag:keyword:media:female_protagonist"
+       ]
+      },
+      "reasonSummary": "Qloo-grounded frontier candidate from the related-brand tag pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "reasonSummary": "Qloo-grounded frontier candidate from the related-brand tag pool.",
+      "accepted": false,
+      "rejection": "NOT_EXPOSED: propose_territory is not offered by the active skills (resolve_territory)",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Friendship and community",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "rationale": "Friendship recurs across related-brand profiles (3 of 6), pointing to a social-bond and community territory matching the brand's community-driven lifestyle tags.",
+       "evidenceTagIds": [
+        "urn:tag:keyword:media:friendship"
+       ]
+      }
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "artist",
+       "tagIds": [
+        "urn:tag:genre:music:folk"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Test whether the folk concept has artist members for the first candidate.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "book",
+       "tagIds": [
+        "urn:tag:genre:media:self_help"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Test whether the self-help concept has book members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:cultural_relevance:qloo:social_responsibility"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Test whether social responsibility has brand members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "movie",
+       "tagIds": [
+        "urn:tag:keyword:media:female_protagonist"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Test whether the female-protagonist concept has movie members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "movie",
+       "tagIds": [
+        "urn:tag:keyword:media:friendship"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Test whether the friendship concept has movie members.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 7908,
+     "outputTokens": 3630,
+     "cacheReadTokens": 5046,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 13617,
+    "skills": [
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     },
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "qloo_related_entities",
+     "propose_territory",
+     "anchor_territory",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": false,
+    "contextChars": 24749,
+    "contextTokensEstimate": 6188
+   },
+   {
+    "iteration": 6,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "movie",
+       "tagIds": [
+        "urn:tag:genre:music:folk"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Folk has no artist members; probing movies, the comparison's shared type, before trying another concept or dropping it.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "self_help_and_personal_growth",
+       "entityType": "book",
+       "exemplars": [
+        {
+         "id": "FE95A446-1913-437F-91BB-9DC2DEC6A805",
+         "reason": "Tao Te Ching: enduring self-cultivation text, a classic of personal growth.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Canonical self-development book; fits the Self Help concept directly."
+         }
+        },
+        {
+         "id": "C0679E48-F35B-460B-8D9D-E98670E10520",
+         "reason": "You Can Heal Your Life: widely read self-help title tagged to the concept.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Core self-help genre title focused on personal change."
+         }
+        },
+        {
+         "id": "A59748F8-17F2-4816-810F-10DE9432D74D",
+         "reason": "Ikigai / Lykke / Lagom: well-being and balanced-living guide, tagged to the concept.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Well-being self-help compilation; a looser fit than the other two."
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Self Help has book members; proposing the three strongest book exemplars for representation.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "social_responsibility_and_conscious_cons",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "D651F503-5244-416D-A55B-7D5DAFC7B680",
+         "reason": "Lemlem: ethically made apparel brand with a socially conscious mission.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Mission-driven, artisan-sourcing fashion brand; closest in category to Allbirds."
+         }
+        },
+        {
+         "id": "8C4FEA65-9DFD-4DBF-8DAE-6DC63E377AA5",
+         "reason": "Feed the Children: humanitarian charity tagged to social responsibility.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Clearly socially responsible, but a charity rather than a consumer brand."
+         }
+        },
+        {
+         "id": "00287006-ECBC-4C55-8D7D-9ECA6535152E",
+         "reason": "GoFundMe: social-impact crowdfunding platform tagged to social responsibility.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Prosocial brand with high popularity; a platform rather than a product brand."
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Social Responsibility has brand members; proposing Lemlem and two prosocial brands as exemplars.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "female_led_stories",
+       "entityType": "movie",
+       "exemplars": [
+        {
+         "id": "DBB1D776-295F-45A7-86E2-E70A91295F9A",
+         "reason": "Mermaids: coming-of-age story centred on women and female identity.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Female-led narrative with women as principal characters."
+         }
+        },
+        {
+         "id": "9809041B-D47E-4407-87CF-4EFE884C2B28",
+         "reason": "D.E.B.S.: female-led ensemble story tagged to female protagonist.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Female ensemble leads throughout the film."
+         }
+        },
+        {
+         "id": "5440F185-12BD-45C0-90A9-A55E094876ED",
+         "reason": "Crossroads: road-trip story led by young women.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Female leads drive the narrative."
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Female protagonist has movie members; proposing three female-led films as exemplars.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 10509,
+     "outputTokens": 2679,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 4050
+    },
+    "latencyMs": 11097,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 30068,
+    "contextTokensEstimate": 7517
+   },
+   {
+    "iteration": 7,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:genre:music:folk"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Folk music has no members yet for artist or movie, so the shared brand type is probed as the next comparison-type test.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 6075,
+     "outputTokens": 391,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 3290
+    },
+    "latencyMs": 2440,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "ask_user",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 17637,
+    "contextTokensEstimate": 4410
+   },
+   {
+    "iteration": 8,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "folk music",
+       "limit": 8
+      },
+      "reasonSummary": "Folk music has no members under its canonical tag, so a differently named folk-music tag is needed to anchor it.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 3871,
+     "outputTokens": 566,
+     "cacheReadTokens": 3290,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 2791,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "ask_user",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 13093,
+    "contextTokensEstimate": 3274
+   },
+   {
+    "iteration": 9,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "movie",
+       "tagIds": [
+        "urn:tag:music:qloo:folk"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Test whether the Folk music concept has movie members, the shared type needed for the comparison.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "movie",
+       "tagIds": [
+        "urn:tag:music_characteristic:qloo:folk"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Type-alignment probe: movie members for the Folk music-characteristic concept.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "movie",
+       "tagIds": [
+        "urn:tag:genre:qloo:folk"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Type-alignment probe: movie members for the Folk genre concept.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4956,
+     "outputTokens": 880,
+     "cacheReadTokens": 3290,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 4110,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "ask_user",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 15017,
+    "contextTokensEstimate": 3755
+   },
+   {
+    "iteration": 10,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "drop_territory",
+      "arguments": {
+       "territoryKey": "folk_music",
+       "code": "QLOO_EMPTY",
+       "reason": "Six probes across its Qloo concepts (music, music characteristic, genre) returned no members for any movie or other tested type; no untested concept remains, so it is unsupported."
+      },
+      "reasonSummary": "Folk music has six empty probes and no untested concept, so it is out of scope.",
+      "accepted": true
+     },
+     {
+      "action": "analyze",
+      "reasonSummary": "The three remaining represented territories have ready representations, so their evidence can be analyzed now.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 3173,
+     "outputTokens": 1192,
+     "cacheReadTokens": 1938,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 5575,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     },
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 8246,
+    "contextTokensEstimate": 2062
+   },
+   {
+    "iteration": 11,
+    "decisions": [
+     {
+      "action": "finish",
+      "reasonSummary": "Sufficiency is SUFFICIENT with all three in-scope territories analyzed, and no Qloo calls remain.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 2737,
+     "outputTokens": 274,
+     "cacheReadTokens": 1938,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 2056,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 6892,
+    "contextTokensEstimate": 1723
+   }
+  ],
+  "toolCalls": [
+   {
+    "id": "tc-1",
+    "iteration": 1,
+    "tool": "interpret_request",
+    "permission": "local_computation",
+    "arguments": {
+     "intent": "explore_frontier",
+     "brand": "Allbirds",
+     "territories": []
+    },
+    "status": "ok",
+    "summary": "intent explore_frontier; brand \"Allbirds\"; 0 named territory(ies)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    }
+   },
+   {
+    "id": "tc-2",
+    "iteration": 2,
+    "tool": "qloo_resolve_entity",
+    "permission": "read_only_external",
+    "arguments": {
+     "name": "Allbirds",
+     "type": "brand",
+     "role": "brand"
+    },
+    "status": "ok",
+    "summary": "Allbirds (78A44C09-E691-42DA-A553-5CDE6EE9B18A, urn:entity:brand, match exact)",
+    "qlooOperations": [
+     "describe"
+    ],
+    "correlationIds": [
+     "mcp-84ebd721-72c0-497c-a960-52cc76e66a0f"
+    ],
+    "attempts": 1,
+    "latencyMs": 567,
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-3",
+    "iteration": 3,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "78A44C09-E691-42DA-A553-5CDE6EE9B18A"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-7aa839be-dbd0-4aa0-bb08-b68af4e12d03"
+    ],
+    "attempts": 1,
+    "latencyMs": 5227,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-4",
+    "iteration": 3,
+    "tool": "qloo_related_entities",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+     "targetType": "brand",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 related brand entities",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-463ff640-f6b9-4d32-9586-5bbde3f1ec47"
+    ],
+    "attempts": 1,
+    "latencyMs": 6617,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-5",
+    "iteration": 4,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "011DFDA5-F5A7-461A-9D96-E28E4964E7FB"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-4c7a8ac2-3812-414a-ac6c-71aa72ee2534"
+    ],
+    "attempts": 1,
+    "latencyMs": 3782,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-6",
+    "iteration": 4,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "C0048DBC-BDED-46D6-9331-49B3A47275A3"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-3b0b927e-6e76-4c3c-8a1b-ac6d12909fa6"
+    ],
+    "attempts": 1,
+    "latencyMs": 7057,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-7",
+    "iteration": 4,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "B8F0B7D9-0FF8-4E38-9DEF-C88D976272BF"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-a1ae34c1-3556-46a8-a066-5b361bba5310"
+    ],
+    "attempts": 1,
+    "latencyMs": 6721,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-8",
+    "iteration": 4,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "AB8D769A-CCEB-4C2D-A3D8-21641E0EC664"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-79c86f86-a8df-40be-b95b-9b9f0b481296"
+    ],
+    "attempts": 1,
+    "latencyMs": 7146,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-9",
+    "iteration": 4,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "FF8BB83C-AC0D-46AF-9410-9563636DF431"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-e20c6931-848d-46e4-8bbc-ea390fbeabde"
+    ],
+    "attempts": 1,
+    "latencyMs": 7123,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-10",
+    "iteration": 4,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "701F94F7-0892-4C17-8BFC-6B7CF3BBF568"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-7c19f854-cb0e-405f-a62c-d8293a11dff9"
+    ],
+    "attempts": 1,
+    "latencyMs": 6966,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-11",
+    "iteration": 5,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Folk music",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "rationale": "Folk is carried by the related-brand evidence base (3 of 6 profiles) and shares the warm, unpretentious, natural-feeling register of the brand.",
+     "evidenceTagIds": [
+      "urn:tag:genre:music:folk"
+     ]
+    },
+    "status": "ok",
+    "summary": "added folk_music",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-12",
+    "iteration": 5,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Self-help and personal growth",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "rationale": "Self-help appears across related-brand profiles, pointing to a wellbeing and self-improvement territory adjacent to the brand's comfort and everyday-wellness positioning.",
+     "evidenceTagIds": [
+      "urn:tag:genre:media:self_help"
+     ]
+    },
+    "status": "ok",
+    "summary": "added self_help_and_personal_growth",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-13",
+    "iteration": 5,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Social responsibility and conscious consumption",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "rationale": "Social responsibility and socially conscious consumers recur across related-brand profiles, matching the brand's sustainability and eco-conscious identity.",
+     "evidenceTagIds": [
+      "urn:tag:cultural_relevance:qloo:social_responsibility"
+     ]
+    },
+    "status": "ok",
+    "summary": "added social_responsibility_and_conscious_cons",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-14",
+    "iteration": 5,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Female-led stories",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "rationale": "Female protagonist recurs across related-brand profiles (4 of 6), a media-narrative territory around women-centred storytelling.",
+     "evidenceTagIds": [
+      "urn:tag:keyword:media:female_protagonist"
+     ]
+    },
+    "status": "ok",
+    "summary": "added female_led_stories",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-15",
+    "iteration": 5,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Friendship and community",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "rationale": "Friendship recurs across related-brand profiles (3 of 6), pointing to a social-bond and community territory matching the brand's community-driven lifestyle tags.",
+     "evidenceTagIds": [
+      "urn:tag:keyword:media:friendship"
+     ]
+    },
+    "status": "rejected",
+    "summary": "NOT_EXPOSED: propose_territory is not offered by the active skills (resolve_territory)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "error": "NOT_EXPOSED"
+   },
+   {
+    "id": "tc-16",
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "artist",
+     "tagIds": [
+      "urn:tag:genre:music:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no artist entities for urn:tag:genre:music:folk",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-c622bd13-3ce3-4fb3-87af-c86b2d46f553"
+    ],
+    "attempts": 1,
+    "latencyMs": 467,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-17",
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "book",
+     "tagIds": [
+      "urn:tag:genre:media:self_help"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "ok",
+    "summary": "10 book entities (brand-independent pool); self_help_and_personal_growth anchored to this tag (its own concept; next: validate_territory_representation with book)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-3ae22143-8065-4132-a1d6-5878b251e52e"
+    ],
+    "attempts": 1,
+    "latencyMs": 7212,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-18",
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "brand",
+     "tagIds": [
+      "urn:tag:cultural_relevance:qloo:social_responsibility"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "ok",
+    "summary": "10 brand entities (brand-independent pool); social_responsibility_and_conscious_cons anchored to this tag (its own concept; next: validate_territory_representation with brand)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-078a926f-f6b6-45a8-ad37-fa687fe0c3c2"
+    ],
+    "attempts": 1,
+    "latencyMs": 6739,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-19",
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "movie",
+     "tagIds": [
+      "urn:tag:keyword:media:female_protagonist"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "ok",
+    "summary": "10 movie entities (brand-independent pool); female_led_stories anchored to this tag (its own concept; next: validate_territory_representation with movie)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-0daaaa12-94c5-4f4e-b858-3394eed7b33c"
+    ],
+    "attempts": 1,
+    "latencyMs": 8954,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-20",
+    "iteration": 5,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "movie",
+     "tagIds": [
+      "urn:tag:keyword:media:friendship"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "ok",
+    "summary": "10 movie entities (brand-independent pool)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-ca1e96cd-79e8-46ba-8d2f-a7a22e43fa3a"
+    ],
+    "attempts": 1,
+    "latencyMs": 7579,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-21",
+    "iteration": 6,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "movie",
+     "tagIds": [
+      "urn:tag:genre:music:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no movie entities for urn:tag:genre:music:folk",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-ad9bc5e1-091a-4907-9213-ed6829cba56b"
+    ],
+    "attempts": 1,
+    "latencyMs": 490,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-22",
+    "iteration": 6,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "self_help_and_personal_growth",
+     "entityType": "book",
+     "exemplars": [
+      {
+       "id": "FE95A446-1913-437F-91BB-9DC2DEC6A805",
+       "reason": "Tao Te Ching: enduring self-cultivation text, a classic of personal growth.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Canonical self-development book; fits the Self Help concept directly."
+       }
+      },
+      {
+       "id": "C0679E48-F35B-460B-8D9D-E98670E10520",
+       "reason": "You Can Heal Your Life: widely read self-help title tagged to the concept.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Core self-help genre title focused on personal change."
+       }
+      },
+      {
+       "id": "A59748F8-17F2-4816-810F-10DE9432D74D",
+       "reason": "Ikigai / Lykke / Lagom: well-being and balanced-living guide, tagged to the concept.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Well-being self-help compilation; a looser fit than the other two."
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "self_help_and_personal_growth: accepted Tao Te Ching, You Can Heal Your Life, Ikigai: The Japanese Secret to a Long and Happy Life / The Little Book of Lykke / Lagom: The Swedish Art of Balanced Living; diversity unknown",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-23",
+    "iteration": 6,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "entityType": "brand",
+     "exemplars": [
+      {
+       "id": "D651F503-5244-416D-A55B-7D5DAFC7B680",
+       "reason": "Lemlem: ethically made apparel brand with a socially conscious mission.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Mission-driven, artisan-sourcing fashion brand; closest in category to Allbirds."
+       }
+      },
+      {
+       "id": "8C4FEA65-9DFD-4DBF-8DAE-6DC63E377AA5",
+       "reason": "Feed the Children: humanitarian charity tagged to social responsibility.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Clearly socially responsible, but a charity rather than a consumer brand."
+       }
+      },
+      {
+       "id": "00287006-ECBC-4C55-8D7D-9ECA6535152E",
+       "reason": "GoFundMe: social-impact crowdfunding platform tagged to social responsibility.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Prosocial brand with high popularity; a platform rather than a product brand."
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "social_responsibility_and_conscious_cons: accepted Lemlem, Feed the Children, GoFundMe; diversity unknown",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-24",
+    "iteration": 6,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "female_led_stories",
+     "entityType": "movie",
+     "exemplars": [
+      {
+       "id": "DBB1D776-295F-45A7-86E2-E70A91295F9A",
+       "reason": "Mermaids: coming-of-age story centred on women and female identity.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Female-led narrative with women as principal characters."
+       }
+      },
+      {
+       "id": "9809041B-D47E-4407-87CF-4EFE884C2B28",
+       "reason": "D.E.B.S.: female-led ensemble story tagged to female protagonist.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Female ensemble leads throughout the film."
+       }
+      },
+      {
+       "id": "5440F185-12BD-45C0-90A9-A55E094876ED",
+       "reason": "Crossroads: road-trip story led by young women.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Female leads drive the narrative."
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "female_led_stories: accepted Mermaids, D.E.B.S., Crossroads; diversity unknown",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-25",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "brand",
+     "tagIds": [
+      "urn:tag:genre:music:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no brand entities for urn:tag:genre:music:folk",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-bbafa4fc-a38f-44c1-a3d8-f63266922755"
+    ],
+    "attempts": 1,
+    "latencyMs": 3434,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-26",
+    "iteration": 8,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "folk music",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-dada523b-3de0-4cdb-9973-fd4b92edf886"
+    ],
+    "attempts": 1,
+    "latencyMs": 4065,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-27",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "movie",
+     "tagIds": [
+      "urn:tag:music:qloo:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no movie entities for urn:tag:music:qloo:folk",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-5b844b7f-ad5a-4fb9-bcec-384301af2893"
+    ],
+    "attempts": 1,
+    "latencyMs": 393,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-28",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "movie",
+     "tagIds": [
+      "urn:tag:music_characteristic:qloo:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no movie entities for urn:tag:music_characteristic:qloo:folk",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-5dbfda3d-e0f9-43c3-b6b4-0d2dc88e98d0"
+    ],
+    "attempts": 1,
+    "latencyMs": 6941,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-29",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "movie",
+     "tagIds": [
+      "urn:tag:genre:qloo:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no movie entities for urn:tag:genre:qloo:folk",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-428783a4-a1c2-4d2c-89e2-4e8c44817e35"
+    ],
+    "attempts": 1,
+    "latencyMs": 6992,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-30",
+    "iteration": 10,
+    "tool": "drop_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "folk_music",
+     "code": "QLOO_EMPTY",
+     "reason": "Six probes across its Qloo concepts (music, music characteristic, genre) returned no members for any movie or other tested type; no untested concept remains, so it is unsupported."
+    },
+    "status": "ok",
+    "summary": "folk_music dropped (QLOO_EMPTY)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "analyze_territories",
+     "version": 2
+    }
+   },
+   {
+    "id": "tc-31",
+    "iteration": 10,
+    "tool": "analyze_evidence",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "self_help_and_personal_growth",
+      "social_responsibility_and_conscious_cons",
+      "female_led_stories"
+     ]
+    },
+    "status": "ok",
+    "summary": "brand profile 20 tags; 15 exemplar/other profiles in run; 3 brand-conditioned list(s)",
+    "qlooOperations": [
+     "entity_tags",
+     "entity_tags",
+     "entity_tags",
+     "recommend",
+     "recommend",
+     "recommend",
+     "entity_tags",
+     "entity_tags",
+     "entity_tags",
+     "entity_tags",
+     "entity_tags",
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-88bdb338-7a19-49c9-b2ad-6ed24dee97ef",
+     "mcp-bd1792ec-6459-4789-8b4e-fdac63aac0f6",
+     "mcp-eacebdc3-1191-4cf0-a208-ccf616a97b5d",
+     "mcp-bd410fa4-51b8-4ed4-acf1-58efcde9bf7b",
+     "mcp-8e1389bb-8d09-485b-8a6f-16921819a3cb",
+     "mcp-5373a919-fd3f-49e9-bc06-0de69f4b9243",
+     "mcp-a8a48560-a8a1-473d-92e0-2cd1c34c0958",
+     "mcp-eb12fe2d-bcd5-4534-99d0-43a6ddf2bbd7",
+     "mcp-ea3ebfea-b785-4aca-9889-9ac4adbd78ee",
+     "mcp-d3bd362b-c176-456c-a224-f56ede40b318",
+     "mcp-883008c1-da6e-4359-bf62-6c7bcdae2fe5",
+     "mcp-fa3279fd-167b-4fb4-87a4-89d69828a032"
+    ],
+    "attempts": 12,
+    "latencyMs": 0
+   },
+   {
+    "id": "tc-32",
+    "iteration": 10,
+    "tool": "build_candidate_panel",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "self_help_and_personal_growth",
+      "social_responsibility_and_conscious_cons",
+      "female_led_stories"
+     ]
+    },
+    "status": "ok",
+    "summary": "no comparison set of ≥ 3 rankable territories of one type",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0
+   }
+  ],
+  "resolvedEntities": [
+   {
+    "role": "brand",
+    "id": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+    "label": "Allbirds",
+    "type": "urn:entity:brand",
+    "match": "exact",
+    "resolution": "confirmed"
+   }
+  ],
+  "territoryHypotheses": [
+   {
+    "key": "folk_music",
+    "label": "Folk music",
+    "role": "frontier_candidate",
+    "origin": "qloo_evidence",
+    "status": "dropped (QLOO_EMPTY)",
+    "rationale": "Folk is carried by the related-brand evidence base (3 of 6 profiles) and shares the warm, unpretentious, natural-feeling register of the brand."
+   },
+   {
+    "key": "self_help_and_personal_growth",
+    "label": "Self-help and personal growth",
+    "role": "frontier_candidate",
+    "origin": "qloo_evidence",
+    "status": "analyzed",
+    "rationale": "Self-help appears across related-brand profiles, pointing to a wellbeing and self-improvement territory adjacent to the brand's comfort and everyday-wellness positioning."
+   },
+   {
+    "key": "social_responsibility_and_conscious_cons",
+    "label": "Social responsibility and conscious consumption",
+    "role": "frontier_candidate",
+    "origin": "qloo_evidence",
+    "status": "analyzed",
+    "rationale": "Social responsibility and socially conscious consumers recur across related-brand profiles, matching the brand's sustainability and eco-conscious identity."
+   },
+   {
+    "key": "female_led_stories",
+    "label": "Female-led stories",
+    "role": "frontier_candidate",
+    "origin": "qloo_evidence",
+    "status": "analyzed",
+    "rationale": "Female protagonist recurs across related-brand profiles (4 of 6), a media-narrative territory around women-centred storytelling."
+   }
+  ],
+  "representations": [
+   {
+    "territoryKey": "self_help_and_personal_growth",
+    "attempt": 1,
+    "accepted": [
+     "Tao Te Ching",
+     "You Can Heal Your Life",
+     "Ikigai: The Japanese Secret to a Long and Happy Life / The Little Book of Lykke / Lagom: The Swedish Art of Balanced Living"
+    ],
+    "rejected": []
+   },
+   {
+    "territoryKey": "social_responsibility_and_conscious_cons",
+    "attempt": 1,
+    "accepted": [
+     "Lemlem",
+     "Feed the Children",
+     "GoFundMe"
+    ],
+    "rejected": []
+   },
+   {
+    "territoryKey": "female_led_stories",
+    "attempt": 1,
+    "accepted": [
+     "Mermaids",
+     "D.E.B.S.",
+     "Crossroads"
+    ],
+    "rejected": []
+   }
+  ],
+  "sufficiency": [
+   {
+    "iteration": 0,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "interpret the request (interpret_request)"
+    ],
+    "nextActions": [
+     {
+      "action": "interpret_request",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the goal is not interpreted yet"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 1,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "resolve the brand (qloo_resolve_entity, role brand)"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_resolve_entity",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the brand is not resolved"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 2,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "0 supported frontier candidate(s); fewer than 3 and budget remains",
+     "propose and investigate further frontier candidates grounded in Qloo evidence"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "HIGH",
+      "reason": "0 viable frontier candidate(s); fewer than 4"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 3,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "0 supported frontier candidate(s); fewer than 3 and budget remains",
+     "propose and investigate further frontier candidates grounded in Qloo evidence"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "MEDIUM",
+      "reason": "0 viable frontier candidate(s); fewer than 4"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 4,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "0 supported frontier candidate(s); fewer than 3 and budget remains",
+     "propose and investigate further frontier candidates grounded in Qloo evidence"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "HIGH",
+      "reason": "0 viable frontier candidate(s); fewer than 4"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 5,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "folk_music: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "self_help_and_personal_growth: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only",
+     "social_responsibility_and_conscious_cons: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only",
+     "female_led_stories: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "folk_music",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "self_help_and_personal_growth",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "self_help_and_personal_growth",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "social_responsibility_and_conscious_cons",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "social_responsibility_and_conscious_cons",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "female_led_stories",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "female_led_stories",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 6,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "folk_music: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "self_help_and_personal_growth: ready to analyze (3 validated exemplar(s))",
+     "social_responsibility_and_conscious_cons: ready to analyze (3 validated exemplar(s))",
+     "female_led_stories: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "folk_music",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "self_help_and_personal_growth",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "social_responsibility_and_conscious_cons",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "female_led_stories",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     },
+     {
+      "action": "analyze",
+      "target": "self_help_and_personal_growth,social_responsibility_and_conscious_cons,female_led_stories",
+      "value": "MEDIUM",
+      "reason": "these territories are ready; other gaps remain"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 7,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "folk_music: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "self_help_and_personal_growth: ready to analyze (3 validated exemplar(s))",
+     "social_responsibility_and_conscious_cons: ready to analyze (3 validated exemplar(s))",
+     "female_led_stories: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "folk_music",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "self_help_and_personal_growth",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "social_responsibility_and_conscious_cons",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "female_led_stories",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     },
+     {
+      "action": "analyze",
+      "target": "self_help_and_personal_growth,social_responsibility_and_conscious_cons,female_led_stories",
+      "value": "MEDIUM",
+      "reason": "these territories are ready; other gaps remain"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 8,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "folk_music: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "self_help_and_personal_growth: ready to analyze (3 validated exemplar(s))",
+     "social_responsibility_and_conscious_cons: ready to analyze (3 validated exemplar(s))",
+     "female_led_stories: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "folk_music",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "self_help_and_personal_growth",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "social_responsibility_and_conscious_cons",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "female_led_stories",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     },
+     {
+      "action": "analyze",
+      "target": "self_help_and_personal_growth,social_responsibility_and_conscious_cons,female_led_stories",
+      "value": "MEDIUM",
+      "reason": "these territories are ready; other gaps remain"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 9,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "folk_music: ready to analyze (Folk music: 6 empty probes across its Qloo concepts and none returned members)",
+     "self_help_and_personal_growth: ready to analyze (3 validated exemplar(s))",
+     "social_responsibility_and_conscious_cons: ready to analyze (3 validated exemplar(s))",
+     "female_led_stories: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "investigate",
+      "target": "folk_music",
+      "value": "NONE",
+      "reason": "Folk music: 6 empty probes across its Qloo concepts and none returned members; report it as unsupported"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "self_help_and_personal_growth",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "social_responsibility_and_conscious_cons",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "female_led_stories",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     },
+     {
+      "action": "analyze",
+      "target": "folk_music,self_help_and_personal_growth,social_responsibility_and_conscious_cons,female_led_stories",
+      "value": "HIGH",
+      "reason": "no material evidence gap remains: analyze"
+     }
+    ],
+    "materialGap": false
+   },
+   {
+    "iteration": 10,
+    "verdict": "SUFFICIENT",
+    "reasons": [
+     "all 3 in-scope territories have analysis results"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "no room left in the candidate or call budget"
+     },
+     {
+      "action": "finish",
+      "target": null,
+      "value": "HIGH",
+      "reason": "every in-scope territory is analyzed"
+     }
+    ],
+    "materialGap": false
+   }
+  ],
+  "representationQuality": [
+   {
+    "territoryKey": "self_help_and_personal_growth",
+    "attempt": 1,
+    "candidateId": "FE95A446-1913-437F-91BB-9DC2DEC6A805",
+    "label": "Tao Te Ching",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9967291816834174,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Canonical self-development book; fits the Self Help concept directly.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "self_help_and_personal_growth",
+    "attempt": 1,
+    "candidateId": "C0679E48-F35B-460B-8D9D-E98670E10520",
+    "label": "You Can Heal Your Life",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9893953406139074,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Core self-help genre title focused on personal change.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "self_help_and_personal_growth",
+    "attempt": 1,
+    "candidateId": "A59748F8-17F2-4816-810F-10DE9432D74D",
+    "label": "Ikigai: The Japanese Secret to a Long and Happy Life / The Little Book of Lykke / Lagom: The Swedish Art of Balanced Living",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9922547566266371,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Well-being self-help compilation; a looser fit than the other two.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "social_responsibility_and_conscious_cons",
+    "attempt": 1,
+    "candidateId": "D651F503-5244-416D-A55B-7D5DAFC7B680",
+    "label": "Lemlem",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.8140648573511213,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 2
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Mission-driven, artisan-sourcing fashion brand; closest in category to Allbirds.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "social_responsibility_and_conscious_cons",
+    "attempt": 1,
+    "candidateId": "8C4FEA65-9DFD-4DBF-8DAE-6DC63E377AA5",
+    "label": "Feed the Children",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.6055754267600142,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 2
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Clearly socially responsible, but a charity rather than a consumer brand.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "social_responsibility_and_conscious_cons",
+    "attempt": 1,
+    "candidateId": "00287006-ECBC-4C55-8D7D-9ECA6535152E",
+    "label": "GoFundMe",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9569256327236358,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 2
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Prosocial brand with high popularity; a platform rather than a product brand.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "female_led_stories",
+    "attempt": 1,
+    "candidateId": "DBB1D776-295F-45A7-86E2-E70A91295F9A",
+    "label": "Mermaids",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9718244454523856,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Female-led narrative with women as principal characters.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "female_led_stories",
+    "attempt": 1,
+    "candidateId": "9809041B-D47E-4407-87CF-4EFE884C2B28",
+    "label": "D.E.B.S.",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9803775459513164,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Female ensemble leads throughout the film.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "female_led_stories",
+    "attempt": 1,
+    "candidateId": "5440F185-12BD-45C0-90A9-A55E094876ED",
+    "label": "Crossroads",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9618998250502171,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Female leads drive the narrative.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   }
+  ],
+  "conceptDedup": [],
+  "earlyStops": [],
+  "skillUsage": [
+   {
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 0,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 1,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "turns": 3,
+    "qlooCalls": 8,
+    "toolCalls": 12
+   },
+   {
+    "skill": {
+     "id": "analyze_territories",
+     "version": 2
+    },
+    "turns": 8,
+    "qlooCalls": 0,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "turns": 4,
+    "qlooCalls": 11,
+    "toolCalls": 11
+   },
+   {
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "turns": 1,
+    "qlooCalls": 0,
+    "toolCalls": 3
+   }
+  ],
+  "methodologyInvocations": [],
+  "synthesis": {
+   "source": "model",
+   "attempts": 1,
+   "violations": [],
+   "attemptDetails": [
+    {
+     "attempt": 1,
+     "accepted": true,
+     "categories": {},
+     "violations": []
+    }
+   ]
+  },
+  "errors": [],
+  "userClarifications": [],
+  "representationPlans": [
+   {
+    "iteration": 5,
+    "plan": {
+     "territoryKeys": [
+      "folk_music",
+      "self_help_and_personal_growth",
+      "social_responsibility_and_conscious_cons",
+      "female_led_stories"
+     ],
+     "candidateEntityTypes": [
+      "movie",
+      "brand",
+      "book"
+     ],
+     "preferredCommonType": "movie",
+     "supportedTerritoriesByType": {
+      "brand": [
+       "social_responsibility_and_conscious_cons"
+      ],
+      "book": [
+       "self_help_and_personal_growth"
+      ],
+      "movie": [
+       "female_led_stories"
+      ]
+     },
+     "possibleTerritoriesByType": {
+      "brand": [
+       "folk_music",
+       "self_help_and_personal_growth",
+       "female_led_stories"
+      ],
+      "book": [
+       "folk_music",
+       "social_responsibility_and_conscious_cons",
+       "female_led_stories"
+      ],
+      "movie": [
+       "folk_music",
+       "self_help_and_personal_growth",
+       "social_responsibility_and_conscious_cons"
+      ]
+     },
+     "feasibility": "POSSIBLE",
+     "required": 3,
+     "missingRequirements": [
+      "folk_music: no movie members observed yet; probe movie on folk [urn:tag:genre:music:folk] before switching to another type",
+      "self_help_and_personal_growth: no movie members observed yet; probe movie on Self Help [urn:tag:genre:media:self_help] before switching to another type",
+      "social_responsibility_and_conscious_cons: no movie members observed yet; probe movie on Social Responsibility [urn:tag:cultural_relevance:qloo:social_responsibility] before switching to another type"
+     ],
+     "reasonCodes": [
+      "COMMON_TYPE_POSSIBLE",
+      "TYPE_PROBE_PATH:folk_music",
+      "TYPE_PROBE_PATH:self_help_and_personal_growth",
+      "TYPE_PROBE_PATH:social_responsibility_and_conscious_cons"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 6,
+    "plan": {
+     "territoryKeys": [
+      "folk_music",
+      "self_help_and_personal_growth",
+      "social_responsibility_and_conscious_cons",
+      "female_led_stories"
+     ],
+     "candidateEntityTypes": [
+      "brand",
+      "book",
+      "movie"
+     ],
+     "preferredCommonType": "brand",
+     "supportedTerritoriesByType": {
+      "brand": [
+       "social_responsibility_and_conscious_cons"
+      ],
+      "book": [
+       "self_help_and_personal_growth"
+      ],
+      "movie": [
+       "female_led_stories"
+      ]
+     },
+     "possibleTerritoriesByType": {
+      "brand": [
+       "folk_music"
+      ],
+      "book": [
+       "folk_music"
+      ]
+     },
+     "feasibility": "UNSUPPORTED",
+     "required": 3,
+     "missingRequirements": [
+      "folk_music: no brand members observed yet; probe brand on folk [urn:tag:genre:music:folk] before switching to another type",
+      "self_help_and_personal_growth: cannot be represented as brand with the concepts observed (represented as book); it will not join the brand comparison set",
+      "female_led_stories: cannot be represented as brand with the concepts observed (represented as movie); it will not join the brand comparison set"
+     ],
+     "reasonCodes": [
+      "NO_COMMON_TYPE",
+      "TYPE_PROBE_PATH:folk_music",
+      "TYPE_MISMATCH:self_help_and_personal_growth",
+      "TYPE_MISMATCH:female_led_stories"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 7,
+    "plan": {
+     "territoryKeys": [
+      "folk_music",
+      "self_help_and_personal_growth",
+      "social_responsibility_and_conscious_cons",
+      "female_led_stories"
+     ],
+     "candidateEntityTypes": [
+      "movie",
+      "brand",
+      "book"
+     ],
+     "preferredCommonType": "movie",
+     "supportedTerritoriesByType": {
+      "brand": [
+       "social_responsibility_and_conscious_cons"
+      ],
+      "book": [
+       "self_help_and_personal_growth"
+      ],
+      "movie": [
+       "female_led_stories"
+      ]
+     },
+     "possibleTerritoriesByType": {},
+     "feasibility": "UNSUPPORTED",
+     "required": 3,
+     "missingRequirements": [
+      "folk_music: cannot be represented as movie with the concepts observed (no untested concept left); it will not join the movie comparison set",
+      "self_help_and_personal_growth: cannot be represented as movie with the concepts observed (represented as book); it will not join the movie comparison set",
+      "social_responsibility_and_conscious_cons: cannot be represented as movie with the concepts observed (represented as brand); it will not join the movie comparison set"
+     ],
+     "reasonCodes": [
+      "NO_COMMON_TYPE",
+      "TYPE_MISMATCH:folk_music",
+      "TYPE_MISMATCH:self_help_and_personal_growth",
+      "TYPE_MISMATCH:social_responsibility_and_conscious_cons"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 8,
+    "plan": {
+     "territoryKeys": [
+      "folk_music",
+      "self_help_and_personal_growth",
+      "social_responsibility_and_conscious_cons",
+      "female_led_stories"
+     ],
+     "candidateEntityTypes": [
+      "movie",
+      "brand",
+      "book"
+     ],
+     "preferredCommonType": "movie",
+     "supportedTerritoriesByType": {
+      "brand": [
+       "social_responsibility_and_conscious_cons"
+      ],
+      "book": [
+       "self_help_and_personal_growth"
+      ],
+      "movie": [
+       "female_led_stories"
+      ]
+     },
+     "possibleTerritoriesByType": {
+      "brand": [
+       "folk_music"
+      ],
+      "book": [
+       "folk_music"
+      ],
+      "movie": [
+       "folk_music"
+      ]
+     },
+     "feasibility": "UNSUPPORTED",
+     "required": 3,
+     "missingRequirements": [
+      "folk_music: no movie members observed yet; probe movie on Folk [urn:tag:music:qloo:folk], Folk [urn:tag:music_characteristic:qloo:folk], Folk [urn:tag:genre:qloo:folk] before switching to another type",
+      "self_help_and_personal_growth: cannot be represented as movie with the concepts observed (represented as book); it will not join the movie comparison set",
+      "social_responsibility_and_conscious_cons: cannot be represented as movie with the concepts observed (represented as brand); it will not join the movie comparison set"
+     ],
+     "reasonCodes": [
+      "NO_COMMON_TYPE",
+      "TYPE_PROBE_PATH:folk_music",
+      "TYPE_MISMATCH:self_help_and_personal_growth",
+      "TYPE_MISMATCH:social_responsibility_and_conscious_cons"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 9,
+    "plan": {
+     "territoryKeys": [
+      "folk_music",
+      "self_help_and_personal_growth",
+      "social_responsibility_and_conscious_cons",
+      "female_led_stories"
+     ],
+     "candidateEntityTypes": [
+      "movie",
+      "brand",
+      "book"
+     ],
+     "preferredCommonType": "movie",
+     "supportedTerritoriesByType": {
+      "brand": [
+       "social_responsibility_and_conscious_cons"
+      ],
+      "book": [
+       "self_help_and_personal_growth"
+      ],
+      "movie": [
+       "female_led_stories"
+      ]
+     },
+     "possibleTerritoriesByType": {},
+     "feasibility": "UNSUPPORTED",
+     "required": 3,
+     "missingRequirements": [
+      "folk_music: cannot be represented as movie with the concepts observed (no untested concept left); it will not join the movie comparison set",
+      "self_help_and_personal_growth: cannot be represented as movie with the concepts observed (represented as book); it will not join the movie comparison set",
+      "social_responsibility_and_conscious_cons: cannot be represented as movie with the concepts observed (represented as brand); it will not join the movie comparison set"
+     ],
+     "reasonCodes": [
+      "NO_COMMON_TYPE",
+      "TYPE_MISMATCH:folk_music",
+      "TYPE_MISMATCH:self_help_and_personal_growth",
+      "TYPE_MISMATCH:social_responsibility_and_conscious_cons"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 10,
+    "plan": {
+     "territoryKeys": [
+      "self_help_and_personal_growth",
+      "social_responsibility_and_conscious_cons",
+      "female_led_stories"
+     ],
+     "candidateEntityTypes": [
+      "movie",
+      "brand",
+      "book"
+     ],
+     "preferredCommonType": "movie",
+     "supportedTerritoriesByType": {
+      "brand": [
+       "social_responsibility_and_conscious_cons"
+      ],
+      "book": [
+       "self_help_and_personal_growth"
+      ],
+      "movie": [
+       "female_led_stories"
+      ]
+     },
+     "possibleTerritoriesByType": {},
+     "feasibility": "UNSUPPORTED",
+     "required": 3,
+     "missingRequirements": [
+      "self_help_and_personal_growth: cannot be represented as movie with the concepts observed (represented as book); it will not join the movie comparison set",
+      "social_responsibility_and_conscious_cons: cannot be represented as movie with the concepts observed (represented as brand); it will not join the movie comparison set"
+     ],
+     "reasonCodes": [
+      "NO_COMMON_TYPE",
+      "TYPE_MISMATCH:self_help_and_personal_growth",
+      "TYPE_MISMATCH:social_responsibility_and_conscious_cons"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   }
+  ],
+  "completion": [],
+  "probeRecommendations": [
+   {
+    "iteration": 5,
+    "territoryKey": "folk_music",
+    "conceptKey": "urn:tag:genre:music:folk",
+    "namespace": "genre:music",
+    "type": "movie",
+    "priority": "COMPARISON_TYPE",
+    "reason": "the comparison's shared entity type"
+   },
+   {
+    "iteration": 6,
+    "territoryKey": "folk_music",
+    "conceptKey": "urn:tag:genre:music:folk",
+    "namespace": "genre:music",
+    "type": "brand",
+    "priority": "COMPARISON_TYPE",
+    "reason": "the comparison's shared entity type"
+   },
+   {
+    "iteration": 8,
+    "territoryKey": "folk_music",
+    "conceptKey": "urn:tag:music:qloo:folk",
+    "namespace": "music:qloo",
+    "type": "movie",
+    "priority": "COMPARISON_TYPE",
+    "reason": "the comparison's shared entity type"
+   }
+  ],
+  "anchorDecisions": [
+   {
+    "iteration": 5,
+    "territoryKey": "self_help_and_personal_growth",
+    "sourceTagId": "urn:tag:genre:media:self_help",
+    "anchoredTagId": "urn:tag:genre:media:self_help",
+    "relation": "SAME_CONCEPT",
+    "basis": "SOURCE_TAG_MEMBERS",
+    "decidedBy": "runtime",
+    "reasonCode": null,
+    "evidence": "grounding tag returned 10 book member(s) (brand-independent pool)",
+    "correlationIds": [
+     "mcp-3ae22143-8065-4132-a1d6-5878b251e52e"
+    ]
+   },
+   {
+    "iteration": 5,
+    "territoryKey": "social_responsibility_and_conscious_cons",
+    "sourceTagId": "urn:tag:cultural_relevance:qloo:social_responsibility",
+    "anchoredTagId": "urn:tag:cultural_relevance:qloo:social_responsibility",
+    "relation": "SAME_CONCEPT",
+    "basis": "SOURCE_TAG_MEMBERS",
+    "decidedBy": "runtime",
+    "reasonCode": null,
+    "evidence": "grounding tag returned 10 brand member(s) (brand-independent pool)",
+    "correlationIds": [
+     "mcp-078a926f-f6b6-45a8-ad37-fa687fe0c3c2"
+    ]
+   },
+   {
+    "iteration": 5,
+    "territoryKey": "female_led_stories",
+    "sourceTagId": "urn:tag:keyword:media:female_protagonist",
+    "anchoredTagId": "urn:tag:keyword:media:female_protagonist",
+    "relation": "SAME_CONCEPT",
+    "basis": "SOURCE_TAG_MEMBERS",
+    "decidedBy": "runtime",
+    "reasonCode": null,
+    "evidence": "grounding tag returned 10 movie member(s) (brand-independent pool)",
+    "correlationIds": [
+     "mcp-0daaaa12-94c5-4f4e-b858-3394eed7b33c"
+    ]
+   }
+  ],
+  "stopReason": {
+   "code": "AGENT_FINISHED",
+   "detail": "agent finished"
+  },
+  "semanticAssessments": []
+ },
+ "metrics": {
+  "agent_iterations": 11,
+  "qloo_calls": 32,
+  "tool_calls": 32,
+  "tool_success_rate": 1,
+  "invalid_actions": 1,
+  "representation_attempts": 3,
+  "territories_proposed": 4,
+  "territories_resolved": 3,
+  "territories_rejected": 1,
+  "full_analysis_count": 0,
+  "partial_analysis_count": 3,
+  "descriptive_analysis_count": 0,
+  "unsupported_count": 1,
+  "methodology_calls": 0,
+  "latency_ms": 259523,
+  "model_input_tokens": 86969,
+  "model_output_tokens": 14913,
+  "retry_count": 0,
+  "budget_exhausted": false,
+  "model_turns": 11,
+  "model_attempts": 11,
+  "first_attempt_valid_turns": 10,
+  "valid_after_repair_turns": 11,
+  "repairs": 0,
+  "unknown_tool_attempts": 0,
+  "invalid_argument_attempts": 0,
+  "unsupported_state_actions": 1,
+  "synthesis_attempts": 1,
+  "calls_avoided": 0,
+  "avg_context_chars": 13601,
+  "max_context_chars": 30068,
+  "avg_context_tokens_estimate": 3401,
+  "model_latency_ms": 50313,
+  "qloo_latency_ms": 183723,
+  "model_cost_usd": 0.0147,
+  "model_id": "claude-haiku-5-5",
+  "model_effort": "high",
+  "synthesis_latency_ms": 14377,
+  "analysis_latency_ms": 79740,
+  "qloo_spacing_ms": 151050,
+  "synthesis_first_attempt_valid": true,
+  "synthesis_valid_after_repair": true,
+  "synthesis_fallback": false,
+  "reference_deferrals": 0,
+  "empty_type_probes": 6,
+  "max_empty_type_probes_per_concept": 3,
+  "probe_limit_refusals": 0,
+  "type_alignment_deferrals": 0,
+  "reference_namespace_refusals": 0,
+  "successful_type_probes": 4,
+  "namespace_type_refusals": 0,
+  "alternate_anchor_refusals": 0,
+  "source_evidence_anchors": 3,
+  "frontier_completion_refusals": 0
+ },
+ "skillsUsed": [
+  {
+   "id": "interpret_request",
+   "version": 1
+  },
+  {
+   "id": "resolve_brand",
+   "version": 1
+  },
+  {
+   "id": "explore_candidate_territories",
+   "version": 4
+  },
+  {
+   "id": "analyze_territories",
+   "version": 2
+  },
+  {
+   "id": "resolve_territory",
+   "version": 5
+  },
+  {
+   "id": "build_territory_representation",
+   "version": 4
+  }
+ ],
+ "comparisonSetConstruction": {
+  "intent": "explore_frontier",
+  "proposed": [
+   {
+    "key": "folk_music",
+    "label": "Folk music",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "evidence": "Qloo tag(s) urn:tag:genre:music:folk"
+   },
+   {
+    "key": "self_help_and_personal_growth",
+    "label": "Self-help and personal growth",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "evidence": "Qloo tag(s) urn:tag:genre:media:self_help"
+   },
+   {
+    "key": "social_responsibility_and_conscious_cons",
+    "label": "Social responsibility and conscious consumption",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "evidence": "Qloo tag(s) urn:tag:cultural_relevance:qloo:social_responsibility"
+   },
+   {
+    "key": "female_led_stories",
+    "label": "Female-led stories",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "evidence": "Qloo tag(s) urn:tag:keyword:media:female_protagonist"
+   }
+  ],
+  "rejected": [
+   {
+    "key": "folk_music",
+    "label": "Folk music",
+    "stage": "qloo_support",
+    "code": "QLOO_EMPTY",
+    "reason": "Six probes across its Qloo concepts (music, music characteristic, genre) returned no members for any movie or other tested type; no untested concept remains, so it is unsupported."
+   }
+  ],
+  "final": [
+   {
+    "key": "self_help_and_personal_growth",
+    "label": "Self-help and personal growth",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "route": "PARTIAL_CULTURAL_ANALYSIS"
+   },
+   {
+    "key": "social_responsibility_and_conscious_cons",
+    "label": "Social responsibility and conscious consumption",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "route": "PARTIAL_CULTURAL_ANALYSIS"
+   },
+   {
+    "key": "female_led_stories",
+    "label": "Female-led stories",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "route": "PARTIAL_CULTURAL_ANALYSIS"
+   }
+  ],
+  "dedupDecisions": [],
+  "semanticAssessments": [],
+  "candidatePool": [
+   {
+    "canonicalConceptKey": "female_protagonist",
+    "tagId": "urn:tag:keyword:media:female_protagonist",
+    "label": "female protagonist",
+    "support": 4
+   },
+   {
+    "canonicalConceptKey": "folk",
+    "tagId": "urn:tag:genre:music:folk",
+    "label": "folk",
+    "support": 3
+   },
+   {
+    "canonicalConceptKey": "friendship",
+    "tagId": "urn:tag:keyword:media:friendship",
+    "label": "friendship",
+    "support": 3
+   },
+   {
+    "canonicalConceptKey": "new_york_city",
+    "tagId": "urn:tag:keyword:media:new_york_city",
+    "label": "new york city",
+    "support": 3
+   },
+   {
+    "canonicalConceptKey": "21st_century",
+    "tagId": "urn:tag:keyword:media:21st_century",
+    "label": "21st century",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "self_help",
+    "tagId": "urn:tag:genre:media:self_help",
+    "label": "Self Help",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "social_responsibility",
+    "tagId": "urn:tag:cultural_relevance:qloo:social_responsibility",
+    "label": "Social Responsibility",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "socially_conscious_consumer",
+    "tagId": "urn:tag:customer_identity:qloo:socially_conscious_consumers",
+    "label": "socially conscious consumers",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "soft_texture",
+    "tagId": "urn:tag:aesthetic_property:qloo:soft_textures",
+    "label": "Soft Textures",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "accessible_fashion",
+    "tagId": "urn:tag:cultural_relevance:qloo:accessible_fashion",
+    "label": "Accessible Fashion",
+    "support": 1
+   },
+   {
+    "canonicalConceptKey": "alternative_rock",
+    "tagId": "urn:tag:genre:music:alternative_rock",
+    "label": "Alternative Rock",
+    "support": 1
+   },
+   {
+    "canonicalConceptKey": "asian_american",
+    "tagId": "urn:tag:keyword:media:asian_american",
+    "label": "asian american",
+    "support": 1
+   }
+  ],
+  "evidenceBase": [
+   "011DFDA5-F5A7-461A-9D96-E28E4964E7FB",
+   "C0048DBC-BDED-46D6-9331-49B3A47275A3",
+   "B8F0B7D9-0FF8-4E38-9DEF-C88D976272BF",
+   "AB8D769A-CCEB-4C2D-A3D8-21641E0EC664",
+   "FF8BB83C-AC0D-46AF-9410-9563636DF431",
+   "701F94F7-0892-4C17-8BFC-6B7CF3BBF568"
+  ],
+  "diversity": {
+   "assessment": "diverse",
+   "similarPairs": [],
+   "detail": "no pair of candidates overlaps culturally in Qloo evidence"
+  },
+  "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+ },
+ "layers": {
+  "qlooEvidence": {
+   "brand": {
+    "id": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+    "label": "Allbirds",
+    "correlationId": "mcp-84ebd721-72c0-497c-a960-52cc76e66a0f"
+   },
+   "concepts": [
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "id": "urn:tag:genre:media:self_help",
+     "label": "Self Help",
+     "correlationIds": [
+      "mcp-3b0b927e-6e76-4c3c-8a1b-ac6d12909fa6",
+      "mcp-e20c6931-848d-46e4-8bbc-ea390fbeabde",
+      "mcp-a8a48560-a8a1-473d-92e0-2cd1c34c0958",
+      "mcp-eb12fe2d-bcd5-4534-99d0-43a6ddf2bbd7"
+     ]
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "id": "urn:tag:cultural_relevance:qloo:social_responsibility",
+     "label": "Social Responsibility",
+     "correlationIds": [
+      "mcp-3b0b927e-6e76-4c3c-8a1b-ac6d12909fa6",
+      "mcp-79c86f86-a8df-40be-b95b-9b9f0b481296"
+     ]
+    },
+    {
+     "territoryKey": "female_led_stories",
+     "id": "urn:tag:keyword:media:female_protagonist",
+     "label": "female protagonist",
+     "correlationIds": [
+      "mcp-4c7a8ac2-3812-414a-ac6c-71aa72ee2534",
+      "mcp-79c86f86-a8df-40be-b95b-9b9f0b481296",
+      "mcp-e20c6931-848d-46e4-8bbc-ea390fbeabde",
+      "mcp-7c19f854-cb0e-405f-a62c-d8293a11dff9",
+      "mcp-88bdb338-7a19-49c9-b2ad-6ed24dee97ef",
+      "mcp-eacebdc3-1191-4cf0-a208-ccf616a97b5d",
+      "mcp-d3bd362b-c176-456c-a224-f56ede40b318",
+      "mcp-883008c1-da6e-4359-bf62-6c7bcdae2fe5",
+      "mcp-fa3279fd-167b-4fb4-87a4-89d69828a032"
+     ]
+    }
+   ],
+   "exemplars": [
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "id": "FE95A446-1913-437F-91BB-9DC2DEC6A805",
+     "label": "Tao Te Ching",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-3ae22143-8065-4132-a1d6-5878b251e52e"
+    },
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "id": "C0679E48-F35B-460B-8D9D-E98670E10520",
+     "label": "You Can Heal Your Life",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-3ae22143-8065-4132-a1d6-5878b251e52e"
+    },
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "id": "A59748F8-17F2-4816-810F-10DE9432D74D",
+     "label": "Ikigai: The Japanese Secret to a Long and Happy Life / The Little Book of Lykke / Lagom: The Swedish Art of Balanced Living",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-3ae22143-8065-4132-a1d6-5878b251e52e"
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "id": "D651F503-5244-416D-A55B-7D5DAFC7B680",
+     "label": "Lemlem",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-078a926f-f6b6-45a8-ad37-fa687fe0c3c2"
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "id": "8C4FEA65-9DFD-4DBF-8DAE-6DC63E377AA5",
+     "label": "Feed the Children",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-078a926f-f6b6-45a8-ad37-fa687fe0c3c2"
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "id": "00287006-ECBC-4C55-8D7D-9ECA6535152E",
+     "label": "GoFundMe",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-078a926f-f6b6-45a8-ad37-fa687fe0c3c2"
+    },
+    {
+     "territoryKey": "female_led_stories",
+     "id": "DBB1D776-295F-45A7-86E2-E70A91295F9A",
+     "label": "Mermaids",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-0daaaa12-94c5-4f4e-b858-3394eed7b33c"
+    },
+    {
+     "territoryKey": "female_led_stories",
+     "id": "9809041B-D47E-4407-87CF-4EFE884C2B28",
+     "label": "D.E.B.S.",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-0daaaa12-94c5-4f4e-b858-3394eed7b33c"
+    },
+    {
+     "territoryKey": "female_led_stories",
+     "id": "5440F185-12BD-45C0-90A9-A55E094876ED",
+     "label": "Crossroads",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-0daaaa12-94c5-4f4e-b858-3394eed7b33c"
+    }
+   ],
+   "qlooCalls": 32
+  },
+  "systemAnalysis": {
+   "routes": [
+    {
+     "territoryKey": "female_led_stories",
+     "route": "PARTIAL_CULTURAL_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    },
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "route": "PARTIAL_CULTURAL_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "route": "PARTIAL_CULTURAL_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    },
+    {
+     "territoryKey": "folk_music",
+     "route": "INSUFFICIENT_EVIDENCE",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    }
+   ],
+   "methodologyRunIds": [],
+   "finalSufficiency": "SUFFICIENT",
+   "representationDecisions": {
+    "valid": 9,
+    "weak": 0,
+    "rejected": 0
+   },
+   "semanticComparison": []
+  },
+  "agentInterpretation": {
+   "summary": "For where Allbirds could expand culturally, none of the territories has a relative position, a robustness estimate, or a provisional class, so none can be placed against a comparison set. Three candidates have only partial cultural analysis: female-led stories, self-help and personal growth, and social responsibility and conscious consumption. Each shows no consistently shared signals and only brand-conditioned association lists, while folk music has no supporting Qloo evidence. The results describe cultural association only and cannot establish how close any candidate sits to the brand's existing cultural profile.\nFemale-led stories: This territory is represented by a tag-derived panel of movie exemplars linked by Qloo to a female protagonist tag, not by a comparison set. A brand-conditioned query for this concept returned supported entities, led by titles such as Lady Bird and The Farewell; this is association only and the list is truncated.\nSelf-help and personal growth: This territory is represented by a tag-derived panel of book exemplars linked by Qloo to the self-help genre tag. After filtering operational tags, no cultural signals are shared at a consistent level across the exemplars, so the panel shows no common signal pattern.\nSocial responsibility and conscious consumption: After filtering operational tags, no cultural signals are consistently shared across the brand exemplars, so the panel does not establish a common signal pattern. The brand-conditioned list includes entities such as Attn and Lemlem, indicating association within a truncated list only.\nFolk music: No Qloo concept anchors folk music, so no cultural evidence or position can be described for it on these results.",
+   "source": "model",
+   "claimValidationPassed": true,
+   "semanticJudgments": [
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "label": "Tao Te Ching",
+     "relevance": "STRONG",
+     "reason": "Canonical self-development book; fits the Self Help concept directly."
+    },
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "label": "You Can Heal Your Life",
+     "relevance": "STRONG",
+     "reason": "Core self-help genre title focused on personal change."
+    },
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "label": "Ikigai: The Japanese Secret to a Long and Happy Life / The Little Book of Lykke / Lagom: The Swedish Art of Balanced Living",
+     "relevance": "ADEQUATE",
+     "reason": "Well-being self-help compilation; a looser fit than the other two."
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "label": "Lemlem",
+     "relevance": "STRONG",
+     "reason": "Mission-driven, artisan-sourcing fashion brand; closest in category to Allbirds."
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "label": "Feed the Children",
+     "relevance": "ADEQUATE",
+     "reason": "Clearly socially responsible, but a charity rather than a consumer brand."
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "label": "GoFundMe",
+     "relevance": "ADEQUATE",
+     "reason": "Prosocial brand with high popularity; a platform rather than a product brand."
+    },
+    {
+     "territoryKey": "female_led_stories",
+     "label": "Mermaids",
+     "relevance": "STRONG",
+     "reason": "Female-led narrative with women as principal characters."
+    },
+    {
+     "territoryKey": "female_led_stories",
+     "label": "D.E.B.S.",
+     "relevance": "STRONG",
+     "reason": "Female ensemble leads throughout the film."
+    },
+    {
+     "territoryKey": "female_led_stories",
+     "label": "Crossroads",
+     "relevance": "ADEQUATE",
+     "reason": "Female leads drive the narrative."
+    }
+   ],
+   "followUpOptions": [
+    "Build a comparison set of brands within the female-led stories territory to test whether a relative position can be established.",
+    "Probe folk music through entity types beyond the tested music, music characteristic and genre concepts, such as artists or albums.",
+    "Add further self-help book exemplars and brand exemplars for social responsibility to see whether consistently shared signals emerge."
+   ],
+   "findings": [
+    {
+     "territoryKey": "female_led_stories",
+     "claimType": "representation",
+     "supportingFields": [
+      "representation",
+      "capabilities.representation"
+     ],
+     "interpretation": "This territory is represented by a tag-derived panel of movie exemplars linked by Qloo to a female protagonist tag, not by a comparison set.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL",
+      "NO_RELATIVE_POSITION"
+     ]
+    },
+    {
+     "territoryKey": "female_led_stories",
+     "claimType": "conditioned_evidence",
+     "supportingFields": [
+      "conditionedEvidence.support",
+      "conditionedEvidence.top"
+     ],
+     "interpretation": "A brand-conditioned query for this concept returned supported entities, led by titles such as Lady Bird and The Farewell; this is association only and the list is truncated.",
+     "limitationCodes": [
+      "CONDITIONED_LIST_TRUNCATED"
+     ]
+    },
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "claimType": "representation",
+     "supportingFields": [
+      "representation",
+      "capabilities.representation"
+     ],
+     "interpretation": "This territory is represented by a tag-derived panel of book exemplars linked by Qloo to the self-help genre tag.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL",
+      "NO_RELATIVE_POSITION"
+     ]
+    },
+    {
+     "territoryKey": "self_help_and_personal_growth",
+     "claimType": "shared_signals",
+     "supportingFields": [
+      "coherence.filteredSharedMedian",
+      "coherence.band"
+     ],
+     "interpretation": "After filtering operational tags, no cultural signals are shared at a consistent level across the exemplars, so the panel shows no common signal pattern.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL"
+     ]
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "claimType": "shared_signals",
+     "supportingFields": [
+      "coherence.band",
+      "coherence.consistentlyShared"
+     ],
+     "interpretation": "After filtering operational tags, no cultural signals are consistently shared across the brand exemplars, so the panel does not establish a common signal pattern.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL",
+      "NO_RELATIVE_POSITION"
+     ]
+    },
+    {
+     "territoryKey": "social_responsibility_and_conscious_cons",
+     "claimType": "conditioned_evidence",
+     "supportingFields": [
+      "conditionedEvidence.top",
+      "conditionedEvidence.support"
+     ],
+     "interpretation": "The brand-conditioned list includes entities such as Attn and Lemlem, indicating association within a truncated list only.",
+     "limitationCodes": [
+      "CONDITIONED_LIST_TRUNCATED"
+     ]
+    },
+    {
+     "territoryKey": "folk_music",
+     "claimType": "route_limitation",
+     "supportingFields": [
+      "route",
+      "capabilities.representation"
+     ],
+     "interpretation": "No Qloo concept anchors folk music, so no cultural evidence or position can be described for it on these results.",
+     "limitationCodes": [
+      "QLOO_EMPTY"
+     ]
+    }
+   ]
+  }
+ },
+ "failureCategory": null
+}

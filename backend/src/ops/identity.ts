@@ -7,6 +7,11 @@ import {
   MIN_VISITOR_LENGTH,
   operatorToken,
   OPERATOR_HEADER,
+  PAID_OPERATOR_HEADER,
+  paidOperatorExpiry,
+  paidOperatorRequired,
+  paidOperatorToken,
+  publicRuntime,
   VISITOR_HEADER,
 } from "../config/production.js";
 
@@ -39,6 +44,21 @@ export function verifyOperator(headers: Record<string, unknown>, env: NodeJS.Pro
   const expected = operatorToken(env);
   if (!expected) return false;
   return secretEquals(expected, headerValue(headers, OPERATOR_HEADER));
+}
+
+export type PaidOperatorDecision = { ok: true } | { ok: false; code: "operator_required" | "operator_expired" };
+
+/**
+ * Fails closed. On a public runtime the authorization needs a configured token and an expiry still in the
+ * future; a missing expiry is refused, so a forgotten token cannot authorize paid work indefinitely.
+ */
+export function verifyPaidOperator(headers: Record<string, unknown>, env: NodeJS.ProcessEnv = process.env, now = Date.now()): PaidOperatorDecision {
+  if (!paidOperatorRequired(env)) return { ok: true };
+  const expected = paidOperatorToken(env);
+  if (!expected) return { ok: false, code: "operator_required" };
+  const expiry = paidOperatorExpiry(env);
+  if (expiry !== null ? expiry <= now : publicRuntime(env)) return { ok: false, code: "operator_expired" };
+  return secretEquals(expected, headerValue(headers, PAID_OPERATOR_HEADER)) ? { ok: true } : { ok: false, code: "operator_required" };
 }
 
 export function visitorIdLooksValid(value: string): boolean {

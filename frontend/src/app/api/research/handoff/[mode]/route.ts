@@ -1,6 +1,6 @@
 import { baselineHandoff } from "@/lib/backend";
 import { parseJobEnvelope } from "@/lib/job-envelope";
-import { visitorIdOf, withVisitor } from "@/lib/job-route";
+import { operatorOf, visitorIdOf, withVisitor } from "@/lib/job-route";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,7 @@ export async function POST(request: Request, context: { params: Promise<{ mode: 
   if (!token) return Response.json({ error: "baseline_not_found" }, { status: 404 });
   let body: unknown;
   try { body = await request.json(); } catch { return Response.json({ error: "invalid_handoff_request" }, { status: 400 }); }
-  const upstream = await baselineHandoff(mode, body, token, visitorIdOf(request));
+  const upstream = await baselineHandoff(mode, body, token, visitorIdOf(request), operatorOf(request));
   if (!upstream) return withVisitor(request, Response.json({ error: "unavailable" }, { status: 503 }));
   if (upstream.status >= 400 || mode === "preview") return withVisitor(request, Response.json(upstream.body, { status: upstream.status }));
   const parsed = parseJobEnvelope(upstream.body);
