@@ -111,6 +111,19 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 5. **Railway stays one replica, admissions off, until a live run is separately approved.** Connecting GitHub must not enable PR environments or unreviewed auto-deploys.
 6. **Operator `/ops/status` may expose Git SHA and branch.** It must never expose secrets, commit messages, or provider keys.
 
+## Deployment regression prevention (permanent, October 27, 2026)
+
+Canonical release contract: `docs/operations/DEPLOYMENT_RELEASE_CONTRACT.md`. Run `pnpm check:deployment-config` before any release branch merge. The offline check must pass, but **cannot** attest to live Vercel/Railway dashboard settings.
+
+1. **Never reintroduce the Vercel pre-production-only Ignored Build Step.** It previously canceled every `main` deployment. Remote Vercel `commandForIgnoringBuildStep` must be cleared, and `main` must not be disabled in `frontend/vercel.json`.
+2. **Keep the Vercel monorepo build configured for `frontend` with files outside root enabled.** A `READY` preview is not proof of a `READY` production deployment. Verify both the target and source SHA.
+3. **Keep Vercel Authentication set to All Deployments until the separately approved public launch.** Do not disable protection simply to make a probe return HTTP 200.
+4. **Vercel server-only production env needs `BACKEND_URL` and `CE_INTERNAL_API_SECRET`.** Verify metadata and actual protected frontend → Railway integration without printing secrets. Missing permissions or missing metadata mean NOT_VERIFIED, never PASS.
+5. **Railway service source must follow `RaulMermans/cultural-elasticity` `main`, with no stale commit pin.** Confirm the actual deployed SHA, one replica, Dockerfile path, healthcheck, unchanged database and stopped paid admissions before changing release status.
+6. **Railway now automatically builds from `main`.** Any merge may change the running backend. Require successful relevant local tests and owner-reviewed release impact before a merge; GitHub Actions billing currently prevents CI from acting as an effective gate. If a release fails, restore the last verified deployment; never reinterpret a previous `SUCCESS` as proof that current code is healthy.
+7. **Do not publish or enable paid research during routine config repair.** Public access, provider limits, spending, migrations, secrets and new services need explicit review and authorization. Keep transient agent jobs and process-local spend limitations visible.
+8. **Remote release preflight is mandatory, not optional because an offline check passed.** Inspect the real provider metadata and run the fail-closed sanitized snapshot check in `scripts/check-deployment-contract.mjs --snapshot <path>`. Without accessible production env metadata, matching SHA and hosted smoke, report RELEASE_NOT_VERIFIED.
+
 ## Brand baseline durability (Sprint 9B)
 
 1. **The brand baseline is deterministic and model-free.** It uses the existing `QlooClient`; the existing agent remains separately admission-gated and in-memory. A baseline candidate is an observed association, never a commercial recommendation or a FULL relative analysis.
@@ -141,7 +154,7 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 ## Verification before calling work done
 
 ```sh
-pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:secrets
+pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:secrets && pnpm check:deployment-config
 pnpm eval:methodology   # offline, synthetic; never report as Qloo validation
 pnpm eval:agent         # offline, synthetic world; never report as Qloo or live-model validation
 pnpm eval:agent:budget -- --approved-usd <N>
