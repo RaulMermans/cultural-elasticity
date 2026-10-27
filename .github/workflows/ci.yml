@@ -43,6 +43,8 @@ jobs:
       - run: pnpm eval:agent
       - run: pnpm eval:query
       - run: pnpm build
+      - name: Deployment configuration regression guard (offline; no cloud credentials)
+        run: pnpm check:deployment-config
       - name: Secret leakage check (repo + browser bundle)
         run: pnpm check:secrets
 
