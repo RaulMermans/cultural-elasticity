@@ -10,7 +10,7 @@ import { JobManager } from "../src/agent/query/jobs.js";
 import { ScriptedQueryInterpreter } from "../src/agent/query/interpreter.js";
 import { RunStore } from "../src/agent/run-store.js";
 import { AgentRuntime } from "../src/agent/runtime.js";
-import { validatePublicRuntime } from "../src/config/production.js";
+import { investigationsAccepted, validatePublicRuntime } from "../src/config/production.js";
 import { conservativeReserveUsd } from "../src/ops/pricing.js";
 import { resetLifecycle } from "../src/ops/lifecycle.js";
 import { resetMetrics } from "../src/ops/metrics.js";
@@ -46,6 +46,8 @@ function publicEnv(): void {
   process.env.CE_INTERNAL_API_SECRET = SECRET;
   process.env.CE_SPEND_BUDGET_USD = "20";
   process.env.CE_INVESTIGATION_RESERVE_USD = "1";
+  process.env.CE_ACCEPT_INVESTIGATIONS = "1";
+  resetLifecycle();
 }
 
 function auth(visitor = "visitor-aaaaaaaaaaaaaa01"): Record<string, string> {
@@ -110,6 +112,27 @@ snapshotEnv();
 afterEach(restoreEnv);
 
 describe("production configuration", () => {
+  it("requires explicit opt-in to permit paid investigations in every runtime", () => {
+    for (const value of [undefined, "", "0", "true", "false", "on", "1 "]) {
+      expect(investigationsAccepted(value === undefined ? {} : { CE_ACCEPT_INVESTIGATIONS: value })).toBe(false);
+    }
+    expect(investigationsAccepted({ CE_ACCEPT_INVESTIGATIONS: "1" })).toBe(true);
+    expect(investigationsAccepted({ CE_PUBLIC_DEPLOYMENT: "1" })).toBe(false);
+    expect(investigationsAccepted({ CE_PUBLIC_DEPLOYMENT: "1", CE_ACCEPT_INVESTIGATIONS: "1" })).toBe(true);
+  });
+
+  it("rejects an otherwise authorized job when the admission flag is omitted", async () => {
+    publicEnv();
+    delete process.env.CE_ACCEPT_INVESTIGATIONS;
+    resetLifecycle();
+    resetSpend();
+    const app = server();
+    const reply = await app.inject({ method: "POST", url: "/api/agent/jobs", headers: auth(), payload: { query: "Where could Northwind Atelier expand?" } });
+    expect(reply.statusCode).toBe(503);
+    expect(reply.json().error).toBe("admissions_paused");
+    await app.close();
+  });
+
   it("fails closed when public budget or internal auth is missing", () => {
     const issues = validatePublicRuntime({
       NODE_ENV: "production",
