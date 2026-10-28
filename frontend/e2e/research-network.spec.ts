@@ -198,7 +198,7 @@ test("SYNTHETIC a compared territory explains its result in plain words and show
   await expect(dossier.getByRole("heading", { name: "How it ranked" })).toBeVisible();
   await expect(dossier.locator(".rr-rank li[data-current]")).toContainText("Mountain Town");
   await expect(dossier).toContainText("not a forecast of sales");
-  await expect(dossier.getByRole("button", { name: "Investigate Mountain Town as a direction" })).toBeVisible();
+  await expect(dossier.getByRole("button", { name: "Investigate Mountain Town further" })).toBeVisible();
 });
 
 test("SYNTHETIC a branch is removed only after a second confirmation, and a kept answer survives a lost job", async ({ page }) => {
@@ -223,4 +223,37 @@ test("SYNTHETIC a branch is removed only after a second confirmation, and a kept
   await expect(page.getByRole("treeitem", { name: /Gravel Riding/u })).toHaveCount(0);
   await page.reload();
   await expect(page.getByTestId("network-node-inquiry")).toHaveCount(0);
+});
+
+test("SYNTHETIC investigating a found territory grows its own branch instead of opening a new direction", async ({ page }) => {
+  const calls = await stubLive(page);
+  await page.route("**/api/agent/jobs/*", (route) => json(route, fixture.compare.view));
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("Compare Gravel Riding with Alpine Hiking and Mountain Town");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await page.getByRole("treeitem", { name: /Territory: Mountain Town/u }).click();
+  await page.getByRole("button", { name: "Investigate Mountain Town further" }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(2);
+  expect(calls.questions[1]).toEqual({ query: "How far can Larkspur Velo extend into Mountain Town?", brand: "Larkspur Velo" });
+  await expect(page.getByRole("treeitem", { name: /Direction: Mountain Town/u })).toHaveCount(0);
+});
+
+test("SYNTHETIC cards on different branches that share Qloo identifiers are tied, and the dossier says what they share", async ({ page }) => {
+  await stubLive(page);
+  // The second SYNTHETIC answer is about another territory represented by the same SYNTHETIC example entities.
+  const other = structuredClone(fixture.parent.view) as { response: { territories: { name: string; territoryKey: string }[]; investigation: { result: { territories: { key: string; label: string; resolvedConcept: unknown }[] } } } };
+  other.response.territories = other.response.territories.map((item) => ({ ...item, name: "Trail Running", territoryKey: "trail_running" }));
+  other.response.investigation.result.territories = other.response.investigation.result.territories.map((item) => ({ ...item, key: "trail_running", label: "Trail Running", resolvedConcept: null }));
+  await page.route("**/api/agent/jobs/*", (route) => json(route, route.request().url().endsWith("000000000001") ? fixture.parent.view : other));
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("How far can Larkspur Velo extend into Gravel Riding?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
+  await page.getByLabel(/Ask about/u).fill("How far can Larkspur Velo extend into Trail Running?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-tie")).toHaveCount(1);
+  await page.getByRole("treeitem", { name: /Territory: Trail Running/u }).click();
+  await expect(page.getByTestId("network-shared")).toContainText("How far can Larkspur Velo extend into Gravel Riding?");
+  await expect(page.getByTestId("network-shared")).toContainText("not a similarity score");
 });

@@ -36,7 +36,7 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 /** Space covered by floating panels, kept clear when the board fits the network. */
 export type BoardInset = { top: number; right: number; bottom: number; left: number };
 
-export function NetworkBoard({ nodes, positions, selectedId, onSelect, onMove, onTidy, moved, label, inset }: { nodes: NetworkNode[]; positions: ReadonlyMap<string, Point>; selectedId: string; onSelect: (id: string) => void; onMove: (id: string, dx: number, dy: number, origin: ReadonlyMap<string, Point>) => void; onTidy: () => void; moved: boolean; label: string; inset: BoardInset }) {
+export function NetworkBoard({ nodes, positions, links = [], selectedId, onSelect, onMove, onTidy, moved, label, inset }: { nodes: NetworkNode[]; positions: ReadonlyMap<string, Point>; links?: { a: string; b: string; shared: { label: string }[] }[]; selectedId: string; onSelect: (id: string) => void; onMove: (id: string, dx: number, dy: number, origin: ReadonlyMap<string, Point>) => void; onTidy: () => void; moved: boolean; label: string; inset: BoardInset }) {
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 1200, height: 720 });
   const [view, setView] = useState<View>({ x: 600, y: 360, k: 1 });
@@ -156,6 +156,29 @@ export function NetworkBoard({ nodes, positions, selectedId, onSelect, onMove, o
             const my = (from.y + to.y) / 2;
             return <path key={`edge:${node.id}`} className="rn-wire" data-kind={node.kind} data-tone={node.tone} pathLength={1}
               d={`M ${from.x} ${from.y} Q ${mx * 0.82} ${my * 0.82} ${to.x} ${to.y}`} />;
+          })}
+          {links.filter((link) => positions.has(link.a) && positions.has(link.b)).map((link) => {
+            const from = positions.get(link.a)!;
+            const to = positions.get(link.b)!;
+            // Bow the tie sideways, away from the brand, so it reads as a bridge across branches, not a lineage edge.
+            const mx = (from.x + to.x) / 2;
+            const my = (from.y + to.y) / 2;
+            const span = Math.hypot(to.x - from.x, to.y - from.y) || 1;
+            const nx = -(to.y - from.y) / span;
+            const ny = (to.x - from.x) / span;
+            const away = nx * mx + ny * my < 0 ? -1 : 1;
+            const bow = Math.max(140, span * 0.35);
+            const cx = mx + nx * bow * away;
+            const cy = my + ny * bow * away;
+            const active = link.a === selectedId || link.b === selectedId;
+            const bx = 0.25 * from.x + 0.5 * cx + 0.25 * to.x;
+            const by = 0.25 * from.y + 0.5 * cy + 0.25 * to.y;
+            return <g key={`tie:${link.a}:${link.b}`} className="rn-tie" data-active={active ? "true" : undefined} data-testid="network-tie">
+              <title>{`Shares ${link.shared.length} Qloo signal${link.shared.length === 1 ? "" : "s"}: ${link.shared.slice(0, 5).map((item) => item.label).join(", ")}`}</title>
+              <path d={`M ${from.x} ${from.y} Q ${cx} ${cy} ${to.x} ${to.y}`} pathLength={1} />
+              <circle cx={bx} cy={by} r={13} />
+              <text x={bx} y={by + 4} textAnchor="middle">{link.shared.length}</text>
+            </g>;
           })}
           {nodes.map((node, index) => {
             const point = positions.get(node.id)!;

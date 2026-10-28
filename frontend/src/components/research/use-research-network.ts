@@ -123,12 +123,13 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
    * A question from the composer. From an investigation or territory it is a follow-up of that run. From a direction
    * it is a new question on that direction's branch; when the text does not name the direction, the direction is
    * sent as the caller's explicit territory. Otherwise it is a new question about the brand.
-   * Asking exactly what is already answered on the same branch opens that answer instead of paying for it again.
+   * Asking exactly what is already answered opens that answer instead of paying for it again.
    */
-  const ask = useCallback((question: string, from: NetworkNode | null) => {
+  const ask = useCallback((question: string, from: NetworkNode | null, placeUnder?: string) => {
     const context = followUpContext(from);
     const direction = !context && from?.kind === "direction" ? from : null;
-    const parentId = context && from ? from.id : direction ? direction.id : "brand";
+    // placeUnder keeps a fresh brand question on the branch it was started from (e.g. a territory found there).
+    const parentId = placeUnder ?? (context && from ? from.id : direction ? direction.id : "brand");
     const same = latest.current.find((item) => normName(item.question) === normName(question) && !canRetry(item));
     if (same) {
       setNotice("You already asked this, so its answer is open. Use Try again on a failed one to run it again.");

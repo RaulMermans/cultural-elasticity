@@ -17,6 +17,7 @@ import { useResearchNetwork } from "./use-research-network";
 import { useResearchLayout } from "./use-research-layout";
 import { TerritoryReadingView } from "./TerritoryReading";
 import { territoryReading } from "@/lib/territory-reading";
+import { crossLinks, territoryItems, type CrossLink, type EvidenceItem, type LinkSource } from "@/lib/research-links";
 
 const clip = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text);
 
@@ -51,6 +52,24 @@ function Reading({ result, territoryKey, brand, pending, investigated, onMeasure
   const reading = pending ? null : territoryReading(result, territoryKey, brand);
   if (reading) return <TerritoryReadingView reading={reading} brand={brand} onMeasure={onMeasure} busy={busy} />;
   return <ElasticityBlock elasticity={pending ? null : elasticityOf(result, territoryKey)} brand={brand} pending={pending} investigated={investigated} onMeasure={onMeasure} busy={busy} />;
+}
+
+const KIND_WORD: Record<EvidenceItem["kind"], string> = { concept: "Same Qloo concept", taste: "Shared taste", example: "Same example" };
+
+/** Other branches tied to this card by the same Qloo identifiers. A tie is shared evidence, not a similarity score. */
+function SharedAcross({ links, selectedId, byId, onSelect }: { links: CrossLink[]; selectedId: string; byId: ReadonlyMap<string, NetworkNode>; onSelect: (id: string) => void }) {
+  return <section className="rr-section rn-shared" data-testid="network-shared">
+    <h3>Also connected, on another branch</h3>
+    <p className="rr-hint">These cards sit on different branches but carry the same Qloo signals, so they can be looked at side by side. This is shared evidence, not a similarity score.</p>
+    <ul className="rn-shared__list">{links.map((link) => {
+      const other = byId.get(link.a === selectedId ? link.b : link.a);
+      if (!other) return null;
+      return <li key={other.id}>
+        <button type="button" className="rn-link" onClick={() => onSelect(other.id)}>{other.label}</button>
+        <ul className="rr-chips">{link.shared.slice(0, 6).map((item) => <li key={item.id} data-kind={item.kind} title={KIND_WORD[item.kind]}>{item.label}</li>)}</ul>
+      </li>;
+    })}</ul>
+  </section>;
 }
 
 /** Removing a branch takes two deliberate steps. It only changes this browser's board; spend already made stays spent. */
@@ -172,8 +191,8 @@ function FindingDossier({ node, inquiry, brand, onInvestigate, onMeasure, busy }
     <p className="rn-status" data-tone={node.tone}>{node.status}</p>
     <Reading result={response?.investigation?.result} territoryKey={node.territoryKey} brand={brand} pending={Boolean(inquiry && isPending(inquiry))} investigated onMeasure={onMeasure} busy={busy} />
     <h3>Continue this path</h3>
-    <p className="quiet">It came up in another question. Investigating it gives it its own direction on the board.</p>
-    <button type="button" className="primary" disabled={busy} onClick={onInvestigate}>Investigate {node.label} as a direction</button>
+    <p className="quiet">It came up in another question. Investigating it runs a full investigation of {node.label} and grows this branch.</p>
+    <button type="button" className="primary" disabled={busy} onClick={onInvestigate}>Investigate {node.label} further</button>
   </>;
 }
 
@@ -239,6 +258,30 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   const layout = useResearchLayout(view.scanId);
   const positions = useMemo(() => layout.apply(layoutNetwork(nodes)), [nodes, layout]);
   const byId = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
+  const links = useMemo(() => {
+    const sources: LinkSource[] = [];
+    const top = (id: string) => { let node = byId.get(id); while (node?.parentId && node.parentId !== BRAND_NODE) node = byId.get(node.parentId); return node?.id ?? id; };
+    for (const node of nodes) {
+      if (node.kind === "direction" && node.directionKey) {
+        const direction = view.directions.find((item) => item.key === node.directionKey);
+        if (direction?.canonicalConcept) sources.push({ nodeId: node.id, branch: top(node.id), name: node.label, items: [{ id: direction.canonicalConcept, label: direction.name, kind: "concept" }] });
+        continue;
+      }
+      if (node.kind !== "inquiry" && node.kind !== "finding") continue;
+      const inquiry = network.inquiries.find((item) => item.jobId === node.jobId);
+      const result = inquiry?.response?.investigation?.result;
+      if (!result || (inquiry && isPending(inquiry))) continue;
+      const branch = branchDirection(nodes, node.id);
+      // A question stands for its branch's own territory; any other territory it found has its own card.
+      const own = branch ? inquiry!.response?.territories.find((item) => normName(item.name) === normName(branch.label)) : undefined;
+      if (node.kind === "inquiry" && !own) continue;
+      const key = node.kind === "finding" ? node.territoryKey : own?.territoryKey ?? null;
+      // Named by the territory the result is about, so the same territory found twice is never a tie.
+      const found = territoryItems(result, key);
+      if (found?.items.length) sources.push({ nodeId: node.id, branch: top(node.id), name: found.name, items: found.items });
+    }
+    return crossLinks(sources);
+  }, [nodes, byId, view, network.inquiries]);
   const selected = byId.get(selectedId) ?? byId.get(BRAND_NODE)!;
   const previousCount = useRef(network.inquiries.length);
 
@@ -292,7 +335,8 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   const branchInquiries = (nodeId: string) => nodes.filter((node) => node.parentId === nodeId && node.kind === "inquiry").map(inquiryOf).filter((item): item is Inquiry => item !== null);
   /** Any started or reused inquiry becomes the selection, so its answer is in view. */
   const open = (started: Promise<string | null>) => started.then((jobId) => { if (jobId) setSelectedId(inquiryNodeId(jobId)); return jobId; });
-  const investigateAsDirection = (name: string) => void open(network.ask(`How far can ${view.brand.name} extend into ${name}?`, null));
+  /** A fresh, full investigation of one territory. From a found territory it stays on that branch. */
+  const investigateTerritory = (name: string, placeUnder?: string) => void open(network.ask(`How far can ${view.brand.name} extend into ${name}?`, null, placeUnder));
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -306,19 +350,25 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     const direction = view.directions.find((item) => item.key === directionNode.directionKey)!;
     dossier = <DirectionDossier view={view} direction={direction} inquiries={branchInquiries(directionNode.id)} canInvestigate={canInvestigate && Boolean(scanToken)} busy={network.starting} onInvestigate={() => void network.investigateDirection(direction.id, direction.name, directionNode.id)} onSelect={setSelectedId} />;
   } else if (directionNode.kind === "direction") {
-    dossier = <NewDirectionDossier node={directionNode} inquiries={branchInquiries(directionNode.id)} brand={view.brand.name} canAsk={live} busy={network.starting} onInvestigate={() => investigateAsDirection(directionNode.label)} onSelect={setSelectedId} />;
+    dossier = <NewDirectionDossier node={directionNode} inquiries={branchInquiries(directionNode.id)} brand={view.brand.name} canAsk={live} busy={network.starting} onInvestigate={() => investigateTerritory(directionNode.label)} onSelect={setSelectedId} />;
   } else if (selected.kind === "inquiry") {
     const inquiry = inquiryOf(selected);
     const branch = branchOfSelected?.label ?? null;
     dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
   } else if (selected.kind === "finding") {
     const parentInquiry = inquiryOf(selected);
-    dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateAsDirection(selected.label)} onMeasure={measureFor(selected.label)} />;
+    dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateTerritory(selected.label, selected.id)} onMeasure={measureFor(selected.label)} />;
   } else {
     dossier = <BrandDossier view={view} onSelect={setSelectedId} />;
   }
 
   // A question, or a direction your questions opened, can be removed with everything that grew from it.
+  // Cards on other branches that carry the same Qloo identifiers as this one.
+  const related = links.filter((link) => link.a === selected.id || link.b === selected.id);
+  if (related.length) {
+    dossier = <>{dossier}<SharedAcross links={related} selectedId={selected.id} byId={byId} onSelect={setSelectedId} /></>;
+  }
+
   const removable = selected.kind === "inquiry" || (selected.kind === "direction" && !selected.directionKey);
   if (removable) {
     const branch = branchOf(nodes, selected.id);
@@ -342,10 +392,10 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
         </div>
       </header>
       <div className="rn-stage">
-        <NetworkBoard nodes={nodes} positions={positions} selectedId={selected.id} onSelect={setSelectedId}
+        <NetworkBoard nodes={nodes} positions={positions} links={links} selectedId={selected.id} onSelect={setSelectedId}
           onMove={(id, dx, dy, origin) => layout.move(branchOf(nodes, id), origin, dx, dy)} onTidy={layout.reset} moved={layout.moved} label={`Research network for ${view.brand.name}`} inset={BOARD_INSET} />
         <ul className="rn-legend" aria-label="Legend">
-          <li data-tone="brand">Brand</li><li data-tone="hypothesis">Direction</li><li data-tone="running">Agent investigating</li><li data-tone="supported">Worth pursuing</li><li data-tone="partial">Inconclusive or partial</li><li data-tone="unsupported">Not supported or not run</li>
+          <li data-tone="brand">Brand</li><li data-tone="hypothesis">Direction</li><li data-tone="running">Agent investigating</li><li data-tone="supported">Worth pursuing</li><li data-tone="partial">Inconclusive or partial</li><li data-tone="unsupported">Not supported or not run</li><li data-tone="cross">Shares Qloo signals across branches</li>
         </ul>
         <p className="rn-note">Drag to move, scroll to zoom. Lines show what was investigated from what; distance on the board is not cultural distance.</p>
         <aside className="rn-dossier" aria-live="polite" data-testid="network-dossier">{dossier}</aside>
