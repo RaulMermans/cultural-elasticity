@@ -3,7 +3,7 @@
 import { parseQueryResponse } from "@cultural-elasticity/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { parseActivity, parseJobEnvelope, publicFailure, type JobEnvelope } from "@/lib/job-envelope";
-import { canRetry, followUpContext, inquiryNodeId, isPending, normName, type Inquiry, type InquiryOrigin, type NetworkNode } from "@/lib/research-network";
+import { canRetry, followUpContext, inquiryNodeId, isPending, needsRefresh, normName, type Inquiry, type InquiryOrigin, type NetworkNode } from "@/lib/research-network";
 
 const POLL_MS = 2000;
 const storageKey = (scanId: string) => `ce.network.${scanId}`;
@@ -80,7 +80,8 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
   useEffect(() => {
     if (restored.current === scanId || !inquiries.length) return;
     restored.current = scanId;
-    for (const inquiry of inquiries) if (!inquiry.lost) void refresh(inquiry);
+    // Finished answers are already kept here; only unfinished ones are asked about again.
+    for (const inquiry of inquiries) if (needsRefresh(inquiry)) void refresh(inquiry);
   }, [scanId, inquiries, refresh]);
 
   /** Starts one job and returns its id. A retry replaces the failed inquiry in place and keeps its branch. */
@@ -163,6 +164,11 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
   }, [begin, brand, scanId, scanToken]);
 
   const forget = useCallback((jobId: string) => setInquiries((current) => current.filter((item) => item.jobId !== jobId)), []);
+  /** Removes inquiries from this browser's network. It never touches the server, and spend already made stays spent. */
+  const forgetMany = useCallback((jobIds: readonly string[]) => {
+    const gone = new Set(jobIds);
+    setInquiries((current) => current.filter((item) => !gone.has(item.jobId)));
+  }, []);
 
-  return { inquiries, notice, starting, investigateDirection, ask, answer, retry, forget, clearNotice: () => setNotice(null) };
+  return { inquiries, notice, starting, investigateDirection, ask, answer, retry, forget, forgetMany, clearNotice: () => setNotice(null) };
 }

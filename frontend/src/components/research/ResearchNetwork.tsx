@@ -58,6 +58,23 @@ function TerritoryEvidence({ response, territoryKey, name }: { response: QueryRe
   </div>;
 }
 
+/** Removing a branch takes two deliberate steps. It only changes this browser's board; spend already made stays spent. */
+function DeleteBranch({ count, running, onDelete }: { count: number; running: boolean; onDelete: () => void }) {
+  const [confirming, setConfirming] = useState(false);
+  if (running) return <p className="quiet rn-delete__note">This branch can be removed once its investigation finishes.</p>;
+  return <div className="rn-delete" data-testid="network-delete">
+    {!confirming
+      ? <button type="button" className="rn-link rn-delete__start" onClick={() => setConfirming(true)}>Remove this branch…</button>
+      : <div className="rn-delete__confirm" role="alertdialog" aria-labelledby="rn-delete-title">
+        <p id="rn-delete-title"><strong>Remove {count === 1 ? "this card" : `these ${count} cards`} from your board?</strong> The answers are deleted from this browser and can&apos;t be brought back. Credits already used are not refunded.</p>
+        <div className="rn-delete__actions">
+          <button type="button" className="rw-secondary" onClick={() => setConfirming(false)} autoFocus>Keep it</button>
+          <button type="button" className="rn-delete__yes" onClick={onDelete}>Yes, remove {count === 1 ? "it" : `all ${count}`}</button>
+        </div>
+      </div>}
+  </div>;
+}
+
 function connectionsFor(view: ResearchView, direction: DirectionView): ConnectionView[] {
   const all = [...view.core.categories, ...view.tasteTags, ...view.keywords, ...view.collections.flatMap((collection) => collection.items)];
   const refs = new Set(direction.refs.map((ref) => `${ref.correlationId}:${ref.sourceId}`));
@@ -133,7 +150,8 @@ function InquiryDossier({ inquiry, node, brand, branch, onAnswer, onAsk, onMeasu
     <p className="kicker">{inquiry.origin === "direction" ? "Agent investigation" : "Research question"}</p>
     <h2>{inquiry.question}</h2>
     <p className="rn-status" data-tone={node.tone} role="status">{running ? `The agent is working: ${inquiry.stageLabel || "investigating"}` : node.status}</p>
-    {inquiry.lost ? <p className="quiet">The research service no longer holds this investigation (it expired or restarted). Its question stays in your network; try it again to continue.</p> : null}
+    {inquiry.lost && node.status === "No longer available" ? <p className="quiet">The research service no longer holds this investigation (it expired or restarted) and it never sent an answer. Its question stays in your network; try it again to continue.</p> : null}
+    {inquiry.lost && node.status !== "No longer available" ? <p className="quiet">Its answer is kept in this browser. The research service has let the run go, so a new question from here starts fresh on the same direction.</p> : null}
     {running ? <AgentActivity entries={inquiry.activity ?? []} live /> : null}
     {response && !running ? <InquiryResult response={response} /> : null}
     {!running && response && !response.investigation && onRephrase ? <button type="button" className="rw-secondary" disabled={busy} onClick={onRephrase}>Rephrase it as a question</button> : null}
@@ -272,8 +290,10 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   const live = canAsk;
   // A connection belongs to its direction; asking with a direction selected branches from that direction.
   const directionNode = selected.kind === "connection" ? byId.get(selected.parentId ?? "") ?? selected : selected;
-  const askFrom = selected.runId ? selected : directionNode.kind === "direction" ? directionNode : null;
   const branchOfSelected = branchDirection(nodes, selected.id);
+  // A run the server let go cannot carry a follow-up; its question then starts fresh on the same direction.
+  const selectedLost = selected.jobId ? Boolean(inquiryOf(selected)?.lost) : false;
+  const askFrom = selected.runId && !selectedLost ? selected : directionNode.kind === "direction" ? directionNode : branchOfSelected;
   const branchInquiries = (nodeId: string) => nodes.filter((node) => node.parentId === nodeId && node.kind === "inquiry").map(inquiryOf).filter((item): item is Inquiry => item !== null);
   /** Any started or reused inquiry becomes the selection, so its answer is in view. */
   const open = (started: Promise<string | null>) => started.then((jobId) => { if (jobId) setSelectedId(inquiryNodeId(jobId)); return jobId; });
@@ -295,12 +315,22 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   } else if (selected.kind === "inquiry") {
     const inquiry = inquiryOf(selected);
     const branch = branchOfSelected?.label ?? null;
-    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, selected))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
+    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
   } else if (selected.kind === "finding") {
     const parentInquiry = inquiryOf(selected);
     dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateAsDirection(selected.label)} onMeasure={measureFor(selected.label)} />;
   } else {
     dossier = <BrandDossier view={view} onSelect={setSelectedId} />;
+  }
+
+  // A question, or a direction your questions opened, can be removed with everything that grew from it.
+  const removable = selected.kind === "inquiry" || (selected.kind === "direction" && !selected.directionKey);
+  if (removable) {
+    const branch = branchOf(nodes, selected.id);
+    const jobIds = [...new Set(branch.map((id) => byId.get(id)?.jobId).filter((id): id is string => Boolean(id)))];
+    const cards = branch.filter((id) => byId.get(id)?.kind !== "connection").length;
+    const running = jobIds.some((jobId) => { const item = network.inquiries.find((inquiry) => inquiry.jobId === jobId); return Boolean(item && isPending(item)); });
+    dossier = <>{dossier}<DeleteBranch key={selected.id} count={cards} running={running} onDelete={() => { setSelectedId(selected.parentId ?? BRAND_NODE); network.forgetMany(jobIds); }} /></>;
   }
 
   return (

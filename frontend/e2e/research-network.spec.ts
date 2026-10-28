@@ -198,3 +198,27 @@ test("SYNTHETIC a compared territory explains its result in plain words and show
   await expect(dossier.getByTestId("network-territory-evidence")).toBeVisible();
   await expect(dossier.getByRole("button", { name: "Investigate Mountain Town as a direction" })).toBeVisible();
 });
+
+test("SYNTHETIC a branch is removed only after a second confirmation, and a kept answer survives a lost job", async ({ page }) => {
+  await stubLive(page);
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("How far can Larkspur Velo extend into Gravel Riding?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-dossier")).toContainText("Inconclusive");
+  // The server forgets the job; the answer already kept in this browser stays.
+  await page.route("**/api/agent/jobs/*", (route) => json(route, { error: "not_found" }, 404));
+  await page.reload();
+  await page.getByRole("treeitem", { name: /Question: How far can Larkspur Velo extend into Gravel Riding/u }).click();
+  await expect(page.getByTestId("network-dossier")).not.toContainText("No longer available");
+  await page.getByRole("treeitem", { name: "Direction: Gravel Riding, New direction" }).click();
+  await page.getByRole("button", { name: "Remove this branch…" }).click();
+  await page.getByRole("button", { name: "Keep it" }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
+  await page.getByRole("button", { name: "Remove this branch…" }).click();
+  await expect(page.getByRole("alertdialog")).toContainText("Remove these 2 cards");
+  await page.getByRole("button", { name: /Yes, remove/u }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(0);
+  await expect(page.getByRole("treeitem", { name: /Gravel Riding/u })).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(0);
+});

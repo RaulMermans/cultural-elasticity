@@ -73,9 +73,11 @@ const ASSESSMENT_TONE: Record<string, { tone: AtlasTone; status: string }> = {
 
 /** The state of one inquiry, from its job and validated response only. */
 export function inquiryState(inquiry: Inquiry): { tone: AtlasTone; status: string } {
-  if (inquiry.lost) return { tone: "failed", status: "No longer available" };
-  if (PENDING.has(inquiry.status)) return { tone: "running", status: "Investigating" };
   const response = inquiry.response;
+  // A finished answer kept in this browser stays readable after the server lets the job go.
+  const kept = Boolean(response) && !PENDING.has(inquiry.status);
+  if (inquiry.lost && !kept) return { tone: "failed", status: "No longer available" };
+  if (PENDING.has(inquiry.status)) return { tone: "running", status: "Investigating" };
   if (!response) {
     if (inquiry.status === "cancelled") return { tone: "interrupted", status: "Stopped" };
     if (inquiry.status === "expired") return { tone: "failed", status: "No longer available" };
@@ -226,6 +228,11 @@ export function followUpContext(node: NetworkNode | null): { runId: string; sele
   return node.territoryKey ? { runId: node.runId, selectedTerritoryKey: node.territoryKey } : { runId: node.runId };
 }
 
+/** Whether the server still has to be asked about this inquiry: it is running, or it never returned an answer. */
+export function needsRefresh(inquiry: Inquiry): boolean {
+  return !inquiry.lost && (PENDING.has(inquiry.status) || !inquiry.response);
+}
+
 export function isPending(inquiry: Inquiry): boolean {
   return !inquiry.lost && PENDING.has(inquiry.status);
 }
@@ -234,6 +241,5 @@ const RETRYABLE = new Set(["No longer available", "Could not finish", "Stopped",
 
 /** A failed, stopped or lost investigation may be started again by the user; a result already kept is never rerun. */
 export function canRetry(inquiry: Inquiry): boolean {
-  if (inquiry.lost && inquiry.response?.investigation?.result) return false;
   return RETRYABLE.has(inquiryState(inquiry).status);
 }

@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { QueryResponse } from "@cultural-elasticity/shared";
-import { BRAND_NODE, branchDirection, buildNetwork, canRetry, followUpContext, inquiryState, layoutNetwork, type Inquiry } from "./research-network.ts";
+import { BRAND_NODE, branchDirection, buildNetwork, canRetry, followUpContext, needsRefresh, inquiryState, layoutNetwork, type Inquiry } from "./research-network.ts";
 import type { DirectionView } from "./research-view.ts";
 
 const direction = (key: string) => ({ key, id: `t-${key}`, name: `SYNTHETIC ${key}` }) as DirectionView;
@@ -63,4 +63,14 @@ test("only failed, stopped or lost investigations without a kept result can be r
   assert.equal(canRetry(inquiry("j3", BRAND_NODE, { status: "cancelled" })), true);
   assert.equal(canRetry(inquiry("j4", BRAND_NODE, { lost: true })), true);
   assert.equal(canRetry(inquiry("j5", BRAND_NODE, { status: "succeeded", response: response({ state: "NEEDS_CLARIFICATION", investigation: null } as never) })), false);
+});
+
+test("a finished answer kept in the browser stays readable when the server has let the job go", () => {
+  const refused = response({ state: "UNSUPPORTED_OPERATION", investigation: null });
+  const kept = inquiry("j6", BRAND_NODE, { status: "completed", response: refused, lost: true });
+  assert.equal(inquiryState(kept).status, "Not run");
+  assert.equal(canRetry(kept), false);
+  assert.equal(needsRefresh(kept), false);
+  assert.equal(needsRefresh(inquiry("j7", BRAND_NODE, { status: "completed", response: refused })), false);
+  assert.equal(needsRefresh(inquiry("j8", BRAND_NODE)), true);
 });
