@@ -10,6 +10,7 @@ import { deploymentRevision } from "../ops/revision.js";
 import { spendLedger } from "../ops/spend.js";
 import { readiness } from "./health.js";
 import { processDispatchCounter } from "../qloo/dispatch-limit.js";
+import { runLedger } from "../ops/run-ledger.js";
 
 function operatorDenied(request: { headers: unknown }, reply: { code: (n: number) => { send: (b: unknown) => unknown } }): boolean {
   if (!operatorToken() || !verifyOperator(request.headers as Record<string, unknown>)) {
@@ -34,6 +35,7 @@ export async function opsRoutes(app: FastifyInstance): Promise<void> {
       providerConnectivity: providerConnectivity(),
       spend: spendLedger().snapshot(),
       qlooDispatch: processDispatchCounter()?.snapshot() ?? null,
+      runLedger: (await runLedger()?.snapshot()) ?? null,
       metrics: opsMetrics().snapshot(),
       jobs: jobs ?? { running: 0, queued: 0, held: 0 },
     };
