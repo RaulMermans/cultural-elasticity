@@ -1,0 +1,13 @@
+{
+  "project": "desktop-1440x900",
+  "test": "A. home: real service state, recorded research reachable, no enabled paid action",
+  "status": "passed",
+  "failed": [],
+  "errors": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "paidPosts": [],
+  "providerHosts": [],
+  "leaked": 0,
+  "requests": 13
+}

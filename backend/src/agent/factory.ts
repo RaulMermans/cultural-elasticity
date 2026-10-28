@@ -10,6 +10,7 @@
  * used ONLY when explicitly requested (it is a reference policy, never a silent substitute for the agent).
  */
 import { harnessChildEnv, LIVE_QLOO_HOST_VERIFIED, QlooEnvironmentError, requireHackathonBaseUrl, verifyHarnessHost } from "../qloo/environment.js";
+import { withProcessDispatchLimit } from "../qloo/dispatch-limit.js";
 import { HarnessMcpTransport } from "../qloo/mcp-transport.js";
 import { defaultHarnessBinPath, HarnessExecTransport } from "../qloo/transport.js";
 import { AgentNotConfiguredError } from "./errors.js";
@@ -67,7 +68,7 @@ export function createLiveToolProvider(env: NodeJS.ProcessEnv = process.env): Ql
   const gate = verifyHarnessHost(defaultHarnessBinPath(), childEnv, origin);
   if (gate.status !== LIVE_QLOO_HOST_VERIFIED) throw new AgentNotConfiguredError("QLOO_HOST_NOT_VERIFIED", gate.reason);
   const exec = env.AGENT_QLOO_TRANSPORT === "exec";
-  const transport = exec ? new HarnessExecTransport({ env: childEnv, timeoutMs: 90_000 }) : new HarnessMcpTransport({ env: childEnv, timeoutMs: 90_000 });
+  const transport = withProcessDispatchLimit(exec ? new HarnessExecTransport({ env: childEnv, timeoutMs: 90_000 }) : new HarnessMcpTransport({ env: childEnv, timeoutMs: 90_000 }), env);
   const spacing = Number(env.QLOO_CALL_SPACING_MS ?? 7_000);
   return new QlooToolProvider(transport, { name: exec ? "qloo-harness-exec" : "qloo-mcp", mode: "live", spacingMs: Number.isFinite(spacing) && spacing >= 0 ? spacing : 7_000 });
 }

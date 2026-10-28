@@ -1,0 +1,13 @@
+{
+  "project": "tablet-768x1024",
+  "test": "B. recorded Loewe: fingerprint, evidence with provenance, directions, summary, exported brief",
+  "status": "passed",
+  "failed": [],
+  "errors": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "paidPosts": [],
+  "providerHosts": [],
+  "leaked": 0,
+  "requests": 28
+}

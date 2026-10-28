@@ -1,0 +1,4596 @@
+{
+ "schemaVersion": "ce-agent-result/0.3",
+ "runId": "92a17d28-d3f8-4cc0-a47b-c53c7aa79d91",
+ "status": "COMPLETE",
+ "finalSufficiency": "SUFFICIENT",
+ "intent": "explore_frontier",
+ "userQuery": "Where could Oatly credibly expand culturally?",
+ "brand": {
+  "id": "012081EE-E2BA-420E-9904-417CAF65214B",
+  "label": "Oatly",
+  "type": "urn:entity:brand",
+  "resolution": "confirmed"
+ },
+ "territories": [
+  {
+   "key": "cooking_and_food_culture",
+   "label": "Cooking and food culture",
+   "role": "frontier_candidate",
+   "origin": "qloo_evidence",
+   "rationale": "Cooking tag recurs across related brand profiles; a food-culture stretch beyond the drink category.",
+   "resolvedConcept": {
+    "id": "urn:tag:genre:media:cooking",
+    "label": "Cooking",
+    "type": "urn:tag:genre:media"
+   },
+   "representation": {
+    "strategy": "TAG_DERIVED_ENTITY_PANEL",
+    "entityType": "book",
+    "exemplars": [
+     {
+      "id": "DF7B5A63-9741-48CD-A977-D904F90B8E9C",
+      "label": "Salt, Fat, Acid, Heat: Mastering the Elements of Good Cooking",
+      "type": "book",
+      "role": "primary",
+      "selectionReason": "Salt, Fat, Acid, Heat, a Qloo member of the Cooking concept with very high popularity.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9732996504780427,
+      "quality": "VALID"
+     },
+     {
+      "id": "71142836-A19F-4B9A-AEF8-F02B99C8C2D0",
+      "label": "Taste: My Life Through Food",
+      "type": "book",
+      "role": "alternate",
+      "selectionReason": "Taste: My Life Through Food, a Qloo member of the Cooking concept with the highest popularity.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9940023664132519,
+      "quality": "VALID"
+     },
+     {
+      "id": "7630CDD4-145F-4544-87FC-3DA0139C5021",
+      "label": "Hungry",
+      "type": "book",
+      "role": "alternate",
+      "selectionReason": "Hungry, a Qloo member of the Cooking concept.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.8806695317493778,
+      "quality": "VALID"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "unknown",
+    "diversityDetail": "not every exemplar's tag profile is known, so distinctness is not established",
+    "attempts": 1,
+    "summary": "TAG_DERIVED_ENTITY_PANEL: 3 book exemplar(s) linked by Qloo to Cooking (urn:tag:genre:media:cooking): Salt, Fat, Acid, Heat: Mastering the Elements of Good Cooking, Taste: My Life Through Food, Hungry",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median 3 across 1 exemplar(s) (SOME).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Famous Nathan: A Family Saga of Coney Island, the American Dream, and the Search for the Perfect Hot Dog, Scoff: A History of Food and Class in Britain, Catching Fire: How Cooking Made Us Human, Chocolate Wars: The 150-Year Rivalry Between the World's Greatest Chocolate Makers, Animal, Vegetable, Junk: A History of Food, from Sustainable to Suicidal: A Food Science Nutrition History Book.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "AVAILABLE",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 3,
+    "filteredSharedMedian": 3,
+    "filteredBand": "SOME",
+    "exemplarsCompared": 1,
+    "consistentlyShared": [
+     {
+      "id": "urn:tag:genre:music:indie",
+      "label": "indie"
+     },
+     {
+      "id": "urn:tag:keyword:media:female_protagonist",
+      "label": "female protagonist"
+     },
+     {
+      "id": "urn:tag:keyword:media:lesbian",
+      "label": "lesbian"
+     }
+    ]
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "Famous Nathan: A Family Saga of Coney Island, the American Dream, and the Search for the Perfect Hot Dog",
+      "rank": 1
+     },
+     {
+      "label": "Scoff: A History of Food and Class in Britain",
+      "rank": 2
+     },
+     {
+      "label": "Catching Fire: How Cooking Made Us Human",
+      "rank": 3
+     },
+     {
+      "label": "Chocolate Wars: The 150-Year Rivalry Between the World's Greatest Chocolate Makers",
+      "rank": 4
+     },
+     {
+      "label": "Animal, Vegetable, Junk: A History of Food, from Sustainable to Suicidal: A Food Science Nutrition History Book",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-18006470-81cb-4487-a705-18a95bee7f88"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "no tag profile",
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "NOT_COLLECTED_BUDGET",
+     "detail": "profile not collected: Qloo call budget (32) spent"
+    },
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 2 rankable book territories in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:genre:media:cooking: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Cooking and food culture: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-10d9e8fd-2814-423a-835a-b43a65f7564e",
+     "mcp-18006470-81cb-4487-a705-18a95bee7f88",
+     "mcp-415413c8-a089-4e94-8feb-6f360496f8b0",
+     "mcp-a338c274-2647-4ec8-9902-149c13138b59",
+     "mcp-e974eb8d-af58-4c6c-b708-c3b023d2b64c"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Cooking and food culture",
+    "sourceTagId": "urn:tag:genre:media:cooking",
+    "resolvedId": "urn:tag:genre:media:cooking",
+    "canonicalConceptKey": "cooking",
+    "normalizationReason": "SOURCE_TAG_CANONICAL_NAME",
+    "candidateSource": "qloo_grounded",
+    "anchorRelation": "SAME_CONCEPT",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:genre:media:cooking",
+     "label": "Cooking",
+     "namespace": "genre:media",
+     "attemptedTypes": [
+      "place",
+      "brand",
+      "book"
+     ],
+     "emptyTypes": [
+      "place",
+      "brand"
+     ],
+     "successfulTypes": [
+      "book"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 2,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  },
+  {
+   "key": "feminism_and_women_s_voices",
+   "label": "Feminism and women's voices",
+   "role": "frontier_candidate",
+   "origin": "qloo_evidence",
+   "rationale": "Feminism tag recurs across Oatly-related brands' profiles and aligns with the brand's women-owned signal.",
+   "resolvedConcept": {
+    "id": "urn:tag:genre:media:feminism",
+    "label": "Feminism",
+    "type": "urn:tag:genre:media"
+   },
+   "representation": {
+    "strategy": "TAG_DERIVED_ENTITY_PANEL",
+    "entityType": "book",
+    "exemplars": [
+     {
+      "id": "027B6797-33FC-4506-BBC4-A6728A170830",
+      "label": "THROUGH THE FLOWER: My Struggle as A Woman Artist",
+      "type": "book",
+      "role": "primary",
+      "selectionReason": "Judy Chicago's account of the feminist art movement, a strong Qloo member of the Feminism concept.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9735206517156496,
+      "quality": "VALID"
+     },
+     {
+      "id": "3BAF525F-B16B-402C-8C4A-CF8C32AD8852",
+      "label": "Witches, Midwives and Nurses: A History of Women Healers",
+      "type": "book",
+      "role": "alternate",
+      "selectionReason": "History of women healers, a Qloo member of the Feminism concept with high popularity.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9495335173876974,
+      "quality": "VALID"
+     },
+     {
+      "id": "FDBDE0E7-2A6E-4DBC-A690-ADBCB45BE256",
+      "label": "An Autobiography",
+      "type": "book",
+      "role": "alternate",
+      "selectionReason": "Autobiography carried by the Feminism concept in Qloo, the most popular candidate.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.9855057188320254,
+      "quality": "VALID"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "unknown",
+    "diversityDetail": "not every exemplar's tag profile is known, so distinctness is not established",
+    "attempts": 1,
+    "summary": "TAG_DERIVED_ENTITY_PANEL: 3 book exemplar(s) linked by Qloo to Feminism (urn:tag:genre:media:feminism): THROUGH THE FLOWER: My Struggle as A Woman Artist, Witches, Midwives and Nurses: A History of Women Healers, An Autobiography",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median 5 across 1 exemplar(s) (SOME).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: A Galaxy of Her Own: Amazing Stories of Women in Space, 12 Bytes: How We Got Here. Where We Might Go Next, Bitch: On the Female of the Species, Let's Get Physical: How Women Discovered Exercise and Reshaped the World, Wally Funk’s Race for Space: The Extraordinary Story of a Female Aviation Pioneer.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "AVAILABLE",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 6,
+    "filteredSharedMedian": 5,
+    "filteredBand": "SOME",
+    "exemplarsCompared": 1,
+    "consistentlyShared": [
+     {
+      "id": "urn:tag:genre:music:electronic",
+      "label": "electronic"
+     },
+     {
+      "id": "urn:tag:genre:music:indie",
+      "label": "indie"
+     },
+     {
+      "id": "urn:tag:genre:person:musician",
+      "label": "Musician"
+     },
+     {
+      "id": "urn:tag:keyword:media:female_protagonist",
+      "label": "female protagonist"
+     },
+     {
+      "id": "urn:tag:keyword:media:lesbian",
+      "label": "lesbian"
+     }
+    ]
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "A Galaxy of Her Own: Amazing Stories of Women in Space",
+      "rank": 1
+     },
+     {
+      "label": "12 Bytes: How We Got Here. Where We Might Go Next",
+      "rank": 2
+     },
+     {
+      "label": "Bitch: On the Female of the Species",
+      "rank": 3
+     },
+     {
+      "label": "Let's Get Physical: How Women Discovered Exercise and Reshaped the World",
+      "rank": 4
+     },
+     {
+      "label": "Wally Funk’s Race for Space: The Extraordinary Story of a Female Aviation Pioneer",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-5c42aadc-beea-4b4b-8bb2-c5204d9ad1d7"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "no tag profile",
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "NOT_COLLECTED_BUDGET",
+     "detail": "profile not collected: Qloo call budget (32) spent"
+    },
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 2 rankable book territories in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:genre:media:feminism: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Feminism and women's voices: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-0b76c30e-1784-484b-b938-ddbebd1fc67b",
+     "mcp-52c91a15-2631-417d-a460-b3eab4847c92",
+     "mcp-5c42aadc-beea-4b4b-8bb2-c5204d9ad1d7",
+     "mcp-620ea35d-59c8-4b93-85ef-0cae3a4cbff4",
+     "mcp-e974eb8d-af58-4c6c-b708-c3b023d2b64c"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Feminism and women's voices",
+    "sourceTagId": "urn:tag:genre:media:feminism",
+    "resolvedId": "urn:tag:genre:media:feminism",
+    "canonicalConceptKey": "feminism",
+    "normalizationReason": "SOURCE_TAG_CANONICAL_NAME",
+    "candidateSource": "qloo_grounded",
+    "anchorRelation": "SAME_CONCEPT",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:genre:media:feminism",
+     "label": "Feminism",
+     "namespace": "genre:media",
+     "attemptedTypes": [
+      "brand",
+      "artist",
+      "book"
+     ],
+     "emptyTypes": [
+      "brand",
+      "artist"
+     ],
+     "successfulTypes": [
+      "book"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 2,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  },
+  {
+   "key": "british_and_london_urban_culture",
+   "label": "British and London urban culture",
+   "role": "frontier_candidate",
+   "origin": "qloo_evidence",
+   "rationale": "London and British tags recur across related brand profiles, a metropolitan Anglophone register.",
+   "resolvedConcept": null,
+   "representation": {
+    "strategy": "UNSUPPORTED",
+    "entityType": null,
+    "exemplars": [],
+    "rejectedExemplars": [],
+    "diversity": "unknown",
+    "diversityDetail": "no exemplars",
+    "attempts": 0,
+    "summary": "no Qloo concept anchors this territory",
+    "failure": {
+     "code": "QLOO_EMPTY",
+     "detail": "Brand, place and artist probes on London England returned no members; the book probe could not be run within the remaining budget."
+    }
+   },
+   "keyEvidence": [
+    "No measurable evidence: Brand, place and artist probes on London England returned no members; the book probe could not be run within the remaining budget.."
+   ],
+   "analysisRoute": "INSUFFICIENT_EVIDENCE",
+   "capabilities": {
+    "representation": "UNSUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "UNAVAILABLE",
+    "conditionedEvidence": "UNAVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": null,
+   "conditionedEvidence": null,
+   "evidenceQuality": null,
+   "classification": null,
+   "limitations": [
+    {
+     "code": "QLOO_EMPTY",
+     "detail": "British and London urban culture: Brand, place and artist probes on London England returned no members; the book probe could not be run within the remaining budget."
+    }
+   ],
+   "provenance": {
+    "correlationIds": [],
+    "sources": []
+   },
+   "candidate": {
+    "originalLabel": "British and London urban culture",
+    "sourceTagId": "urn:tag:keyword:media:london_england",
+    "resolvedId": null,
+    "canonicalConceptKey": "london_england",
+    "normalizationReason": "SOURCE_TAG_CANONICAL_NAME",
+    "candidateSource": "qloo_grounded",
+    "anchorRelation": "NOT_ANCHORED",
+    "uncertainty": null
+   },
+   "evidenceStatus": "UNSUPPORTED",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:keyword:media:london_england",
+     "label": "london england",
+     "namespace": "keyword:media",
+     "attemptedTypes": [
+      "brand",
+      "place",
+      "artist"
+     ],
+     "emptyTypes": [
+      "brand",
+      "place",
+      "artist"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 3,
+     "probingExhausted": true,
+     "exhaustionReason": "london england: 3 entity types (brand, place, artist) returned no members; probing it with further types has no expected value"
+    }
+   ]
+  },
+  {
+   "key": "folk_and_indie_music",
+   "label": "Folk and indie music",
+   "role": "frontier_candidate",
+   "origin": "qloo_evidence",
+   "rationale": "Folk music tag appears across related brand profiles, a warm acoustic lifestyle register.",
+   "resolvedConcept": {
+    "id": "urn:tag:genre:music:folk",
+    "label": "folk",
+    "type": "urn:tag:genre:music"
+   },
+   "representation": {
+    "strategy": "DESCRIPTIVE_ONLY",
+    "entityType": null,
+    "exemplars": [],
+    "rejectedExemplars": [],
+    "diversity": "unknown",
+    "diversityDetail": "no exemplars",
+    "attempts": 0,
+    "summary": "DESCRIPTIVE_ONLY: Qloo concept folk (urn:tag:genre:music:folk) without a validated exemplar panel",
+    "failure": null
+   },
+   "keyEvidence": [
+    "No measurable evidence: DESCRIPTIVE_ONLY: Qloo concept folk (urn:tag:genre:music:folk) without a validated exemplar panel."
+   ],
+   "analysisRoute": "INSUFFICIENT_EVIDENCE",
+   "capabilities": {
+    "representation": "PARTIAL",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "UNAVAILABLE",
+    "conditionedEvidence": "UNAVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": null,
+   "conditionedEvidence": null,
+   "evidenceQuality": null,
+   "classification": null,
+   "limitations": [
+    {
+     "code": "NOT_COLLECTED_BUDGET",
+     "detail": "profile not collected: Qloo call budget (32) spent"
+    },
+    {
+     "code": "NO_VALID_REPRESENTATION",
+     "detail": "Folk and indie music: no validated exemplar panel; relative position, robustness and classification are unavailable"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Folk and indie music: route INSUFFICIENT_EVIDENCE reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-0b76c30e-1784-484b-b938-ddbebd1fc67b",
+     "mcp-10d9e8fd-2814-423a-835a-b43a65f7564e",
+     "mcp-52c91a15-2631-417d-a460-b3eab4847c92",
+     "mcp-620ea35d-59c8-4b93-85ef-0cae3a4cbff4",
+     "mcp-8ba89cdb-2a63-43da-b9c6-a71610514537"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Folk and indie music",
+    "sourceTagId": "urn:tag:genre:music:folk",
+    "resolvedId": "urn:tag:genre:music:folk",
+    "canonicalConceptKey": "folk",
+    "normalizationReason": "SOURCE_TAG_CANONICAL_NAME",
+    "candidateSource": "qloo_grounded",
+    "anchorRelation": "SAME_CONCEPT",
+    "uncertainty": null
+   },
+   "evidenceStatus": "UNSUPPORTED",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:genre:music:folk",
+     "label": "folk",
+     "namespace": "genre:music",
+     "attemptedTypes": [
+      "brand",
+      "place",
+      "artist"
+     ],
+     "emptyTypes": [
+      "brand",
+      "place",
+      "artist"
+     ],
+     "successfulTypes": [],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 3,
+     "probingExhausted": true,
+     "exhaustionReason": "folk: 3 entity types (brand, place, artist) returned no members; probing it with further types has no expected value"
+    }
+   ]
+  }
+ ],
+ "methodologyRuns": [],
+ "summary": {
+  "text": "Within these results, Oatly's frontier candidates are cooking and food culture and feminism and women's voices, both on partial routes with medium evidence quality and no relative position against a comparison set. British and London urban culture and folk and indie music have no usable evidence yet, so they cannot be assessed. No candidate has a robustness level, so any expansion read rests only on shared signals and brand-conditioned association, and these results cannot say whether any territory would be a credible expansion for Oatly.\nCooking and food culture: Filtered shared signals for this territory's book exemplars (indie, female protagonist, lesbian) fall in a SOME band, suggesting a loose rather than tight shared profile. The brand-conditioned query returned a supported list whose leading titles center on food history, class and cooking science, indicating association with food culture rather than a ranked fit. Evidence quality is medium and the route is partial, so the food-culture association is an exploratory signal rather than a settled finding.\nFeminism and women's voices: Shared signals (electronic, indie, musician, female protagonist, lesbian) fall in a SOME band, pointing to a loosely shared profile with music-adjacent overlap. The brand-conditioned query returned a supported list whose top entries lean toward women in space, science and exercise history, an association pattern rather than a ranked fit. Evidence quality is medium on a partial route with no relative position, so the association should be treated as provisional.\nBritish and London urban culture: No concept anchors this territory and the route is insufficient evidence, so no cultural association can be described from these results.\nFolk and indie music: Folk has only a descriptive concept without a validated exemplar panel, so its route cannot yet support any association claim.",
+  "source": "model",
+  "claimValidation": {
+   "passed": true,
+   "violations": []
+  }
+ },
+ "followUpOptions": [
+  "Build a comparison set for cooking and food culture with additional book exemplars to enable a relative position.",
+  "Validate an exemplar panel for folk and indie music so its representation can support analysis.",
+  "Probe London, England with venue or book entity types to test whether British and London urban culture can be anchored.",
+  "Widen the brand-conditioned list for feminism and women's voices beyond the truncated top entries to check whether the association holds."
+ ],
+ "limitations": [
+  {
+   "code": "NOT_A_SUCCESS_PREDICTION",
+   "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+  },
+  {
+   "code": "NO_APPROVED_SCORE",
+   "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+  },
+  {
+   "code": "COMPARISON_SET_DEPENDENT",
+   "detail": "relative position depends on the comparison set; see comparisonSetConstruction for how it was assembled and what was rejected"
+  }
+ ],
+ "evidenceOrigin": "live",
+ "model": {
+  "id": "claude-haiku-5-5",
+  "kind": "llm",
+  "live": true,
+  "effort": "high"
+ },
+ "trace": {
+  "runId": "92a17d28-d3f8-4cc0-a47b-c53c7aa79d91",
+  "intent": "explore_frontier",
+  "userQuery": "Where could Oatly credibly expand culturally?",
+  "interpretedRequest": {
+   "intent": "explore_frontier",
+   "brand": "Oatly",
+   "territories": []
+  },
+  "model": {
+   "id": "claude-haiku-5-5",
+   "kind": "llm",
+   "live": true,
+   "effort": "high"
+  },
+  "toolProvider": {
+   "name": "qloo-mcp",
+   "mode": "live"
+  },
+  "limits": {
+   "maxAgentIterations": 12,
+   "maxRepresentationAttemptsPerTerritory": 3,
+   "maxCandidateTerritories": 6,
+   "maxExemplarsPerTerritory": 3,
+   "maxRetryPerToolCall": 1,
+   "maxActionsPerTurn": 12,
+   "maxInvalidTurns": 2,
+   "toolTimeoutMs": 300000,
+   "maxQlooCalls": 32
+  },
+  "statusTransitions": [
+   {
+    "iteration": 0,
+    "from": "INTAKE",
+    "to": "PLANNING",
+    "reason": "request validated"
+   },
+   {
+    "iteration": 1,
+    "from": "PLANNING",
+    "to": "RESOLVING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 2,
+    "from": "RESOLVING",
+    "to": "INVESTIGATING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 11,
+    "from": "INVESTIGATING",
+    "to": "ANALYZING",
+    "reason": "analyze feminism_and_women_s_voices, cooking_and_food_culture, folk_and_indie_music"
+   },
+   {
+    "iteration": 11,
+    "from": "ANALYZING",
+    "to": "INVESTIGATING",
+    "reason": "analysis step done"
+   },
+   {
+    "iteration": 12,
+    "from": "INVESTIGATING",
+    "to": "COMPLETE",
+    "reason": "agent finished"
+   }
+  ],
+  "planRevisions": [
+   {
+    "iteration": 1,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[ ] resolve the brand",
+     "[ ] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[ ] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The user asks where Oatly could credibly expand culturally, so territories must be discovered rather than named."
+   },
+   {
+    "iteration": 2,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[ ] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Resolve the analysis subject, Oatly, to a single Qloo brand entity before any territory work."
+   },
+   {
+    "iteration": 4,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[ ] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Retry the Oatly related-brands call that timed out, needed for the Qloo-grounded frontier pool."
+   },
+   {
+    "iteration": 6,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[x] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[ ] Feminism and women's voices: anchor to a Qloo concept",
+     "[ ] Feminism and women's voices: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Feminism and women's voices: analyze",
+     "[ ] Cooking and food culture: anchor to a Qloo concept",
+     "[ ] Cooking and food culture: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Cooking and food culture: analyze",
+     "[ ] Folk and indie music: anchor to a Qloo concept",
+     "[ ] Folk and indie music: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Folk and indie music: analyze",
+     "[ ] British and London urban culture: anchor to a Qloo concept",
+     "[ ] British and London urban culture: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] British and London urban culture: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Frontier candidate grounded in a Qloo frontier concept shared by related brands."
+   },
+   {
+    "iteration": 9,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[x] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[x] Feminism and women's voices: anchor to a Qloo concept",
+     "[ ] Feminism and women's voices: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Feminism and women's voices: analyze",
+     "[x] Cooking and food culture: anchor to a Qloo concept",
+     "[ ] Cooking and food culture: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Cooking and food culture: analyze",
+     "[x] Folk and indie music: anchor to a Qloo concept",
+     "[ ] Folk and indie music: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Folk and indie music: analyze",
+     "[ ] British and London urban culture: anchor to a Qloo concept",
+     "[ ] British and London urban culture: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] British and London urban culture: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Canonical Feminism concept grounded this candidate; anchoring it so the artist probe can run against it."
+   },
+   {
+    "iteration": 11,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[x] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[x] Feminism and women's voices: anchor to a Qloo concept",
+     "[x] Feminism and women's voices: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Feminism and women's voices: analyze",
+     "[x] Cooking and food culture: anchor to a Qloo concept",
+     "[x] Cooking and food culture: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Cooking and food culture: analyze",
+     "[x] Folk and indie music: anchor to a Qloo concept",
+     "[ ] Folk and indie music: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Folk and indie music: analyze",
+     "[-] British and London urban culture: dropped (QLOO_EMPTY)",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Propose the three strongest Qloo book members of the Feminism concept as exemplars."
+   },
+   {
+    "iteration": 12,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[x] gather Qloo evidence that suggests frontier concepts (brand profile, related entities and their profiles)",
+     "[x] propose distinct frontier candidates grounded in that evidence (max 6 territories)",
+     "[x] Feminism and women's voices: anchor to a Qloo concept",
+     "[x] Feminism and women's voices: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Feminism and women's voices: analyze",
+     "[x] Cooking and food culture: anchor to a Qloo concept",
+     "[x] Cooking and food culture: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Cooking and food culture: analyze",
+     "[x] Folk and indie music: anchor to a Qloo concept",
+     "[ ] Folk and indie music: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Folk and indie music: analyze",
+     "[-] British and London urban culture: dropped (QLOO_EMPTY)",
+     "[x] finish when deterministic sufficiency allows"
+    ],
+    "note": "Budget is exhausted and every in-scope territory has been analyzed, so the honest result is finished with the partial and insufficient routes reported as they are."
+   }
+  ],
+  "turns": [
+   {
+    "iteration": 1,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "explore_frontier",
+       "brand": "Oatly",
+       "territories": []
+      },
+      "reasonSummary": "The user asks where Oatly could credibly expand culturally, so territories must be discovered rather than named.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 732,
+     "outputTokens": 240,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1569
+    },
+    "latencyMs": 1661,
+    "skills": [
+     {
+      "id": "interpret_request",
+      "version": 1
+     },
+     {
+      "id": "resolve_brand",
+      "version": 1
+     }
+    ],
+    "toolsExposed": [
+     "interpret_request",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2331,
+    "contextTokensEstimate": 583
+   },
+   {
+    "iteration": 2,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Oatly",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "Resolve the analysis subject, Oatly, to a single Qloo brand entity before any territory work.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 879,
+     "outputTokens": 159,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1547
+    },
+    "latencyMs": 1156,
+    "skills": [
+     {
+      "id": "resolve_brand",
+      "version": 1
+     },
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_resolve_entity",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2446,
+    "contextTokensEstimate": 612
+   },
+   {
+    "iteration": 3,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "012081EE-E2BA-420E-9904-417CAF65214B"
+      },
+      "reasonSummary": "Fetch the Oatly brand tag profile, the fixed evidence base for frontier discovery.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_related_entities",
+      "arguments": {
+       "entityId": "012081EE-E2BA-420E-9904-417CAF65214B",
+       "targetType": "brand",
+       "limit": 8
+      },
+      "reasonSummary": "Find Qloo-related brands to build the frontier concept pool from their tag profiles.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1838,
+     "outputTokens": 379,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5046
+    },
+    "latencyMs": 2226,
+    "skills": [
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "qloo_related_entities",
+     "propose_territory",
+     "anchor_territory",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 12325,
+    "contextTokensEstimate": 3082
+   },
+   {
+    "iteration": 4,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_related_entities",
+      "arguments": {
+       "entityId": "012081EE-E2BA-420E-9904-417CAF65214B",
+       "targetType": "brand",
+       "limit": 8
+      },
+      "reasonSummary": "Retry the Oatly related-brands call that timed out, needed for the Qloo-grounded frontier pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "plant-based milk alternative",
+       "limit": 8
+      },
+      "reasonSummary": "Probe a concept tag for the core oat-milk territory to ground candidate territories in Qloo vocabulary.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Scandinavian design",
+       "limit": 8
+      },
+      "reasonSummary": "Probe a lateral Nordic design territory suggested by the brand's Swedish tags.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 3106,
+     "outputTokens": 690,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5046
+    },
+    "latencyMs": 1332701,
+    "skills": [
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "qloo_related_entities",
+     "propose_territory",
+     "anchor_territory",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 14901,
+    "contextTokensEstimate": 3726
+   },
+   {
+    "iteration": 5,
+    "decisions": [
+     {
+      "action": "turn",
+      "reasonSummary": "",
+      "accepted": false,
+      "rejection": "INVALID_MODEL_OUTPUT: model call failed: Request timed out."
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "82ABA78E-DA57-4E6B-B956-F56E77BD0661"
+      },
+      "reasonSummary": "Fetching the tag profile of the first related brand (Natural Cycles) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "C770B4D0-8776-42D8-8353-95C91836E4E2"
+      },
+      "reasonSummary": "Fetching the tag profile of the second related brand (Oddbox) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "80BA1963-AACC-48B1-B832-72E780C4FA8D"
+      },
+      "reasonSummary": "Fetching the tag profile of the third related brand (Moving Mountains Foods) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "68331716-A54E-4477-81FC-97EF3BCC8723"
+      },
+      "reasonSummary": "Fetching the tag profile of the fourth related brand (Thinx) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "CF79BA2C-A846-4F56-AC38-5FBC2389BF29"
+      },
+      "reasonSummary": "Fetching the tag profile of the fifth related brand (Ella Mills) to build the frontier concept pool.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "1F645FD2-FF8A-4902-8D2D-F18438BDABD5"
+      },
+      "reasonSummary": "Fetching the tag profile of the sixth related brand (Joe & The Juice) to build the frontier concept pool.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4369,
+     "outputTokens": 1098,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5046
+    },
+    "latencyMs": 3643253,
+    "skills": [
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "qloo_related_entities",
+     "propose_territory",
+     "anchor_territory",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 2,
+    "repairReason": "INVALID_MODEL_OUTPUT: model call failed: Request timed out.",
+    "firstAttemptValid": false,
+    "contextChars": 17053,
+    "contextTokensEstimate": 4264
+   },
+   {
+    "iteration": 6,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Feminism and women's voices",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:genre:media:feminism"
+       ],
+       "rationale": "Feminism tag recurs across Oatly-related brands' profiles and aligns with the brand's women-owned signal."
+      },
+      "reasonSummary": "Frontier candidate grounded in a Qloo frontier concept shared by related brands.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Cooking and food culture",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:genre:media:cooking"
+       ],
+       "rationale": "Cooking tag recurs across related brand profiles; a food-culture stretch beyond the drink category."
+      },
+      "reasonSummary": "Frontier candidate grounded in a Qloo frontier concept shared by related brands.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Folk and indie music",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:genre:music:folk"
+       ],
+       "rationale": "Folk music tag appears across related brand profiles, a warm acoustic lifestyle register."
+      },
+      "reasonSummary": "Frontier candidate grounded in a Qloo frontier concept shared by related brands.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "British and London urban culture",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:keyword:media:london_england",
+        "urn:tag:genre:music:british"
+       ],
+       "rationale": "London and British tags recur across related brand profiles, a metropolitan Anglophone register."
+      },
+      "reasonSummary": "Frontier candidate grounded in Qloo frontier concepts shared by related brands.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "reasonSummary": "Frontier candidate grounded in the highest-support Qloo frontier concept.",
+      "accepted": false,
+      "rejection": "NOT_EXPOSED: propose_territory is not offered by the active skills (resolve_territory)",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Friendship stories",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:keyword:media:friendship"
+       ],
+       "rationale": "Friendship is the most-supported frontier concept across related brands (support 5), a social-warmth theme."
+      }
+     },
+     {
+      "action": "call_tool",
+      "reasonSummary": "Frontier candidate grounded in a Qloo frontier concept shared by related brands.",
+      "accepted": false,
+      "rejection": "NOT_EXPOSED: propose_territory is not offered by the active skills (resolve_territory)",
+      "tool": "propose_territory",
+      "arguments": {
+       "label": "Teenage girl coming-of-age",
+       "role": "frontier_candidate",
+       "origin": "qloo_evidence",
+       "evidenceTagIds": [
+        "urn:tag:keyword:media:teenage_girl"
+       ],
+       "rationale": "Teenage girl coming-of-age concept recurs across related brand profiles, a youthful narrative register."
+      }
+     }
+    ],
+    "usage": {
+     "inputTokens": 6687,
+     "outputTokens": 2823,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5046
+    },
+    "latencyMs": 13438,
+    "skills": [
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     },
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "qloo_related_entities",
+     "propose_territory",
+     "anchor_territory",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": false,
+    "contextChars": 22328,
+    "contextTokensEstimate": 5582
+   },
+   {
+    "iteration": 7,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:genre:media:feminism"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the feminism territory's own concept tag for brand members, as the focus nextProbe directs.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:media:cooking"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the cooking territory's own concept tag for place members, as the focus nextProbe directs.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:genre:music:folk"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the folk territory's own concept tag for brand members, as the focus nextProbe directs.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:keyword:media:london_england"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the London urban culture territory's own concept tag for brand members, as the focus nextProbe directs.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 5170,
+     "outputTokens": 824,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 2788
+    },
+    "latencyMs": 3378,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 15579,
+    "contextTokensEstimate": 3895
+   },
+   {
+    "iteration": 8,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "feminism and women's voices"
+      },
+      "reasonSummary": "Feminism territory has no anchored concept yet, and its grounding tag returned no brand members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "cooking and food culture"
+      },
+      "reasonSummary": "Cooking territory has no anchored concept; its grounding tag returned no place members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "folk and indie music"
+      },
+      "reasonSummary": "Folk and indie territory has no anchored concept yet and needs a tag with members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:keyword:media:london_england"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probing the grounding tag of the London territory, which is the highest-priority evidence-backed probe.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4992,
+     "outputTokens": 757,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 2788
+    },
+    "latencyMs": 3621,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 14887,
+    "contextTokensEstimate": 3722
+   },
+   {
+    "iteration": 9,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "feminism_and_women_s_voices",
+       "tagId": "urn:tag:genre:media:feminism"
+      },
+      "reasonSummary": "Canonical Feminism concept grounded this candidate; anchoring it so the artist probe can run against it.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "cooking_and_food_culture",
+       "tagId": "urn:tag:genre:media:cooking"
+      },
+      "reasonSummary": "Canonical Cooking concept grounded this candidate; anchoring it for the brand probe.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "folk_and_indie_music",
+       "tagId": "urn:tag:genre:music:folk"
+      },
+      "reasonSummary": "Canonical folk concept grounded this candidate; anchoring it for the place probe.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "artist",
+       "tagIds": [
+        "urn:tag:genre:media:feminism"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Next-ranked probe for Feminism: artist members, brand-independent.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:genre:media:cooking"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Next-ranked structural probe for Cooking: brand members, brand-independent.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:folk"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Next-ranked probe for folk: place members, brand-independent.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:london_england"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Next-ranked probe for London: place members, brand-independent.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 7521,
+     "outputTokens": 2710,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 2788
+    },
+    "latencyMs": 11261,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 19883,
+    "contextTokensEstimate": 4971
+   },
+   {
+    "iteration": 10,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "British and London urban culture",
+       "limit": 8
+      },
+      "reasonSummary": "The british_and_london_urban_culture territory has no concept yet and is blocked on tag search.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "book",
+       "tagIds": [
+        "urn:tag:genre:media:feminism"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Feminism's last untried supported entity type is book, the final probe before recovery alternatives.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "book",
+       "tagIds": [
+        "urn:tag:genre:media:cooking"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Cooking's untried supported entity type is book, the final probe before recovery alternatives.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "artist",
+       "tagIds": [
+        "urn:tag:genre:music:folk"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Folk's untried supported entity type is artist, the final probe before recovery alternatives.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "artist",
+       "tagIds": [
+        "urn:tag:keyword:media:london_england"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "London England's next untested probe is artist, the last empty probe slot for this concept.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 8035,
+     "outputTokens": 1336,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 4552
+    },
+    "latencyMs": 5919,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "ask_user",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 24953,
+    "contextTokensEstimate": 6239
+   },
+   {
+    "iteration": 11,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "feminism_and_women_s_voices",
+       "entityType": "book",
+       "exemplars": [
+        {
+         "id": "027B6797-33FC-4506-BBC4-A6728A170830",
+         "reason": "Judy Chicago's account of the feminist art movement, a strong Qloo member of the Feminism concept.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Explicitly centred on women's liberation and feminist art practice."
+         }
+        },
+        {
+         "id": "3BAF525F-B16B-402C-8C4A-CF8C32AD8852",
+         "reason": "History of women healers, a Qloo member of the Feminism concept with high popularity.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Feminist history of women's bodies and social power."
+         }
+        },
+        {
+         "id": "FDBDE0E7-2A6E-4DBC-A690-ADBCB45BE256",
+         "reason": "Autobiography carried by the Feminism concept in Qloo, the most popular candidate.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Personal life narrative; feminist framing is indirect."
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Propose the three strongest Qloo book members of the Feminism concept as exemplars.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "cooking_and_food_culture",
+       "entityType": "book",
+       "exemplars": [
+        {
+         "id": "DF7B5A63-9741-48CD-A977-D904F90B8E9C",
+         "reason": "Salt, Fat, Acid, Heat, a Qloo member of the Cooking concept with very high popularity.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Core technical cooking culture book."
+         }
+        },
+        {
+         "id": "71142836-A19F-4B9A-AEF8-F02B99C8C2D0",
+         "reason": "Taste: My Life Through Food, a Qloo member of the Cooking concept with the highest popularity.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Memoir centred on food and cooking culture."
+         }
+        },
+        {
+         "id": "7630CDD4-145F-4544-87FC-3DA0139C5021",
+         "reason": "Hungry, a Qloo member of the Cooking concept.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Food-focused book; cultural link to cooking is looser."
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Propose the three strongest Qloo book members of the Cooking concept as exemplars.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "drop_territory",
+      "arguments": {
+       "territoryKey": "british_and_london_urban_culture",
+       "code": "QLOO_EMPTY",
+       "reason": "Brand, place and artist probes on London England returned no members; the book probe could not be run within the remaining budget."
+      },
+      "reasonSummary": "Drop the British/London territory because no Qloo members were found and the budget is exhausted.",
+      "accepted": true
+     },
+     {
+      "action": "analyze",
+      "reasonSummary": "Analyze the territories with representation or concept-level evidence before the run budget ends.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 13567,
+     "outputTokens": 3674,
+     "cacheReadTokens": 4552,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 16903,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     },
+     {
+      "id": "explore_candidate_territories",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "ask_user",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 36740,
+    "contextTokensEstimate": 9185
+   },
+   {
+    "iteration": 12,
+    "decisions": [
+     {
+      "action": "finish",
+      "reasonSummary": "Budget is exhausted and every in-scope territory has been analyzed, so the honest result is finished with the partial and insufficient routes reported as they are.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 3891,
+     "outputTokens": 417,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1938
+    },
+    "latencyMs": 2998,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 9280,
+    "contextTokensEstimate": 2320
+   }
+  ],
+  "toolCalls": [
+   {
+    "id": "tc-1",
+    "iteration": 1,
+    "tool": "interpret_request",
+    "permission": "local_computation",
+    "arguments": {
+     "intent": "explore_frontier",
+     "brand": "Oatly",
+     "territories": []
+    },
+    "status": "ok",
+    "summary": "intent explore_frontier; brand \"Oatly\"; 0 named territory(ies)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 2,
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    }
+   },
+   {
+    "id": "tc-2",
+    "iteration": 2,
+    "tool": "qloo_resolve_entity",
+    "permission": "read_only_external",
+    "arguments": {
+     "name": "Oatly",
+     "type": "brand",
+     "role": "brand"
+    },
+    "status": "ok",
+    "summary": "Oatly (012081EE-E2BA-420E-9904-417CAF65214B, urn:entity:brand, match exact)",
+    "qlooOperations": [
+     "describe"
+    ],
+    "correlationIds": [
+     "mcp-f2b39c7d-6d95-4625-842b-79029bbf00a5"
+    ],
+    "attempts": 1,
+    "latencyMs": 609,
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-3",
+    "iteration": 3,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "012081EE-E2BA-420E-9904-417CAF65214B"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-e974eb8d-af58-4c6c-b708-c3b023d2b64c"
+    ],
+    "attempts": 1,
+    "latencyMs": 5134,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-4",
+    "iteration": 3,
+    "tool": "qloo_related_entities",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "012081EE-E2BA-420E-9904-417CAF65214B",
+     "targetType": "brand",
+     "limit": 8
+    },
+    "status": "failed",
+    "summary": "TOOL_TIMEOUT: TOOL_TIMEOUT after 300000 ms",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [],
+    "attempts": 1,
+    "latencyMs": 1014968,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM",
+    "error": "TOOL_TIMEOUT"
+   },
+   {
+    "id": "tc-5",
+    "iteration": 4,
+    "tool": "qloo_related_entities",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "012081EE-E2BA-420E-9904-417CAF65214B",
+     "targetType": "brand",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 related brand entities",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-8cb6ba77-6c77-4703-bf41-82989bbec6a4"
+    ],
+    "attempts": 1,
+    "latencyMs": 2081,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-6",
+    "iteration": 4,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "plant-based milk alternative",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-dfd3da93-c96d-4dd0-8f93-af31820a6f67"
+    ],
+    "attempts": 1,
+    "latencyMs": 7569,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-7",
+    "iteration": 4,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "Scandinavian design",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-96f81a2f-4060-4edb-b6f7-da249b90debb"
+    ],
+    "attempts": 1,
+    "latencyMs": 6601,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-8",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "82ABA78E-DA57-4E6B-B956-F56E77BD0661"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-620ea35d-59c8-4b93-85ef-0cae3a4cbff4"
+    ],
+    "attempts": 1,
+    "latencyMs": 1252,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-9",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "C770B4D0-8776-42D8-8353-95C91836E4E2"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-193e4a0c-b3ed-4968-837d-f3c962375ebd"
+    ],
+    "attempts": 1,
+    "latencyMs": 7295,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-10",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "80BA1963-AACC-48B1-B832-72E780C4FA8D"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-415413c8-a089-4e94-8feb-6f360496f8b0"
+    ],
+    "attempts": 1,
+    "latencyMs": 5949,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-11",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "68331716-A54E-4477-81FC-97EF3BCC8723"
+    },
+    "status": "failed",
+    "summary": "TOOL_TIMEOUT: TOOL_TIMEOUT after 300000 ms",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-0b76c30e-1784-484b-b938-ddbebd1fc67b"
+    ],
+    "attempts": 1,
+    "latencyMs": 324586,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM",
+    "error": "TOOL_TIMEOUT"
+   },
+   {
+    "id": "tc-12",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "CF79BA2C-A846-4F56-AC38-5FBC2389BF29"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-8ba89cdb-2a63-43da-b9c6-a71610514537"
+    ],
+    "attempts": 1,
+    "latencyMs": 8127,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-13",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "1F645FD2-FF8A-4902-8D2D-F18438BDABD5"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-a338c274-2647-4ec8-9902-149c13138b59"
+    ],
+    "attempts": 1,
+    "latencyMs": 6692,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-14",
+    "iteration": 6,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Feminism and women's voices",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "rationale": "Feminism tag recurs across Oatly-related brands' profiles and aligns with the brand's women-owned signal.",
+     "evidenceTagIds": [
+      "urn:tag:genre:media:feminism"
+     ]
+    },
+    "status": "ok",
+    "summary": "added feminism_and_women_s_voices",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-15",
+    "iteration": 6,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Cooking and food culture",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "rationale": "Cooking tag recurs across related brand profiles; a food-culture stretch beyond the drink category.",
+     "evidenceTagIds": [
+      "urn:tag:genre:media:cooking"
+     ]
+    },
+    "status": "ok",
+    "summary": "added cooking_and_food_culture",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-16",
+    "iteration": 6,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Folk and indie music",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "rationale": "Folk music tag appears across related brand profiles, a warm acoustic lifestyle register.",
+     "evidenceTagIds": [
+      "urn:tag:genre:music:folk"
+     ]
+    },
+    "status": "ok",
+    "summary": "added folk_and_indie_music",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-17",
+    "iteration": 6,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "British and London urban culture",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "rationale": "London and British tags recur across related brand profiles, a metropolitan Anglophone register.",
+     "evidenceTagIds": [
+      "urn:tag:keyword:media:london_england",
+      "urn:tag:genre:music:british"
+     ]
+    },
+    "status": "ok",
+    "summary": "added british_and_london_urban_culture",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-18",
+    "iteration": 6,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Friendship stories",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "evidenceTagIds": [
+      "urn:tag:keyword:media:friendship"
+     ],
+     "rationale": "Friendship is the most-supported frontier concept across related brands (support 5), a social-warmth theme."
+    },
+    "status": "rejected",
+    "summary": "NOT_EXPOSED: propose_territory is not offered by the active skills (resolve_territory)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "error": "NOT_EXPOSED"
+   },
+   {
+    "id": "tc-19",
+    "iteration": 6,
+    "tool": "propose_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "label": "Teenage girl coming-of-age",
+     "role": "frontier_candidate",
+     "origin": "qloo_evidence",
+     "evidenceTagIds": [
+      "urn:tag:keyword:media:teenage_girl"
+     ],
+     "rationale": "Teenage girl coming-of-age concept recurs across related brand profiles, a youthful narrative register."
+    },
+    "status": "rejected",
+    "summary": "NOT_EXPOSED: propose_territory is not offered by the active skills (resolve_territory)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "error": "NOT_EXPOSED"
+   },
+   {
+    "id": "tc-20",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "brand",
+     "tagIds": [
+      "urn:tag:genre:media:feminism"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no brand entities for urn:tag:genre:media:feminism",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-2501b896-02ad-4bc6-85a8-c4218e0f50b0"
+    ],
+    "attempts": 1,
+    "latencyMs": 437,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-21",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:media:cooking"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:media:cooking",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-6d5ee841-e0ac-4bfc-b899-f6d0522c396a"
+    ],
+    "attempts": 1,
+    "latencyMs": 6950,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-22",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "brand",
+     "tagIds": [
+      "urn:tag:genre:music:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "failed",
+    "summary": "TOOL_TIMEOUT: TOOL_TIMEOUT after 300000 ms",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-fd5593ca-8bb3-4b6f-84de-dbaacab3b91e"
+    ],
+    "attempts": 1,
+    "latencyMs": 983317,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH",
+    "error": "TOOL_TIMEOUT"
+   },
+   {
+    "id": "tc-23",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "brand",
+     "tagIds": [
+      "urn:tag:keyword:media:london_england"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "failed",
+    "summary": "TOOL_TIMEOUT: TOOL_TIMEOUT after 300000 ms",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-34cf8b27-8979-4b45-9584-6616f2990eff"
+    ],
+    "attempts": 1,
+    "latencyMs": 1041769,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH",
+    "error": "TOOL_TIMEOUT"
+   },
+   {
+    "id": "tc-24",
+    "iteration": 8,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "feminism and women's voices",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-1355e228-bf3a-49df-938b-bbe99f53898f"
+    ],
+    "attempts": 1,
+    "latencyMs": 873,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-25",
+    "iteration": 8,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "cooking and food culture",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-bb6818d6-e595-4f28-a363-a77b742d4d92"
+    ],
+    "attempts": 1,
+    "latencyMs": 274001,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-26",
+    "iteration": 8,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "folk and indie music",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-35b22154-b27b-4439-a981-5d43a32779eb"
+    ],
+    "attempts": 1,
+    "latencyMs": 3128,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-27",
+    "iteration": 8,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "brand",
+     "tagIds": [
+      "urn:tag:keyword:media:london_england"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no brand entities for urn:tag:keyword:media:london_england",
+    "qlooOperations": [
+     "recommend (cached)"
+    ],
+    "correlationIds": [
+     "mcp-34cf8b27-8979-4b45-9584-6616f2990eff"
+    ],
+    "attempts": 0,
+    "latencyMs": 4,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-28",
+    "iteration": 9,
+    "tool": "anchor_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "feminism_and_women_s_voices",
+     "tagId": "urn:tag:genre:media:feminism"
+    },
+    "status": "ok",
+    "summary": "feminism_and_women_s_voices anchored to Feminism (urn:tag:genre:media:feminism)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    }
+   },
+   {
+    "id": "tc-29",
+    "iteration": 9,
+    "tool": "anchor_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "cooking_and_food_culture",
+     "tagId": "urn:tag:genre:media:cooking"
+    },
+    "status": "ok",
+    "summary": "cooking_and_food_culture anchored to Cooking (urn:tag:genre:media:cooking)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    }
+   },
+   {
+    "id": "tc-30",
+    "iteration": 9,
+    "tool": "anchor_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "folk_and_indie_music",
+     "tagId": "urn:tag:genre:music:folk"
+    },
+    "status": "ok",
+    "summary": "folk_and_indie_music anchored to folk (urn:tag:genre:music:folk)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    }
+   },
+   {
+    "id": "tc-31",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "artist",
+     "tagIds": [
+      "urn:tag:genre:media:feminism"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no artist entities for urn:tag:genre:media:feminism",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-66c293c3-e511-4d2b-b132-0c5c9bb29acb"
+    ],
+    "attempts": 1,
+    "latencyMs": 664,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-32",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "brand",
+     "tagIds": [
+      "urn:tag:genre:media:cooking"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no brand entities for urn:tag:genre:media:cooking",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-275d0761-08f3-45be-84ed-ce255caee9e9"
+    ],
+    "attempts": 1,
+    "latencyMs": 464,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-33",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:music:folk",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-713b5807-354b-40a3-9ee8-c22eb964d24f"
+    ],
+    "attempts": 1,
+    "latencyMs": 711,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-34",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:london_england"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:keyword:media:london_england",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-4389d61d-e6ab-4cdf-9904-2752143db173"
+    ],
+    "attempts": 1,
+    "latencyMs": 402,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-35",
+    "iteration": 10,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "British and London urban culture",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-bdd67a4f-7828-47b8-8cab-13551fabe1f4"
+    ],
+    "attempts": 1,
+    "latencyMs": 893,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-36",
+    "iteration": 10,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "book",
+     "tagIds": [
+      "urn:tag:genre:media:feminism"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "ok",
+    "summary": "20 book entities (brand-independent pool)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-31023c26-cb61-4c5e-b1bd-ceefef4eab03"
+    ],
+    "attempts": 1,
+    "latencyMs": 2315,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-37",
+    "iteration": 10,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "book",
+     "tagIds": [
+      "urn:tag:genre:media:cooking"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "ok",
+    "summary": "20 book entities (brand-independent pool)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-23968ad0-0569-406a-9a31-19904c1cff4d"
+    ],
+    "attempts": 1,
+    "latencyMs": 1239,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-38",
+    "iteration": 10,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "artist",
+     "tagIds": [
+      "urn:tag:genre:music:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no artist entities for urn:tag:genre:music:folk",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-6c781aed-1b61-4a2a-a162-21c7a286c1d5"
+    ],
+    "attempts": 1,
+    "latencyMs": 451,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-39",
+    "iteration": 10,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "artist",
+     "tagIds": [
+      "urn:tag:keyword:media:london_england"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no artist entities for urn:tag:keyword:media:london_england",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-52b52d22-68ba-4477-a94e-3a0e466e1a59"
+    ],
+    "attempts": 1,
+    "latencyMs": 428,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-40",
+    "iteration": 11,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "feminism_and_women_s_voices",
+     "entityType": "book",
+     "exemplars": [
+      {
+       "id": "027B6797-33FC-4506-BBC4-A6728A170830",
+       "reason": "Judy Chicago's account of the feminist art movement, a strong Qloo member of the Feminism concept.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Explicitly centred on women's liberation and feminist art practice."
+       }
+      },
+      {
+       "id": "3BAF525F-B16B-402C-8C4A-CF8C32AD8852",
+       "reason": "History of women healers, a Qloo member of the Feminism concept with high popularity.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Feminist history of women's bodies and social power."
+       }
+      },
+      {
+       "id": "FDBDE0E7-2A6E-4DBC-A690-ADBCB45BE256",
+       "reason": "Autobiography carried by the Feminism concept in Qloo, the most popular candidate.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Personal life narrative; feminist framing is indirect."
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "feminism_and_women_s_voices: accepted THROUGH THE FLOWER: My Struggle as A Woman Artist, Witches, Midwives and Nurses: A History of Women Healers, An Autobiography; diversity unknown",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-41",
+    "iteration": 11,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "cooking_and_food_culture",
+     "entityType": "book",
+     "exemplars": [
+      {
+       "id": "DF7B5A63-9741-48CD-A977-D904F90B8E9C",
+       "reason": "Salt, Fat, Acid, Heat, a Qloo member of the Cooking concept with very high popularity.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Core technical cooking culture book."
+       }
+      },
+      {
+       "id": "71142836-A19F-4B9A-AEF8-F02B99C8C2D0",
+       "reason": "Taste: My Life Through Food, a Qloo member of the Cooking concept with the highest popularity.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Memoir centred on food and cooking culture."
+       }
+      },
+      {
+       "id": "7630CDD4-145F-4544-87FC-3DA0139C5021",
+       "reason": "Hungry, a Qloo member of the Cooking concept.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Food-focused book; cultural link to cooking is looser."
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "cooking_and_food_culture: accepted Salt, Fat, Acid, Heat: Mastering the Elements of Good Cooking, Taste: My Life Through Food, Hungry; diversity unknown",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-42",
+    "iteration": 11,
+    "tool": "drop_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "british_and_london_urban_culture",
+     "code": "QLOO_EMPTY",
+     "reason": "Brand, place and artist probes on London England returned no members; the book probe could not be run within the remaining budget."
+    },
+    "status": "ok",
+    "summary": "british_and_london_urban_culture dropped (QLOO_EMPTY)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    }
+   },
+   {
+    "id": "tc-43",
+    "iteration": 11,
+    "tool": "analyze_evidence",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "feminism_and_women_s_voices",
+      "cooking_and_food_culture",
+      "folk_and_indie_music"
+     ]
+    },
+    "status": "ok",
+    "summary": "brand profile 20 tags; 8 exemplar/other profiles in run; 2 brand-conditioned list(s)",
+    "qlooOperations": [
+     "entity_tags",
+     "entity_tags",
+     "recommend",
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-52c91a15-2631-417d-a460-b3eab4847c92",
+     "mcp-10d9e8fd-2814-423a-835a-b43a65f7564e",
+     "mcp-5c42aadc-beea-4b4b-8bb2-c5204d9ad1d7",
+     "mcp-18006470-81cb-4487-a705-18a95bee7f88"
+    ],
+    "attempts": 4,
+    "latencyMs": 0
+   },
+   {
+    "id": "tc-44",
+    "iteration": 11,
+    "tool": "build_candidate_panel",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "feminism_and_women_s_voices",
+      "cooking_and_food_culture",
+      "folk_and_indie_music"
+     ]
+    },
+    "status": "ok",
+    "summary": "no comparison set of ≥ 3 rankable territories of one type",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0
+   }
+  ],
+  "resolvedEntities": [
+   {
+    "role": "brand",
+    "id": "012081EE-E2BA-420E-9904-417CAF65214B",
+    "label": "Oatly",
+    "type": "urn:entity:brand",
+    "match": "exact",
+    "resolution": "confirmed"
+   }
+  ],
+  "territoryHypotheses": [
+   {
+    "key": "feminism_and_women_s_voices",
+    "label": "Feminism and women's voices",
+    "role": "frontier_candidate",
+    "origin": "qloo_evidence",
+    "status": "analyzed",
+    "rationale": "Feminism tag recurs across Oatly-related brands' profiles and aligns with the brand's women-owned signal."
+   },
+   {
+    "key": "cooking_and_food_culture",
+    "label": "Cooking and food culture",
+    "role": "frontier_candidate",
+    "origin": "qloo_evidence",
+    "status": "analyzed",
+    "rationale": "Cooking tag recurs across related brand profiles; a food-culture stretch beyond the drink category."
+   },
+   {
+    "key": "folk_and_indie_music",
+    "label": "Folk and indie music",
+    "role": "frontier_candidate",
+    "origin": "qloo_evidence",
+    "status": "analyzed",
+    "rationale": "Folk music tag appears across related brand profiles, a warm acoustic lifestyle register."
+   },
+   {
+    "key": "british_and_london_urban_culture",
+    "label": "British and London urban culture",
+    "role": "frontier_candidate",
+    "origin": "qloo_evidence",
+    "status": "dropped (QLOO_EMPTY)",
+    "rationale": "London and British tags recur across related brand profiles, a metropolitan Anglophone register."
+   }
+  ],
+  "representations": [
+   {
+    "territoryKey": "feminism_and_women_s_voices",
+    "attempt": 1,
+    "accepted": [
+     "THROUGH THE FLOWER: My Struggle as A Woman Artist",
+     "Witches, Midwives and Nurses: A History of Women Healers",
+     "An Autobiography"
+    ],
+    "rejected": []
+   },
+   {
+    "territoryKey": "cooking_and_food_culture",
+    "attempt": 1,
+    "accepted": [
+     "Salt, Fat, Acid, Heat: Mastering the Elements of Good Cooking",
+     "Taste: My Life Through Food",
+     "Hungry"
+    ],
+    "rejected": []
+   }
+  ],
+  "sufficiency": [
+   {
+    "iteration": 0,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "interpret the request (interpret_request)"
+    ],
+    "nextActions": [
+     {
+      "action": "interpret_request",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the goal is not interpreted yet"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 1,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "resolve the brand (qloo_resolve_entity, role brand)"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_resolve_entity",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the brand is not resolved"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 2,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "0 supported frontier candidate(s); fewer than 3 and budget remains",
+     "propose and investigate further frontier candidates grounded in Qloo evidence"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "HIGH",
+      "reason": "0 viable frontier candidate(s); fewer than 4"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 3,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "0 supported frontier candidate(s); fewer than 3 and budget remains",
+     "propose and investigate further frontier candidates grounded in Qloo evidence"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "HIGH",
+      "reason": "0 viable frontier candidate(s); fewer than 4"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 4,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "0 supported frontier candidate(s); fewer than 3 and budget remains",
+     "propose and investigate further frontier candidates grounded in Qloo evidence"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "MEDIUM",
+      "reason": "0 viable frontier candidate(s); fewer than 4"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 5,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "0 supported frontier candidate(s); fewer than 3 and budget remains",
+     "propose and investigate further frontier candidates grounded in Qloo evidence"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "HIGH",
+      "reason": "0 viable frontier candidate(s); fewer than 4"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 6,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "feminism_and_women_s_voices: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "cooking_and_food_culture: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "folk_and_indie_music: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "british_and_london_urban_culture: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "qloo_recommend",
+      "target": "feminism_and_women_s_voices",
+      "value": "HIGH",
+      "reason": "probe the candidate's own Qloo concept urn:tag:genre:media:feminism before searching other tags"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "feminism_and_women_s_voices",
+      "value": "MEDIUM",
+      "reason": "search for an alternate concept only if the grounding tag has no members"
+     },
+     {
+      "action": "qloo_recommend",
+      "target": "cooking_and_food_culture",
+      "value": "HIGH",
+      "reason": "probe the candidate's own Qloo concept urn:tag:genre:media:cooking before searching other tags"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "cooking_and_food_culture",
+      "value": "MEDIUM",
+      "reason": "search for an alternate concept only if the grounding tag has no members"
+     },
+     {
+      "action": "qloo_recommend",
+      "target": "folk_and_indie_music",
+      "value": "HIGH",
+      "reason": "probe the candidate's own Qloo concept urn:tag:genre:music:folk before searching other tags"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "folk_and_indie_music",
+      "value": "MEDIUM",
+      "reason": "search for an alternate concept only if the grounding tag has no members"
+     },
+     {
+      "action": "qloo_recommend",
+      "target": "british_and_london_urban_culture",
+      "value": "HIGH",
+      "reason": "probe the candidate's own Qloo concept urn:tag:keyword:media:london_england before searching other tags"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "british_and_london_urban_culture",
+      "value": "MEDIUM",
+      "reason": "search for an alternate concept only if the grounding tag has no members"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 7,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "feminism_and_women_s_voices: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "cooking_and_food_culture: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "folk_and_indie_music: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "british_and_london_urban_culture: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "feminism_and_women_s_voices",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "cooking_and_food_culture",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "folk_and_indie_music",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     },
+     {
+      "action": "qloo_recommend",
+      "target": "british_and_london_urban_culture",
+      "value": "HIGH",
+      "reason": "probe the candidate's own Qloo concept urn:tag:keyword:media:london_england before searching other tags"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "british_and_london_urban_culture",
+      "value": "MEDIUM",
+      "reason": "search for an alternate concept only if the grounding tag has no members"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 8,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "feminism_and_women_s_voices: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "cooking_and_food_culture: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "folk_and_indie_music: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it",
+     "british_and_london_urban_culture: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "feminism_and_women_s_voices",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "cooking_and_food_culture",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "folk_and_indie_music",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "british_and_london_urban_culture",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 9,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "feminism_and_women_s_voices: ready to analyze (every observed representation strategy is empty or exhausted)",
+     "cooking_and_food_culture: ready to analyze (every observed representation strategy is empty or exhausted)",
+     "folk_and_indie_music: ready to analyze (every observed representation strategy is empty or exhausted)",
+     "british_and_london_urban_culture: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "qloo_recommend",
+      "target": "feminism_and_women_s_voices",
+      "value": "MEDIUM",
+      "reason": "recovery: an untried entity type or alternate Qloo concept may yield valid exemplars"
+     },
+     {
+      "action": "qloo_recommend",
+      "target": "cooking_and_food_culture",
+      "value": "MEDIUM",
+      "reason": "recovery: an untried entity type or alternate Qloo concept may yield valid exemplars"
+     },
+     {
+      "action": "qloo_recommend",
+      "target": "folk_and_indie_music",
+      "value": "MEDIUM",
+      "reason": "recovery: an untried entity type or alternate Qloo concept may yield valid exemplars"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "british_and_london_urban_culture",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     },
+     {
+      "action": "analyze",
+      "target": "feminism_and_women_s_voices,cooking_and_food_culture,folk_and_indie_music",
+      "value": "MEDIUM",
+      "reason": "these territories are ready; other gaps remain"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 10,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "4 in-scope territory(ies) not yet analyzed",
+     "feminism_and_women_s_voices: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only",
+     "cooking_and_food_culture: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only",
+     "folk_and_indie_music: ready to analyze (every observed representation strategy is empty or exhausted)",
+     "british_and_london_urban_culture: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "feminism_and_women_s_voices",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "feminism_and_women_s_voices",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "cooking_and_food_culture",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "cooking_and_food_culture",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     },
+     {
+      "action": "qloo_recommend",
+      "target": "folk_and_indie_music",
+      "value": "MEDIUM",
+      "reason": "recovery: an untried entity type or alternate Qloo concept may yield valid exemplars"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "british_and_london_urban_culture",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "4 viable candidates"
+     },
+     {
+      "action": "analyze",
+      "target": "folk_and_indie_music",
+      "value": "MEDIUM",
+      "reason": "these territories are ready; other gaps remain"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 11,
+    "verdict": "SUFFICIENT",
+    "reasons": [
+     "all 3 in-scope territories have analysis results"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "propose_frontier",
+      "target": null,
+      "value": "NONE",
+      "reason": "no room left in the candidate or call budget"
+     },
+     {
+      "action": "finish",
+      "target": null,
+      "value": "HIGH",
+      "reason": "every in-scope territory is analyzed"
+     }
+    ],
+    "materialGap": false
+   }
+  ],
+  "representationQuality": [
+   {
+    "territoryKey": "feminism_and_women_s_voices",
+    "attempt": 1,
+    "candidateId": "027B6797-33FC-4506-BBC4-A6728A170830",
+    "label": "THROUGH THE FLOWER: My Struggle as A Woman Artist",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9735206517156496,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Explicitly centred on women's liberation and feminist art practice.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "feminism_and_women_s_voices",
+    "attempt": 1,
+    "candidateId": "3BAF525F-B16B-402C-8C4A-CF8C32AD8852",
+    "label": "Witches, Midwives and Nurses: A History of Women Healers",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9495335173876974,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Feminist history of women's bodies and social power.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "feminism_and_women_s_voices",
+    "attempt": 1,
+    "candidateId": "FDBDE0E7-2A6E-4DBC-A690-ADBCB45BE256",
+    "label": "An Autobiography",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9855057188320254,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Personal life narrative; feminist framing is indirect.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "cooking_and_food_culture",
+    "attempt": 1,
+    "candidateId": "DF7B5A63-9741-48CD-A977-D904F90B8E9C",
+    "label": "Salt, Fat, Acid, Heat: Mastering the Elements of Good Cooking",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9732996504780427,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Core technical cooking culture book.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "cooking_and_food_culture",
+    "attempt": 1,
+    "candidateId": "71142836-A19F-4B9A-AEF8-F02B99C8C2D0",
+    "label": "Taste: My Life Through Food",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.9940023664132519,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Memoir centred on food and cooking culture.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "cooking_and_food_culture",
+    "attempt": 1,
+    "candidateId": "7630CDD4-145F-4544-87FC-3DA0139C5021",
+    "label": "Hungry",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": false,
+      "profileTags": null,
+      "popularity": 0.8806695317493778,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 0
+     },
+     "reasons": [
+      "quality unverified: its tag profile has not been fetched"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Food-focused book; cultural link to cooking is looser.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   }
+  ],
+  "conceptDedup": [],
+  "earlyStops": [],
+  "skillUsage": [
+   {
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 0,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 1,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "explore_candidate_territories",
+     "version": 4
+    },
+    "turns": 4,
+    "qlooCalls": 9,
+    "toolCalls": 15
+   },
+   {
+    "skill": {
+     "id": "analyze_territories",
+     "version": 2
+    },
+    "turns": 7,
+    "qlooCalls": 0,
+    "toolCalls": 0
+   },
+   {
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "turns": 5,
+    "qlooCalls": 14,
+    "toolCalls": 21
+   },
+   {
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "turns": 2,
+    "qlooCalls": 0,
+    "toolCalls": 2
+   }
+  ],
+  "methodologyInvocations": [],
+  "synthesis": {
+   "source": "model",
+   "attempts": 1,
+   "violations": [],
+   "attemptDetails": [
+    {
+     "attempt": 1,
+     "accepted": true,
+     "categories": {},
+     "violations": []
+    }
+   ]
+  },
+  "errors": [
+   {
+    "iteration": 3,
+    "code": "TOOL_TIMEOUT",
+    "detail": "qloo_related_entities: TOOL_TIMEOUT after 300000 ms"
+   },
+   {
+    "iteration": 5,
+    "code": "TOOL_TIMEOUT",
+    "detail": "qloo_get_entity_tags: TOOL_TIMEOUT after 300000 ms"
+   },
+   {
+    "iteration": 7,
+    "code": "TOOL_TIMEOUT",
+    "detail": "qloo_recommend: TOOL_TIMEOUT after 300000 ms"
+   },
+   {
+    "iteration": 7,
+    "code": "TOOL_TIMEOUT",
+    "detail": "qloo_recommend: TOOL_TIMEOUT after 300000 ms"
+   }
+  ],
+  "userClarifications": [],
+  "representationPlans": [
+   {
+    "iteration": 6,
+    "plan": {
+     "territoryKeys": [
+      "feminism_and_women_s_voices",
+      "cooking_and_food_culture",
+      "folk_and_indie_music",
+      "british_and_london_urban_culture"
+     ],
+     "candidateEntityTypes": [],
+     "preferredCommonType": null,
+     "supportedTerritoriesByType": {},
+     "possibleTerritoriesByType": {},
+     "feasibility": "POSSIBLE",
+     "required": 3,
+     "missingRequirements": [
+      "no territory has returned Qloo members yet: probe the concepts first"
+     ],
+     "reasonCodes": [
+      "NO_TYPE_OBSERVED"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 10,
+    "plan": {
+     "territoryKeys": [
+      "feminism_and_women_s_voices",
+      "cooking_and_food_culture",
+      "folk_and_indie_music",
+      "british_and_london_urban_culture"
+     ],
+     "candidateEntityTypes": [
+      "book"
+     ],
+     "preferredCommonType": "book",
+     "supportedTerritoriesByType": {
+      "book": [
+       "feminism_and_women_s_voices",
+       "cooking_and_food_culture"
+      ]
+     },
+     "possibleTerritoriesByType": {
+      "book": [
+       "folk_and_indie_music",
+       "british_and_london_urban_culture"
+      ]
+     },
+     "feasibility": "POSSIBLE",
+     "required": 3,
+     "missingRequirements": [
+      "folk_and_indie_music: no book members observed yet; probe book on Indie - Folk [urn:tag:genre:music:indie_folk], Indie - Folk [urn:tag:genre:qloo:indie_folk], Indie Folk [urn:tag:subgenre:qloo:indie_folk] before switching to another type",
+      "british_and_london_urban_culture: no book members observed yet; probe book on British High Street Culture [urn:tag:cultural_relevance:qloo:british_high_street_culture], British Urban Culture [urn:tag:interests:qloo:british_urban_culture], London Culture [urn:tag:cultural_relevance:qloo:london_culture] before switching to another type"
+     ],
+     "reasonCodes": [
+      "COMMON_TYPE_POSSIBLE",
+      "TYPE_PROBE_PATH:folk_and_indie_music",
+      "TYPE_PROBE_PATH:british_and_london_urban_culture"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   },
+   {
+    "iteration": 11,
+    "plan": {
+     "territoryKeys": [
+      "feminism_and_women_s_voices",
+      "cooking_and_food_culture",
+      "folk_and_indie_music"
+     ],
+     "candidateEntityTypes": [
+      "book"
+     ],
+     "preferredCommonType": "book",
+     "supportedTerritoriesByType": {
+      "book": [
+       "feminism_and_women_s_voices",
+       "cooking_and_food_culture"
+      ]
+     },
+     "possibleTerritoriesByType": {
+      "book": [
+       "folk_and_indie_music"
+      ]
+     },
+     "feasibility": "POSSIBLE",
+     "required": 3,
+     "missingRequirements": [
+      "folk_and_indie_music: no book members observed yet; probe book on Indie - Folk [urn:tag:genre:music:indie_folk], Indie - Folk [urn:tag:genre:qloo:indie_folk], Indie Folk [urn:tag:subgenre:qloo:indie_folk] before switching to another type"
+     ],
+     "reasonCodes": [
+      "COMMON_TYPE_POSSIBLE",
+      "TYPE_PROBE_PATH:folk_and_indie_music"
+     ],
+     "rulesVersion": "representation-alignment-v1"
+    }
+   }
+  ],
+  "completion": [],
+  "probeRecommendations": [
+   {
+    "iteration": 6,
+    "territoryKey": "feminism_and_women_s_voices",
+    "conceptKey": "urn:tag:genre:media:feminism",
+    "namespace": "genre:media",
+    "type": "brand",
+    "priority": "STRUCTURAL",
+    "reason": "2 brand profile(s) observed in this run carry the concept (Qloo entity_tags)"
+   },
+   {
+    "iteration": 6,
+    "territoryKey": "cooking_and_food_culture",
+    "conceptKey": "urn:tag:genre:media:cooking",
+    "namespace": "genre:media",
+    "type": "place",
+    "priority": "EXPLORATION",
+    "reason": "untested in genre:media"
+   },
+   {
+    "iteration": 6,
+    "territoryKey": "folk_and_indie_music",
+    "conceptKey": "urn:tag:genre:music:folk",
+    "namespace": "genre:music",
+    "type": "brand",
+    "priority": "STRUCTURAL",
+    "reason": "3 brand profile(s) observed in this run carry the concept (Qloo entity_tags)"
+   },
+   {
+    "iteration": 6,
+    "territoryKey": "british_and_london_urban_culture",
+    "conceptKey": "urn:tag:keyword:media:london_england",
+    "namespace": "keyword:media",
+    "type": "brand",
+    "priority": "STRUCTURAL",
+    "reason": "3 brand profile(s) observed in this run carry the concept (Qloo entity_tags)"
+   },
+   {
+    "iteration": 7,
+    "territoryKey": "feminism_and_women_s_voices",
+    "conceptKey": "urn:tag:genre:media:feminism",
+    "namespace": "genre:media",
+    "type": "artist",
+    "priority": "EXPLORATION",
+    "reason": "untested in genre:media"
+   },
+   {
+    "iteration": 7,
+    "territoryKey": "cooking_and_food_culture",
+    "conceptKey": "urn:tag:genre:media:cooking",
+    "namespace": "genre:media",
+    "type": "brand",
+    "priority": "STRUCTURAL",
+    "reason": "2 brand profile(s) observed in this run carry the concept (Qloo entity_tags)"
+   },
+   {
+    "iteration": 7,
+    "territoryKey": "folk_and_indie_music",
+    "conceptKey": "urn:tag:genre:music:folk",
+    "namespace": "genre:music",
+    "type": "place",
+    "priority": "EXPLORATION",
+    "reason": "untested in genre:music"
+   },
+   {
+    "iteration": 8,
+    "territoryKey": "british_and_london_urban_culture",
+    "conceptKey": "urn:tag:keyword:media:london_england",
+    "namespace": "keyword:media",
+    "type": "place",
+    "priority": "EXPLORATION",
+    "reason": "untested in keyword:media"
+   },
+   {
+    "iteration": 9,
+    "territoryKey": "feminism_and_women_s_voices",
+    "conceptKey": "urn:tag:genre:media:feminism",
+    "namespace": "genre:media",
+    "type": "book",
+    "priority": "EXPLORATION",
+    "reason": "untested in genre:media"
+   },
+   {
+    "iteration": 9,
+    "territoryKey": "cooking_and_food_culture",
+    "conceptKey": "urn:tag:cultural_relevance:qloo:food_culture",
+    "namespace": "cultural_relevance:qloo",
+    "type": "place",
+    "priority": "EXPLORATION",
+    "reason": "untested in cultural_relevance:qloo"
+   },
+   {
+    "iteration": 9,
+    "territoryKey": "folk_and_indie_music",
+    "conceptKey": "urn:tag:genre:music:folk",
+    "namespace": "genre:music",
+    "type": "artist",
+    "priority": "EXPLORATION",
+    "reason": "untested in genre:music"
+   },
+   {
+    "iteration": 9,
+    "territoryKey": "british_and_london_urban_culture",
+    "conceptKey": "urn:tag:keyword:media:london_england",
+    "namespace": "keyword:media",
+    "type": "artist",
+    "priority": "EXPLORATION",
+    "reason": "untested in keyword:media"
+   },
+   {
+    "iteration": 10,
+    "territoryKey": "folk_and_indie_music",
+    "conceptKey": "urn:tag:genre:music:indie_folk",
+    "namespace": "genre:music",
+    "type": "book",
+    "priority": "COMPARISON_TYPE",
+    "reason": "the comparison's shared entity type"
+   },
+   {
+    "iteration": 10,
+    "territoryKey": "british_and_london_urban_culture",
+    "conceptKey": "urn:tag:cultural_relevance:qloo:british_high_street_culture",
+    "namespace": "cultural_relevance:qloo",
+    "type": "book",
+    "priority": "COMPARISON_TYPE",
+    "reason": "the comparison's shared entity type"
+   }
+  ],
+  "anchorDecisions": [
+   {
+    "iteration": 9,
+    "territoryKey": "feminism_and_women_s_voices",
+    "sourceTagId": "urn:tag:genre:media:feminism",
+    "anchoredTagId": "urn:tag:genre:media:feminism",
+    "relation": "SAME_CONCEPT",
+    "basis": "MODEL_ANCHOR",
+    "decidedBy": "agent",
+    "reasonCode": null,
+    "evidence": "anchored to its own evidence tag",
+    "correlationIds": []
+   },
+   {
+    "iteration": 9,
+    "territoryKey": "cooking_and_food_culture",
+    "sourceTagId": "urn:tag:genre:media:cooking",
+    "anchoredTagId": "urn:tag:genre:media:cooking",
+    "relation": "SAME_CONCEPT",
+    "basis": "MODEL_ANCHOR",
+    "decidedBy": "agent",
+    "reasonCode": null,
+    "evidence": "anchored to its own evidence tag",
+    "correlationIds": []
+   },
+   {
+    "iteration": 9,
+    "territoryKey": "folk_and_indie_music",
+    "sourceTagId": "urn:tag:genre:music:folk",
+    "anchoredTagId": "urn:tag:genre:music:folk",
+    "relation": "SAME_CONCEPT",
+    "basis": "MODEL_ANCHOR",
+    "decidedBy": "agent",
+    "reasonCode": null,
+    "evidence": "anchored to its own evidence tag",
+    "correlationIds": []
+   }
+  ],
+  "stopReason": {
+   "code": "AGENT_FINISHED",
+   "detail": "agent finished"
+  },
+  "semanticAssessments": []
+ },
+ "metrics": {
+  "agent_iterations": 12,
+  "qloo_calls": 32,
+  "tool_calls": 44,
+  "tool_success_rate": 0.905,
+  "invalid_actions": 3,
+  "representation_attempts": 2,
+  "territories_proposed": 4,
+  "territories_resolved": 3,
+  "territories_rejected": 1,
+  "full_analysis_count": 0,
+  "partial_analysis_count": 2,
+  "descriptive_analysis_count": 0,
+  "unsupported_count": 2,
+  "methodology_calls": 0,
+  "latency_ms": 12574244,
+  "model_input_tokens": 107652,
+  "model_output_tokens": 18357,
+  "retry_count": 0,
+  "budget_exhausted": false,
+  "model_turns": 12,
+  "model_attempts": 13,
+  "first_attempt_valid_turns": 10,
+  "valid_after_repair_turns": 12,
+  "repairs": 1,
+  "unknown_tool_attempts": 0,
+  "invalid_argument_attempts": 0,
+  "unsupported_state_actions": 2,
+  "synthesis_attempts": 1,
+  "calls_avoided": 0,
+  "avg_context_chars": 16059,
+  "max_context_chars": 36740,
+  "avg_context_tokens_estimate": 4015,
+  "model_latency_ms": 5038515,
+  "qloo_latency_ms": 5659818,
+  "model_cost_usd": 0.0205,
+  "model_id": "claude-haiku-5-5",
+  "model_effort": "high",
+  "synthesis_latency_ms": 13492,
+  "analysis_latency_ms": 21549,
+  "qloo_spacing_ms": 109227,
+  "synthesis_first_attempt_valid": true,
+  "synthesis_valid_after_repair": true,
+  "synthesis_fallback": false,
+  "reference_deferrals": 0,
+  "empty_type_probes": 10,
+  "max_empty_type_probes_per_concept": 3,
+  "probe_limit_refusals": 0,
+  "type_alignment_deferrals": 0,
+  "reference_namespace_refusals": 0,
+  "successful_type_probes": 2,
+  "namespace_type_refusals": 0,
+  "alternate_anchor_refusals": 0,
+  "source_evidence_anchors": 0,
+  "frontier_completion_refusals": 0
+ },
+ "skillsUsed": [
+  {
+   "id": "interpret_request",
+   "version": 1
+  },
+  {
+   "id": "resolve_brand",
+   "version": 1
+  },
+  {
+   "id": "explore_candidate_territories",
+   "version": 4
+  },
+  {
+   "id": "analyze_territories",
+   "version": 2
+  },
+  {
+   "id": "resolve_territory",
+   "version": 5
+  },
+  {
+   "id": "build_territory_representation",
+   "version": 4
+  }
+ ],
+ "comparisonSetConstruction": {
+  "intent": "explore_frontier",
+  "proposed": [
+   {
+    "key": "feminism_and_women_s_voices",
+    "label": "Feminism and women's voices",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "evidence": "Qloo tag(s) urn:tag:genre:media:feminism"
+   },
+   {
+    "key": "cooking_and_food_culture",
+    "label": "Cooking and food culture",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "evidence": "Qloo tag(s) urn:tag:genre:media:cooking"
+   },
+   {
+    "key": "folk_and_indie_music",
+    "label": "Folk and indie music",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "evidence": "Qloo tag(s) urn:tag:genre:music:folk"
+   },
+   {
+    "key": "british_and_london_urban_culture",
+    "label": "British and London urban culture",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "evidence": "Qloo tag(s) urn:tag:keyword:media:london_england, urn:tag:genre:music:british"
+   }
+  ],
+  "rejected": [
+   {
+    "key": "folk_and_indie_music",
+    "label": "Folk and indie music",
+    "stage": "evidence",
+    "code": "INSUFFICIENT_EVIDENCE",
+    "reason": "no measurable Qloo evidence"
+   },
+   {
+    "key": "british_and_london_urban_culture",
+    "label": "British and London urban culture",
+    "stage": "qloo_support",
+    "code": "QLOO_EMPTY",
+    "reason": "Brand, place and artist probes on London England returned no members; the book probe could not be run within the remaining budget."
+   }
+  ],
+  "final": [
+   {
+    "key": "feminism_and_women_s_voices",
+    "label": "Feminism and women's voices",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "route": "PARTIAL_CULTURAL_ANALYSIS"
+   },
+   {
+    "key": "cooking_and_food_culture",
+    "label": "Cooking and food culture",
+    "role": "frontier_candidate",
+    "source": "qloo_grounded",
+    "route": "PARTIAL_CULTURAL_ANALYSIS"
+   }
+  ],
+  "dedupDecisions": [],
+  "semanticAssessments": [],
+  "candidatePool": [
+   {
+    "canonicalConceptKey": "friendship",
+    "tagId": "urn:tag:keyword:media:friendship",
+    "label": "friendship",
+    "support": 5
+   },
+   {
+    "canonicalConceptKey": "england",
+    "tagId": "urn:tag:keyword:media:england",
+    "label": "england",
+    "support": 3
+   },
+   {
+    "canonicalConceptKey": "folk",
+    "tagId": "urn:tag:genre:music:folk",
+    "label": "folk",
+    "support": 3
+   },
+   {
+    "canonicalConceptKey": "london_england",
+    "tagId": "urn:tag:keyword:media:london_england",
+    "label": "london england",
+    "support": 3
+   },
+   {
+    "canonicalConceptKey": "teenage_girl",
+    "tagId": "urn:tag:keyword:media:teenage_girl",
+    "label": "teenage girl",
+    "support": 3
+   },
+   {
+    "canonicalConceptKey": "british",
+    "tagId": "urn:tag:genre:music:british",
+    "label": "british",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "cooking",
+    "tagId": "urn:tag:genre:media:cooking",
+    "label": "Cooking",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "family_relationship",
+    "tagId": "urn:tag:keyword:media:family_relationships",
+    "label": "family relationships",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "feminism",
+    "tagId": "urn:tag:genre:media:feminism",
+    "label": "Feminism",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "new_york_city",
+    "tagId": "urn:tag:keyword:media:new_york_city",
+    "label": "new york city",
+    "support": 2
+   },
+   {
+    "canonicalConceptKey": "21st_century",
+    "tagId": "urn:tag:keyword:media:21st_century",
+    "label": "21st century",
+    "support": 1
+   },
+   {
+    "canonicalConceptKey": "african_american",
+    "tagId": "urn:tag:keyword:media:african_american",
+    "label": "african american",
+    "support": 1
+   }
+  ],
+  "evidenceBase": [
+   "82ABA78E-DA57-4E6B-B956-F56E77BD0661",
+   "C770B4D0-8776-42D8-8353-95C91836E4E2",
+   "80BA1963-AACC-48B1-B832-72E780C4FA8D",
+   "68331716-A54E-4477-81FC-97EF3BCC8723",
+   "CF79BA2C-A846-4F56-AC38-5FBC2389BF29",
+   "1F645FD2-FF8A-4902-8D2D-F18438BDABD5"
+  ],
+  "diversity": {
+   "assessment": "diverse",
+   "similarPairs": [],
+   "detail": "no pair of candidates overlaps culturally in Qloo evidence"
+  },
+  "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+ },
+ "layers": {
+  "qlooEvidence": {
+   "brand": {
+    "id": "012081EE-E2BA-420E-9904-417CAF65214B",
+    "label": "Oatly",
+    "correlationId": "mcp-f2b39c7d-6d95-4625-842b-79029bbf00a5"
+   },
+   "concepts": [
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "id": "urn:tag:genre:media:feminism",
+     "label": "Feminism",
+     "correlationIds": [
+      "mcp-620ea35d-59c8-4b93-85ef-0cae3a4cbff4",
+      "mcp-0b76c30e-1784-484b-b938-ddbebd1fc67b"
+     ]
+    },
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "id": "urn:tag:genre:media:cooking",
+     "label": "Cooking",
+     "correlationIds": [
+      "mcp-415413c8-a089-4e94-8feb-6f360496f8b0",
+      "mcp-a338c274-2647-4ec8-9902-149c13138b59"
+     ]
+    },
+    {
+     "territoryKey": "folk_and_indie_music",
+     "id": "urn:tag:genre:music:folk",
+     "label": "folk",
+     "correlationIds": [
+      "mcp-620ea35d-59c8-4b93-85ef-0cae3a4cbff4",
+      "mcp-0b76c30e-1784-484b-b938-ddbebd1fc67b",
+      "mcp-8ba89cdb-2a63-43da-b9c6-a71610514537",
+      "mcp-52c91a15-2631-417d-a460-b3eab4847c92",
+      "mcp-10d9e8fd-2814-423a-835a-b43a65f7564e"
+     ]
+    }
+   ],
+   "exemplars": [
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "id": "027B6797-33FC-4506-BBC4-A6728A170830",
+     "label": "THROUGH THE FLOWER: My Struggle as A Woman Artist",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-31023c26-cb61-4c5e-b1bd-ceefef4eab03"
+    },
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "id": "3BAF525F-B16B-402C-8C4A-CF8C32AD8852",
+     "label": "Witches, Midwives and Nurses: A History of Women Healers",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-31023c26-cb61-4c5e-b1bd-ceefef4eab03"
+    },
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "id": "FDBDE0E7-2A6E-4DBC-A690-ADBCB45BE256",
+     "label": "An Autobiography",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-31023c26-cb61-4c5e-b1bd-ceefef4eab03"
+    },
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "id": "DF7B5A63-9741-48CD-A977-D904F90B8E9C",
+     "label": "Salt, Fat, Acid, Heat: Mastering the Elements of Good Cooking",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-23968ad0-0569-406a-9a31-19904c1cff4d"
+    },
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "id": "71142836-A19F-4B9A-AEF8-F02B99C8C2D0",
+     "label": "Taste: My Life Through Food",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-23968ad0-0569-406a-9a31-19904c1cff4d"
+    },
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "id": "7630CDD4-145F-4544-87FC-3DA0139C5021",
+     "label": "Hungry",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-23968ad0-0569-406a-9a31-19904c1cff4d"
+    }
+   ],
+   "qlooCalls": 32
+  },
+  "systemAnalysis": {
+   "routes": [
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "route": "PARTIAL_CULTURAL_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    },
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "route": "PARTIAL_CULTURAL_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    },
+    {
+     "territoryKey": "british_and_london_urban_culture",
+     "route": "INSUFFICIENT_EVIDENCE",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    },
+    {
+     "territoryKey": "folk_and_indie_music",
+     "route": "INSUFFICIENT_EVIDENCE",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    }
+   ],
+   "methodologyRunIds": [],
+   "finalSufficiency": "SUFFICIENT",
+   "representationDecisions": {
+    "valid": 6,
+    "weak": 0,
+    "rejected": 0
+   },
+   "semanticComparison": []
+  },
+  "agentInterpretation": {
+   "summary": "Within these results, Oatly's frontier candidates are cooking and food culture and feminism and women's voices, both on partial routes with medium evidence quality and no relative position against a comparison set. British and London urban culture and folk and indie music have no usable evidence yet, so they cannot be assessed. No candidate has a robustness level, so any expansion read rests only on shared signals and brand-conditioned association, and these results cannot say whether any territory would be a credible expansion for Oatly.\nCooking and food culture: Filtered shared signals for this territory's book exemplars (indie, female protagonist, lesbian) fall in a SOME band, suggesting a loose rather than tight shared profile. The brand-conditioned query returned a supported list whose leading titles center on food history, class and cooking science, indicating association with food culture rather than a ranked fit. Evidence quality is medium and the route is partial, so the food-culture association is an exploratory signal rather than a settled finding.\nFeminism and women's voices: Shared signals (electronic, indie, musician, female protagonist, lesbian) fall in a SOME band, pointing to a loosely shared profile with music-adjacent overlap. The brand-conditioned query returned a supported list whose top entries lean toward women in space, science and exercise history, an association pattern rather than a ranked fit. Evidence quality is medium on a partial route with no relative position, so the association should be treated as provisional.\nBritish and London urban culture: No concept anchors this territory and the route is insufficient evidence, so no cultural association can be described from these results.\nFolk and indie music: Folk has only a descriptive concept without a validated exemplar panel, so its route cannot yet support any association claim.",
+   "source": "model",
+   "claimValidationPassed": true,
+   "semanticJudgments": [
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "label": "THROUGH THE FLOWER: My Struggle as A Woman Artist",
+     "relevance": "STRONG",
+     "reason": "Explicitly centred on women's liberation and feminist art practice."
+    },
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "label": "Witches, Midwives and Nurses: A History of Women Healers",
+     "relevance": "STRONG",
+     "reason": "Feminist history of women's bodies and social power."
+    },
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "label": "An Autobiography",
+     "relevance": "ADEQUATE",
+     "reason": "Personal life narrative; feminist framing is indirect."
+    },
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "label": "Salt, Fat, Acid, Heat: Mastering the Elements of Good Cooking",
+     "relevance": "STRONG",
+     "reason": "Core technical cooking culture book."
+    },
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "label": "Taste: My Life Through Food",
+     "relevance": "STRONG",
+     "reason": "Memoir centred on food and cooking culture."
+    },
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "label": "Hungry",
+     "relevance": "ADEQUATE",
+     "reason": "Food-focused book; cultural link to cooking is looser."
+    }
+   ],
+   "followUpOptions": [
+    "Build a comparison set for cooking and food culture with additional book exemplars to enable a relative position.",
+    "Validate an exemplar panel for folk and indie music so its representation can support analysis.",
+    "Probe London, England with venue or book entity types to test whether British and London urban culture can be anchored.",
+    "Widen the brand-conditioned list for feminism and women's voices beyond the truncated top entries to check whether the association holds."
+   ],
+   "findings": [
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "claimType": "shared_signals",
+     "supportingFields": [
+      "coherence.consistentlyShared",
+      "coherence.band"
+     ],
+     "interpretation": "Filtered shared signals for this territory's book exemplars (indie, female protagonist, lesbian) fall in a SOME band, suggesting a loose rather than tight shared profile.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL",
+      "NO_RELATIVE_POSITION"
+     ]
+    },
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "claimType": "conditioned_evidence",
+     "supportingFields": [
+      "conditionedEvidence.support",
+      "conditionedEvidence.top"
+     ],
+     "interpretation": "The brand-conditioned query returned a supported list whose leading titles center on food history, class and cooking science, indicating association with food culture rather than a ranked fit.",
+     "limitationCodes": [
+      "CONDITIONED_LIST_TRUNCATED"
+     ]
+    },
+    {
+     "territoryKey": "cooking_and_food_culture",
+     "claimType": "evidence_quality",
+     "supportingFields": [
+      "evidenceQuality"
+     ],
+     "interpretation": "Evidence quality is medium and the route is partial, so the food-culture association is an exploratory signal rather than a settled finding.",
+     "limitationCodes": [
+      "NOT_COLLECTED_BUDGET",
+      "COMPARISON_SET_TOO_SMALL"
+     ]
+    },
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "claimType": "shared_signals",
+     "supportingFields": [
+      "coherence.consistentlyShared",
+      "coherence.band"
+     ],
+     "interpretation": "Shared signals (electronic, indie, musician, female protagonist, lesbian) fall in a SOME band, pointing to a loosely shared profile with music-adjacent overlap.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL"
+     ]
+    },
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "claimType": "conditioned_evidence",
+     "supportingFields": [
+      "conditionedEvidence.support",
+      "conditionedEvidence.top"
+     ],
+     "interpretation": "The brand-conditioned query returned a supported list whose top entries lean toward women in space, science and exercise history, an association pattern rather than a ranked fit.",
+     "limitationCodes": [
+      "CONDITIONED_LIST_TRUNCATED"
+     ]
+    },
+    {
+     "territoryKey": "feminism_and_women_s_voices",
+     "claimType": "evidence_quality",
+     "supportingFields": [
+      "evidenceQuality",
+      "route"
+     ],
+     "interpretation": "Evidence quality is medium on a partial route with no relative position, so the association should be treated as provisional.",
+     "limitationCodes": [
+      "NO_RELATIVE_POSITION",
+      "NOT_COLLECTED_BUDGET"
+     ]
+    },
+    {
+     "territoryKey": "british_and_london_urban_culture",
+     "claimType": "route_limitation",
+     "supportingFields": [
+      "route",
+      "limitations"
+     ],
+     "interpretation": "No concept anchors this territory and the route is insufficient evidence, so no cultural association can be described from these results.",
+     "limitationCodes": [
+      "QLOO_EMPTY"
+     ]
+    },
+    {
+     "territoryKey": "folk_and_indie_music",
+     "claimType": "route_limitation",
+     "supportingFields": [
+      "route",
+      "representation"
+     ],
+     "interpretation": "Folk has only a descriptive concept without a validated exemplar panel, so its route cannot yet support any association claim.",
+     "limitationCodes": [
+      "NO_VALID_REPRESENTATION",
+      "NO_RELATIVE_POSITION"
+     ]
+    }
+   ]
+  }
+ },
+ "failureCategory": null
+}

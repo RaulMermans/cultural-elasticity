@@ -1,0 +1,2380 @@
+{
+ "schemaVersion": "ce-agent-result/0.3",
+ "runId": "500ce0b2-9cfd-48a8-9619-57a2e975daba",
+ "status": "COMPLETE",
+ "finalSufficiency": "SUFFICIENT",
+ "intent": "analyze_move",
+ "userQuery": "Could Aesop credibly move into coffee?",
+ "brand": {
+  "id": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+  "label": "Aesop",
+  "type": "urn:entity:brand",
+  "resolution": "confirmed"
+ },
+ "territories": [
+  {
+   "key": "coffee",
+   "label": "Coffee",
+   "role": "target",
+   "origin": "user",
+   "rationale": "named by the user",
+   "resolvedConcept": {
+    "id": "urn:tag:cuisine:qloo:coffee",
+    "label": "Coffee",
+    "type": "urn:tag:cuisine:qloo"
+   },
+   "representation": {
+    "strategy": "PLACE_PANEL",
+    "entityType": "place",
+    "exemplars": [
+     {
+      "id": "C56C9A77-AE35-4A48-ADC4-F59C93A020A1",
+      "label": "Coffee Bru",
+      "type": "place",
+      "role": "primary",
+      "selectionReason": "Coffee Bru: a coffee venue in the coffee concept's member pool with high popularity.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.8870413851486255,
+      "quality": "VALID"
+     },
+     {
+      "id": "AB8C0F3E-6A9C-4FE3-93C3-D449A020040C",
+      "label": "Georges espressobar",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Georges espressobar: an espresso bar in the coffee concept's member pool, profiled against peers.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.76982754361742,
+      "quality": "VALID"
+     },
+     {
+      "id": "002C2D76-B2C1-4A7C-A5C5-DCF47878952F",
+      "label": "Blue Bottle Coffee",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Blue Bottle Coffee: a specialty coffee roaster and cafe, a direct cultural peer of the coffee concept.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.8027469994625016,
+      "quality": "WEAK"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "adequate",
+    "diversityDetail": "no exemplar pair shares ≥ 0.8 of its cultural tags",
+    "attempts": 1,
+    "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Coffee (urn:tag:cuisine:qloo:coffee): Coffee Bru, Georges espressobar, Blue Bottle Coffee",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Jack & NaNa coffee store, Raw Coffee Stand, LiLo Coffee Roasters, Cafe de L'ambre, r.about coffee.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "AVAILABLE",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 2,
+    "filteredSharedMedian": 0,
+    "filteredBand": "NONE",
+    "exemplarsCompared": 3,
+    "consistentlyShared": []
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "Jack & NaNa coffee store",
+      "rank": 1
+     },
+     {
+      "label": "Raw Coffee Stand",
+      "rank": 2
+     },
+     {
+      "label": "LiLo Coffee Roasters",
+      "rank": 3
+     },
+     {
+      "label": "Cafe de L'ambre",
+      "rank": 4
+     },
+     {
+      "label": "r.about coffee",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-c1d7cce1-52d9-440b-9b0a-4ab13e6b2e04"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 1 rankable place territory in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:cuisine:qloo:coffee: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Coffee: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-29e60f12-30fa-422a-aaaa-12558b9dd669",
+     "mcp-5aaf1368-2ce7-4bbe-95fc-3434547d064a",
+     "mcp-5f92474e-3bf6-4802-a96e-1c5a8f076c11",
+     "mcp-aa86f6d1-4970-4c1a-b593-da96b222bd58",
+     "mcp-c1d7cce1-52d9-440b-9b0a-4ab13e6b2e04",
+     "mcp-cdabbde4-9210-45e6-b0e3-8d56cff01b08"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Coffee",
+    "sourceTagId": null,
+    "resolvedId": "urn:tag:cuisine:qloo:coffee",
+    "canonicalConceptKey": "coffee",
+    "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+    "candidateSource": "user",
+    "anchorRelation": "NO_SOURCE_TAG",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:cuisine:qloo:coffee",
+     "label": "Coffee",
+     "namespace": "cuisine:qloo",
+     "attemptedTypes": [
+      "place"
+     ],
+     "emptyTypes": [],
+     "successfulTypes": [
+      "place"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 0,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  }
+ ],
+ "methodologyRuns": [],
+ "summary": {
+  "text": "Qloo's evidence on whether Aesop could credibly move into coffee is partial. A place-based representation and a brand-conditioned list of coffee entities are available, but no comparison set, relative position, classification, or measured robustness exists for coffee. The coffee exemplars share no cultural signals after filtering operational tags, so the results describe coffee-related association around the brand without establishing how coffee compares with other territories or whether the move is credible.\nCoffee: After operational tags are filtered, the coffee exemplars share no consistently shared cultural signals, so the exemplar set alone does not show a common cultural profile for coffee. The brand-conditioned query for coffee returned a supported list of entities, led by coffee stores, roasters and cafés, which describes association with the brand only. The list is truncated, so it does not show the full set of associated entities. The route for coffee is partial: robustness was not measured and relative position is unavailable, so no comparison-based or robustness-based reading of coffee is offered.",
+  "source": "model",
+  "claimValidation": {
+   "passed": true,
+   "violations": []
+  }
+ },
+ "followUpOptions": [
+  "Add further Qloo exemplars for coffee beyond the current place exemplars to widen the representation.",
+  "Run a comparison set of adjacent beverage or tea territories to obtain a relative position for coffee.",
+  "Request the full brand-conditioned entity list for coffee, beyond the truncated top results, to see the wider associated set.",
+  "Query Aesop's own exemplar territories to compare their shared signals with those of coffee."
+ ],
+ "limitations": [
+  {
+   "code": "NOT_A_SUCCESS_PREDICTION",
+   "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+  },
+  {
+   "code": "NO_APPROVED_SCORE",
+   "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+  }
+ ],
+ "evidenceOrigin": "live",
+ "model": {
+  "id": "claude-haiku-5-5",
+  "kind": "llm",
+  "live": true,
+  "effort": "high"
+ },
+ "trace": {
+  "runId": "500ce0b2-9cfd-48a8-9619-57a2e975daba",
+  "intent": "analyze_move",
+  "userQuery": "Could Aesop credibly move into coffee?",
+  "interpretedRequest": {
+   "intent": "analyze_move",
+   "brand": "Aesop",
+   "territories": [
+    "Coffee"
+   ]
+  },
+  "model": {
+   "id": "claude-haiku-5-5",
+   "kind": "llm",
+   "live": true,
+   "effort": "high"
+  },
+  "toolProvider": {
+   "name": "qloo-mcp",
+   "mode": "live"
+  },
+  "limits": {
+   "maxAgentIterations": 12,
+   "maxRepresentationAttemptsPerTerritory": 3,
+   "maxCandidateTerritories": 6,
+   "maxExemplarsPerTerritory": 3,
+   "maxRetryPerToolCall": 1,
+   "maxActionsPerTurn": 12,
+   "maxInvalidTurns": 2,
+   "toolTimeoutMs": 300000,
+   "maxQlooCalls": 24
+  },
+  "statusTransitions": [
+   {
+    "iteration": 0,
+    "from": "INTAKE",
+    "to": "PLANNING",
+    "reason": "request validated"
+   },
+   {
+    "iteration": 1,
+    "from": "PLANNING",
+    "to": "RESOLVING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 2,
+    "from": "RESOLVING",
+    "to": "INVESTIGATING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 10,
+    "from": "INVESTIGATING",
+    "to": "ANALYZING",
+    "reason": "analyze coffee"
+   },
+   {
+    "iteration": 10,
+    "from": "ANALYZING",
+    "to": "INVESTIGATING",
+    "reason": "analysis step done"
+   },
+   {
+    "iteration": 11,
+    "from": "INVESTIGATING",
+    "to": "COMPLETE",
+    "reason": "agent finished"
+   }
+  ],
+  "planRevisions": [
+   {
+    "iteration": 1,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[ ] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Coffee: anchor to a Qloo concept",
+     "[ ] Coffee: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Coffee: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "User asks whether Aesop could credibly move into coffee, a single named target territory."
+   },
+   {
+    "iteration": 2,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Coffee: anchor to a Qloo concept",
+     "[ ] Coffee: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Coffee: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The brand must be resolved to a single Qloo entity before any territory evidence can be gathered."
+   },
+   {
+    "iteration": 4,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Coffee: anchor to a Qloo concept",
+     "[ ] Coffee: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Coffee: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Probing the next-ranked entity type on the Coffee cuisine tag to test whether it carries brand-independent members before anchoring."
+   },
+   {
+    "iteration": 6,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Coffee: anchor to a Qloo concept",
+     "[x] Coffee: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Coffee: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Proposing three profiled coffee venues as place exemplars for the Coffee territory."
+   },
+   {
+    "iteration": 10,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Coffee: anchor to a Qloo concept",
+     "[x] Coffee: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Coffee: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Coffee is the only ready territory and sufficiency marks analysis HIGH with no material evidence gap, so I'm running it as a partial result."
+   },
+   {
+    "iteration": 11,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Coffee: anchor to a Qloo concept",
+     "[x] Coffee: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Coffee: analyze",
+     "[x] finish when deterministic sufficiency allows"
+    ],
+    "note": "Coffee is analyzed and sufficiency is SUFFICIENT, so the result is a partial cultural analysis with no comparison set."
+   }
+  ],
+  "turns": [
+   {
+    "iteration": 1,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Aesop",
+       "territories": [
+        "Coffee"
+       ]
+      },
+      "reasonSummary": "User asks whether Aesop could credibly move into coffee, a single named target territory.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 733,
+     "outputTokens": 158,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1569
+    },
+    "latencyMs": 1547,
+    "skills": [
+     {
+      "id": "interpret_request",
+      "version": 1
+     },
+     {
+      "id": "resolve_brand",
+      "version": 1
+     }
+    ],
+    "toolsExposed": [
+     "interpret_request",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2332,
+    "contextTokensEstimate": 583
+   },
+   {
+    "iteration": 2,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Aesop",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "The brand must be resolved to a single Qloo entity before any territory evidence can be gathered.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1026,
+     "outputTokens": 304,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1547
+    },
+    "latencyMs": 2592,
+    "skills": [
+     {
+      "id": "resolve_brand",
+      "version": 1
+     },
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_resolve_entity",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2806,
+    "contextTokensEstimate": 702
+   },
+   {
+    "iteration": 3,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "coffee",
+       "limit": 8
+      },
+      "reasonSummary": "Coffee is the target territory and needs a Qloo concept tag before anchoring.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1677,
+     "outputTokens": 128,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 2788
+    },
+    "latencyMs": 1162,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 7209,
+    "contextTokensEstimate": 1803
+   },
+   {
+    "iteration": 4,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:cuisine:qloo:coffee"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probing the next-ranked entity type on the Coffee cuisine tag to test whether it carries brand-independent members before anchoring.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 2894,
+     "outputTokens": 437,
+     "cacheReadTokens": 2788,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 2392,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 9570,
+    "contextTokensEstimate": 2393
+   },
+   {
+    "iteration": 5,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "002C2D76-B2C1-4A7C-A5C5-DCF47878952F"
+      },
+      "reasonSummary": "Profile the strongest coffee candidate (Blue Bottle Coffee) so the quality check can compare peers.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "C56C9A77-AE35-4A48-ADC4-F59C93A020A1"
+      },
+      "reasonSummary": "Profile Coffee Bru to compare peers before choosing exemplars.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "AB8C0F3E-6A9C-4FE3-93C3-D449A020040C"
+      },
+      "reasonSummary": "Profile Georges espressobar to compare peers before choosing exemplars.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4"
+      },
+      "reasonSummary": "Fetch the Aesop brand profile needed for analysis and reference discovery.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4336,
+     "outputTokens": 960,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 3919
+    },
+    "latencyMs": 4489,
+    "skills": [
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 15369,
+    "contextTokensEstimate": 3843
+   },
+   {
+    "iteration": 6,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "coffee",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "002C2D76-B2C1-4A7C-A5C5-DCF47878952F",
+         "reason": "Blue Bottle Coffee: a specialty coffee roaster and cafe, a direct cultural peer of the coffee concept.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Specialty coffee roaster with a design-led, minimal aesthetic that parallels Aesop's positioning."
+         }
+        },
+        {
+         "id": "C56C9A77-AE35-4A48-ADC4-F59C93A020A1",
+         "reason": "Coffee Bru: a coffee venue in the coffee concept's member pool with high popularity.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Coffee-focused venue; a fitting member of the coffee concept, though less brand-distinctive than Blue Bottle."
+         }
+        },
+        {
+         "id": "AB8C0F3E-6A9C-4FE3-93C3-D449A020040C",
+         "reason": "Georges espressobar: an espresso bar in the coffee concept's member pool, profiled against peers.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Espresso bar format directly tied to the coffee concept."
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Proposing three profiled coffee venues as place exemplars for the Coffee territory.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 5684,
+     "outputTokens": 1713,
+     "cacheReadTokens": 3919,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 8219,
+    "skills": [
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     },
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 18129,
+    "contextTokensEstimate": 4533
+   },
+   {
+    "iteration": 7,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:brand:fashion"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probing the brand-independent place pool for the Fashion reference candidate.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:media:cooking"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probing the brand-independent place pool for the Cooking reference candidate.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4758,
+     "outputTokens": 672,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5087
+    },
+    "latencyMs": 3151,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 18828,
+    "contextTokensEstimate": 4707
+   },
+   {
+    "iteration": 8,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:media:cookbooks"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Probe the brand-independent place pool of Cookbooks, a food-culture reference candidate, to test for reference members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:indie"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Probe the brand-independent place pool of indie music, a cultural-taste reference candidate, to test for members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:electronic"
+       ],
+       "conditionOnBrand": false,
+       "limit": 10
+      },
+      "reasonSummary": "Probe the brand-independent place pool of electronic music, a cultural-taste reference candidate, to test for members.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4367,
+     "outputTokens": 953,
+     "cacheReadTokens": 5087,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 3895,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 18112,
+    "contextTokensEstimate": 4528
+   },
+   {
+    "iteration": 9,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:japanese_drama"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Test whether the Japanese drama reference tag has brand-independent place members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:based_on_novel"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Test whether the based-on-novel reference tag has brand-independent place members.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "reasonSummary": "Test whether the based-on-manga reference tag has brand-independent place members.",
+      "accepted": false,
+      "rejection": "NOT_EXPOSED: qloo_recommend is not offered by the active skills (analyze_territories)",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:based_on_manga"
+       ],
+       "conditionOnBrand": false
+      }
+     },
+     {
+      "action": "call_tool",
+      "reasonSummary": "Test whether the love reference tag has brand-independent place members.",
+      "accepted": false,
+      "rejection": "NOT_EXPOSED: qloo_recommend is not offered by the active skills (analyze_territories)",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:love"
+       ],
+       "conditionOnBrand": false
+      }
+     }
+    ],
+    "usage": {
+     "inputTokens": 4482,
+     "outputTokens": 1257,
+     "cacheReadTokens": 5087,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 5214,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": false,
+    "contextChars": 18372,
+    "contextTokensEstimate": 4593
+   },
+   {
+    "iteration": 10,
+    "decisions": [
+     {
+      "action": "analyze",
+      "reasonSummary": "Coffee is the only ready territory and sufficiency marks analysis HIGH with no material evidence gap, so I'm running it as a partial result.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1916,
+     "outputTokens": 227,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1938
+    },
+    "latencyMs": 2641,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 5165,
+    "contextTokensEstimate": 1292
+   },
+   {
+    "iteration": 11,
+    "decisions": [
+     {
+      "action": "finish",
+      "reasonSummary": "Coffee is analyzed and sufficiency is SUFFICIENT, so the result is a partial cultural analysis with no comparison set.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1514,
+     "outputTokens": 178,
+     "cacheReadTokens": 1938,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 2056,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 4149,
+    "contextTokensEstimate": 1038
+   }
+  ],
+  "toolCalls": [
+   {
+    "id": "tc-1",
+    "iteration": 1,
+    "tool": "interpret_request",
+    "permission": "local_computation",
+    "arguments": {
+     "intent": "analyze_move",
+     "brand": "Aesop",
+     "territories": [
+      "Coffee"
+     ]
+    },
+    "status": "ok",
+    "summary": "intent analyze_move; brand \"Aesop\"; 1 named territory(ies)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    }
+   },
+   {
+    "id": "tc-2",
+    "iteration": 2,
+    "tool": "qloo_resolve_entity",
+    "permission": "read_only_external",
+    "arguments": {
+     "name": "Aesop",
+     "type": "brand",
+     "role": "brand"
+    },
+    "status": "ok",
+    "summary": "Aesop (32F867B9-E6DF-44C3-BCE4-40160C7ED5E4, urn:entity:brand, match exact)",
+    "qlooOperations": [
+     "describe"
+    ],
+    "correlationIds": [
+     "mcp-49c14842-b8dd-4dde-bdab-620c408359d7"
+    ],
+    "attempts": 1,
+    "latencyMs": 2713,
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-3",
+    "iteration": 3,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "coffee",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-aa86f6d1-4970-4c1a-b593-da96b222bd58"
+    ],
+    "attempts": 1,
+    "latencyMs": 5656,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-4",
+    "iteration": 4,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:cuisine:qloo:coffee"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "ok",
+    "summary": "20 place entities (brand-independent pool); coffee anchored to this tag (its own concept; next: validate_territory_representation with place)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-3faf28e5-5562-4c19-a550-086049157cda"
+    ],
+    "attempts": 1,
+    "latencyMs": 5149,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-5",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "002C2D76-B2C1-4A7C-A5C5-DCF47878952F"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-cdabbde4-9210-45e6-b0e3-8d56cff01b08"
+    ],
+    "attempts": 1,
+    "latencyMs": 2067,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-6",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "C56C9A77-AE35-4A48-ADC4-F59C93A020A1"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-5aaf1368-2ce7-4bbe-95fc-3434547d064a"
+    ],
+    "attempts": 1,
+    "latencyMs": 6951,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-7",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "AB8C0F3E-6A9C-4FE3-93C3-D449A020040C"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-29e60f12-30fa-422a-aaaa-12558b9dd669"
+    ],
+    "attempts": 1,
+    "latencyMs": 7043,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-8",
+    "iteration": 5,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-5f92474e-3bf6-4802-a96e-1c5a8f076c11"
+    ],
+    "attempts": 1,
+    "latencyMs": 7128,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-9",
+    "iteration": 6,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "coffee",
+     "entityType": "place",
+     "exemplars": [
+      {
+       "id": "002C2D76-B2C1-4A7C-A5C5-DCF47878952F",
+       "reason": "Blue Bottle Coffee: a specialty coffee roaster and cafe, a direct cultural peer of the coffee concept.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Specialty coffee roaster with a design-led, minimal aesthetic that parallels Aesop's positioning."
+       }
+      },
+      {
+       "id": "C56C9A77-AE35-4A48-ADC4-F59C93A020A1",
+       "reason": "Coffee Bru: a coffee venue in the coffee concept's member pool with high popularity.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Coffee-focused venue; a fitting member of the coffee concept, though less brand-distinctive than Blue Bottle."
+       }
+      },
+      {
+       "id": "AB8C0F3E-6A9C-4FE3-93C3-D449A020040C",
+       "reason": "Georges espressobar: an espresso bar in the coffee concept's member pool, profiled against peers.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Espresso bar format directly tied to the coffee concept."
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "coffee: accepted Coffee Bru, Georges espressobar, Blue Bottle Coffee (weak alternate); diversity adequate",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-10",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:brand:fashion"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:brand:fashion",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-657a365f-1ecb-4689-b6e2-3b05c03ffa5a"
+    ],
+    "attempts": 1,
+    "latencyMs": 451,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-11",
+    "iteration": 7,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:media:cooking"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:media:cooking",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-9a56051c-a883-4fef-a28c-b9e7850b2081"
+    ],
+    "attempts": 1,
+    "latencyMs": 6948,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-12",
+    "iteration": 8,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:media:cookbooks"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:media:cookbooks",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-f0dc1ce4-eeef-4537-aa05-122a20f5c963"
+    ],
+    "attempts": 1,
+    "latencyMs": 3129,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-13",
+    "iteration": 8,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:indie"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:music:indie",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-84d42180-5669-41c0-b5ca-7279e9c6d397"
+    ],
+    "attempts": 1,
+    "latencyMs": 6975,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-14",
+    "iteration": 8,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:electronic"
+     ],
+     "conditionOnBrand": false,
+     "limit": 10
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:music:electronic",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-f34e4377-cdf5-42c8-a6e0-55ec745368e3"
+    ],
+    "attempts": 1,
+    "latencyMs": 6969,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-15",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:japanese_drama"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:keyword:media:japanese_drama",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-7f9acc4a-6986-4492-83d1-a37344cef916"
+    ],
+    "attempts": 1,
+    "latencyMs": 1828,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-16",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:based_on_novel"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:keyword:media:based_on_novel",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-e67708b3-f309-4db9-a4f5-218dec3e39a2"
+    ],
+    "attempts": 1,
+    "latencyMs": 6946,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-17",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "local_computation",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:based_on_manga"
+     ],
+     "conditionOnBrand": false
+    },
+    "status": "rejected",
+    "summary": "NOT_EXPOSED: qloo_recommend is not offered by the active skills (analyze_territories)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "error": "NOT_EXPOSED"
+   },
+   {
+    "id": "tc-18",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "local_computation",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:love"
+     ],
+     "conditionOnBrand": false
+    },
+    "status": "rejected",
+    "summary": "NOT_EXPOSED: qloo_recommend is not offered by the active skills (analyze_territories)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "error": "NOT_EXPOSED"
+   },
+   {
+    "id": "tc-19",
+    "iteration": 10,
+    "tool": "analyze_evidence",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "coffee"
+     ]
+    },
+    "status": "ok",
+    "summary": "brand profile 20 tags; 3 exemplar/other profiles in run; 1 brand-conditioned list(s)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-c1d7cce1-52d9-440b-9b0a-4ab13e6b2e04"
+    ],
+    "attempts": 1,
+    "latencyMs": 0
+   },
+   {
+    "id": "tc-20",
+    "iteration": 10,
+    "tool": "build_candidate_panel",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "coffee"
+     ]
+    },
+    "status": "ok",
+    "summary": "no comparison set of ≥ 3 rankable territories of one type",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0
+   }
+  ],
+  "resolvedEntities": [
+   {
+    "role": "brand",
+    "id": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+    "label": "Aesop",
+    "type": "urn:entity:brand",
+    "match": "exact",
+    "resolution": "confirmed"
+   }
+  ],
+  "territoryHypotheses": [
+   {
+    "key": "coffee",
+    "label": "Coffee",
+    "role": "target",
+    "origin": "user",
+    "status": "analyzed",
+    "rationale": "named by the user"
+   }
+  ],
+  "representations": [
+   {
+    "territoryKey": "coffee",
+    "attempt": 1,
+    "accepted": [
+     "Coffee Bru",
+     "Georges espressobar",
+     "Blue Bottle Coffee"
+    ],
+    "rejected": []
+   }
+  ],
+  "sufficiency": [
+   {
+    "iteration": 0,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "interpret the request (interpret_request)"
+    ],
+    "nextActions": [
+     {
+      "action": "interpret_request",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the goal is not interpreted yet"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 1,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "resolve the brand (qloo_resolve_entity, role brand)"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_resolve_entity",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the brand is not resolved"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 2,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "coffee: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "coffee",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 3,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "coffee: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "coffee",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 4,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "coffee: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "coffee",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "coffee",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 5,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "coffee: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "coffee",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 6,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "coffee: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "coffee",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "2 more meaningful place reference territories are required for a relative position (have 1 of 3). Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent place pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "coffee",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 7,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "coffee: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "coffee",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "2 more meaningful place reference territories are required for a relative position (have 1 of 3). Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent place pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "coffee",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 8,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "coffee: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "coffee",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "2 more meaningful place reference territories are required for a relative position (have 1 of 3). Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent place pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "coffee",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 9,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "coffee: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "coffee",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "NONE",
+      "reason": "FULL is not feasible: only 1 semantically meaningful reference candidate(s) with possible place members; 2 needed; analysis will be partial"
+     },
+     {
+      "action": "analyze",
+      "target": "coffee",
+      "value": "HIGH",
+      "reason": "no material evidence gap remains: analyze"
+     }
+    ],
+    "materialGap": false
+   },
+   {
+    "iteration": 10,
+    "verdict": "SUFFICIENT",
+    "reasons": [
+     "all 1 in-scope territories have analysis results"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "NONE",
+      "reason": "the targets are already analyzed"
+     },
+     {
+      "action": "finish",
+      "target": null,
+      "value": "HIGH",
+      "reason": "every in-scope territory is analyzed"
+     }
+    ],
+    "materialGap": false
+   }
+  ],
+  "representationQuality": [
+   {
+    "territoryKey": "coffee",
+    "attempt": 1,
+    "candidateId": "002C2D76-B2C1-4A7C-A5C5-DCF47878952F",
+    "label": "Blue Bottle Coffee",
+    "deterministic": {
+     "level": "WEAK",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": true,
+      "profileTags": 20,
+      "popularity": 0.8027469994625016,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 2,
+      "maxSharedWithPeer": 0,
+      "conceptInProfile": true,
+      "peersCarryingConcept": 2
+     },
+     "reasons": [
+      "PEER_OUTLIER: shares no cultural tag with any peer candidate, while the peers share tags with each other"
+     ]
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Specialty coffee roaster with a design-led, minimal aesthetic that parallels Aesop's positioning.",
+     "advisory": true
+    },
+    "final": "WEAK",
+    "rule": "R4 deterministic weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "coffee",
+    "attempt": 1,
+    "candidateId": "C56C9A77-AE35-4A48-ADC4-F59C93A020A1",
+    "label": "Coffee Bru",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": true,
+      "profileTags": 20,
+      "popularity": 0.8870413851486255,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 2,
+      "maxSharedWithPeer": 1,
+      "conceptInProfile": true,
+      "peersCarryingConcept": 2
+     },
+     "reasons": []
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Coffee-focused venue; a fitting member of the coffee concept, though less brand-distinctive than Blue Bottle.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "coffee",
+    "attempt": 1,
+    "candidateId": "AB8C0F3E-6A9C-4FE3-93C3-D449A020040C",
+    "label": "Georges espressobar",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": true,
+      "profileTags": 20,
+      "popularity": 0.76982754361742,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 2,
+      "maxSharedWithPeer": 1,
+      "conceptInProfile": true,
+      "peersCarryingConcept": 2
+     },
+     "reasons": []
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Espresso bar format directly tied to the coffee concept.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   }
+  ],
+  "conceptDedup": [],
+  "earlyStops": [],
+  "skillUsage": [
+   {
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 0,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 1,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "turns": 2,
+    "qlooCalls": 2,
+    "toolCalls": 2
+   },
+   {
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "turns": 2,
+    "qlooCalls": 4,
+    "toolCalls": 5
+   },
+   {
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "turns": 3,
+    "qlooCalls": 7,
+    "toolCalls": 7
+   },
+   {
+    "skill": {
+     "id": "analyze_territories",
+     "version": 2
+    },
+    "turns": 5,
+    "qlooCalls": 0,
+    "toolCalls": 0
+   }
+  ],
+  "methodologyInvocations": [],
+  "synthesis": {
+   "source": "model",
+   "attempts": 2,
+   "violations": [],
+   "attemptDetails": [
+    {
+     "attempt": 1,
+     "accepted": false,
+     "categories": {
+      "MISMATCHED_ROBUSTNESS": 1
+     },
+     "violations": [
+      "territoryNotes.coffee: robustness wording does not match Coffee (not measured)"
+     ],
+     "rejectedOutput": "{\"summary\":\"The evidence does not establish that Aesop could credibly move into coffee on a strong basis. The coffee route is partial: no relative position, robustness, or classification is available, and the small set of place exemplars shares no cultural signals beyond operational tags. A brand-conditioned query returns a supported but truncated set of coffee-related entities, which shows only partial association. The evidence cannot say how coffee compares with other candidate territories or whether the move would hold up on a fuller comparison.\",\"findings\":[{\"territoryKey\":\"coffee\",\"claimType\":\"route_limitation\",\"supportingFields\":[\"capabilities.relativePosition\",\"capabilities.robustness\",\"capabilities.classification\"],\"interpretation\":\"The coffee route is partial, and relative position, robustness, and classification are all unavailable, so no comparative strength or stability can be stated for coffee.\",\"limitationCodes\":[\"NO_RELATIVE_POSITION\"]},{\"territoryKey\":\"coffee\",\"claimType\":\"shared_signals\",\"supportingFields\":[\"coherence.band\",\"coherence.consistentlyShared\"],\"interpretation\":\"After operational tags are filtered, the coffee exemplars show no band of shared cultural signals and no consistently shared signals, so the panel offers little common cultural ground to read against Aesop.\",\"limitationCodes\":[\"COMPARISON_SET_TOO_SMALL\"]},{\"territoryKey\":\"coffee\",\"claimType\":\"conditioned_evidence\",\"supportingFields\":[\"conditionedEvidence.support\",\"conditionedEvidence.top\"],\"interpretation\":\"The brand-conditioned coffee query is supported and leads with Jack & NaNa coffee store, Raw Coffee Stand, and LiLo Coffee Roasters, but the list is truncated, so it indicates association with these entities rather than a complete picture.\",\"limitationCodes\":[\"CONDITIONED_LIST_TRUNCATED\"]}],\"followUpOptions\":[\"Add further coffee exemplars beyond places to enlarge the comparison set and test whether a relative position becomes available.\",\"Run the same analysis against adjacent beverage or cafe territories as reference territories for comparison.\",\"Retrieve the full brand-conditioned coffee entity list, not only the leading entries, to see the wider association pattern.\",\"Examine coffee brand and product entity types separately to see whether shared cultural signals emerge outside place exemplars.\"]}"
+    },
+    {
+     "attempt": 2,
+     "accepted": true,
+     "categories": {},
+     "violations": []
+    }
+   ]
+  },
+  "errors": [],
+  "userClarifications": [],
+  "representationPlans": [],
+  "completion": [
+   {
+    "iteration": 6,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 14,
+    "remainingTurns": 6,
+    "remainingQlooCalls": 17,
+    "turnsNeeded": 3,
+    "callsNeeded": 7,
+    "fullAnalysisFeasible": true,
+    "reason": "FULL is feasible: 2 reference(s) needed, 14 meaningful candidate(s) (0 already probed with members), 17 Qloo call(s) and 6 turn(s) left (needs 3 turn(s), about 7 call(s))"
+   },
+   {
+    "iteration": 7,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 12,
+    "remainingTurns": 5,
+    "remainingQlooCalls": 15,
+    "turnsNeeded": 3,
+    "callsNeeded": 7,
+    "fullAnalysisFeasible": true,
+    "reason": "FULL is feasible: 2 reference(s) needed, 12 meaningful candidate(s) (0 already probed with members), 15 Qloo call(s) and 5 turn(s) left (needs 3 turn(s), about 7 call(s))"
+   },
+   {
+    "iteration": 8,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 9,
+    "remainingTurns": 4,
+    "remainingQlooCalls": 12,
+    "turnsNeeded": 3,
+    "callsNeeded": 7,
+    "fullAnalysisFeasible": true,
+    "reason": "FULL is feasible: 2 reference(s) needed, 9 meaningful candidate(s) (0 already probed with members), 12 Qloo call(s) and 4 turn(s) left (needs 3 turn(s), about 7 call(s))"
+   },
+   {
+    "iteration": 9,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 1,
+    "remainingTurns": 3,
+    "remainingQlooCalls": 10,
+    "turnsNeeded": 3,
+    "callsNeeded": 7,
+    "fullAnalysisFeasible": false,
+    "reason": "FULL is not feasible: only 1 semantically meaningful reference candidate(s) with possible place members; 2 needed; analysis will be partial"
+   }
+  ],
+  "probeRecommendations": [
+   {
+    "iteration": 3,
+    "territoryKey": "coffee",
+    "conceptKey": "urn:tag:cuisine:qloo:coffee",
+    "namespace": "cuisine:qloo",
+    "type": "place",
+    "priority": "EXPLORATION",
+    "reason": "untested in cuisine:qloo"
+   }
+  ],
+  "anchorDecisions": [
+   {
+    "iteration": 4,
+    "territoryKey": "coffee",
+    "sourceTagId": null,
+    "anchoredTagId": "urn:tag:cuisine:qloo:coffee",
+    "relation": "NO_SOURCE_TAG",
+    "basis": "LABEL_TAG_MEMBERS",
+    "decidedBy": "runtime",
+    "reasonCode": null,
+    "evidence": "the territory's own same-named tag returned 20 place member(s) (brand-independent pool)",
+    "correlationIds": [
+     "mcp-3faf28e5-5562-4c19-a550-086049157cda"
+    ]
+   }
+  ],
+  "stopReason": {
+   "code": "AGENT_FINISHED",
+   "detail": "agent finished"
+  },
+  "semanticAssessments": []
+ },
+ "metrics": {
+  "agent_iterations": 11,
+  "qloo_calls": 15,
+  "tool_calls": 20,
+  "tool_success_rate": 1,
+  "invalid_actions": 2,
+  "representation_attempts": 1,
+  "territories_proposed": 1,
+  "territories_resolved": 1,
+  "territories_rejected": 0,
+  "full_analysis_count": 0,
+  "partial_analysis_count": 1,
+  "descriptive_analysis_count": 0,
+  "unsupported_count": 0,
+  "methodology_calls": 0,
+  "latency_ms": 133866,
+  "model_input_tokens": 73457,
+  "model_output_tokens": 11522,
+  "retry_count": 0,
+  "budget_exhausted": false,
+  "model_turns": 11,
+  "model_attempts": 11,
+  "first_attempt_valid_turns": 10,
+  "valid_after_repair_turns": 11,
+  "repairs": 0,
+  "unknown_tool_attempts": 0,
+  "invalid_argument_attempts": 0,
+  "unsupported_state_actions": 2,
+  "synthesis_attempts": 2,
+  "calls_avoided": 0,
+  "avg_context_chars": 10913,
+  "max_context_chars": 18828,
+  "avg_context_tokens_estimate": 2729,
+  "model_latency_ms": 37358,
+  "qloo_latency_ms": 75197,
+  "model_cost_usd": 0.0118,
+  "model_id": "claude-haiku-5-5",
+  "model_effort": "high",
+  "synthesis_latency_ms": 20980,
+  "analysis_latency_ms": 5257,
+  "qloo_spacing_ms": 66696,
+  "synthesis_first_attempt_valid": false,
+  "synthesis_valid_after_repair": true,
+  "synthesis_fallback": false,
+  "reference_deferrals": 0,
+  "empty_type_probes": 7,
+  "max_empty_type_probes_per_concept": 1,
+  "probe_limit_refusals": 0,
+  "type_alignment_deferrals": 0,
+  "reference_namespace_refusals": 0,
+  "successful_type_probes": 1,
+  "namespace_type_refusals": 0,
+  "alternate_anchor_refusals": 0,
+  "source_evidence_anchors": 1,
+  "frontier_completion_refusals": 0
+ },
+ "skillsUsed": [
+  {
+   "id": "interpret_request",
+   "version": 1
+  },
+  {
+   "id": "resolve_brand",
+   "version": 1
+  },
+  {
+   "id": "resolve_territory",
+   "version": 5
+  },
+  {
+   "id": "build_territory_representation",
+   "version": 4
+  },
+  {
+   "id": "build_comparison_set",
+   "version": 3
+  },
+  {
+   "id": "analyze_territories",
+   "version": 2
+  }
+ ],
+ "comparisonSetConstruction": {
+  "intent": "analyze_move",
+  "proposed": [
+   {
+    "key": "coffee",
+    "label": "Coffee",
+    "role": "target",
+    "source": "user",
+    "evidence": "named by the user"
+   }
+  ],
+  "rejected": [],
+  "final": [
+   {
+    "key": "coffee",
+    "label": "Coffee",
+    "role": "target",
+    "source": "user",
+    "route": "PARTIAL_CULTURAL_ANALYSIS"
+   }
+  ],
+  "dedupDecisions": [],
+  "semanticAssessments": [],
+  "diversity": {
+   "assessment": "unknown",
+   "similarPairs": [],
+   "detail": "fewer than two non-target territories: diversity not assessed"
+  },
+  "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+ },
+ "layers": {
+  "qlooEvidence": {
+   "brand": {
+    "id": "32F867B9-E6DF-44C3-BCE4-40160C7ED5E4",
+    "label": "Aesop",
+    "correlationId": "mcp-49c14842-b8dd-4dde-bdab-620c408359d7"
+   },
+   "concepts": [
+    {
+     "territoryKey": "coffee",
+     "id": "urn:tag:cuisine:qloo:coffee",
+     "label": "Coffee",
+     "correlationIds": [
+      "mcp-aa86f6d1-4970-4c1a-b593-da96b222bd58"
+     ]
+    }
+   ],
+   "exemplars": [
+    {
+     "territoryKey": "coffee",
+     "id": "C56C9A77-AE35-4A48-ADC4-F59C93A020A1",
+     "label": "Coffee Bru",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-3faf28e5-5562-4c19-a550-086049157cda"
+    },
+    {
+     "territoryKey": "coffee",
+     "id": "AB8C0F3E-6A9C-4FE3-93C3-D449A020040C",
+     "label": "Georges espressobar",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-3faf28e5-5562-4c19-a550-086049157cda"
+    },
+    {
+     "territoryKey": "coffee",
+     "id": "002C2D76-B2C1-4A7C-A5C5-DCF47878952F",
+     "label": "Blue Bottle Coffee",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-3faf28e5-5562-4c19-a550-086049157cda"
+    }
+   ],
+   "qlooCalls": 15
+  },
+  "systemAnalysis": {
+   "routes": [
+    {
+     "territoryKey": "coffee",
+     "route": "PARTIAL_CULTURAL_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    }
+   ],
+   "methodologyRunIds": [],
+   "finalSufficiency": "SUFFICIENT",
+   "representationDecisions": {
+    "valid": 2,
+    "weak": 1,
+    "rejected": 0
+   },
+   "semanticComparison": []
+  },
+  "agentInterpretation": {
+   "summary": "Qloo's evidence on whether Aesop could credibly move into coffee is partial. A place-based representation and a brand-conditioned list of coffee entities are available, but no comparison set, relative position, classification, or measured robustness exists for coffee. The coffee exemplars share no cultural signals after filtering operational tags, so the results describe coffee-related association around the brand without establishing how coffee compares with other territories or whether the move is credible.\nCoffee: After operational tags are filtered, the coffee exemplars share no consistently shared cultural signals, so the exemplar set alone does not show a common cultural profile for coffee. The brand-conditioned query for coffee returned a supported list of entities, led by coffee stores, roasters and cafés, which describes association with the brand only. The list is truncated, so it does not show the full set of associated entities. The route for coffee is partial: robustness was not measured and relative position is unavailable, so no comparison-based or robustness-based reading of coffee is offered.",
+   "source": "model",
+   "claimValidationPassed": true,
+   "semanticJudgments": [
+    {
+     "territoryKey": "coffee",
+     "label": "Blue Bottle Coffee",
+     "relevance": "STRONG",
+     "reason": "Specialty coffee roaster with a design-led, minimal aesthetic that parallels Aesop's positioning."
+    },
+    {
+     "territoryKey": "coffee",
+     "label": "Coffee Bru",
+     "relevance": "ADEQUATE",
+     "reason": "Coffee-focused venue; a fitting member of the coffee concept, though less brand-distinctive than Blue Bottle."
+    },
+    {
+     "territoryKey": "coffee",
+     "label": "Georges espressobar",
+     "relevance": "ADEQUATE",
+     "reason": "Espresso bar format directly tied to the coffee concept."
+    }
+   ],
+   "followUpOptions": [
+    "Add further Qloo exemplars for coffee beyond the current place exemplars to widen the representation.",
+    "Run a comparison set of adjacent beverage or tea territories to obtain a relative position for coffee.",
+    "Request the full brand-conditioned entity list for coffee, beyond the truncated top results, to see the wider associated set.",
+    "Query Aesop's own exemplar territories to compare their shared signals with those of coffee."
+   ],
+   "findings": [
+    {
+     "territoryKey": "coffee",
+     "claimType": "shared_signals",
+     "supportingFields": [
+      "coherence.band",
+      "coherence.consistentlyShared"
+     ],
+     "interpretation": "After operational tags are filtered, the coffee exemplars share no consistently shared cultural signals, so the exemplar set alone does not show a common cultural profile for coffee.",
+     "limitationCodes": [
+      "COMPARISON_SET_TOO_SMALL"
+     ]
+    },
+    {
+     "territoryKey": "coffee",
+     "claimType": "conditioned_evidence",
+     "supportingFields": [
+      "conditionedEvidence.support",
+      "conditionedEvidence.top"
+     ],
+     "interpretation": "The brand-conditioned query for coffee returned a supported list of entities, led by coffee stores, roasters and cafés, which describes association with the brand only. The list is truncated, so it does not show the full set of associated entities.",
+     "limitationCodes": [
+      "CONDITIONED_LIST_TRUNCATED"
+     ]
+    },
+    {
+     "territoryKey": "coffee",
+     "claimType": "route_limitation",
+     "supportingFields": [
+      "route",
+      "capabilities.robustness",
+      "capabilities.relativePosition"
+     ],
+     "interpretation": "The route for coffee is partial: robustness was not measured and relative position is unavailable, so no comparison-based or robustness-based reading of coffee is offered.",
+     "limitationCodes": [
+      "NO_RELATIVE_POSITION"
+     ]
+    }
+   ]
+  }
+ },
+ "failureCategory": null
+}

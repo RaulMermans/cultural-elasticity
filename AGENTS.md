@@ -111,6 +111,17 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 5. **Cross-domain relationships explain; they never rank** (`packages/shared/src/connections.ts`). `DIRECT_QLOO_OBSERVATION`, `DERIVED_PROFILE_OVERLAP` and `AGENT_INTERPRETATION` stay separate, and every relationship is `rankable: false`. A reference of another entity type is qualitative evidence with an explicit comparison limitation, never a cross-type score.
 6. **The recorded comparative demo is built, not written** (`backend/scripts/demo/build-recorded-comparative.ts`) from live-origin evidence with source checksums. It must not contain a ranking that no recorded run produced. Canonical record: `docs/sprint-9i/CROSS_DOMAIN_COMPARATIVE_RESEARCH_REPORT.md`.
 
+## Paid access and live validation (permanent, from Sprint 9J)
+
+1. **Internal auth is not user authorization.** The Next.js proxy injects `CE_INTERNAL_API_SECRET` for every visitor. Every paid start also needs the scoped, expiring operator credential (`CE_PAID_OPERATOR_TOKEN`, `x-ce-paid-operator`), checked on Railway at dispatch. It is required on any public runtime and fails closed. Never open admission on a build without this gate.
+2. **The browser never holds paid authority beyond the operator's own cookie.** It is forwarded only on paid POST routes. Admission views show *paused* to anonymous visitors.
+3. **One run-wide Qloo ceiling per approved run** (`CE_PROCESS_QLOO_CALL_LIMIT`) covers every phase, retries and uncertain attempts. It, the spend ledger and idempotency are process-local: a restart resets them, so no unattended or public paid launch is allowed without durable accounting and a provider-side cap.
+4. **A ranked comparison must be the authorized comparison.** A ranked reference whose concept drifted, or a ranked territory outside the authorized set, withholds every position (`INTEGRITY_FAILED`).
+5. **Report each evidence class separately:** offline, synthetic browser, hosted recorded browser, local live provider, hosted live provider. A recorded-evidence browser pass is not live validation.
+6. **Tests must pass from a fresh clone.** Pinned live artifacts that tests read are tracked byte-for-byte with their original checksums, never regenerated.
+
+Canonical record: `docs/sprint-9j/LIVE_VALIDATION_AND_RELEASE_REPORT.md`.
+
 ## Deployment provenance (permanent, from Sprint 8F)
 
 1. **GitHub is the canonical source.** `RaulMermans/cultural-elasticity` is the only release repository. Do not deploy from copied archives as the ordinary process.

@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start --port 3000",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test src/components/atlas/atlas-model.test.ts src/lib/deployment.test.ts src/lib/admissions.test.ts src/lib/evidence-presentation.test.ts src/lib/research-view.test.ts src/lib/research-route.test.ts src/lib/research-findings.test.ts src/lib/comparative.test.ts",
+    "test": "node --experimental-strip-types --test src/components/atlas/atlas-model.test.ts src/lib/deployment.test.ts src/lib/admissions.test.ts src/lib/evidence-presentation.test.ts src/lib/research-view.test.ts src/lib/research-route.test.ts src/lib/research-findings.test.ts src/lib/comparative.test.ts src/lib/operator.test.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {

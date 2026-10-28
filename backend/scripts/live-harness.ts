@@ -15,6 +15,8 @@ import { parseEvidencePacket, type EvidencePacket } from "../src/evidence/schema
 import { LIVE_INVESTIGATION } from "./feasibility/live-config.js";
 import { QLOO_LIVE_SOURCE } from "../src/qloo/live-adapter.js";
 import { liveFixtureSchema, LIVE_FIXTURES_DIR, type LiveFixture } from "./live-fixture.js";
+import { baselineObservationSchema } from "../src/brand-baseline/schema.js";
+import { replayCanary } from "./brand-baseline-eval/replay.js";
 
 export const RECORDED_FIXTURES_DIR = fileURLToPath(new URL("../tests/fixtures/recorded/", import.meta.url));
 
@@ -43,6 +45,54 @@ const check = (id: string, description: string, run: () => true | string): Check
 /** Key-shaped strings or header literals must never appear in a fixture. */
 const FORBIDDEN = [/x-api-key/i, /QLOO_API_KEY\s*[=:]\s*\S{8,}/, /"(address|phone|images?)"\s*:/];
 
+function fixtureTypeOf(text: string): unknown {
+  try {
+    return (JSON.parse(text) as { fixtureType?: unknown }).fixtureType;
+  } catch {
+    return undefined;
+  }
+}
+
+const OBSERVATION_VERSIONS = ["ce-brand-baseline-observation/0.1", "ce-brand-baseline-observation/0.2"];
+
+/** Checks for a recorded live baseline canary (normalized observations, read-only export). Nothing is rewritten. */
+function canaryChecks(dir: string, file: string, text: string): CheckResult[] {
+  const raw = JSON.parse(text) as {
+    notice?: unknown;
+    source?: { scanId?: unknown };
+    brand?: { qlooId?: unknown; describeCorrelationId?: unknown };
+    observations?: { stage?: unknown; schemaVersion?: unknown; payload?: unknown }[];
+    asRunResult?: { payload?: unknown };
+  };
+  const observations = Array.isArray(raw.observations) ? raw.observations : [];
+  return [
+    check(`${file}.schema`, "canary record envelope: live notice, scan id, Qloo brand with describe correlation id, versioned observations", () => {
+      if (typeof raw.notice !== "string" || !/^LIVE:/u.test(raw.notice)) return "notice is not labelled LIVE";
+      if (typeof raw.source?.scanId !== "string" || !/^[0-9a-f-]{36}$/u.test(raw.source.scanId)) return "source.scanId missing";
+      if (typeof raw.brand?.qlooId !== "string" || typeof raw.brand.describeCorrelationId !== "string" || !raw.brand.describeCorrelationId.startsWith("mcp-")) return "brand identity or describe correlation id missing";
+      if (observations.length === 0) return "no observations";
+      const bad = observations.find((item) => typeof item.schemaVersion !== "string" || !OBSERVATION_VERSIONS.includes(item.schemaVersion) || !baselineObservationSchema.safeParse(item.payload).success);
+      return bad === undefined || `observation ${String(bad.stage)} does not match its schema`;
+    }),
+    check(`${file}.sanitized`, "no credential, header or personal/location fields", () => {
+      const hit = FORBIDDEN.find((p) => p.test(text));
+      return hit === undefined || `matches ${hit}`;
+    }),
+    check(`${file}.provenance`, "every 0.2 signal cites an mcp- correlation id (0.1 never recorded one; reported, not repaired)", () => {
+      const current = observations.filter((item) => item.schemaVersion === "ce-brand-baseline-observation/0.2");
+      const signals = current.flatMap((item) => ((item.payload as { signals?: { sourceCorrelationId?: unknown }[] }).signals ?? []));
+      const missing = signals.filter((signal) => typeof signal.sourceCorrelationId !== "string" || !signal.sourceCorrelationId.startsWith("mcp-"));
+      return missing.length === 0 || `${missing.length} signal(s) without a correlation id`;
+    }),
+    check(`${file}.replay`, "offline replay re-projects it as a derived artifact and leaves the as-run result unchanged", () => {
+      const replay = replayCanary(join(dir, file));
+      if (replay.result.brand.qlooId !== raw.brand?.qlooId) return "replayed brand differs";
+      if (!replay.result.execution.derivedFrom) return "replay is not marked derived";
+      return JSON.stringify(replay.asRun ?? null) === JSON.stringify(raw.asRunResult?.payload ?? null) || "as-run result changed";
+    }),
+  ];
+}
+
 export function runLiveEval(dir: string = LIVE_FIXTURES_DIR): FixtureClassReport {
   const files = readdirSync(dir).filter((f) => f.endsWith(".live.json")).sort();
   const checks: CheckResult[] = [check("live.present", "at least one live fixture exists", () => files.length > 0 || "no *.live.json in evals/fixtures/live")];
@@ -51,6 +101,12 @@ export function runLiveEval(dir: string = LIVE_FIXTURES_DIR): FixtureClassReport
     let fixture: LiveFixture | undefined;
     let packet: EvidencePacket | undefined;
     let ingredients: AnalysisIngredients | undefined;
+    // Sprint 9J: a live baseline canary record is a different, valid artifact. It is checked against its own
+    // contract and never coerced into an investigation packet. Any other type still fails the schema check.
+    if (fixtureTypeOf(text) === "live_qloo_canary_record") {
+      checks.push(...canaryChecks(dir, file, text));
+      continue;
+    }
     checks.push(
       check(`${file}.schema`, "fixture envelope is fixtureType live, hackathon environment", () => {
         fixture = liveFixtureSchema.parse(JSON.parse(text));

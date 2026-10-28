@@ -21,7 +21,7 @@ import { RunStore } from "../agent/run-store.js";
 import { AgentRuntime } from "../agent/runtime.js";
 import type { AgentToolProvider } from "../agent/tool-provider.js";
 import type { EvidenceIssue } from "../evidence/schema.js";
-import { admitVisitor, verifyInternalAuth } from "../ops/identity.js";
+import { admitVisitor, verifyInternalAuth, verifyPaidOperator } from "../ops/identity.js";
 import { canAcceptInvestigations } from "../ops/lifecycle.js";
 import { opsMetrics } from "../ops/metrics.js";
 import { registerJobManager } from "../ops/server.js";
@@ -180,6 +180,12 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       if (!canAcceptInvestigations()) {
         opsMetrics().record("admission_rejected");
         void reply.code(503).send({ error: "admissions_paused", message: "New investigations are not being accepted right now." });
+        return false;
+      }
+      const operator = verifyPaidOperator(headersOf(request));
+      if (!operator.ok) {
+        opsMetrics().record("admission_rejected");
+        void reply.code(403).send({ error: operator.code, message: "Paid research is restricted to an authorized operator." });
         return false;
       }
       const visitor = admitVisitor(headersOf(request), true);

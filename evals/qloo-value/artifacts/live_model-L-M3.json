@@ -1,0 +1,2364 @@
+{
+ "schemaVersion": "ce-agent-result/0.3",
+ "runId": "06aff836-81df-4102-8425-d5adb295cc58",
+ "status": "COMPLETE",
+ "finalSufficiency": "SUFFICIENT",
+ "intent": "analyze_move",
+ "userQuery": "Could Le Creuset move into tea culture?",
+ "brand": {
+  "id": "9886839E-BED5-45F9-8703-276527054727",
+  "label": "Le Creuset",
+  "type": "urn:entity:brand",
+  "resolution": "confirmed"
+ },
+ "territories": [
+  {
+   "key": "tea",
+   "label": "Tea",
+   "role": "target",
+   "origin": "user",
+   "rationale": "named by the user",
+   "resolvedConcept": {
+    "id": "urn:tag:cuisine:qloo:tea",
+    "label": "Tea",
+    "type": "urn:tag:cuisine:qloo"
+   },
+   "representation": {
+    "strategy": "PLACE_PANEL",
+    "entityType": "place",
+    "exemplars": [
+     {
+      "id": "0038B857-136E-4EF0-8F5D-FFAF0359AA7D",
+      "label": "Pipra Borin Popular Tea Center",
+      "type": "place",
+      "role": "primary",
+      "selectionReason": "Tea-focused venue (popular tea center) Qloo links to the Tea concept via brand-independent evidence, with a profile available for peer checks.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.7971032661850354,
+      "quality": "VALID"
+     },
+     {
+      "id": "009667F4-FCD4-470E-B316-CEAC319FD9D9",
+      "label": "Kebuke Black Tea",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Black tea specialist (Kebuke Black Tea) that Qloo associates with the Tea concept, with a profile available.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.5600205935809986,
+      "quality": "VALID"
+     },
+     {
+      "id": "0004637E-C595-45C1-BC63-9CCDD83AC3ED",
+      "label": "Honeymee",
+      "type": "place",
+      "role": "alternate",
+      "selectionReason": "Honeymee is a tea-concept place Qloo links to Tea, with a profile available for peer comparison.",
+      "conceptSupport": "tag_member",
+      "popularity": 0.738086349657758,
+      "quality": "VALID"
+     }
+    ],
+    "rejectedExemplars": [],
+    "diversity": "adequate",
+    "diversityDetail": "no exemplar pair shares ≥ 0.8 of its cultural tags",
+    "attempts": 1,
+    "summary": "PLACE_PANEL: 3 place exemplar(s) linked by Qloo to Tea (urn:tag:cuisine:qloo:tea): Pipra Borin Popular Tea Center, Kebuke Black Tea, Honeymee",
+    "failure": null
+   },
+   "keyEvidence": [
+    "Shared cultural signals (operational tags filtered): median 0 across 3 exemplar(s) (NONE).",
+    "A brand-conditioned Qloo query for this concept returned 20 entities (SUPPORTED); top: Enstrom Candies Arvada, Ladurée Cannes, Ladurée, Manoelzinho do chá, Miansai SoHo.",
+    "Evidence quality MEDIUM."
+   ],
+   "analysisRoute": "PARTIAL_CULTURAL_ANALYSIS",
+   "capabilities": {
+    "representation": "SUPPORTED",
+    "relativePosition": "UNAVAILABLE",
+    "robustness": "UNAVAILABLE",
+    "coherence": "AVAILABLE",
+    "conditionedEvidence": "AVAILABLE",
+    "classification": "UNAVAILABLE"
+   },
+   "comparisonSet": null,
+   "relativePosition": null,
+   "robustness": null,
+   "coherence": {
+    "rawSharedMedian": 1,
+    "filteredSharedMedian": 0,
+    "filteredBand": "NONE",
+    "exemplarsCompared": 3,
+    "consistentlyShared": []
+   },
+   "conditionedEvidence": {
+    "support": "SUPPORTED",
+    "entityCount": 20,
+    "topEntities": [
+     {
+      "label": "Enstrom Candies Arvada",
+      "rank": 1
+     },
+     {
+      "label": "Ladurée Cannes",
+      "rank": 2
+     },
+     {
+      "label": "Ladurée",
+      "rank": 3
+     },
+     {
+      "label": "Manoelzinho do chá",
+      "rank": 4
+     },
+     {
+      "label": "Miansai SoHo",
+      "rank": 5
+     }
+    ],
+    "correlationId": "mcp-6adcc27a-46d1-4898-ae4f-ad45a23a1e6b"
+   },
+   "evidenceQuality": {
+    "level": "MEDIUM",
+    "drivers": [
+     "profileCoverage: limited"
+    ]
+   },
+   "classification": null,
+   "limitations": [
+    {
+     "code": "COMPARISON_SET_TOO_SMALL",
+     "detail": "only 1 rankable place territory in this analysis; a relative position needs ≥ 3 of one entity type"
+    },
+    {
+     "code": "CONDITIONED_LIST_TRUNCATED",
+     "detail": "urn:tag:cuisine:qloo:tea: the list reached the requested limit; more entities may exist"
+    },
+    {
+     "code": "NO_RELATIVE_POSITION",
+     "detail": "Tea: route PARTIAL_CULTURAL_ANALYSIS reports no relative position or classification"
+    }
+   ],
+   "provenance": {
+    "correlationIds": [
+     "mcp-480ed840-850d-4612-a416-deac30d9ae09",
+     "mcp-5ef37522-b053-4ce3-901d-bf3e70dec021",
+     "mcp-6adcc27a-46d1-4898-ae4f-ad45a23a1e6b",
+     "mcp-8ff026c4-c8f4-4654-a060-1c397ce9fd88",
+     "mcp-c46fbd9c-4b99-4725-9c54-54550c605edf",
+     "mcp-cd83e190-0946-4083-8259-066bcb9fc937"
+    ],
+    "sources": [
+     "qloo-hackathon-api"
+    ]
+   },
+   "candidate": {
+    "originalLabel": "Tea",
+    "sourceTagId": null,
+    "resolvedId": "urn:tag:cuisine:qloo:tea",
+    "canonicalConceptKey": "tea",
+    "normalizationReason": "ANCHORED_TAG_CANONICAL_NAME",
+    "candidateSource": "user",
+    "anchorRelation": "NO_SOURCE_TAG",
+    "uncertainty": null
+   },
+   "evidenceStatus": "PARTIAL_EVIDENCE",
+   "probes": [
+    {
+     "conceptKey": "urn:tag:cuisine:qloo:tea",
+     "label": "Tea",
+     "namespace": "cuisine:qloo",
+     "attemptedTypes": [
+      "place"
+     ],
+     "emptyTypes": [],
+     "successfulTypes": [
+      "place"
+     ],
+     "unreliableTypes": [],
+     "totalEmptyTypeProbes": 0,
+     "probingExhausted": false,
+     "exhaustionReason": null
+    }
+   ]
+  }
+ ],
+ "methodologyRuns": [],
+ "summary": {
+  "text": "Le Creuset: 1 territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.\nTea: partial cultural analysis (brand-conditioned evidence and shared signals, no relative position).",
+  "source": "deterministic_template",
+  "claimValidation": {
+   "passed": true,
+   "violations": [
+    "summary: forbidden language \"would succeed\" (business-outcome prediction)"
+   ]
+  }
+ },
+ "followUpOptions": [
+  "Add represented reference territories of the same entity type so Tea can be placed in a comparison set.",
+  "Review the exemplar choices behind each territory before acting on any class."
+ ],
+ "limitations": [
+  {
+   "code": "NOT_A_SUCCESS_PREDICTION",
+   "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+  },
+  {
+   "code": "NO_APPROVED_SCORE",
+   "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+  }
+ ],
+ "evidenceOrigin": "live",
+ "model": {
+  "id": "claude-haiku-5-5",
+  "kind": "llm",
+  "live": true,
+  "effort": "high"
+ },
+ "trace": {
+  "runId": "06aff836-81df-4102-8425-d5adb295cc58",
+  "intent": "analyze_move",
+  "userQuery": "Could Le Creuset move into tea culture?",
+  "interpretedRequest": {
+   "intent": "analyze_move",
+   "brand": "Le Creuset",
+   "territories": [
+    "Tea"
+   ]
+  },
+  "model": {
+   "id": "claude-haiku-5-5",
+   "kind": "llm",
+   "live": true,
+   "effort": "high"
+  },
+  "toolProvider": {
+   "name": "qloo-mcp",
+   "mode": "live"
+  },
+  "limits": {
+   "maxAgentIterations": 12,
+   "maxRepresentationAttemptsPerTerritory": 3,
+   "maxCandidateTerritories": 6,
+   "maxExemplarsPerTerritory": 3,
+   "maxRetryPerToolCall": 1,
+   "maxActionsPerTurn": 12,
+   "maxInvalidTurns": 2,
+   "toolTimeoutMs": 300000,
+   "maxQlooCalls": 24
+  },
+  "statusTransitions": [
+   {
+    "iteration": 0,
+    "from": "INTAKE",
+    "to": "PLANNING",
+    "reason": "request validated"
+   },
+   {
+    "iteration": 1,
+    "from": "PLANNING",
+    "to": "RESOLVING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 3,
+    "from": "RESOLVING",
+    "to": "NEEDS_INPUT",
+    "reason": "Qloo has two brand entities labeled \"Le Creuset\" (both type urn:entity:brand). Their labels and types are identical, so Qloo's own types do not settle which one the user means. The choice has to come from the user."
+   },
+   {
+    "iteration": 3,
+    "from": "NEEDS_INPUT",
+    "to": "PLANNING",
+    "reason": "user clarification received"
+   },
+   {
+    "iteration": 3,
+    "from": "PLANNING",
+    "to": "RESOLVING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 4,
+    "from": "RESOLVING",
+    "to": "INVESTIGATING",
+    "reason": "evidence changed the working phase"
+   },
+   {
+    "iteration": 11,
+    "from": "INVESTIGATING",
+    "to": "ANALYZING",
+    "reason": "analyze tea"
+   },
+   {
+    "iteration": 11,
+    "from": "ANALYZING",
+    "to": "INVESTIGATING",
+    "reason": "analysis step done"
+   },
+   {
+    "iteration": 12,
+    "from": "INVESTIGATING",
+    "to": "COMPLETE",
+    "reason": "agent finished"
+   }
+  ],
+  "planRevisions": [
+   {
+    "iteration": 1,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[ ] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Tea: anchor to a Qloo concept",
+     "[ ] Tea: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Tea: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "User asks whether Le Creuset can move into tea culture, a single named target territory."
+   },
+   {
+    "iteration": 2,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[ ] resolve the brand (ambiguous: needs the user)",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Tea: anchor to a Qloo concept",
+     "[ ] Tea: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Tea: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The brand must be resolved to a single Qloo entity before any territory evidence can be gathered."
+   },
+   {
+    "iteration": 4,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[ ] Tea: anchor to a Qloo concept",
+     "[ ] Tea: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Tea: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The clarification record names 9886839E-BED5-45F9-8703-276527054727 as the chosen Le Creuset candidate, so I resolve that id."
+   },
+   {
+    "iteration": 6,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Tea: anchor to a Qloo concept",
+     "[ ] Tea: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Tea: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "The cuisine-namespace tag \"Tea\" names the territory directly and is the next-probe candidate."
+   },
+   {
+    "iteration": 8,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Tea: anchor to a Qloo concept",
+     "[x] Tea: discover and validate exemplars (or accept concept-only evidence)",
+     "[ ] Tea: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Propose three profiled tea-concept places as Tea exemplars, the strategy Qloo marked available."
+   },
+   {
+    "iteration": 11,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Tea: anchor to a Qloo concept",
+     "[x] Tea: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Tea: analyze",
+     "[ ] finish when deterministic sufficiency allows"
+    ],
+    "note": "Sufficiency marks analyzing the ready tea territory as the only remaining high-value action; no further evidence gap is material."
+   },
+   {
+    "iteration": 12,
+    "items": [
+     "[x] interpret the goal (intent, brand, named territories)",
+     "[x] resolve the brand",
+     "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+     "[x] Tea: anchor to a Qloo concept",
+     "[x] Tea: discover and validate exemplars (or accept concept-only evidence)",
+     "[x] Tea: analyze",
+     "[x] finish when deterministic sufficiency allows"
+    ],
+    "note": "The only in-scope territory (Tea) is analyzed and sufficiency is SUFFICIENT, so the result is a PARTIAL cultural analysis with no comparison set."
+   }
+  ],
+  "turns": [
+   {
+    "iteration": 1,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Le Creuset",
+       "territories": [
+        "Tea"
+       ]
+      },
+      "reasonSummary": "User asks whether Le Creuset can move into tea culture, a single named target territory.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 730,
+     "outputTokens": 159,
+     "cacheReadTokens": 1569,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 1147,
+    "skills": [
+     {
+      "id": "interpret_request",
+      "version": 1
+     },
+     {
+      "id": "resolve_brand",
+      "version": 1
+     }
+    ],
+    "toolsExposed": [
+     "interpret_request",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2335,
+    "contextTokensEstimate": 584
+   },
+   {
+    "iteration": 2,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Le Creuset",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "The brand must be resolved to a single Qloo entity before any territory evidence can be gathered.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1023,
+     "outputTokens": 270,
+     "cacheReadTokens": 1547,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 1481,
+    "skills": [
+     {
+      "id": "resolve_brand",
+      "version": 1
+     }
+    ],
+    "toolsExposed": [
+     "qloo_resolve_entity",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2806,
+    "contextTokensEstimate": 702
+   },
+   {
+    "iteration": 3,
+    "decisions": [
+     {
+      "action": "ask_user",
+      "reasonSummary": "",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1210,
+     "outputTokens": 514,
+     "cacheReadTokens": 1547,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 3100,
+    "skills": [
+     {
+      "id": "resolve_brand",
+      "version": 1
+     }
+    ],
+    "toolsExposed": [
+     "qloo_resolve_entity",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 3101,
+    "contextTokensEstimate": 776
+   },
+   {
+    "iteration": 4,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "9886839E-BED5-45F9-8703-276527054727",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "The clarification record names 9886839E-BED5-45F9-8703-276527054727 as the chosen Le Creuset candidate, so I resolve that id.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1071,
+     "outputTokens": 552,
+     "cacheReadTokens": 1547,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 2880,
+    "skills": [
+     {
+      "id": "resolve_brand",
+      "version": 1
+     },
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_resolve_entity",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 2865,
+    "contextTokensEstimate": 717
+   },
+   {
+    "iteration": 5,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "tea"
+      },
+      "reasonSummary": "The territory Tea needs a Qloo concept tag before it can be anchored.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1662,
+     "outputTokens": 103,
+     "cacheReadTokens": 2788,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 1294,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 7257,
+    "contextTokensEstimate": 1815
+   },
+   {
+    "iteration": 6,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "tea",
+       "tagId": "urn:tag:cuisine:qloo:tea"
+      },
+      "reasonSummary": "The cuisine-namespace tag \"Tea\" names the territory directly and is the next-probe candidate.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:cuisine:qloo:tea"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe brand-independent places for the Tea concept, the ranked next probe for this territory.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 2852,
+     "outputTokens": 563,
+     "cacheReadTokens": 2788,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 2819,
+    "skills": [
+     {
+      "id": "resolve_territory",
+      "version": 5
+     },
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "drop_territory",
+     "ask_user"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 9479,
+    "contextTokensEstimate": 2370
+   },
+   {
+    "iteration": 7,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "0038B857-136E-4EF0-8F5D-FFAF0359AA7D"
+      },
+      "reasonSummary": "Profiling Pipra Borin Popular Tea Center to check it against tea-culture peers before choosing exemplars.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "009667F4-FCD4-470E-B316-CEAC319FD9D9"
+      },
+      "reasonSummary": "Profiling Kebuke Black Tea to check it against tea-culture peers before choosing exemplars.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "013A563C-CC7F-4D21-A870-4F3FAF4A5326"
+      },
+      "reasonSummary": "Profiling Tea Room at the White Dragon to check it against tea-culture peers before choosing exemplars.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "0004637E-C595-45C1-BC63-9CCDD83AC3ED"
+      },
+      "reasonSummary": "Profiling Honeymee to check it against tea-culture peers before choosing exemplars.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "9886839E-BED5-45F9-8703-276527054727"
+      },
+      "reasonSummary": "Fetching the Le Creuset brand profile needed for the analysis and reference discovery.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4288,
+     "outputTokens": 1268,
+     "cacheReadTokens": 3919,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 5732,
+    "skills": [
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 15234,
+    "contextTokensEstimate": 3809
+   },
+   {
+    "iteration": 8,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "tea",
+       "entityType": "place",
+       "exemplars": [
+        {
+         "id": "0038B857-136E-4EF0-8F5D-FFAF0359AA7D",
+         "reason": "Tea-focused venue (popular tea center) Qloo links to the Tea concept via brand-independent evidence, with a profile available for peer checks.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Venue built around tea itself, so it directly represents the Tea territory."
+         }
+        },
+        {
+         "id": "009667F4-FCD4-470E-B316-CEAC319FD9D9",
+         "reason": "Black tea specialist (Kebuke Black Tea) that Qloo associates with the Tea concept, with a profile available.",
+         "semantic": {
+          "relevance": "strong",
+          "reason": "Name and focus are tea-specific, a clear tea-culture place."
+         }
+        },
+        {
+         "id": "0004637E-C595-45C1-BC63-9CCDD83AC3ED",
+         "reason": "Honeymee is a tea-concept place Qloo links to Tea, with a profile available for peer comparison.",
+         "semantic": {
+          "relevance": "adequate",
+          "reason": "Tea-related venue; the name alone does not confirm a tea-centred format, so it is a weaker representative than the two tea-specific venues."
+         }
+        }
+       ]
+      },
+      "reasonSummary": "Propose three profiled tea-concept places as Tea exemplars, the strategy Qloo marked available.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 5682,
+     "outputTokens": 935,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 3919
+    },
+    "latencyMs": 5086,
+    "skills": [
+     {
+      "id": "build_territory_representation",
+      "version": 4
+     },
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_find_tags",
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "anchor_territory",
+     "validate_territory_representation",
+     "declare_concept_only",
+     "drop_territory"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 18293,
+    "contextTokensEstimate": 4574
+   },
+   {
+    "iteration": 9,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:media:cooking"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the Cooking reference candidate.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:person:chef"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the Chef reference candidate.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4680,
+     "outputTokens": 815,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 5087
+    },
+    "latencyMs": 3599,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 18672,
+    "contextTokensEstimate": 4668
+   },
+   {
+    "iteration": 10,
+    "decisions": [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:keyword:media:new_york_city"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the brand-independent place pool for a meaningful candidate reference tag from the brand's own profile.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:folk"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the folk music candidate reference tag.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:genre:music:country"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the country music candidate reference tag.",
+      "accepted": true
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "place",
+       "tagIds": [
+        "urn:tag:style:qloo:methodical"
+       ],
+       "conditionOnBrand": false
+      },
+      "reasonSummary": "Probe the brand-independent place pool for the Methodical style candidate reference tag.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 4336,
+     "outputTokens": 1615,
+     "cacheReadTokens": 5087,
+     "cacheCreationTokens": 0
+    },
+    "latencyMs": 7604,
+    "skills": [
+     {
+      "id": "build_comparison_set",
+      "version": 3
+     },
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "qloo_get_entity_tags",
+     "qloo_recommend",
+     "propose_territory",
+     "anchor_territory",
+     "validate_territory_representation",
+     "assess_concept_duplicates",
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 18071,
+    "contextTokensEstimate": 4518
+   },
+   {
+    "iteration": 11,
+    "decisions": [
+     {
+      "action": "analyze",
+      "reasonSummary": "Sufficiency marks analyzing the ready tea territory as the only remaining high-value action; no further evidence gap is material.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1836,
+     "outputTokens": 342,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1938
+    },
+    "latencyMs": 2332,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 4923,
+    "contextTokensEstimate": 1231
+   },
+   {
+    "iteration": 12,
+    "decisions": [
+     {
+      "action": "finish",
+      "reasonSummary": "The only in-scope territory (Tea) is analyzed and sufficiency is SUFFICIENT, so the result is a PARTIAL cultural analysis with no comparison set.",
+      "accepted": true
+     }
+    ],
+    "usage": {
+     "inputTokens": 1511,
+     "outputTokens": 192,
+     "cacheReadTokens": 0,
+     "cacheCreationTokens": 1938
+    },
+    "latencyMs": 995795,
+    "skills": [
+     {
+      "id": "analyze_territories",
+      "version": 2
+     }
+    ],
+    "toolsExposed": [
+     "drop_territory",
+     "assess_evidence_sufficiency",
+     "analyze",
+     "finish"
+    ],
+    "modelAttempts": 1,
+    "repairReason": null,
+    "firstAttemptValid": true,
+    "contextChars": 4187,
+    "contextTokensEstimate": 1047
+   }
+  ],
+  "toolCalls": [
+   {
+    "id": "tc-1",
+    "iteration": 1,
+    "tool": "interpret_request",
+    "permission": "local_computation",
+    "arguments": {
+     "intent": "analyze_move",
+     "brand": "Le Creuset",
+     "territories": [
+      "Tea"
+     ]
+    },
+    "status": "ok",
+    "summary": "intent analyze_move; brand \"Le Creuset\"; 1 named territory(ies)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    }
+   },
+   {
+    "id": "tc-2",
+    "iteration": 2,
+    "tool": "qloo_resolve_entity",
+    "permission": "read_only_external",
+    "arguments": {
+     "name": "Le Creuset",
+     "type": "brand",
+     "role": "brand"
+    },
+    "status": "needs_input",
+    "summary": "ambiguous: 2 candidate(s)",
+    "qlooOperations": [
+     "describe"
+    ],
+    "correlationIds": [
+     "mcp-ea5c3541-e21e-46c6-9323-b3f1faa444d4"
+    ],
+    "attempts": 1,
+    "latencyMs": 659,
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-3",
+    "iteration": 4,
+    "tool": "qloo_resolve_entity",
+    "permission": "read_only_external",
+    "arguments": {
+     "name": "9886839E-BED5-45F9-8703-276527054727",
+     "type": "brand",
+     "role": "brand"
+    },
+    "status": "ok",
+    "summary": "Le Creuset (9886839E-BED5-45F9-8703-276527054727, urn:entity:brand, match identifier)",
+    "qlooOperations": [
+     "describe"
+    ],
+    "correlationIds": [
+     "mcp-b526944f-83ae-4891-96a9-bf1b2353bdfc"
+    ],
+    "attempts": 1,
+    "latencyMs": 733,
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-4",
+    "iteration": 5,
+    "tool": "qloo_find_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "query": "tea",
+     "limit": 8
+    },
+    "status": "ok",
+    "summary": "8 tag(s)",
+    "qlooOperations": [
+     "find_tags"
+    ],
+    "correlationIds": [
+     "mcp-cd83e190-0946-4083-8259-066bcb9fc937"
+    ],
+    "attempts": 1,
+    "latencyMs": 5771,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-5",
+    "iteration": 6,
+    "tool": "anchor_territory",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "tea",
+     "tagId": "urn:tag:cuisine:qloo:tea"
+    },
+    "status": "ok",
+    "summary": "tea anchored to Tea (urn:tag:cuisine:qloo:tea)",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0,
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    }
+   },
+   {
+    "id": "tc-6",
+    "iteration": 6,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:cuisine:qloo:tea"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "ok",
+    "summary": "20 place entities (brand-independent pool)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-29e491b6-8ffc-4e04-bfff-4c063f9d2974"
+    ],
+    "attempts": 1,
+    "latencyMs": 4611,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "HIGH"
+   },
+   {
+    "id": "tc-7",
+    "iteration": 7,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "0038B857-136E-4EF0-8F5D-FFAF0359AA7D"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-5ef37522-b053-4ce3-901d-bf3e70dec021"
+    ],
+    "attempts": 1,
+    "latencyMs": 892,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-8",
+    "iteration": 7,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "009667F4-FCD4-470E-B316-CEAC319FD9D9"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-8ff026c4-c8f4-4654-a060-1c397ce9fd88"
+    ],
+    "attempts": 1,
+    "latencyMs": 7080,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-9",
+    "iteration": 7,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "013A563C-CC7F-4D21-A870-4F3FAF4A5326"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-b0075c95-ebc9-4db8-955f-8f2e0b1e06cd"
+    ],
+    "attempts": 1,
+    "latencyMs": 6887,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-10",
+    "iteration": 7,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "0004637E-C595-45C1-BC63-9CCDD83AC3ED"
+    },
+    "status": "failed",
+    "summary": "TOOL_TIMEOUT: TOOL_TIMEOUT after 300000 ms",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-c46fbd9c-4b99-4725-9c54-54550c605edf"
+    ],
+    "attempts": 1,
+    "latencyMs": 766986,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM",
+    "error": "TOOL_TIMEOUT"
+   },
+   {
+    "id": "tc-11",
+    "iteration": 7,
+    "tool": "qloo_get_entity_tags",
+    "permission": "read_only_external",
+    "arguments": {
+     "entityId": "9886839E-BED5-45F9-8703-276527054727"
+    },
+    "status": "ok",
+    "summary": "20 tag(s)",
+    "qlooOperations": [
+     "entity_tags"
+    ],
+    "correlationIds": [
+     "mcp-480ed840-850d-4612-a416-deac30d9ae09"
+    ],
+    "attempts": 1,
+    "latencyMs": 7974,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-12",
+    "iteration": 8,
+    "tool": "validate_territory_representation",
+    "permission": "local_computation",
+    "arguments": {
+     "territoryKey": "tea",
+     "entityType": "place",
+     "exemplars": [
+      {
+       "id": "0038B857-136E-4EF0-8F5D-FFAF0359AA7D",
+       "reason": "Tea-focused venue (popular tea center) Qloo links to the Tea concept via brand-independent evidence, with a profile available for peer checks.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Venue built around tea itself, so it directly represents the Tea territory."
+       }
+      },
+      {
+       "id": "009667F4-FCD4-470E-B316-CEAC319FD9D9",
+       "reason": "Black tea specialist (Kebuke Black Tea) that Qloo associates with the Tea concept, with a profile available.",
+       "semantic": {
+        "relevance": "strong",
+        "reason": "Name and focus are tea-specific, a clear tea-culture place."
+       }
+      },
+      {
+       "id": "0004637E-C595-45C1-BC63-9CCDD83AC3ED",
+       "reason": "Honeymee is a tea-concept place Qloo links to Tea, with a profile available for peer comparison.",
+       "semantic": {
+        "relevance": "adequate",
+        "reason": "Tea-related venue; the name alone does not confirm a tea-centred format, so it is a weaker representative than the two tea-specific venues."
+       }
+      }
+     ]
+    },
+    "status": "ok",
+    "summary": "tea: accepted Pipra Borin Popular Tea Center, Kebuke Black Tea, Honeymee; diversity adequate",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 1,
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    }
+   },
+   {
+    "id": "tc-13",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:media:cooking"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:media:cooking",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-e61bf6a2-7d66-4fbb-b57a-acb71af8b7ae"
+    ],
+    "attempts": 1,
+    "latencyMs": 380,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-14",
+    "iteration": 9,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:person:chef"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:person:chef",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-e7184b20-6505-43a3-8fd9-79d34d52db31"
+    ],
+    "attempts": 1,
+    "latencyMs": 7388,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-15",
+    "iteration": 10,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:keyword:media:new_york_city"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:keyword:media:new_york_city",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-22bd568f-431c-48c2-9855-36688d2c7723"
+    ],
+    "attempts": 1,
+    "latencyMs": 404,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-16",
+    "iteration": 10,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:folk"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "empty",
+    "summary": "Qloo returned no place entities for urn:tag:genre:music:folk",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-2598f9be-ff21-4783-b5e7-90074c0bff95"
+    ],
+    "attempts": 1,
+    "latencyMs": 6983,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM"
+   },
+   {
+    "id": "tc-17",
+    "iteration": 10,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:genre:music:country"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "failed",
+    "summary": "TOOL_TIMEOUT: TOOL_TIMEOUT after 300000 ms",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-0ad4d7e0-df92-46ff-ba93-4b227f891c8f"
+    ],
+    "attempts": 1,
+    "latencyMs": 1022928,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM",
+    "error": "TOOL_TIMEOUT"
+   },
+   {
+    "id": "tc-18",
+    "iteration": 10,
+    "tool": "qloo_recommend",
+    "permission": "read_only_external",
+    "arguments": {
+     "targetType": "place",
+     "tagIds": [
+      "urn:tag:style:qloo:methodical"
+     ],
+     "conditionOnBrand": false,
+     "limit": 20
+    },
+    "status": "failed",
+    "summary": "TOOL_TIMEOUT: TOOL_TIMEOUT after 300000 ms",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-cd9a8bf4-47ae-4eb1-b288-6799c74f1068"
+    ],
+    "attempts": 1,
+    "latencyMs": 936560,
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "expectedValue": "MEDIUM",
+    "error": "TOOL_TIMEOUT"
+   },
+   {
+    "id": "tc-19",
+    "iteration": 11,
+    "tool": "analyze_evidence",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "tea"
+     ]
+    },
+    "status": "ok",
+    "summary": "brand profile 20 tags; 4 exemplar/other profiles in run; 1 brand-conditioned list(s)",
+    "qlooOperations": [
+     "recommend"
+    ],
+    "correlationIds": [
+     "mcp-6adcc27a-46d1-4898-ae4f-ad45a23a1e6b"
+    ],
+    "attempts": 1,
+    "latencyMs": 0
+   },
+   {
+    "id": "tc-20",
+    "iteration": 11,
+    "tool": "build_candidate_panel",
+    "permission": "read_only_external",
+    "arguments": {
+     "territoryKeys": [
+      "tea"
+     ]
+    },
+    "status": "ok",
+    "summary": "no comparison set of ≥ 3 rankable territories of one type",
+    "qlooOperations": [],
+    "correlationIds": [],
+    "attempts": 0,
+    "latencyMs": 0
+   }
+  ],
+  "resolvedEntities": [
+   {
+    "role": "brand",
+    "id": "9886839E-BED5-45F9-8703-276527054727",
+    "label": "Le Creuset",
+    "type": "urn:entity:brand",
+    "match": "identifier",
+    "resolution": "confirmed"
+   }
+  ],
+  "territoryHypotheses": [
+   {
+    "key": "tea",
+    "label": "Tea",
+    "role": "target",
+    "origin": "user",
+    "status": "analyzed",
+    "rationale": "named by the user"
+   }
+  ],
+  "representations": [
+   {
+    "territoryKey": "tea",
+    "attempt": 1,
+    "accepted": [
+     "Pipra Borin Popular Tea Center",
+     "Kebuke Black Tea",
+     "Honeymee"
+    ],
+    "rejected": []
+   }
+  ],
+  "sufficiency": [
+   {
+    "iteration": 0,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "interpret the request (interpret_request)"
+    ],
+    "nextActions": [
+     {
+      "action": "interpret_request",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the goal is not interpreted yet"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 1,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "resolve the brand (qloo_resolve_entity, role brand)"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_resolve_entity",
+      "target": null,
+      "value": "HIGH",
+      "reason": "the brand is not resolved"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 2,
+    "verdict": "NEEDS_USER_INPUT",
+    "reasons": [
+     "brand \"Le Creuset\" is ambiguous in Qloo (Le Creuset | Le Creuset); only the user can choose"
+    ],
+    "nextActions": [],
+    "materialGap": false
+   },
+   {
+    "iteration": 3,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "resolve the brand using the user's clarification (qloo_resolve_entity with the chosen candidate id)",
+     "resolve the brand (qloo_resolve_entity, role brand)"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_resolve_entity",
+      "target": null,
+      "value": "HIGH",
+      "reason": "resolve the candidate the user chose"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 4,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "tea: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "9886839E-BED5-45F9-8703-276527054727",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "qloo_find_tags",
+      "target": "tea",
+      "value": "HIGH",
+      "reason": "search Qloo's tag vocabulary for a concept"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 5,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "tea: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "9886839E-BED5-45F9-8703-276527054727",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "anchor_territory",
+      "target": "tea",
+      "value": "HIGH",
+      "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 6,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "tea: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+    ],
+    "nextActions": [
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "9886839E-BED5-45F9-8703-276527054727",
+      "value": "MEDIUM",
+      "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "tea",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     },
+     {
+      "action": "qloo_get_entity_tags",
+      "target": "tea",
+      "value": "MEDIUM",
+      "reason": "candidate tag profiles let the quality check compare peers before choosing exemplars"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 7,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "tea: discover exemplars (qloo_recommend on the concept), check candidate quality and propose a representation; or declare_concept_only"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "9886839E-BED5-45F9-8703-276527054727",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "validate_territory_representation",
+      "target": "tea",
+      "value": "HIGH",
+      "reason": "Qloo returned exemplar candidates for an available strategy"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 8,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "tea: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "9886839E-BED5-45F9-8703-276527054727",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "tea",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "2 more meaningful place reference territories are required for a relative position (have 1 of 3). Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent place pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "tea",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 9,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "tea: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "9886839E-BED5-45F9-8703-276527054727",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "tea",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "HIGH",
+      "reason": "2 more meaningful place reference territories are required for a relative position (have 1 of 3). Choose from referenceCandidates with semantic MEANINGFUL: probe its brand-independent place pool if untested, then propose_territory (role reference) + anchor_territory + validate_territory_representation. If none fits, analyze now and accept a PARTIAL result."
+     },
+     {
+      "action": "analyze",
+      "target": "tea",
+      "value": "LOW",
+      "reason": "analyzing the targets now would lock a PARTIAL route while a meaningful comparison set is still constructible (see add_references)"
+     }
+    ],
+    "materialGap": true
+   },
+   {
+    "iteration": 10,
+    "verdict": "MORE_EVIDENCE_USEFUL",
+    "reasons": [
+     "1 in-scope territory(ies) not yet analyzed",
+     "tea: ready to analyze (3 validated exemplar(s))"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "9886839E-BED5-45F9-8703-276527054727",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_exemplar",
+      "target": "tea",
+      "value": "NONE",
+      "reason": "exemplar limit reached"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "NONE",
+      "reason": "FULL is not feasible: only 2 turn(s) left; references and analysis need 3; analysis will be partial"
+     },
+     {
+      "action": "analyze",
+      "target": "tea",
+      "value": "HIGH",
+      "reason": "no material evidence gap remains: analyze"
+     }
+    ],
+    "materialGap": false
+   },
+   {
+    "iteration": 11,
+    "verdict": "SUFFICIENT",
+    "reasons": [
+     "all 1 in-scope territories have analysis results"
+    ],
+    "nextActions": [
+     {
+      "action": "more_brand_tags",
+      "target": "9886839E-BED5-45F9-8703-276527054727",
+      "value": "NONE",
+      "reason": "the brand profile is already at the fixed Qloo tag cap (20); more tags cannot be requested"
+     },
+     {
+      "action": "add_references",
+      "target": null,
+      "value": "NONE",
+      "reason": "the targets are already analyzed"
+     },
+     {
+      "action": "finish",
+      "target": null,
+      "value": "HIGH",
+      "reason": "every in-scope territory is analyzed"
+     }
+    ],
+    "materialGap": false
+   }
+  ],
+  "representationQuality": [
+   {
+    "territoryKey": "tea",
+    "attempt": 1,
+    "candidateId": "0038B857-136E-4EF0-8F5D-FFAF0359AA7D",
+    "label": "Pipra Borin Popular Tea Center",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": true,
+      "profileTags": 20,
+      "popularity": 0.7971032661850354,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 3,
+      "maxSharedWithPeer": 0,
+      "conceptInProfile": false,
+      "peersCarryingConcept": 0
+     },
+     "reasons": []
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Venue built around tea itself, so it directly represents the Tea territory.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "tea",
+    "attempt": 1,
+    "candidateId": "009667F4-FCD4-470E-B316-CEAC319FD9D9",
+    "label": "Kebuke Black Tea",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": true,
+      "profileTags": 20,
+      "popularity": 0.5600205935809986,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 3,
+      "maxSharedWithPeer": 0,
+      "conceptInProfile": false,
+      "peersCarryingConcept": 0
+     },
+     "reasons": []
+    },
+    "modelAssessment": {
+     "relevance": "STRONG",
+     "reason": "Name and focus are tea-specific, a clear tea-culture place.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   },
+   {
+    "territoryKey": "tea",
+    "attempt": 1,
+    "candidateId": "0004637E-C595-45C1-BC63-9CCDD83AC3ED",
+    "label": "Honeymee",
+    "deterministic": {
+     "level": "VALID",
+     "signals": {
+      "resolves": true,
+      "correctType": true,
+      "isBrand": false,
+      "linkedToConcept": "tag_member",
+      "brandConditionedOnly": false,
+      "profileFetched": true,
+      "profileTags": 20,
+      "popularity": 0.738086349657758,
+      "duplicateOf": null,
+      "nameFamilyOf": null,
+      "peersWithProfiles": 3,
+      "maxSharedWithPeer": 0,
+      "conceptInProfile": false,
+      "peersCarryingConcept": 0
+     },
+     "reasons": []
+    },
+    "modelAssessment": {
+     "relevance": "ADEQUATE",
+     "reason": "Tea-related venue; the name alone does not confirm a tea-centred format, so it is a weaker representative than the two tea-specific venues.",
+     "advisory": true
+    },
+    "final": "VALID",
+    "rule": "R6 no hard failure, no weak signal",
+    "rulesVersion": "representation-quality-v1"
+   }
+  ],
+  "conceptDedup": [],
+  "earlyStops": [],
+  "skillUsage": [
+   {
+    "skill": {
+     "id": "interpret_request",
+     "version": 1
+    },
+    "turns": 1,
+    "qlooCalls": 0,
+    "toolCalls": 1
+   },
+   {
+    "skill": {
+     "id": "resolve_brand",
+     "version": 1
+    },
+    "turns": 3,
+    "qlooCalls": 2,
+    "toolCalls": 2
+   },
+   {
+    "skill": {
+     "id": "resolve_territory",
+     "version": 5
+    },
+    "turns": 2,
+    "qlooCalls": 1,
+    "toolCalls": 2
+   },
+   {
+    "skill": {
+     "id": "build_territory_representation",
+     "version": 4
+    },
+    "turns": 2,
+    "qlooCalls": 5,
+    "toolCalls": 7
+   },
+   {
+    "skill": {
+     "id": "build_comparison_set",
+     "version": 3
+    },
+    "turns": 2,
+    "qlooCalls": 4,
+    "toolCalls": 6
+   },
+   {
+    "skill": {
+     "id": "analyze_territories",
+     "version": 2
+    },
+    "turns": 4,
+    "qlooCalls": 0,
+    "toolCalls": 0
+   }
+  ],
+  "methodologyInvocations": [],
+  "synthesis": {
+   "source": "deterministic_template",
+   "attempts": 2,
+   "violations": [
+    "summary: forbidden language \"would succeed\" (business-outcome prediction)"
+   ],
+   "attemptDetails": [
+    {
+     "attempt": 1,
+     "accepted": false,
+     "categories": {
+      "MISMATCHED_ROBUSTNESS": 1
+     },
+     "violations": [
+      "territoryNotes.tea: robustness wording does not match Tea (not measured)"
+     ],
+     "rejectedOutput": "{\"summary\":\"The deterministic results give only a partial read on whether Le Creuset could move into tea culture. Tea is represented through a few place exemplars, but no shared cultural signals emerge across them, and no comparison set or relative position is available. Brand-conditioned results lean toward confectionery and lifestyle names rather than tea itself, and evidence quality is medium. The evidence cannot establish how tea compares with other territories or whether the move is culturally natural.\",\"findings\":[{\"territoryKey\":\"tea\",\"claimType\":\"shared_signals\",\"supportingFields\":[\"coherence.band\",\"coherence.consistentlyShared\"],\"interpretation\":\"Filtered shared cultural signals across the tea place exemplars fall in no band, and no signal is consistently shared, so there is no common cultural thread to read across them.\",\"limitationCodes\":[\"COMPARISON_SET_TOO_SMALL\"]},{\"territoryKey\":\"tea\",\"claimType\":\"conditioned_evidence\",\"supportingFields\":[\"conditionedEvidence.support\",\"conditionedEvidence.top\"],\"interpretation\":\"The brand-conditioned query for tea is supported and its leading entities include confectionery and lifestyle names such as Ladurée and Miansai SoHo, which describes the brand's conditioned neighbourhood rather than tea-specific affinity.\",\"limitationCodes\":[\"CONDITIONED_LIST_TRUNCATED\"]},{\"territoryKey\":\"tea\",\"claimType\":\"route_limitation\",\"supportingFields\":[\"route\",\"capabilities.relativePosition\",\"capabilities.robustness\",\"capabilities.classification\"],\"interpretation\":\"The route for tea is partial, with relative position, robustness and classification unavailable, so no ranking or stability statement about tea against a comparison set can be made.\",\"limitationCodes\":[\"NO_RELATIVE_POSITION\",\"COMPARISON_SET_TOO_SMALL\"]}],\"followUpOptions\":[\"Add reference territories, such as adjacent beverage or confectionery territories, to establish a comparison set for tea.\",\"Expand the tea exemplars beyond the three place entities to test whether shared cultural signals emerge.\",\"Run an entity-type query for tea-adjacent brands and products to compare conditioned neighbourhoods.\",\"Request a brand-conditioned query with a larger returned list to reduce truncation of the conditioned entities.\"]}"
+    },
+    {
+     "attempt": 2,
+     "accepted": false,
+     "categories": {
+      "PROHIBITED_COMMERCIAL_OR_PREDICTION": 1
+     },
+     "violations": [
+      "summary: forbidden language \"would succeed\" (business-outcome prediction)"
+     ],
+     "rejectedOutput": "{\"summary\":\"The question of whether Le Creuset could move into tea culture can only be partly answered. Tea has a place-based exemplar panel and a brand-conditioned entity list, but no comparison-based position against other territories, so the results cannot place tea relative to any alternative. Shared cultural signals across the tea exemplars are absent after filtering operational tags, and evidence quality is medium. The results show association between the brand and some entities in tea-linked culture, not whether the move would succeed.\",\"findings\":[{\"territoryKey\":\"tea\",\"claimType\":\"representation\",\"supportingFields\":[\"representation\",\"capabilities.representation\"],\"interpretation\":\"Tea is represented by a place panel of exemplars linked by Qloo to the tea concept, and this is the only supported representation route for the territory.\",\"limitationCodes\":[\"COMPARISON_SET_TOO_SMALL\",\"NO_RELATIVE_POSITION\"]},{\"territoryKey\":\"tea\",\"claimType\":\"shared_signals\",\"supportingFields\":[\"coherence.band\",\"coherence.consistentlyShared\"],\"interpretation\":\"The tea exemplars show no shared cultural signals after filtering operational tags, so they do not converge on a common profile in these results.\",\"limitationCodes\":[\"COMPARISON_SET_TOO_SMALL\"]},{\"territoryKey\":\"tea\",\"claimType\":\"conditioned_evidence\",\"supportingFields\":[\"conditionedEvidence.support\",\"conditionedEvidence.top\"],\"interpretation\":\"A brand-conditioned query for tea returned supported entities, led by Enstrom Candies Arvada, Ladurée Cannes and Ladurée, which indicates association only and the list is truncated.\",\"limitationCodes\":[\"CONDITIONED_LIST_TRUNCATED\"]}],\"followUpOptions\":[\"Add reference territories with adjacent beverage or cookware-linked culinary culture to create a comparison set for tea.\",\"Expand the tea exemplar panel with additional tea-linked entities to test whether shared cultural signals emerge.\",\"Rerun the brand-conditioned tea query with a larger result window to reduce list truncation.\",\"Query Le Creuset's own cultural exemplars against a comparison territory so that a relative position can be produced.\"]}"
+    }
+   ]
+  },
+  "errors": [
+   {
+    "iteration": 7,
+    "code": "TOOL_TIMEOUT",
+    "detail": "qloo_get_entity_tags: TOOL_TIMEOUT after 300000 ms"
+   },
+   {
+    "iteration": 10,
+    "code": "TOOL_TIMEOUT",
+    "detail": "qloo_recommend: TOOL_TIMEOUT after 300000 ms"
+   },
+   {
+    "iteration": 10,
+    "code": "TOOL_TIMEOUT",
+    "detail": "qloo_recommend: TOOL_TIMEOUT after 300000 ms"
+   }
+  ],
+  "userClarifications": [
+   "9886839E-BED5-45F9-8703-276527054727"
+  ],
+  "representationPlans": [],
+  "completion": [
+   {
+    "iteration": 8,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 10,
+    "remainingTurns": 4,
+    "remainingQlooCalls": 15,
+    "turnsNeeded": 3,
+    "callsNeeded": 7,
+    "fullAnalysisFeasible": true,
+    "reason": "FULL is feasible: 2 reference(s) needed, 10 meaningful candidate(s) (0 already probed with members), 15 Qloo call(s) and 4 turn(s) left (needs 3 turn(s), about 7 call(s))"
+   },
+   {
+    "iteration": 9,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 8,
+    "remainingTurns": 3,
+    "remainingQlooCalls": 13,
+    "turnsNeeded": 3,
+    "callsNeeded": 7,
+    "fullAnalysisFeasible": true,
+    "reason": "FULL is feasible: 2 reference(s) needed, 8 meaningful candidate(s) (0 already probed with members), 13 Qloo call(s) and 3 turn(s) left (needs 3 turn(s), about 7 call(s))"
+   },
+   {
+    "iteration": 10,
+    "requiredReferenceCount": 3,
+    "validReferenceCount": 1,
+    "missingReferenceCount": 2,
+    "compatibleEntityType": "place",
+    "remainingRelevantCandidates": 5,
+    "remainingTurns": 2,
+    "remainingQlooCalls": 10,
+    "turnsNeeded": 3,
+    "callsNeeded": 7,
+    "fullAnalysisFeasible": false,
+    "reason": "FULL is not feasible: only 2 turn(s) left; references and analysis need 3; analysis will be partial"
+   }
+  ],
+  "probeRecommendations": [
+   {
+    "iteration": 5,
+    "territoryKey": "tea",
+    "conceptKey": "urn:tag:cuisine:qloo:tea",
+    "namespace": "cuisine:qloo",
+    "type": "place",
+    "priority": "EXPLORATION",
+    "reason": "untested in cuisine:qloo"
+   }
+  ],
+  "stopReason": {
+   "code": "AGENT_FINISHED",
+   "detail": "agent finished"
+  },
+  "semanticAssessments": []
+ },
+ "metrics": {
+  "agent_iterations": 12,
+  "qloo_calls": 16,
+  "tool_calls": 20,
+  "tool_success_rate": 0.8,
+  "invalid_actions": 0,
+  "representation_attempts": 1,
+  "territories_proposed": 1,
+  "territories_resolved": 1,
+  "territories_rejected": 0,
+  "full_analysis_count": 0,
+  "partial_analysis_count": 1,
+  "descriptive_analysis_count": 0,
+  "unsupported_count": 0,
+  "methodology_calls": 0,
+  "latency_ms": 5626984,
+  "model_input_tokens": 68920,
+  "model_output_tokens": 11708,
+  "retry_count": 0,
+  "budget_exhausted": false,
+  "model_turns": 12,
+  "model_attempts": 12,
+  "first_attempt_valid_turns": 12,
+  "valid_after_repair_turns": 12,
+  "repairs": 0,
+  "unknown_tool_attempts": 0,
+  "invalid_argument_attempts": 0,
+  "unsupported_state_actions": 0,
+  "synthesis_attempts": 2,
+  "calls_avoided": 0,
+  "avg_context_chars": 8935,
+  "max_context_chars": 18672,
+  "avg_context_tokens_estimate": 2234,
+  "model_latency_ms": 1032869,
+  "qloo_latency_ms": 3844431,
+  "model_cost_usd": 0.0112,
+  "model_id": "claude-haiku-5-5",
+  "model_effort": "high",
+  "synthesis_latency_ms": 750763,
+  "analysis_latency_ms": 1066634,
+  "qloo_spacing_ms": 81261,
+  "synthesis_first_attempt_valid": false,
+  "synthesis_valid_after_repair": false,
+  "synthesis_fallback": true,
+  "reference_deferrals": 0,
+  "empty_type_probes": 6,
+  "max_empty_type_probes_per_concept": 1,
+  "probe_limit_refusals": 0,
+  "type_alignment_deferrals": 0,
+  "reference_namespace_refusals": 0,
+  "successful_type_probes": 1,
+  "namespace_type_refusals": 0,
+  "alternate_anchor_refusals": 0,
+  "source_evidence_anchors": 0,
+  "frontier_completion_refusals": 0
+ },
+ "skillsUsed": [
+  {
+   "id": "interpret_request",
+   "version": 1
+  },
+  {
+   "id": "resolve_brand",
+   "version": 1
+  },
+  {
+   "id": "resolve_territory",
+   "version": 5
+  },
+  {
+   "id": "build_territory_representation",
+   "version": 4
+  },
+  {
+   "id": "build_comparison_set",
+   "version": 3
+  },
+  {
+   "id": "analyze_territories",
+   "version": 2
+  }
+ ],
+ "comparisonSetConstruction": {
+  "intent": "analyze_move",
+  "proposed": [
+   {
+    "key": "tea",
+    "label": "Tea",
+    "role": "target",
+    "source": "user",
+    "evidence": "named by the user"
+   }
+  ],
+  "rejected": [],
+  "final": [
+   {
+    "key": "tea",
+    "label": "Tea",
+    "role": "target",
+    "source": "user",
+    "route": "PARTIAL_CULTURAL_ANALYSIS"
+   }
+  ],
+  "dedupDecisions": [],
+  "semanticAssessments": [],
+  "diversity": {
+   "assessment": "unknown",
+   "similarPairs": [],
+   "detail": "fewer than two non-target territories: diversity not assessed"
+  },
+  "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+ },
+ "layers": {
+  "qlooEvidence": {
+   "brand": {
+    "id": "9886839E-BED5-45F9-8703-276527054727",
+    "label": "Le Creuset",
+    "correlationId": "mcp-b526944f-83ae-4891-96a9-bf1b2353bdfc"
+   },
+   "concepts": [
+    {
+     "territoryKey": "tea",
+     "id": "urn:tag:cuisine:qloo:tea",
+     "label": "Tea",
+     "correlationIds": [
+      "mcp-cd83e190-0946-4083-8259-066bcb9fc937"
+     ]
+    }
+   ],
+   "exemplars": [
+    {
+     "territoryKey": "tea",
+     "id": "0038B857-136E-4EF0-8F5D-FFAF0359AA7D",
+     "label": "Pipra Borin Popular Tea Center",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-29e491b6-8ffc-4e04-bfff-4c063f9d2974"
+    },
+    {
+     "territoryKey": "tea",
+     "id": "009667F4-FCD4-470E-B316-CEAC319FD9D9",
+     "label": "Kebuke Black Tea",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-29e491b6-8ffc-4e04-bfff-4c063f9d2974"
+    },
+    {
+     "territoryKey": "tea",
+     "id": "0004637E-C595-45C1-BC63-9CCDD83AC3ED",
+     "label": "Honeymee",
+     "conceptSupport": "tag_member",
+     "supportCorrelationId": "mcp-29e491b6-8ffc-4e04-bfff-4c063f9d2974"
+    }
+   ],
+   "qlooCalls": 16
+  },
+  "systemAnalysis": {
+   "routes": [
+    {
+     "territoryKey": "tea",
+     "route": "PARTIAL_CULTURAL_ANALYSIS",
+     "classification": null,
+     "position": null,
+     "robustness": null
+    }
+   ],
+   "methodologyRunIds": [],
+   "finalSufficiency": "SUFFICIENT",
+   "representationDecisions": {
+    "valid": 3,
+    "weak": 0,
+    "rejected": 0
+   },
+   "semanticComparison": []
+  },
+  "agentInterpretation": {
+   "summary": "Le Creuset: 1 territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.\nTea: partial cultural analysis (brand-conditioned evidence and shared signals, no relative position).",
+   "source": "deterministic_template",
+   "claimValidationPassed": true,
+   "semanticJudgments": [
+    {
+     "territoryKey": "tea",
+     "label": "Pipra Borin Popular Tea Center",
+     "relevance": "STRONG",
+     "reason": "Venue built around tea itself, so it directly represents the Tea territory."
+    },
+    {
+     "territoryKey": "tea",
+     "label": "Kebuke Black Tea",
+     "relevance": "STRONG",
+     "reason": "Name and focus are tea-specific, a clear tea-culture place."
+    },
+    {
+     "territoryKey": "tea",
+     "label": "Honeymee",
+     "relevance": "ADEQUATE",
+     "reason": "Tea-related venue; the name alone does not confirm a tea-centred format, so it is a weaker representative than the two tea-specific venues."
+    }
+   ],
+   "followUpOptions": [
+    "Add represented reference territories of the same entity type so Tea can be placed in a comparison set.",
+    "Review the exemplar choices behind each territory before acting on any class."
+   ],
+   "findings": []
+  }
+ },
+ "failureCategory": null
+}

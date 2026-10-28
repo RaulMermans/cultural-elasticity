@@ -1,0 +1,13 @@
+{
+  "project": "tablet-768x1024",
+  "test": "G2. direct requests to every paid route are refused on the public deployment",
+  "status": "passed",
+  "failed": [],
+  "errors": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "paidPosts": [],
+  "providerHosts": [],
+  "leaked": 0,
+  "requests": 13
+}

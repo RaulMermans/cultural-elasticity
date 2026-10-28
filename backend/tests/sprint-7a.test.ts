@@ -22,7 +22,9 @@ import type { QueryResponse } from "@cultural-elasticity/shared";
 
 const SECRET = "ce-public-internal-auth-secret-32ch";
 const OPERATOR = "ce-operator-token-value-32chars-xx";
-const KEYS = ["CE_PUBLIC_DEPLOYMENT", "CE_INTERNAL_API_SECRET", "CE_SPEND_BUDGET_USD", "CE_INVESTIGATION_RESERVE_USD", "CE_ACCEPT_INVESTIGATIONS", "CE_JOB_CREATE_LIMIT", "CE_GLOBAL_JOB_LIMIT", "CE_OPERATOR_TOKEN", "QLOO_API_KEY", "ANTHROPIC_API_KEY", "QLOO_API_BASE_URL", "QLOO_CALL_SPACING_MS"] as const;
+const PAID_OPERATOR = "ce-paid-operator-token-value-32ch-x";
+const PAID_EXPIRY = "2999-01-01T00:00:00Z";
+const KEYS = ["CE_PUBLIC_DEPLOYMENT", "CE_INTERNAL_API_SECRET", "CE_SPEND_BUDGET_USD", "CE_INVESTIGATION_RESERVE_USD", "CE_ACCEPT_INVESTIGATIONS", "CE_JOB_CREATE_LIMIT", "CE_GLOBAL_JOB_LIMIT", "CE_OPERATOR_TOKEN", "CE_PAID_OPERATOR_TOKEN", "CE_PAID_OPERATOR_EXPIRES_AT", "QLOO_API_KEY", "ANTHROPIC_API_KEY", "QLOO_API_BASE_URL", "QLOO_CALL_SPACING_MS"] as const;
 
 const previous: Record<string, string | undefined> = {};
 
@@ -47,11 +49,14 @@ function publicEnv(): void {
   process.env.CE_SPEND_BUDGET_USD = "20";
   process.env.CE_INVESTIGATION_RESERVE_USD = "1";
   process.env.CE_ACCEPT_INVESTIGATIONS = "1";
+  // Sprint 9J: a public paid dispatch also needs the scoped operator credential.
+  process.env.CE_PAID_OPERATOR_TOKEN = PAID_OPERATOR;
+  process.env.CE_PAID_OPERATOR_EXPIRES_AT = PAID_EXPIRY;
   resetLifecycle();
 }
 
 function auth(visitor = "visitor-aaaaaaaaaaaaaa01"): Record<string, string> {
-  return { "x-ce-internal-auth": SECRET, "x-ce-visitor": visitor };
+  return { "x-ce-internal-auth": SECRET, "x-ce-visitor": visitor, "x-ce-paid-operator": PAID_OPERATOR };
 }
 
 function completed(): QueryResponse {

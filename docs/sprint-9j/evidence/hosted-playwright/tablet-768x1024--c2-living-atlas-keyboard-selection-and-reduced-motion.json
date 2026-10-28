@@ -1,0 +1,13 @@
+{
+  "project": "tablet-768x1024",
+  "test": "C2. Living Atlas keyboard selection and reduced motion",
+  "status": "passed",
+  "failed": [],
+  "errors": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "paidPosts": [],
+  "providerHosts": [],
+  "leaked": 0,
+  "requests": 15
+}

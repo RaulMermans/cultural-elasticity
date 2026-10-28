@@ -1,6 +1,6 @@
 import { API_SERVICE_NAME, type HealthResponse } from "@cultural-elasticity/shared";
 import type { FastifyInstance } from "fastify";
-import { publicRuntime } from "../config/production.js";
+import { paidOperatorRequired, publicRuntime } from "../config/production.js";
 import { canAcceptInvestigations, lifecycle } from "../ops/lifecycle.js";
 import { spendLedger } from "../ops/spend.js";
 
@@ -33,6 +33,8 @@ export type ReadyResponse = {
     internalAuth: boolean;
     spendConfigured: boolean;
     qlooTransportInitialized: false;
+    /** Sprint 9J: paid dispatch also needs the operator credential. Never says whether one is configured. */
+    paidOperatorRequired: boolean;
   };
 };
 
@@ -70,6 +72,7 @@ export function readiness(env: NodeJS.ProcessEnv = process.env): ReadyResponse {
       internalAuth,
       spendConfigured,
       qlooTransportInitialized: false,
+      paidOperatorRequired: paidOperatorRequired(env),
     },
   };
 }

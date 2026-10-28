@@ -33,6 +33,8 @@ export default defineConfig({
       timeout: 180_000,
       env: {
         BACKEND_URL: "http://127.0.0.1:4100",
+        // SYNTHETIC: a production frontend needs both settings (Sprint 9J); the synthetic backend ignores it.
+        CE_INTERNAL_API_SECRET: "SYNTHETIC-internal-auth-not-a-secret-00000000",
         QLOO_API_KEY: sentinelQloo,
         ANTHROPIC_API_KEY: sentinelModel,
       },

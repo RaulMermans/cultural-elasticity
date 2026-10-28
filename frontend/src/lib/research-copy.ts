@@ -150,6 +150,8 @@ const API_ERRORS: Record<string, string> = {
   scan_in_progress: "Research for this brand is already in progress.",
   resolution_invalid_or_stale: "The brand confirmation expired. Please search for the brand again.",
   request_too_large: "That request is too long.",
+  operator_required: "Live research is restricted to an authorized research operator. No paid call was started.",
+  operator_expired: "The research operator's authorization has expired. No paid call was started.",
 };
 
 /** API error bodies carry a code; this turns it into a sentence. Limits share one message. */
