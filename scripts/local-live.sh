@@ -4,7 +4,7 @@
 # written to disk. Spend is still capped by the in-app limits below; raise them deliberately.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-DATABASE_URL_LOCAL="${CE_LOCAL_DATABASE_URL:-postgresql://$(whoami)@127.0.0.1:55432/ce_local}"
+DATABASE_URL_LOCAL="${CE_LOCAL_DATABASE_URL:-postgresql://$(whoami)@127.0.0.1:5432/ce_local}"
 exec railway run -- env \
   NODE_ENV=development \
   CE_PUBLIC_DEPLOYMENT=0 \
