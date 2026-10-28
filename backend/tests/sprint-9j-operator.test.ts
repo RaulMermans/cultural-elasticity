@@ -3,7 +3,9 @@
  * SYNTHETIC world, SYN- ids, baseline policy and scripted Qloo: no Qloo, no model, no network.
  */
 import { randomUUID } from "node:crypto";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { refusingRunLedger, setRunLedgerForTests } from "../src/ops/run-ledger.js";
+import { memoryRunLedger } from "./fixtures/synthetic/run-ledger.js";
 import type { AnyBrandBaselineResult } from "@cultural-elasticity/shared";
 import { buildApp } from "../src/app.js";
 import { BaselinePolicyModel } from "../src/agent/model/baseline.js";
@@ -39,6 +41,10 @@ afterEach(() => {
 });
 
 const publicEnv = { CE_PUBLIC_DEPLOYMENT: "1", CE_INTERNAL_API_SECRET: SECRET } as NodeJS.ProcessEnv;
+
+// Sprint 9J: a public runtime with a paid operator needs a durable run ledger; these tests use a SYNTHETIC one.
+beforeEach(() => setRunLedgerForTests(memoryRunLedger()));
+afterEach(() => setRunLedgerForTests(undefined));
 
 describe("verifyPaidOperator", () => {
   const header = (value: string) => ({ "x-ce-paid-operator": value });
@@ -144,6 +150,30 @@ describe("SYNTHETIC paid dispatch through the HTTP API", () => {
     expect(response.statusCode).toBe(403);
     expect(response.json()).toMatchObject({ error: "operator_expired" });
     await h.app.close();
+  });
+
+  it("an authorized operator is refused when the durable run record is unavailable or spent, and nothing stays reserved", async () => {
+    const env = { CE_PUBLIC_DEPLOYMENT: "1", CE_PAID_OPERATOR_TOKEN: PAID, CE_PAID_OPERATOR_EXPIRES_AT: FUTURE, QLOO_API_KEY: "present", ANTHROPIC_API_KEY: "present", QLOO_API_BASE_URL: "https://hackathon.api.qloo.com" };
+    const payload = { query: "Where could Northwind Atelier expand?" };
+    setRunLedgerForTests(refusingRunLedger);
+    const unavailable = harness(env);
+    const refused = await unavailable.app.inject({ method: "POST", url: "/api/agent/jobs", headers: unavailable.operator(), payload });
+    expect(refused.statusCode).toBe(503);
+    expect(refused.json()).toMatchObject({ error: "budget_unavailable" });
+    expect(spendLedger().snapshot().reservedUsd).toBe(0);
+    await unavailable.app.close();
+
+    // A restarted process: the in-memory ledger is empty, the durable record is already spent.
+    const spent = memoryRunLedger();
+    spent.rows.set("model_usd_cents", { limit: 100, used: 100 });
+    setRunLedgerForTests(spent);
+    resetSpend();
+    const restarted = harness(env);
+    const exhausted = await restarted.app.inject({ method: "POST", url: "/api/agent/jobs", headers: restarted.operator(), payload });
+    expect(exhausted.statusCode).toBe(429);
+    expect(exhausted.json()).toMatchObject({ error: "budget_exhausted" });
+    expect(spendLedger().snapshot().reservedUsd).toBe(0);
+    await restarted.app.close();
   });
 
   it("paused admission still wins: an operator cannot start work while admissions are off", async () => {

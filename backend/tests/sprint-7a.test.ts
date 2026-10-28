@@ -1,6 +1,8 @@
 /** Sprint 7A: public runtime safety, spend, proxy trust, health, jobs and recorded provenance. SYNTHETIC. */
 import { readFileSync } from "node:fs";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { setRunLedgerForTests } from "../src/ops/run-ledger.js";
+import { memoryRunLedger } from "./fixtures/synthetic/run-ledger.js";
 import { parseQueryResponse } from "@cultural-elasticity/shared";
 import { buildApp } from "../src/app.js";
 import { resetAdmission } from "../src/api/admission.js";
@@ -115,6 +117,10 @@ async function stopJob(app: ReturnType<typeof buildApp>, response: { statusCode:
 
 snapshotEnv();
 afterEach(restoreEnv);
+
+// Sprint 9J: a public runtime with a paid operator needs a durable run ledger; these tests use a SYNTHETIC one.
+beforeEach(() => setRunLedgerForTests(memoryRunLedger()));
+afterEach(() => setRunLedgerForTests(undefined));
 
 describe("production configuration", () => {
   it("requires explicit opt-in to permit paid investigations in every runtime", () => {

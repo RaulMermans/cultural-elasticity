@@ -1,5 +1,7 @@
 /** Sprint 7B: production-mode HTTP boundaries. SYNTHETIC. No live Qloo or Haiku. */
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { setRunLedgerForTests } from "../src/ops/run-ledger.js";
+import { memoryRunLedger } from "./fixtures/synthetic/run-ledger.js";
 import type { AddressInfo } from "node:net";
 import { buildApp } from "../src/app.js";
 import { resetAdmission } from "../src/api/admission.js";
@@ -82,6 +84,10 @@ async function listen() {
 
 snapshotEnv();
 afterEach(restoreEnv);
+
+// Sprint 9J: a public runtime with a paid operator needs a durable run ledger; these tests use a SYNTHETIC one.
+beforeEach(() => setRunLedgerForTests(memoryRunLedger()));
+afterEach(() => setRunLedgerForTests(undefined));
 
 describe("production HTTP integration", () => {
   it("serves liveness, admission readiness, and refuses a direct unauthenticated job", async () => {

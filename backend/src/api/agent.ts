@@ -26,6 +26,7 @@ import { canAcceptInvestigations } from "../ops/lifecycle.js";
 import { opsMetrics } from "../ops/metrics.js";
 import { registerJobManager } from "../ops/server.js";
 import { spendLedger } from "../ops/spend.js";
+import { runLedger } from "../ops/run-ledger.js";
 import type { ObservedUsage } from "../ops/usage.js";
 
 /** Builds (or reuses) the runtime for a model choice. Injected in tests; lazily wired to live Qloo otherwise. */
@@ -194,12 +195,28 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       void reply.code(429).send({ error: "too_many_requests", message: "Too many investigations were requested. Wait a moment and try again." });
       return false;
     };
-    const reserveSpend = (reply: FastifyReply) => {
+    const reserveSpend = async (reply: FastifyReply) => {
       const reserved = spendLedger().reserve();
-      if (reserved.ok) return reserved.reservation;
-      opsMetrics().record(reserved.code === "budget_exhausted" ? "budget_exceeded" : "admission_rejected");
-      void reply.code(reserved.code === "budget_unavailable" ? 503 : 429).send({ error: reserved.code, message: reserved.message });
-      return null;
+      if (!reserved.ok) {
+        opsMetrics().record(reserved.code === "budget_exhausted" ? "budget_exceeded" : "admission_rejected");
+        void reply.code(reserved.code === "budget_unavailable" ? 503 : 429).send({ error: reserved.code, message: reserved.message });
+        return null;
+      }
+      // Sprint 9J: the same reservation is also taken durably for the operator run and never returned, so a
+      // restart cannot reopen a model budget the in-memory ledger forgot.
+      const ledger = runLedger();
+      const budget = spendLedger().configuredBudgetUsd();
+      if (ledger) {
+        const durable = budget === null ? ({ ok: false, code: "ledger_unavailable" } as const) : await ledger.take("model_usd_cents", Math.ceil(reserved.reservation.reservedUsd * 100), Math.floor(budget * 100));
+        if (!durable.ok) {
+          spendLedger().settle(reserved.reservation.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
+          opsMetrics().record(durable.code === "limit_reached" ? "budget_exceeded" : "admission_rejected");
+          if (durable.code === "limit_reached") void reply.code(429).send({ error: "budget_exhausted", message: "The available investigation budget cannot cover another run." });
+          else void reply.code(503).send({ error: "budget_unavailable", message: "Investigations cannot start because the spend record is unavailable." });
+          return null;
+        }
+      }
+      return reserved.reservation;
     };
     const closed = (reply: FastifyReply) => {
       if (developmentRoutesOpen()) return false;
@@ -219,8 +236,8 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         throw error;
       }
     };
-    const enqueue = (jobRequest: JobRequest, reply: FastifyReply) => {
-      const hold = reserveSpend(reply);
+    const enqueue = async (jobRequest: JobRequest, reply: FastifyReply) => {
+      const hold = await reserveSpend(reply);
       if (!hold) return;
       opsMetrics().record("budget_reserved");
       return handle(reply, async () => {
