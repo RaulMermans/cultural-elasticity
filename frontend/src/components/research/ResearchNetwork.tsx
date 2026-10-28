@@ -7,7 +7,7 @@ import { elasticityVerdict } from "@/lib/elasticity-verdict";
 import { evidenceTerm } from "@/lib/evidence-presentation";
 import type { JobActivity } from "@/lib/job-envelope";
 import { hypothesisOutcomeCopy } from "@/lib/research-copy";
-import { BRAND_NODE, branchDirection, bridgeId, buildNetwork, layoutWithBridges, lineageOf, territoryAncestor, type Bridge, canRetry, directionNodeId, inquiryNodeId, isPending, normName, layoutNetwork, type Inquiry, type NetworkNode } from "@/lib/research-network";
+import { BRAND_NODE, branchDirection, bridgeId, buildNetwork, layoutWithBridges, lineageOf, territoryAncestor, type Bridge, canRetry, directionNodeId, inquiryNodeId, isPending, normName, type Inquiry, type NetworkNode } from "@/lib/research-network";
 import { buildResearchView, type ConnectionView, type DirectionView, type ResearchView } from "@/lib/research-view";
 import { NetworkBoard, type BoardInset } from "./NetworkBoard";
 
