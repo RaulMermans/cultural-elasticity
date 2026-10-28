@@ -26,9 +26,9 @@ export function buildDeepInvestigationRequest(result: AnyBrandBaselineResult, te
     throw new HandoffError("TERRITORY_UNSUPPORTED");
   }
   const objective = `Investigate whether Qloo evidence supports ${territory.name} as a cultural research direction for ${result.brand.name}.`;
-  const sourceRefs = territory.supportingReferences.map((ref) => `${ref.operation} ${ref.correlationId}`).join(", ");
-  const userQuery = `${objective} Earlier baseline context: unvalidated territory hypothesis from scan ${result.scanId}; Qloo source references ${sourceRefs}.`;
-  const agentRequest = agentRequestSchema.parse({ userQuery, intent: "analyze_move", brand: result.brand.name, territories: [territory.name], researchMode: "single_hypothesis_v1" });
+  // The scan id and source references travel as structured fields (baselineScanId, evidence). Run and correlation
+  // ids in the query text read as an attempt to supply evidence and were refused as a system directive live.
+  const agentRequest = agentRequestSchema.parse({ userQuery: objective, intent: "analyze_move", brand: result.brand.name, territories: [territory.name], researchMode: "single_hypothesis_v1" });
   return {
     version: "ce-deep-investigation/0.1",
     baselineScanId: result.scanId,
