@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { reasonCopy } from "@/components/atlas/atlas-model";
 import { evidenceTerm } from "@/lib/evidence-presentation";
 import { hypothesisOutcomeCopy } from "@/lib/research-copy";
-import { BRAND_NODE, buildNetwork, directionNodeId, inquiryNodeId, layoutNetwork, type Inquiry, type NetworkNode } from "@/lib/research-network";
+import { BRAND_NODE, buildNetwork, canRetry, directionNodeId, inquiryNodeId, layoutNetwork, type Inquiry, type NetworkNode } from "@/lib/research-network";
 import { buildResearchView, type ConnectionView, type DirectionView, type ResearchView } from "@/lib/research-view";
 import { NetworkBoard, type BoardInset } from "./NetworkBoard";
 
@@ -82,7 +82,7 @@ function InquiryResult({ response }: { response: QueryResponse }) {
   </>;
 }
 
-function InquiryDossier({ inquiry, node, onAnswer, onAsk, onMeasure, busy }: { inquiry: Inquiry; node: NetworkNode; onAnswer: (text: string) => void; onAsk: (question: string) => void; onMeasure?: () => void; busy: boolean }) {
+function InquiryDossier({ inquiry, node, onAnswer, onAsk, onMeasure, onRetry, busy }: { inquiry: Inquiry; node: NetworkNode; onAnswer: (text: string) => void; onAsk: (question: string) => void; onMeasure?: () => void; onRetry?: () => void; busy: boolean }) {
   const [answer, setAnswer] = useState("");
   const response = inquiry.response;
   const result = response?.investigation?.result;
@@ -93,8 +93,9 @@ function InquiryDossier({ inquiry, node, onAnswer, onAsk, onMeasure, busy }: { i
     <p className="kicker">{inquiry.origin === "direction" ? "Agent investigation" : "Research question"}</p>
     <h2>{inquiry.question}</h2>
     <p className="rn-status" data-tone={node.tone} role="status">{running ? `The agent is working: ${inquiry.stageLabel || "investigating"}` : node.status}</p>
-    {inquiry.lost ? <p className="quiet">The research service no longer holds this investigation (it expired or restarted). Its question stays in your network; ask it again to continue.</p> : null}
+    {inquiry.lost ? <p className="quiet">The research service no longer holds this investigation (it expired or restarted). Its question stays in your network; try it again to continue.</p> : null}
     {response && !running ? <InquiryResult response={response} /> : null}
+    {onRetry ? <button type="button" className="primary" data-testid="network-retry" disabled={busy} onClick={onRetry}>Try again</button> : null}
     {!running && response?.investigation ? <ElasticityBlock elasticity={elasticityOf(result, null)} investigated onMeasure={onMeasure} busy={busy} /> : running ? <ElasticityBlock elasticity={null} pending /> : null}
     {waiting ? <form className="rn-answer" onSubmit={(event) => { event.preventDefault(); if (answer.trim()) { onAnswer(answer.trim()); setAnswer(""); } }}>
       <label htmlFor="rn-answer">Your answer</label>
@@ -183,6 +184,17 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
       composerRef.current?.focus();
     };
   };
+  // Retry starts the same request again from the same parent; the new job takes the failed card's place.
+  const retryFor = (inquiry: Inquiry) => {
+    if (!live || !canRetry(inquiry)) return undefined;
+    const parent = byId.get(inquiry.parentId) ?? null;
+    const direction = inquiry.origin === "direction" ? view.directions.find((item) => directionNodeId(item.key) === inquiry.parentId) : undefined;
+    if (inquiry.origin === "direction" && (!direction || !canInvestigate || !scanToken)) return undefined;
+    return () => {
+      void network.retry(inquiry, direction ? { directionId: direction.id } : { from: parent?.runId ? parent : null })
+        .then((jobId) => { if (jobId) setSelectedId(inquiryNodeId(jobId)); });
+    };
+  };
   const inquiryOf = (node: NetworkNode) => network.inquiries.find((item) => item.jobId === node.jobId) ?? null;
   const askFrom = selected.runId ? selected : null;
   const live = canAsk;
@@ -202,7 +214,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     dossier = <DirectionDossier view={view} direction={direction} inquiries={related} canInvestigate={canInvestigate && Boolean(scanToken)} busy={network.starting} onInvestigate={() => void network.investigateDirection(direction.id, direction.name, directionNode.id)} onSelect={setSelectedId} />;
   } else if (selected.kind === "inquiry") {
     const inquiry = inquiryOf(selected);
-    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} busy={network.starting || !live} onAnswer={(text) => void network.answer(inquiry, text)} onAsk={(text) => void network.ask(text, selected)} onMeasure={measureFor(inquiry.response?.territories[0]?.name ?? inquiry.question)} /> : null;
+    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} busy={network.starting || !live} onAnswer={(text) => void network.answer(inquiry, text)} onAsk={(text) => void network.ask(text, selected)} onMeasure={measureFor(inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} /> : null;
   } else if (selected.kind === "finding") {
     dossier = <FindingDossier node={selected} inquiry={inquiryOf(selected)} brand={view.brand.name} busy={network.starting || !live} onAsk={(text) => void network.ask(text, selected)} onMeasure={measureFor(selected.label)} />;
   } else {

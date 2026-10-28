@@ -93,3 +93,21 @@ test("SYNTHETIC the network is kept in the research library and reopens with its
   await page.getByTestId("research-library").getByRole("button", { name: /Larkspur Velo/u }).click();
   await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
 });
+
+test("SYNTHETIC a lost investigation can be tried again and takes the failed card's place", async ({ page }) => {
+  const calls = await stubLive(page);
+  await page.route("**/api/agent/jobs/*", (route) => route.request().url().endsWith("000000000001")
+    ? json(route, { error: "not_found" }, 404)
+    : json(route, fixture.parent.view));
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("Where could Larkspur Velo go next?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-dossier")).toContainText("No longer available");
+  await page.getByTestId("network-retry").click();
+  await expect(page.getByTestId("network-dossier")).not.toContainText("No longer available");
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
+  expect(calls.questions).toEqual([
+    { query: "Where could Larkspur Velo go next?", brand: "Larkspur Velo" },
+    { query: "Where could Larkspur Velo go next?", brand: "Larkspur Velo" },
+  ]);
+});

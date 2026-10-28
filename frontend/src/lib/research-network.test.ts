@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { QueryResponse } from "@cultural-elasticity/shared";
-import { BRAND_NODE, buildNetwork, followUpContext, inquiryState, layoutNetwork, type Inquiry } from "./research-network.ts";
+import { BRAND_NODE, buildNetwork, canRetry, followUpContext, inquiryState, layoutNetwork, type Inquiry } from "./research-network.ts";
 import type { DirectionView } from "./research-view.ts";
 
 const direction = (key: string) => ({ key, id: `t-${key}`, name: `SYNTHETIC ${key}` }) as DirectionView;
@@ -49,4 +49,12 @@ test("the radial layout puts the brand at the centre and is deterministic", () =
   assert.deepEqual([...layoutNetwork(nodes)], [...first]);
   const radius = (id: string) => Math.hypot(first.get(id)!.x, first.get(id)!.y);
   assert.ok(radius("inq:job1") > radius("dir:a"));
+});
+
+test("only failed, stopped or lost investigations without a kept result can be retried", () => {
+  assert.equal(canRetry(inquiry("j1", BRAND_NODE)), false);
+  assert.equal(canRetry(inquiry("j2", BRAND_NODE, { status: "failed" })), true);
+  assert.equal(canRetry(inquiry("j3", BRAND_NODE, { status: "cancelled" })), true);
+  assert.equal(canRetry(inquiry("j4", BRAND_NODE, { lost: true })), true);
+  assert.equal(canRetry(inquiry("j5", BRAND_NODE, { status: "succeeded", response: response({ state: "NEEDS_CLARIFICATION", investigation: null } as never) })), false);
 });

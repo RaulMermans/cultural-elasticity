@@ -3,7 +3,7 @@
 import { parseQueryResponse } from "@cultural-elasticity/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { parseJobEnvelope, publicFailure, type JobEnvelope } from "@/lib/job-envelope";
-import { followUpContext, isPending, type Inquiry, type InquiryOrigin, type NetworkNode } from "@/lib/research-network";
+import { followUpContext, inquiryNodeId, isPending, type Inquiry, type InquiryOrigin, type NetworkNode } from "@/lib/research-network";
 
 const POLL_MS = 2000;
 const storageKey = (scanId: string) => `ce.network.${scanId}`;
@@ -83,8 +83,9 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
     for (const inquiry of inquiries) if (!inquiry.lost) void refresh(inquiry);
   }, [scanId, inquiries, refresh]);
 
-  const begin = useCallback(async (url: string, body: unknown, headers: Record<string, string>, inquiry: { parentId: string; origin: InquiryOrigin; question: string }) => {
-    if (starting) return false;
+  /** Starts one job and returns its id. A retry replaces the failed inquiry in place and keeps its branch. */
+  const begin = useCallback(async (url: string, body: unknown, headers: Record<string, string>, inquiry: { parentId: string; origin: InquiryOrigin; question: string }, replaces?: Inquiry): Promise<string | null> => {
+    if (starting) return null;
     setStarting(true);
     setNotice(null);
     try {
@@ -93,14 +94,19 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
       const parsed = parseJobEnvelope(payload);
       if (!response.ok || !parsed.ok || !parsed.job.accessToken) {
         setNotice(response.status === 503 ? "Live investigations are paused right now." : publicFailure(response.status, payload));
-        return false;
+        return null;
       }
-      const next = merge({ jobId: parsed.job.jobId, token: parsed.job.accessToken, ...inquiry, status: parsed.job.status, stageLabel: parsed.job.stageLabel, response: null, lost: false, createdAt: Date.now() }, parsed.job);
-      setInquiries((current) => (current.some((item) => item.jobId === next.jobId) ? current : [...current, next]));
-      return true;
+      const next = merge({ jobId: parsed.job.jobId, token: parsed.job.accessToken, ...inquiry, status: parsed.job.status, stageLabel: parsed.job.stageLabel, response: null, lost: false, createdAt: replaces?.createdAt ?? Date.now() }, parsed.job);
+      setInquiries((current) => {
+        if (current.some((item) => item.jobId === next.jobId)) return current;
+        if (!replaces) return [...current, next];
+        const oldId = inquiryNodeId(replaces.jobId);
+        return current.map((item) => (item.jobId === replaces.jobId ? next : item.parentId === oldId ? { ...item, parentId: inquiryNodeId(next.jobId) } : item));
+      });
+      return next.jobId;
     } catch {
       setNotice("The start could not be confirmed. It may have reached the research service, so it will not be sent again automatically.");
-      return false;
+      return null;
     } finally {
       setStarting(false);
     }
@@ -108,7 +114,7 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
 
   /** Deep investigation of a baseline direction. The server rereads the scan; the browser sends identifiers only. */
   const investigateDirection = useCallback((directionId: string, directionName: string, parentId: string) => {
-    if (!scanToken) { setNotice("Live investigation needs the research session that found this direction."); return Promise.resolve(false); }
+    if (!scanToken) { setNotice("Live investigation needs the research session that found this direction."); return Promise.resolve(null); }
     return begin("/api/research/handoff/jobs", { scanId, territoryId: directionId, idempotencyKey: crypto.randomUUID() }, { "x-baseline-token": scanToken }, { parentId, origin: "direction", question: `Investigate ${directionName}` });
   }, [begin, scanId, scanToken]);
 
@@ -124,11 +130,26 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
     const body = response?.state === "NEEDS_CLARIFICATION"
       ? { clarifyQueryId: response.queryId, clarification }
       : response?.investigation ? { continueRunId: response.investigation.runId, clarification } : null;
-    if (!body) return Promise.resolve(false);
+    if (!body) return Promise.resolve(null);
     return begin("/api/agent/jobs", body, {}, { parentId: `inq:${inquiry.jobId}`, origin: "question", question: clarification });
   }, [begin]);
 
+  /**
+   * Starts a failed or lost investigation again, from the same place in the network: a direction is reinvestigated
+   * through the server handoff; a question is asked again from its parent (its run context, or the brand).
+   */
+  const retry = useCallback((inquiry: Inquiry, target: { directionId: string } | { from: NetworkNode | null }) => {
+    const spec = { parentId: inquiry.parentId, origin: inquiry.origin, question: inquiry.question };
+    if ("directionId" in target) {
+      if (!scanToken) { setNotice("Live investigation needs the research session that found this direction."); return Promise.resolve(null); }
+      return begin("/api/research/handoff/jobs", { scanId, territoryId: target.directionId, idempotencyKey: crypto.randomUUID() }, { "x-baseline-token": scanToken }, spec, inquiry);
+    }
+    const context = followUpContext(target.from);
+    const body = context ? { query: inquiry.question, context } : { query: inquiry.question, brand };
+    return begin("/api/agent/jobs", body, {}, { ...spec, parentId: context && target.from ? target.from.id : "brand" }, inquiry);
+  }, [begin, brand, scanId, scanToken]);
+
   const forget = useCallback((jobId: string) => setInquiries((current) => current.filter((item) => item.jobId !== jobId)), []);
 
-  return { inquiries, notice, starting, investigateDirection, ask, answer, forget, clearNotice: () => setNotice(null) };
+  return { inquiries, notice, starting, investigateDirection, ask, answer, retry, forget, clearNotice: () => setNotice(null) };
 }

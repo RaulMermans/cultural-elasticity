@@ -191,3 +191,11 @@ export function followUpContext(node: NetworkNode | null): { runId: string; sele
 export function isPending(inquiry: Inquiry): boolean {
   return !inquiry.lost && PENDING.has(inquiry.status);
 }
+
+const RETRYABLE = new Set(["No longer available", "Could not finish", "Stopped", "Could not complete"]);
+
+/** A failed, stopped or lost investigation may be started again by the user; a result already kept is never rerun. */
+export function canRetry(inquiry: Inquiry): boolean {
+  if (inquiry.lost && inquiry.response?.investigation?.result) return false;
+  return RETRYABLE.has(inquiryState(inquiry).status);
+}
