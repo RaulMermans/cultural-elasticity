@@ -25,6 +25,21 @@ function readPointer(): { scanId: string; token: string } | null {
   } catch { return null; }
 }
 
+/** Every scan started in this browser, so earlier research can be reopened and extended. Never put in a URL. */
+const LIBRARY_KEY = "ce-research-library";
+export type LibraryEntry = { scanId: string; token: string; brand: string; startedAt: number };
+
+function readLibrary(): LibraryEntry[] {
+  try {
+    const saved: unknown = JSON.parse(localStorage.getItem(LIBRARY_KEY) ?? "[]");
+    return Array.isArray(saved) ? saved.filter((item): item is LibraryEntry => typeof item?.scanId === "string" && typeof item?.token === "string" && typeof item?.brand === "string" && typeof item?.startedAt === "number") : [];
+  } catch { return []; }
+}
+
+function writeLibrary(entries: LibraryEntry[]) {
+  try { localStorage.setItem(LIBRARY_KEY, JSON.stringify(entries.slice(-40))); } catch { /* Storage may be blocked; the library is a convenience. */ }
+}
+
 /**
  * Live brand research: availability, brand resolution and one scan. Nothing here runs on page load except the
  * free availability check and, if this tab already started a scan, reading that stored scan back.
@@ -36,6 +51,7 @@ export function useBrandResearch() {
   const [scan, setScan] = useState<LiveScan | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [library, setLibrary] = useState<LibraryEntry[]>([]);
   const lookupVersion = useRef(0);
   const startKey = useRef<string | null>(null);
   const starting = useRef(false);
@@ -47,6 +63,7 @@ export function useBrandResearch() {
       if (active) setAvailability(response.ok && body ? body.enabled === true ? "available" : "paused" : "unavailable");
     }).catch(() => { if (active) setAvailability("unavailable"); });
     setPointer(readPointer());
+    setLibrary(readLibrary());
     return () => { active = false; };
   }, []);
 
@@ -59,7 +76,7 @@ export function useBrandResearch() {
         const response = await fetch(`/api/brands/baselines/${pointer.scanId}`, { headers: { "x-baseline-token": pointer.token }, cache: "no-store" });
         const body = await json(response);
         if (!active) return;
-        if (!response.ok || !body) { setError(response.status === 404 ? "This scan could not be reopened. Its access may have expired; start a new scan or open recorded research." : apiErrorCopy(body?.error)); return; }
+        if (!response.ok || !body) { setError(response.status === 404 ? "This scan could not be reopened. Its access may have expired; start a new scan." : apiErrorCopy(body?.error)); return; }
         const status = typeof body.scanStatus === "string" ? body.scanStatus : "RUNNING";
         const stages = Array.isArray(body.stages) ? body.stages.filter((stage): stage is { stage: string; status: string } => typeof stage?.stage === "string" && typeof stage?.status === "string") : [];
         const result = isBrandBaselineResult(body.result) ? body.result : null;
@@ -103,6 +120,9 @@ export function useBrandResearch() {
       try { sessionStorage.setItem(POINTER_KEY, JSON.stringify(next)); } catch { /* Storage may be blocked; the scan still runs for this page. */ }
       setScan({ scanId: body.scanId, scanStatus: body.scanStatus, stages: [], result: null });
       setPointer(next);
+      const entries = [...readLibrary().filter((item) => item.scanId !== next.scanId), { ...next, brand: resolution.entity?.label ?? "Brand research", startedAt: Date.now() }];
+      writeLibrary(entries);
+      setLibrary(entries);
       setResolution(null);
       startKey.current = null;
       return true;
@@ -112,5 +132,13 @@ export function useBrandResearch() {
 
   const clearResolution = useCallback(() => { lookupVersion.current++; startKey.current = null; setResolution(null); setBusy(false); setError(""); }, []);
 
-  return { availability, resolution, scan, scanToken: pointer?.token ?? null, hasSessionScan: Boolean(pointer), busy, error, resolve, start, clearResolution };
+  const openScan = useCallback((entry: LibraryEntry) => {
+    const next = { scanId: entry.scanId, token: entry.token };
+    try { sessionStorage.setItem(POINTER_KEY, JSON.stringify(next)); } catch { /* The scan still opens for this page. */ }
+    setError("");
+    setScan(null);
+    setPointer(next);
+  }, []);
+
+  return { availability, resolution, scan, scanToken: pointer?.token ?? null, hasSessionScan: Boolean(pointer), busy, error, library, resolve, start, clearResolution, openScan };
 }

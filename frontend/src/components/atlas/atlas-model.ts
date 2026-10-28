@@ -472,7 +472,7 @@ function brandLabel(response: QueryResponse): string {
   return response.interpretation?.brand.name ?? "This investigation";
 }
 
-function runCopy(response: QueryResponse): { statusLabel: string; detail: string; tone: AtlasTone } {
+export function runCopy(response: QueryResponse): { statusLabel: string; detail: string; tone: AtlasTone } {
   if (response.reasons.some((reason) => reason.code === "INVESTIGATION_CANCELLED")) {
     return { tone: "interrupted", statusLabel: "Interrupted", detail: "Stopped before the investigation finished." };
   }
@@ -492,7 +492,7 @@ function runCopy(response: QueryResponse): { statusLabel: string; detail: string
   }
 }
 
-function territoryCopy(response: QueryResponse, territory: QueryTerritoryNode): { statusLabel: string; detail: string; tone: AtlasTone } {
+export function territoryCopy(response: QueryResponse, territory: QueryTerritoryNode): { statusLabel: string; detail: string; tone: AtlasTone } {
   if (response.reasons.some((reason) => reason.code === "INVESTIGATION_CANCELLED") || response.state === "INVESTIGATION_FAILED") {
     return { tone: "interrupted", statusLabel: "Interrupted", detail: "Stopped before this could become a finding." };
   }

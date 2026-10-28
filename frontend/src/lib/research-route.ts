@@ -7,6 +7,8 @@ export type Route = {
   mode: "research" | "atlas";
   research: string | null;
   view: ResearchSection;
+  /** The research network is the default; the classic section view stays available for the brief and old links. */
+  layout: "network" | "tabs";
   item: string | null;
   open: "recorded" | null;
   ask: string | null;
@@ -28,6 +30,7 @@ export function parseRoute(params: Params): Route {
     mode,
     research: mode === "research" && research && KEY.test(research) ? research : null,
     view: view && SECTIONS.has(view as ResearchSection) ? view as ResearchSection : "overview",
+    layout: params.get("layout") === "tabs" || (view !== null && SECTIONS.has(view as ResearchSection)) ? "tabs" : "network",
     item: item && item.length <= 300 ? item : null,
     open: mode === "atlas" && params.get("open") === "recorded" ? "recorded" : null,
     ask: mode === "atlas" && ask ? ask.slice(0, 500) : null,
@@ -43,13 +46,14 @@ export function routeQuery(route: Route): string {
   } else if (route.research) {
     params.set("research", route.research);
     if (route.view !== "overview") params.set("view", route.view);
+    else if (route.layout === "tabs") params.set("layout", "tabs");
     if (route.item) params.set("item", route.item);
   }
   const query = params.toString();
   return query ? `?${query}` : "";
 }
 
-export const HOME: Route = { mode: "research", research: null, view: "overview", item: null, open: null, ask: null };
+export const HOME: Route = { mode: "research", research: null, view: "overview", layout: "network", item: null, open: null, ask: null };
 
 /** Accent- and case-insensitive comparison of a typed name with a recorded brand name. */
 export function sameName(a: string, b: string): boolean {

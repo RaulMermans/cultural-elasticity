@@ -1,9 +1,7 @@
 /** Sprint 7A: public runtime safety, spend, proxy trust, health, jobs and recorded provenance. SYNTHETIC. */
-import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { setRunLedgerForTests } from "../src/ops/run-ledger.js";
 import { memoryRunLedger } from "./fixtures/synthetic/run-ledger.js";
-import { parseQueryResponse } from "@cultural-elasticity/shared";
 import { buildApp } from "../src/app.js";
 import { resetAdmission } from "../src/api/admission.js";
 import { readiness } from "../src/api/health.js";
@@ -417,42 +415,6 @@ describe("job lifecycle", () => {
     expect(jobs.get(created.jobId, created.accessToken)?.status).toBe("cancelled");
     clock += 80;
     expect(jobs.get(created.jobId, created.accessToken)?.status).toBe("expired");
-  });
-});
-
-describe("recorded example provenance", () => {
-  it("validates the published artifact without provider secrets", () => {
-    const artifact = JSON.parse(readFileSync(new URL("../../frontend/src/demo/recorded-example.json", import.meta.url), "utf8")) as {
-      kind: string;
-      recordedAt: string;
-      evidenceOrigin: string;
-      sourceSha256: string;
-      note: string;
-      responses: QueryResponse[];
-    };
-    const meta = JSON.parse(readFileSync(new URL("../../frontend/src/demo/recorded-example.meta.json", import.meta.url), "utf8")) as {
-      kind: string;
-      sourceSha256: string;
-      recordedAt: string;
-    };
-    expect(artifact.kind).toBe("RECORDED_EXAMPLE");
-    expect(meta.kind).toBe("RECORDED_EXAMPLE");
-    expect(artifact.sourceSha256).toBe(meta.sourceSha256);
-    expect(artifact.recordedAt).toBe(meta.recordedAt);
-    expect(artifact.evidenceOrigin).toBe("live");
-    expect(artifact.note).toMatch(/does not call a provider/iu);
-    expect(JSON.stringify(artifact)).not.toMatch(/sk-ant-|QLOO_API_KEY|ANTHROPIC_API_KEY|authorization/iu);
-    expect(artifact.responses.length).toBeGreaterThan(0);
-    expect(artifact.responses[0]?.state).toBe("INVESTIGATION_INCOMPLETE");
-    const child = artifact.responses[1];
-    expect(child?.state).toBe("INVESTIGATION_COMPLETED");
-    const childResult = child?.investigation?.result;
-    expect(childResult && childResult.status !== "NEEDS_INPUT" ? childResult.territories[0]?.evidenceStatus : null).toBe("PARTIAL_EVIDENCE");
-    expect(childResult && childResult.status !== "NEEDS_INPUT" ? childResult.territories[0]?.analysisRoute : null).toBe("PARTIAL_CULTURAL_ANALYSIS");
-    for (const response of artifact.responses) {
-      expect(parseQueryResponse(response).ok).toBe(true);
-      expect(response.interpretation?.interpretationWarnings).toContain("RECORDED_EXAMPLE");
-    }
   });
 });
 

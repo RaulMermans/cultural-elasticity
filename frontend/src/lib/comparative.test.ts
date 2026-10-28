@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import type { AnyBrandBaselineResult, ComparativeStrategicReport, CulturalConnectionMap } from "@cultural-elasticity/shared";
@@ -79,20 +78,3 @@ test("the report boundary rejects an unknown schema or a rankable relationship",
   assert.equal(parseReportEnvelope({ ...envelope, connections: { ...connections, relationships: [{ ...connections.relationships[0], rankable: true }] } }), null);
 });
 
-test("12: the recorded comparative demo is reproducible from its sources and contains no ranking", () => {
-  const demo = JSON.parse(readFileSync(new URL("../demo/recorded-comparative.json", import.meta.url), "utf8")) as {
-    kind: string; evidenceOrigin: string; sources: { path: string; sha256: string }[]; eligibility: { eligible: boolean; code: string };
-    comparison: { status: string }; connections: CulturalConnectionMap;
-  };
-  assert.equal(demo.kind, "RECORDED_COMPARATIVE_DEMO");
-  assert.equal(demo.evidenceOrigin, "live");
-  for (const source of demo.sources) {
-    const text = readFileSync(new URL(`../../../${source.path}`, import.meta.url), "utf8");
-    assert.equal(createHash("sha256").update(text).digest("hex"), source.sha256, source.path);
-  }
-  assert.equal(demo.eligibility.eligible, false);
-  assert.equal(demo.comparison.status, "NOT_RUN");
-  assert.ok(!/relativePosition|medianPercentile|NATURAL_ADJACENCY|CREDIBLE_STRETCH|CULTURAL_BREAK/u.test(JSON.stringify(demo)));
-  assert.ok(demo.connections.relationships.every((item) => item.rankable === false && item.correlationIds.every((id) => id.startsWith("mcp-"))));
-  assert.equal(demo.connections.evidenceOrigin, "recorded");
-});

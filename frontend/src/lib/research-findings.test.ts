@@ -4,10 +4,10 @@ import test from "node:test";
 import type { AgentAnalysisResult } from "@cultural-elasticity/shared";
 import { buildResearchFinding } from "./research-findings.ts";
 
-const recorded = JSON.parse(readFileSync(new URL("../demo/recorded-example.json", import.meta.url), "utf8")) as { responses: { investigation?: { result?: AgentAnalysisResult } }[] };
-const result = recorded.responses.find((item) => item.investigation?.result?.status === "COMPLETE")?.investigation?.result;
+/** A stored live investigation from the Sprint 9G evidence. Nothing here calls a provider. */
+const result = JSON.parse(readFileSync(new URL("../../../docs/sprint-9g/evidence/loewe-boutique-hospitality.live.json", import.meta.url), "utf8")) as AgentAnalysisResult;
 
-test("recorded-live finding keeps scope and provider references", () => {
+test("a live finding keeps scope and provider references", () => {
   assert.ok(result && result.status === "COMPLETE");
   const target = result.territories.find((item) => item.role === "target")!;
   const finding = buildResearchFinding(result, target.key);

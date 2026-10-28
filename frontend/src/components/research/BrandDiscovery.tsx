@@ -1,40 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { brandSuggestions, type SuggestionSource } from "@/lib/brand-suggestions";
 import { RESOLUTION_COPY, availabilityCopy, type BrandResearchAvailability } from "@/lib/research-copy";
-import type { RecordedEntry } from "@/lib/recorded-research";
 import { sameName } from "@/lib/research-route";
 import { formatDate } from "@/lib/research-summary";
-import type { Resolution } from "./use-brand-research";
+import type { LibraryEntry, Resolution } from "./use-brand-research";
 
-export function BrandDiscovery({ catalog, availability, resolution, busy, error, hasSessionScan, onResolve, onStart, onClearResolution, onOpenRecorded, onOpenInvestigation, onOpenSession }: {
-  catalog: RecordedEntry[];
+export function BrandDiscovery({ availability, resolution, busy, error, hasSessionScan, library, onResolve, onStart, onClearResolution, onOpenSession, onOpenLibrary }: {
   availability: BrandResearchAvailability;
   resolution: Resolution | null;
   busy: boolean;
   error: string;
   hasSessionScan: boolean;
+  library: LibraryEntry[];
   onResolve: (name: string, selectedQlooId?: string) => void;
   onStart: () => void;
   onClearResolution: () => void;
-  onOpenRecorded: (key: string) => void;
-  onOpenInvestigation: () => void;
   onOpenSession: () => void;
+  onOpenLibrary: (entry: LibraryEntry) => void;
 }) {
   const [name, setName] = useState("");
-  const [lookup, setLookup] = useState<{ query: string; match: RecordedEntry | null } | null>(null);
   const live = availability === "available";
   const copy = availabilityCopy(availability);
-  const firstBaseline = catalog.find((entry) => entry.kind === "baseline");
 
   const submit = () => {
     const query = name.trim();
-    if (query.length < 2) return;
-    const match = catalog.find((entry) => sameName(entry.brand, query)) ?? null;
-    setLookup({ query, match });
-    if (live && !match) onResolve(query);
+    if (query.length < 2 || !live) return;
+    onResolve(query);
   };
-  const open = (entry: RecordedEntry) => entry.kind === "baseline" ? onOpenRecorded(entry.key) : onOpenInvestigation();
+
+  // Suggestions narrow as you type, from your research library in this browser. Typing never calls Qloo.
+  const sources = useMemo<SuggestionSource<LibraryEntry>[]>(() => library.map((entry) => ({ label: entry.brand, detail: `Your research · ${formatDate(new Date(entry.startedAt).toISOString())}`, kind: "library" as const, value: entry, at: entry.startedAt })), [library]);
+  const [listOpen, setListOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const suggestions = useMemo(() => brandSuggestions(name, sources), [name, sources]);
+  const canSearch = live && name.trim().length >= 2 && !suggestions.some((item) => sameName(item.label, name));
+  const options = suggestions.length + (canSearch ? 1 : 0);
+  // Only open when there is something of yours to suggest; a new search is the Find brand button, never hidden under the list.
+  const showList = listOpen && suggestions.length > 0;
+  const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const choose = (index: number) => {
+    setListOpen(false);
+    setActive(-1);
+    const pick = suggestions[index];
+    if (!pick) { submit(); return; }
+    onOpenLibrary(pick.value);
+  };
+  const onKey = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "ArrowDown" && options) { event.preventDefault(); setListOpen(true); setActive((current) => (current + 1) % options); }
+    else if (event.key === "ArrowUp" && options) { event.preventDefault(); setListOpen(true); setActive((current) => (current <= 0 ? options - 1 : current - 1)); }
+    else if (event.key === "Enter" && showList && active >= 0) { event.preventDefault(); choose(active); }
+    else if (event.key === "Escape") { setListOpen(false); setActive(-1); }
+  };
 
   return (
     <div className="rw-discovery" data-testid="brand-discovery" data-availability={availability}>
@@ -44,11 +62,6 @@ export function BrandDiscovery({ catalog, availability, resolution, busy, error,
         <p className="rw-discovery__lede">
           See which cultural associations Qloo shows for a brand, check the evidence behind each one, and decide which directions deserve deeper research.
         </p>
-        {!live && firstBaseline ? (
-          <p className="rw-discovery__cta">
-            <button type="button" className="primary" data-testid="open-recorded-baseline" onClick={() => open(firstBaseline)}>Open the recorded {firstBaseline.brand} research</button>
-          </p>
-        ) : null}
         <ol className="rw-steps" aria-label="What the research produces">
           <li><strong>Cultural fingerprint</strong><span>What Qloo associates with the brand, and how complete that picture is.</span></li>
           <li><strong>Connections</strong><span>Artists, places, films, books and tags, each with its evidence and limits.</span></li>
@@ -61,23 +74,35 @@ export function BrandDiscovery({ catalog, availability, resolution, busy, error,
         <form onSubmit={(event) => { event.preventDefault(); submit(); }}>
           <label htmlFor="rw-brand">Brand name</label>
           <div className="rw-search">
-            <input id="rw-brand" value={name} minLength={2} maxLength={200} required autoComplete="off" placeholder="For example, Loewe" onChange={(event) => { setName(event.target.value); setLookup(null); onClearResolution(); }} />
-            <button type="submit" className={live ? "primary" : "rw-secondary"} disabled={busy}>{busy ? "Searching…" : live ? "Find brand" : "Find recorded research"}</button>
+            <div className="rw-combo">
+              <input id="rw-brand" value={name} minLength={2} maxLength={200} required autoComplete="off" placeholder="For example, Loewe"
+                role="combobox" aria-expanded={showList} aria-controls="rw-brand-options" aria-autocomplete="list"
+                aria-activedescendant={showList && active >= 0 ? `rw-brand-option-${active}` : undefined}
+                onFocus={() => setListOpen(true)} onBlur={() => { blurTimer.current = setTimeout(() => setListOpen(false), 120); }} onKeyDown={onKey}
+                onChange={(event) => { setName(event.target.value); setListOpen(true); setActive(-1); onClearResolution(); }} />
+              {showList ? <ul id="rw-brand-options" role="listbox" className="rw-combo__list" aria-label="Brand suggestions" data-testid="brand-suggestions"
+                onMouseDown={(event) => { event.preventDefault(); if (blurTimer.current) clearTimeout(blurTimer.current); }}>
+                {suggestions.map((item, index) => <li key={`${item.kind}:${item.label}`} id={`rw-brand-option-${index}`} role="option" aria-selected={active === index} data-kind={item.kind}
+                  onMouseEnter={() => setActive(index)} onClick={() => choose(index)}>
+                  <span className="rw-combo__name">{item.label}</span>
+                  <span className="rw-combo__detail">{item.detail}</span>
+                </li>)}
+                {canSearch ? <li id={`rw-brand-option-${suggestions.length}`} role="option" aria-selected={active === suggestions.length} data-kind="search"
+                  onMouseEnter={() => setActive(suggestions.length)} onClick={() => choose(suggestions.length)}>
+                  <span className="rw-combo__name">Find “{name.trim()}” in Qloo</span>
+                  <span className="rw-combo__detail">Checks the brand with one Qloo lookup</span>
+                </li> : null}
+              </ul> : null}
+            </div>
+            <button type="submit" className="primary" disabled={busy || !live}>{busy ? "Searching…" : "Find brand"}</button>
           </div>
         </form>
-        <p className="rw-availability" role="status" data-testid="research-availability"><strong>{copy.label}</strong> {copy.detail} {live ? "Search is submitted explicitly and Qloo checks the brand identity before any scan starts." : "These examples are recorded, not a complete list of Qloo brands."}</p>
+        <p className="rw-availability" role="status" data-testid="research-availability"><strong>{copy.label}</strong> {copy.detail} {live ? "Search is submitted explicitly and Qloo checks the brand identity before any scan starts." : "Your research library below still opens."}</p>
         {hasSessionScan ? <p><button type="button" className="ghost" onClick={onOpenSession}>Return to the research you started in this tab</button></p> : null}
-
-        {lookup?.match ? (
-          <div className="rw-lookup" role="status">
-            <p>Recorded research for <strong>{lookup.match.brand}</strong> is available. It opens instantly and does not start a new search.</p>
-            <button type="button" className="primary" onClick={() => open(lookup.match!)}>Open the {lookup.match.brand} research</button>
-          </div>
-        ) : lookup && !live ? (
-          <div className="rw-lookup" role="status">
-            <p>There is no recorded research for “{lookup.query}”. {copy.label} You can open one of the recorded examples below.</p>
-          </div>
-        ) : null}
+        {library.length ? <section className="rw-library" aria-labelledby="rw-library-title" data-testid="research-library">
+          <h2 id="rw-library-title">Your research library</h2>
+          <ul className="rw-plain">{[...library].reverse().map((entry) => <li key={entry.scanId}><button type="button" className="ghost" onClick={() => onOpenLibrary(entry)}>{entry.brand} <span className="quiet">· {formatDate(new Date(entry.startedAt).toISOString())}</span></button></li>)}</ul>
+        </section> : null}
 
         {live && resolution?.status === "AMBIGUOUS" ? (
           <fieldset className="rw-candidates">
@@ -96,27 +121,6 @@ export function BrandDiscovery({ catalog, availability, resolution, busy, error,
         {error ? <p className="notice" role="alert">{error}</p> : null}
       </section>
 
-      <section className="rw-discovery__recorded" aria-labelledby="rw-recorded-title">
-        <h2 id="rw-recorded-title" className="rw-section-title">Recorded research</h2>
-        <p className="quiet">Captured earlier from Qloo and stored with the product. Opening one is instant and does not start a new search.</p>
-        <ul className="rw-recorded">
-          {catalog.map((entry) => (
-            <li key={entry.key}>
-              <div>
-                <h3>{entry.brand}</h3>
-                <p className="quiet">
-                  {entry.kind === "baseline"
-                    ? `Cultural fingerprint · captured ${formatDate(entry.recordedAt)} · ${entry.connections} connections, ${entry.directions} possible ${entry.directions === 1 ? "direction" : "directions"}`
-                    : `Archived deep investigation${entry.question ? ` of “${entry.question}”` : ""} · captured ${formatDate(entry.recordedAt)} · historical Atlas view`}
-                </p>
-              </div>
-              <button type="button" className="rw-secondary" data-testid={entry.kind === "baseline" ? `recorded-${entry.key}` : "recorded-investigation"} onClick={() => open(entry)}>
-                {entry.kind === "baseline" ? "Open research" : "Open archived investigation"}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
   );
 }

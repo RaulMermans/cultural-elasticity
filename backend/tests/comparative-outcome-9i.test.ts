@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import { projectCulturalConnections, type AgentAnalysisResult, type AnyBrandBaselineResult } from "@cultural-elasticity/shared";
 import { projectComparativeStrategicReport, validateComparativeOutcome, type ComparativePlan } from "../src/agent/comparative-bridge.js";
 import { runtime } from "./fixtures/synthetic/agent.js";
+import { replayCanary } from "../scripts/brand-baseline-eval/replay.js";
 
 const PLAN = (target: string, references: string[]): ComparativePlan => ({
   brandId: "SYN-BR-3001",
@@ -101,9 +102,10 @@ describe("SYNTHETIC Sprint 9I outcome verification", () => {
   });
 });
 
-describe("RECORDED live Loewe evidence: cross-domain relationships (offline, no provider call)", () => {
+describe("Live Loewe evidence: cross-domain relationships (offline, no provider call)", () => {
   const root = path.resolve(import.meta.dirname, "../..");
-  const baseline = (JSON.parse(fs.readFileSync(path.join(root, "frontend/src/demo/recorded-baselines.json"), "utf8")) as { items: { key: string; result: AnyBrandBaselineResult }[] }).items.find((item) => item.key === "loewe")!.result;
+  // The live Loewe baseline canary, re-read offline by the current baseline code.
+  const baseline = replayCanary("evals/fixtures/live/loewe-baseline-canary-2.live.json").result as AnyBrandBaselineResult;
   const investigation = JSON.parse(fs.readFileSync(path.join(root, "docs/sprint-9g/evidence/loewe-boutique-hospitality.live.json"), "utf8")) as AgentAnalysisResult;
 
   it("keeps direct observations, derived overlaps and interpretations apart, each with its Qloo source", () => {

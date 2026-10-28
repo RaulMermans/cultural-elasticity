@@ -1,7 +1,6 @@
 "use client";
 
-import { parseQueryResponse, type QueryResponse } from "@cultural-elasticity/shared";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { liveQuestionsEnabled } from "@/lib/admissions";
 import { AlternativeConfirmation } from "./AlternativeConfirmation";
 import { AtlasNavigation } from "./AtlasNavigation";
@@ -21,15 +20,8 @@ import { ReadOnlyComparison } from "./ReadOnlyComparison";
 import { useAtlas } from "./use-atlas";
 
 /** The optional Living Atlas exploration view. Brand research is the default product view (ResearchApp). */
-export function AtlasApp({ nav, autoOpenRecorded = false, initialQuery = null }: { nav?: ReactNode; autoOpenRecorded?: boolean; initialQuery?: string | null }) {
+export function AtlasApp({ nav, initialQuery = null }: { nav?: ReactNode; initialQuery?: string | null }) {
   const atlas = useAtlas();
-  const opened = useRef(false);
-  useEffect(() => {
-    // Opening the recorded investigation is local to the bundled artifact; it never starts a live job.
-    if (!autoOpenRecorded || opened.current) return;
-    opened.current = true;
-    void openRecorded(atlas.showRecorded, atlas.fail);
-  }, [autoOpenRecorded, atlas.showRecorded, atlas.fail]);
   const [dismissed, setDismissed] = useState<string | null>(null);
   const [how, setHow] = useState(false);
   const [showReadOnlyComparison, setShowReadOnlyComparison] = useState(false);
@@ -54,7 +46,6 @@ export function AtlasApp({ nav, autoOpenRecorded = false, initialQuery = null }:
           <Landing
             admissions={atlas.admissions}
             busy={Boolean(atlas.active)}
-            onRecorded={(prepared) => void openRecorded(atlas.showRecorded, atlas.fail, prepared)}
             onAsk={(query) => void atlas.submit({ query })}
             onHow={() => setHow(true)}
             initialQuery={initialQuery ?? ""}
@@ -221,33 +212,3 @@ export function AtlasApp({ nav, autoOpenRecorded = false, initialQuery = null }:
   );
 }
 
-async function openRecorded(
-  show: (responses: QueryResponse[]) => void,
-  fail: (message: string) => void,
-  prepared?: QueryResponse[],
-) {
-  if (prepared && prepared.length > 0) {
-    show(prepared);
-    return;
-  }
-  try {
-    const response = await fetch("/api/demo/recorded", { cache: "no-store" });
-    if (!response.ok) {
-      fail("The recorded example could not be opened.");
-      return;
-    }
-    const body: unknown = await response.json();
-    if (!body || typeof body !== "object" || !("responses" in body) || !Array.isArray(body.responses)) {
-      fail("The recorded example could not be opened.");
-      return;
-    }
-    const parsed = body.responses.map((item: unknown) => parseQueryResponse(item)).filter((item) => item.ok);
-    if (parsed.length === 0) {
-      fail("The recorded example could not be shown.");
-      return;
-    }
-    show(parsed.map((item) => item.response));
-  } catch {
-    fail("The recorded example could not be opened.");
-  }
-}
