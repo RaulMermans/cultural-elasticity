@@ -73,12 +73,9 @@ async function investigate(page: Page, direction: string): Promise<string> {
 test("LIVE: Loewe baseline → references → Boutique hospitality → governed comparison → report", async ({ page }) => {
   test.setTimeout(120 * 60_000);
   const paid = watch(page);
-  // The operator authorizes this browser through the operator page; Railway verifies the credential on each paid start.
-  await page.goto("/operator");
-  await page.getByLabel("Operator credential").fill(OPERATOR);
-  await page.getByRole("button", { name: "Authorize this browser" }).click();
-  await expect(page.getByTestId("operator-status")).toContainText("Credential stored", { timeout: 15_000 });
-  await page.goto("/");
+  // The operator link authorizes this browser and returns home; Railway verifies the credential on each paid start.
+  await page.goto(`/operator#token=${OPERATOR}`);
+  await page.waitForURL((url) => url.pathname === "/", { timeout: 15_000 });
   await expect(page.getByTestId("research-availability")).toContainText("New brand research available.", { timeout: 30_000 });
   note("operator_session_established");
 
