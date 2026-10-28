@@ -9,6 +9,7 @@ import { HOME, SESSION_RESEARCH, parseRoute, routeQuery, type ResearchSection, t
 import { AtlasApp } from "../atlas/AtlasApp";
 import { AtlasShell } from "../atlas/AtlasShell";
 import { BrandDiscovery } from "./BrandDiscovery";
+import { ResearchNetwork } from "./ResearchNetwork";
 import { ResearchWorkspace } from "./ResearchWorkspace";
 import { useBrandResearch } from "./use-brand-research";
 
@@ -32,7 +33,7 @@ export function ResearchApp({ initialRoute, catalog, initialRecorded }: { initia
     if (replace) window.history.replaceState(null, "", url);
     else window.history.pushState(null, "", url);
     setRoute((current) => {
-      if (current.research !== next.research || current.view !== next.view || current.mode !== next.mode) window.scrollTo({ top: 0 });
+      if (current.research !== next.research || current.view !== next.view || current.mode !== next.mode || current.layout !== next.layout) window.scrollTo({ top: 0 });
       return next;
     });
   }, []);
@@ -82,12 +83,27 @@ export function ResearchApp({ initialRoute, catalog, initialRecorded }: { initia
         busy={research.busy}
         error={research.error}
         hasSessionScan={research.hasSessionScan}
+        library={research.library}
         onResolve={(name, id) => void research.resolve(name, id)}
         onStart={() => void research.start().then((started) => { if (started) navigate({ ...HOME, research: SESSION_RESEARCH }); })}
         onClearResolution={research.clearResolution}
         onOpenRecorded={(key) => navigate({ ...HOME, research: key })}
         onOpenInvestigation={() => navigate({ ...HOME, mode: "atlas", open: "recorded" })}
         onOpenSession={() => navigate({ ...HOME, research: SESSION_RESEARCH })}
+        onOpenLibrary={(entry) => { research.openScan(entry); navigate({ ...HOME, research: SESSION_RESEARCH }); }}
+      />
+    );
+  } else if (result && route.layout === "network") {
+    body = (
+      <ResearchNetwork
+        key={result.scanId}
+        result={result}
+        scanToken={route.research === SESSION_RESEARCH ? research.scanToken : null}
+        canAsk={admissions === "accepting"}
+        canInvestigate={deepResearch === "available"}
+        onHome={() => navigate(HOME)}
+        onClassic={() => navigate({ ...route, layout: "tabs", view: "summary", item: null })}
+        onSections={() => navigate({ ...route, layout: "tabs", view: "overview", item: null }, true)}
       />
     );
   } else if (result) {

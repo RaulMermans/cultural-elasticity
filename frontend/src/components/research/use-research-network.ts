@@ -1,0 +1,134 @@
+"use client";
+
+import { parseQueryResponse } from "@cultural-elasticity/shared";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { parseJobEnvelope, publicFailure, type JobEnvelope } from "@/lib/job-envelope";
+import { followUpContext, isPending, type Inquiry, type InquiryOrigin, type NetworkNode } from "@/lib/research-network";
+
+const POLL_MS = 2000;
+const storageKey = (scanId: string) => `ce.network.${scanId}`;
+
+/** The network of one scan stays in this browser, so it can be reopened and extended later. */
+function load(scanId: string): Inquiry[] {
+  try {
+    const saved: unknown = JSON.parse(localStorage.getItem(storageKey(scanId)) ?? "[]");
+    if (!Array.isArray(saved)) return [];
+    return saved.filter((item): item is Inquiry => typeof item?.jobId === "string" && typeof item?.token === "string" && typeof item?.parentId === "string" && typeof item?.question === "string")
+      .map((item) => {
+        const parsed = item.response ? parseQueryResponse(item.response) : null;
+        return { ...item, response: parsed?.ok ? parsed.response : null };
+      });
+  } catch { return []; }
+}
+
+function save(scanId: string, inquiries: Inquiry[]) {
+  try { localStorage.setItem(storageKey(scanId), JSON.stringify(inquiries.slice(-60))); } catch { /* Storage may be blocked; the network still works on this page. */ }
+}
+
+async function readJson(response: Response): Promise<unknown> {
+  try { return await response.json(); } catch { return null; }
+}
+
+function merge(inquiry: Inquiry, view: JobEnvelope): Inquiry {
+  const parsed = view.response ? parseQueryResponse(view.response) : null;
+  return { ...inquiry, status: view.status, stageLabel: view.stageLabel, response: parsed?.ok ? parsed.response : inquiry.response };
+}
+
+export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: string; brand: string; scanToken: string | null }) {
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [starting, setStarting] = useState(false);
+  // Saving waits until this scan's stored network has been read, so opening a network never overwrites it.
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
+
+  useEffect(() => {
+    setInquiries(load(scanId));
+    setLoadedFor(scanId);
+  }, [scanId]);
+
+  useEffect(() => {
+    if (loadedFor === scanId) save(scanId, inquiries);
+  }, [loadedFor, scanId, inquiries]);
+
+  const update = useCallback((jobId: string, change: (inquiry: Inquiry) => Inquiry) => {
+    setInquiries((current) => current.map((item) => (item.jobId === jobId ? change(item) : item)));
+  }, []);
+
+  const refresh = useCallback(async (inquiry: Inquiry) => {
+    try {
+      const response = await fetch(`/api/agent/jobs/${encodeURIComponent(inquiry.jobId)}`, { headers: { "x-job-token": inquiry.token }, cache: "no-store" });
+      if (response.status === 404) { update(inquiry.jobId, (item) => ({ ...item, lost: true })); return; }
+      const parsed = parseJobEnvelope(await readJson(response));
+      if (response.ok && parsed.ok) update(inquiry.jobId, (item) => merge(item, parsed.job));
+    } catch { /* A missed poll is retried on the next tick. */ }
+  }, [update]);
+
+  // The interval follows the set of pending jobs, not every status change; it reads the latest list through a ref.
+  const latest = useRef(inquiries);
+  latest.current = inquiries;
+  const pendingKey = inquiries.filter(isPending).map((item) => item.jobId).join(",");
+  useEffect(() => {
+    if (!pendingKey) return;
+    const timer = setInterval(() => {
+      for (const inquiry of latest.current.filter(isPending)) void refresh(inquiry);
+    }, POLL_MS);
+    return () => clearInterval(timer);
+  }, [pendingKey, refresh]);
+
+  // Jobs restored from storage may have finished, or been lost, while the page was closed.
+  const restored = useRef<string | null>(null);
+  useEffect(() => {
+    if (restored.current === scanId || !inquiries.length) return;
+    restored.current = scanId;
+    for (const inquiry of inquiries) if (!inquiry.lost) void refresh(inquiry);
+  }, [scanId, inquiries, refresh]);
+
+  const begin = useCallback(async (url: string, body: unknown, headers: Record<string, string>, inquiry: { parentId: string; origin: InquiryOrigin; question: string }) => {
+    if (starting) return false;
+    setStarting(true);
+    setNotice(null);
+    try {
+      const response = await fetch(url, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body) });
+      const payload = await readJson(response);
+      const parsed = parseJobEnvelope(payload);
+      if (!response.ok || !parsed.ok || !parsed.job.accessToken) {
+        setNotice(response.status === 503 ? "Live investigations are paused right now." : publicFailure(response.status, payload));
+        return false;
+      }
+      const next = merge({ jobId: parsed.job.jobId, token: parsed.job.accessToken, ...inquiry, status: parsed.job.status, stageLabel: parsed.job.stageLabel, response: null, lost: false, createdAt: Date.now() }, parsed.job);
+      setInquiries((current) => (current.some((item) => item.jobId === next.jobId) ? current : [...current, next]));
+      return true;
+    } catch {
+      setNotice("The start could not be confirmed. It may have reached the research service, so it will not be sent again automatically.");
+      return false;
+    } finally {
+      setStarting(false);
+    }
+  }, [starting]);
+
+  /** Deep investigation of a baseline direction. The server rereads the scan; the browser sends identifiers only. */
+  const investigateDirection = useCallback((directionId: string, directionName: string, parentId: string) => {
+    if (!scanToken) { setNotice("Live investigation needs the research session that found this direction."); return Promise.resolve(false); }
+    return begin("/api/research/handoff/jobs", { scanId, territoryId: directionId, idempotencyKey: crypto.randomUUID() }, { "x-baseline-token": scanToken }, { parentId, origin: "direction", question: `Investigate ${directionName}` });
+  }, [begin, scanId, scanToken]);
+
+  /** A question from the composer: a follow-up of the selected investigation, or a new question about the brand. */
+  const ask = useCallback((question: string, from: NetworkNode | null) => {
+    const context = followUpContext(from);
+    const body = context ? { query: question, context } : { query: question, brand };
+    return begin("/api/agent/jobs", body, {}, { parentId: context && from ? from.id : "brand", origin: "question", question });
+  }, [begin, brand]);
+
+  const answer = useCallback((inquiry: Inquiry, clarification: string) => {
+    const response = inquiry.response;
+    const body = response?.state === "NEEDS_CLARIFICATION"
+      ? { clarifyQueryId: response.queryId, clarification }
+      : response?.investigation ? { continueRunId: response.investigation.runId, clarification } : null;
+    if (!body) return Promise.resolve(false);
+    return begin("/api/agent/jobs", body, {}, { parentId: `inq:${inquiry.jobId}`, origin: "question", question: clarification });
+  }, [begin]);
+
+  const forget = useCallback((jobId: string) => setInquiries((current) => current.filter((item) => item.jobId !== jobId)), []);
+
+  return { inquiries, notice, starting, investigateDirection, ask, answer, forget, clearNotice: () => setNotice(null) };
+}

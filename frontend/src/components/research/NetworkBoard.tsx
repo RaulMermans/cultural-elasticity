@@ -1,0 +1,165 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import type { Point } from "@/components/atlas/atlas-model";
+import { networkBounds, type NetworkNode } from "@/lib/research-network";
+
+/** Card sizes per node kind. Size is a role, never a measure of importance, affinity or elasticity. */
+export const CARD: Record<NetworkNode["kind"], { width: number; height: number; chars: number }> = {
+  brand: { width: 230, height: 92, chars: 18 },
+  direction: { width: 200, height: 78, chars: 22 },
+  connection: { width: 150, height: 44, chars: 18 },
+  inquiry: { width: 240, height: 84, chars: 26 },
+  finding: { width: 180, height: 70, chars: 20 },
+};
+
+const KIND_LABEL: Record<NetworkNode["kind"], string> = { brand: "Brand", direction: "Direction", connection: "Qloo connection", inquiry: "Question", finding: "Territory" };
+
+function wrap(text: string, chars: number, lines: number): string[] {
+  const out: string[] = [];
+  let current = "";
+  for (const word of text.split(/\s+/u)) {
+    if (!current) current = word;
+    else if (`${current} ${word}`.length <= chars) current = `${current} ${word}`;
+    else { out.push(current); current = word; }
+  }
+  if (current) out.push(current);
+  if (out.length <= lines) return out;
+  const kept = out.slice(0, lines);
+  kept[lines - 1] = `${kept[lines - 1]!.slice(0, chars - 1).trimEnd()}…`;
+  return kept;
+}
+
+type View = { x: number; y: number; k: number };
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+/** Space covered by floating panels, kept clear when the board fits the network. */
+export type BoardInset = { top: number; right: number; bottom: number; left: number };
+
+export function NetworkBoard({ nodes, positions, selectedId, onSelect, label, inset }: { nodes: NetworkNode[]; positions: ReadonlyMap<string, Point>; selectedId: string; onSelect: (id: string) => void; label: string; inset: BoardInset }) {
+  const host = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ width: 1200, height: 720 });
+  const [view, setView] = useState<View>({ x: 600, y: 360, k: 1 });
+  const drag = useRef<{ x: number; y: number; vx: number; vy: number; moved: boolean } | null>(null);
+  const touched = useRef(false);
+
+  const fit = useCallback(() => {
+    const bounds = networkBounds(positions, 150);
+    const narrow = size.width < 1000;
+    const free = narrow ? { top: 60, right: 0, bottom: 60, left: 0 } : inset;
+    const width = Math.max(200, size.width - free.left - free.right);
+    const height = Math.max(200, size.height - free.top - free.bottom);
+    const k = clamp(Math.min(width / bounds.width, height / bounds.height), 0.3, 1.1);
+    setView({ k, x: free.left + width / 2 - (bounds.x + bounds.width / 2) * k, y: free.top + height / 2 - (bounds.y + bounds.height / 2) * k });
+  }, [positions, size, inset]);
+
+  useEffect(() => {
+    const element = host.current;
+    if (!element) return;
+    const observer = new ResizeObserver(([entry]) => { if (entry) setSize({ width: entry.contentRect.width, height: entry.contentRect.height }); });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  // Refit when the network grows, unless the user has moved the board themselves.
+  const nodeCount = nodes.length;
+  useEffect(() => { if (!touched.current) fit(); }, [fit, nodeCount]);
+
+  useEffect(() => {
+    const element = host.current;
+    if (!element) return;
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      touched.current = true;
+      const rect = element.getBoundingClientRect();
+      const px = event.clientX - rect.left;
+      const py = event.clientY - rect.top;
+      setView((current) => {
+        const k = clamp(current.k * Math.exp(-event.deltaY * 0.0015), 0.25, 2.5);
+        return { k, x: px - ((px - current.x) * k) / current.k, y: py - ((py - current.y) * k) / current.k };
+      });
+    };
+    element.addEventListener("wheel", onWheel, { passive: false });
+    return () => element.removeEventListener("wheel", onWheel);
+  }, []);
+
+  const zoom = (factor: number) => {
+    touched.current = true;
+    setView((current) => {
+      const k = clamp(current.k * factor, 0.25, 2.5);
+      const cx = size.width / 2;
+      const cy = size.height / 2;
+      return { k, x: cx - ((cx - current.x) * k) / current.k, y: cy - ((cy - current.y) * k) / current.k };
+    });
+  };
+
+  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if ((event.target as Element).closest(".rn-card")) return;
+    drag.current = { x: event.clientX, y: event.clientY, vx: view.x, vy: view.y, moved: false };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const start = drag.current;
+    if (!start) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) { start.moved = true; touched.current = true; }
+    setView((current) => ({ ...current, x: start.vx + dx, y: start.vy + dy }));
+  };
+  const onPointerUp = () => { drag.current = null; };
+
+  const onKey = (event: KeyboardEvent<SVGGElement>, id: string) => {
+    if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(id); }
+  };
+
+  return (
+    <div ref={host} className="rn-board" data-testid="network-canvas" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}
+      style={{ backgroundPosition: `${view.x}px ${view.y}px`, backgroundSize: `${24 * view.k}px ${24 * view.k}px` }}>
+      <svg width="100%" height="100%" role="tree" aria-label={label}>
+        <defs>
+          <filter id="rn-shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#1a1612" floodOpacity="0.14" /></filter>
+        </defs>
+        <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
+          {nodes.filter((node) => node.parentId && positions.has(node.parentId)).map((node) => {
+            const from = positions.get(node.parentId!)!;
+            const to = positions.get(node.id)!;
+            const mx = (from.x + to.x) / 2;
+            const my = (from.y + to.y) / 2;
+            return <path key={`edge:${node.id}`} className="rn-wire" data-kind={node.kind} data-tone={node.tone} pathLength={1}
+              d={`M ${from.x} ${from.y} Q ${mx * 0.82} ${my * 0.82} ${to.x} ${to.y}`} />;
+          })}
+          {nodes.map((node, index) => {
+            const point = positions.get(node.id)!;
+            const card = CARD[node.kind];
+            const lines = wrap(node.label, card.chars, node.kind === "connection" ? 1 : 2);
+            const selected = node.id === selectedId;
+            const top = -card.height / 2;
+            return (
+              <g key={node.id} className="rn-card" data-kind={node.kind} data-tone={node.tone} data-selected={selected ? "true" : undefined}
+                style={{ transform: `translate(${point.x}px, ${point.y}px)` }} role="treeitem" aria-selected={selected} tabIndex={0}
+                aria-label={`${KIND_LABEL[node.kind]}: ${node.label}, ${node.status}`} data-testid={`network-node-${node.kind}`}
+                onClick={() => onSelect(node.id)} onKeyDown={(event) => onKey(event, node.id)}>
+                <g className="rn-card__float" style={{ animationDelay: `${(index % 7) * -0.9}s` }}>
+                  <g className="rn-card__pop">
+                    {node.tone === "running" ? <rect className="rn-card__halo" x={-card.width / 2 - 8} y={top - 8} width={card.width + 16} height={card.height + 16} rx={22} /> : null}
+                    <rect className="rn-card__body" x={-card.width / 2} y={top} width={card.width} height={card.height} rx={16} filter="url(#rn-shadow)" />
+                    {node.kind !== "connection" ? <>
+                      <circle className="rn-card__dot" cx={-card.width / 2 + 18} cy={top + 18} r={5} />
+                      <text className="rn-card__kind" x={-card.width / 2 + 30} y={top + 22}>{node.kind === "brand" ? "Brand" : node.status}</text>
+                      {lines.map((line, row) => <text key={row} className="rn-card__title" x={-card.width / 2 + 16} y={top + 46 + row * 20}>{line}</text>)}
+                    </> : <text className="rn-card__title" x={0} y={5} textAnchor="middle">{lines[0]}</text>}
+                  </g>
+                </g>
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+      <div className="rn-zoom" role="group" aria-label="Zoom">
+        <button type="button" onClick={() => zoom(1.2)} aria-label="Zoom in">+</button>
+        <button type="button" onClick={() => zoom(1 / 1.2)} aria-label="Zoom out">−</button>
+        <button type="button" onClick={() => { touched.current = false; fit(); }} aria-label="Fit the network">Fit</button>
+      </div>
+    </div>
+  );
+}

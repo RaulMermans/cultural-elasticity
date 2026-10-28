@@ -67,6 +67,8 @@ async function completeHypothesis(page: Page) {
   await page.getByLabel("Brand name").fill("Larkspur Velo");
   await page.getByRole("button", { name: "Find brand" }).click();
   await page.getByRole("button", { name: /Start research/u }).click();
+  // The comparison journey runs in the classic section view, linked from the research network.
+  await page.getByRole("button", { name: "Sections view" }).click();
   await page.getByRole("link", { name: /Directions/u }).click();
   const field = page.getByLabel("Have a specific cultural direction in mind?");
   await field.fill("Gravel Riding");

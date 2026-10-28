@@ -15,6 +15,8 @@ export default defineConfig({
     navigationTimeout: 120_000,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    // The research network floats its cards; reduced motion keeps them still so clicks are stable.
+    reducedMotion: "reduce",
   },
   webServer: [
     {

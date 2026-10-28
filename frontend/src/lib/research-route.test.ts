@@ -6,9 +6,18 @@ const params = (query: string) => new URLSearchParams(query);
 
 test("routes round-trip through the URL", () => {
   const route = parseRoute(params("research=loewe&view=connections&item=artist:ABC"));
-  assert.deepEqual(route, { mode: "research", research: "loewe", view: "connections", item: "artist:ABC", open: null, ask: null });
+  assert.deepEqual(route, { mode: "research", research: "loewe", view: "connections", layout: "tabs", item: "artist:ABC", open: null, ask: null });
   assert.deepEqual(parseRoute(params(routeQuery(route).slice(1))), route);
   assert.equal(routeQuery(HOME), "");
+});
+
+test("the research network is the default layout; a section or layout=tabs opens the classic view", () => {
+  assert.equal(parseRoute(params("research=loewe")).layout, "network");
+  assert.equal(parseRoute(params("research=loewe&view=summary")).layout, "tabs");
+  const classic = parseRoute(params("research=loewe&layout=tabs"));
+  assert.equal(classic.layout, "tabs");
+  assert.equal(routeQuery(classic), "?research=loewe&layout=tabs");
+  assert.equal(routeQuery({ ...classic, layout: "network" }), "?research=loewe");
 });
 
 test("unknown views and malformed keys fall back safely", () => {

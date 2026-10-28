@@ -1,7 +1,7 @@
 ---
 name: living-atlas-design
 description: Design and experience rules for the Cultural Elasticity product UI (brand research workspace and Living Atlas). Use when changing the product UI, visual language, atlas layout, evidence presentation, or motion. This is a development skill, not a runtime investigation skill.
-version: "5"
+version: "6"
 ---
 
 # Living Atlas design and experience
@@ -9,6 +9,17 @@ version: "5"
 Version 5. This file is the authority for product UI decisions. Tokens are implemented in `frontend/src/app/globals.css` and must match the values here. `docs/design/LIVING_ATLAS_DESIGN_SYSTEM.md` points here; it does not override it.
 
 Version 5 makes the **brand research workspace** the default product view and the Living Atlas an optional exploration view (`?mode=atlas`). It keeps Cultural Observatory and every rule from versions 1–4, which still govern the Atlas. Version 4 added stage-aligned lineage edges, a docked evidence dossier, human-readable methodology presentation, and distinct connected-paused versus disconnected labels.
+
+## Research network (version 6)
+
+Version 6 makes the **research network** the default view of a brand's research (`research-network.ts`, `ResearchNetwork.tsx`, `NetworkBoard.tsx`). One living board replaces the four tabs: the brand in the middle, its baseline directions around it, and every investigation attached to the node it was asked from. The section workspace below stays available ("Sections view", `layout=tabs`, and any `view=` link) and holds the printable brief.
+
+- **Lineage only.** An edge means investigated-from. Ring, angle and card size are layout, never affinity, distance, confidence or elasticity. The board says so.
+- **Opening a direction** shows its Qloo connections as small cards around it and a dossier: why it is here, its fingerprint, the connections behind it, what is unknown, and the degree of elasticity.
+- **Degree of elasticity** is shown only from a deterministic classification of a comparison within one Qloo call. Otherwise it says "not measured" and why; "Measure it" pre-fills a comparison the user completes with references they name. It is never inferred from baseline evidence.
+- **Agentic by default.** The composer below the board asks the agent a new question about the brand (explicit brand field) or a follow-up of the selected investigation (server run context only). The agent's validated follow-up options are offered as "Continue this path". The runtime and gate still own every decision.
+- **Research library.** Scans and their networks are kept in this browser (local storage, never a URL) and reopen from the start screen. A job the server no longer holds is shown as "No longer available", never reconstructed.
+- **Alive, calmly.** Dotted board with pan and zoom, cards that pop in and glide, a breathing halo while the agent works. All motion stops under reduced motion.
 
 ## Brand research workspace (version 5)
 

@@ -50,10 +50,17 @@ const mainText = (page: Page) => page.locator("#atlas-main").evaluate((node) => 
 });
 const overflow = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
 
+/** These tests cover the classic section view; research opens in the network, which links to it. */
+async function toSections(page: Page) {
+  await page.getByRole("button", { name: "Sections view" }).click();
+  await expect(page.getByTestId("fingerprint")).toBeVisible();
+}
+
 async function openLoewe(page: Page) {
   await page.goto("/");
   await page.getByTestId("open-recorded-baseline").click();
   await expect(page.getByRole("heading", { level: 1, name: "Loewe" })).toBeVisible();
+  await toSections(page);
 }
 
 test("paused research: the product explains itself, offers recorded research and enables no paid action", async ({ page }) => {
@@ -117,7 +124,7 @@ test("recorded journey: fingerprint, connection evidence, direction limits, summ
 
 test("keyboard only: tabs, arrow keys through connections, Enter to inspect, focus returns", async ({ page }) => {
   await stub(page);
-  await page.goto("/?research=loewe");
+  await page.goto("/?research=loewe&layout=tabs");
   await page.getByRole("link", { name: /Connections/u }).focus();
   await page.keyboard.press("Enter");
   const first = page.locator("[data-row]").first();
@@ -185,6 +192,7 @@ test("SYNTHETIC live scan previews a server handoff before any paid job", async 
   await page.getByLabel("Brand name").fill("SYNTHETIC House");
   await page.getByRole("button", { name: "Find brand" }).click();
   await page.getByRole("button", { name: /Start research/u }).click();
+  await toSections(page);
   await page.getByRole("link", { name: /Directions/u }).click();
   await page.getByRole("button", { name: `Prepare investigation of ${territory.name}` }).click();
   await expect(page.getByTestId("deep-investigation")).toContainText("SYNTHETIC research question");
@@ -206,6 +214,7 @@ test("SYNTHETIC user direction previews a single question on desktop and mobile 
   await page.getByLabel("Brand name").fill("SYNTHETIC House");
   await page.getByRole("button", { name: "Find brand" }).click();
   await page.getByRole("button", { name: /Start research/u }).click();
+  await toSections(page);
   await page.getByRole("link", { name: /Directions/u }).click();
   const field = page.getByLabel("Have a specific cultural direction in mind?");
   await field.fill("Ritual hospitality");
@@ -234,6 +243,7 @@ test("SYNTHETIC live research: ambiguity, confirmation, progress, then a fingerp
   await page.getByRole("button", { name: /Northwind Atelier · brand · ID syn-brand-21/u }).click();
   await page.getByRole("button", { name: "Start research on SYNTHETIC House" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "SYNTHETIC House" })).toBeVisible();
+  await toSections(page);
   // The badge follows the result's own canonical origin field (this SYNTHETIC fixture says "recorded"), never the route taken.
   await expect(page.getByRole("note")).toContainText("Recorded Qloo research, captured earlier.");
   expect(page.url()).not.toContain("syn-token");
@@ -268,6 +278,7 @@ test("SYNTHETIC failed preview stops loading and never enables a paid start", as
   await page.getByLabel("Brand name").fill("SYNTHETIC House");
   await page.getByRole("button", { name: "Find brand" }).click();
   await page.getByRole("button", { name: /Start research/u }).click();
+  await toSections(page);
   await page.getByRole("link", { name: /Directions/u }).click();
   await page.getByRole("button", { name: /Prepare investigation of/u }).first().click();
   await expect(page.getByTestId("deep-investigation").getByRole("alert")).toContainText("This direction cannot be prepared");
@@ -289,6 +300,7 @@ test("SYNTHETIC uncertain job start cannot be repeated from the same preview", a
   await page.getByLabel("Brand name").fill("SYNTHETIC House");
   await page.getByRole("button", { name: "Find brand" }).click();
   await page.getByRole("button", { name: /Start research/u }).click();
+  await toSections(page);
   await page.getByRole("link", { name: /Directions/u }).click();
   await page.getByRole("button", { name: /Prepare investigation of/u }).first().click();
   const start = page.getByRole("button", { name: "Start live investigation" });
@@ -304,6 +316,7 @@ test("SYNTHETIC zero-direction result stays useful and says why", async ({ page 
   await page.getByLabel("Brand name").fill("SYNTHETIC House");
   await page.getByRole("button", { name: "Find brand" }).click();
   await page.getByRole("button", { name: /Start research/u }).click();
+  await toSections(page);
   await expect(page.getByText("We found cultural connections, but not enough evidence for a new direction.")).toBeVisible();
   await expect(page.getByText(/These describe the brand itself, not new directions/u).first()).toBeVisible();
   await page.getByRole("link", { name: /Directions/u }).click();
@@ -318,6 +331,7 @@ test("SYNTHETIC insufficient evidence and partial responses are labelled honestl
   await page.getByLabel("Brand name").fill("SYNTHETIC House");
   await page.getByRole("button", { name: "Find brand" }).click();
   await page.getByRole("button", { name: /Start research/u }).click();
+  await toSections(page);
   await expect(page.getByText("Qloo didn't return enough cultural evidence for a profile.")).toBeVisible();
   await expect(page.getByRole("note")).toContainText("Not enough evidence for a profile.");
   await page.unrouteAll();
@@ -334,6 +348,7 @@ test("SYNTHETIC legacy 0.1 research renders as stored, marked as an earlier meth
   await page.getByLabel("Brand name").fill("SYNTHETIC House");
   await page.getByRole("button", { name: "Find brand" }).click();
   await page.getByRole("button", { name: /Start research/u }).click();
+  await toSections(page);
   await expect(page.getByRole("note")).toContainText("Recorded with an earlier method and shown as stored.");
   await page.getByRole("link", { name: /Directions/u }).click();
   await expect(page.getByText(/Why it appeared was not recorded/u).first()).toBeVisible();
@@ -389,7 +404,9 @@ for (const [width, height] of [[1440, 900], [1920, 1080], [768, 1024], [390, 844
     expect(await overflow(page)).toBeLessThanOrEqual(0);
     await page.screenshot({ path: `${shots}${width}x${height}-01-home.png`, fullPage: true });
     await cta.click();
-    await expect(page.getByTestId("fingerprint")).toBeVisible();
+    await expect(page.getByTestId("research-network")).toBeVisible();
+    expect(await overflow(page)).toBeLessThanOrEqual(0);
+    await toSections(page);
     expect(await overflow(page)).toBeLessThanOrEqual(0);
     await page.screenshot({ path: `${shots}${width}x${height}-02-fingerprint.png`, fullPage: true });
     await page.getByRole("link", { name: /Connections/u }).click();

@@ -5,21 +5,23 @@ import { RESOLUTION_COPY, availabilityCopy, type BrandResearchAvailability } fro
 import type { RecordedEntry } from "@/lib/recorded-research";
 import { sameName } from "@/lib/research-route";
 import { formatDate } from "@/lib/research-summary";
-import type { Resolution } from "./use-brand-research";
+import type { LibraryEntry, Resolution } from "./use-brand-research";
 
-export function BrandDiscovery({ catalog, availability, resolution, busy, error, hasSessionScan, onResolve, onStart, onClearResolution, onOpenRecorded, onOpenInvestigation, onOpenSession }: {
+export function BrandDiscovery({ catalog, availability, resolution, busy, error, hasSessionScan, library, onResolve, onStart, onClearResolution, onOpenRecorded, onOpenInvestigation, onOpenSession, onOpenLibrary }: {
   catalog: RecordedEntry[];
   availability: BrandResearchAvailability;
   resolution: Resolution | null;
   busy: boolean;
   error: string;
   hasSessionScan: boolean;
+  library: LibraryEntry[];
   onResolve: (name: string, selectedQlooId?: string) => void;
   onStart: () => void;
   onClearResolution: () => void;
   onOpenRecorded: (key: string) => void;
   onOpenInvestigation: () => void;
   onOpenSession: () => void;
+  onOpenLibrary: (entry: LibraryEntry) => void;
 }) {
   const [name, setName] = useState("");
   const [lookup, setLookup] = useState<{ query: string; match: RecordedEntry | null } | null>(null);
@@ -67,6 +69,10 @@ export function BrandDiscovery({ catalog, availability, resolution, busy, error,
         </form>
         <p className="rw-availability" role="status" data-testid="research-availability"><strong>{copy.label}</strong> {copy.detail} {live ? "Search is submitted explicitly and Qloo checks the brand identity before any scan starts." : "These examples are recorded, not a complete list of Qloo brands."}</p>
         {hasSessionScan ? <p><button type="button" className="ghost" onClick={onOpenSession}>Return to the research you started in this tab</button></p> : null}
+        {library.length ? <section className="rw-library" aria-labelledby="rw-library-title" data-testid="research-library">
+          <h2 id="rw-library-title">Your research library</h2>
+          <ul className="rw-plain">{[...library].reverse().map((entry) => <li key={entry.scanId}><button type="button" className="ghost" onClick={() => onOpenLibrary(entry)}>{entry.brand} <span className="quiet">· {formatDate(new Date(entry.startedAt).toISOString())}</span></button></li>)}</ul>
+        </section> : null}
 
         {lookup?.match ? (
           <div className="rw-lookup" role="status">

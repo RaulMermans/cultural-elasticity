@@ -84,14 +84,14 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 
 1. **The Living Atlas presents validated query responses.** It does not own scores, evidence, or lineage. Since Sprint 9C it is the optional exploration view (`?mode=atlas`); the default product view is the brand research workspace (below).
 2. **Geometry is investigation lineage.** An edge means investigated-from. Spacing is not cultural distance, affinity, confidence, elasticity, or a recommendation.
-3. **Visual decisions follow** `.agents/skills/living-atlas-design/SKILL.md` (version 5). That is a development skill, not a runtime investigation skill. Tokens live in `frontend/src/app/globals.css` and match the skill. The product art direction is Cultural Observatory.
+3. **Visual decisions follow** `.agents/skills/living-atlas-design/SKILL.md` (version 6). That is a development skill, not a runtime investigation skill. Tokens live in `frontend/src/app/globals.css` and match the skill. The product art direction is Cultural Observatory.
 4. **Jobs are in-process.** `POST /api/agent/jobs` detaches work from the HTTP request inside one Node process. Jobs are not durable across restarts and are not safe on a host that freezes after the response. The browser talks only to the Next.js routes.
 5. **A system directive cannot be confirmed.** A rejected directive does not become a confirmable alternative, and a second confirmation is refused.
 6. **Not investigated is not unsupported.** Incomplete or interrupted is not "no usable evidence." Evidence support is not an investment recommendation.
 
 ## Brand research workspace (permanent, from Sprint 9C)
 
-1. **Brand-first is the default UX.** The workspace is a view over the canonical baseline result. It never adds evidence, scores, ranks by opportunity, or calls a model or Qloo to display a result.
+1. **Brand-first is the default UX.** The research network (Sprint 10, design skill version 6) and the section workspace are views over the canonical baseline result. It never adds evidence, scores, ranks by opportunity, or calls a model or Qloo to display a result.
 2. **Core versus adjacent is never inferred from Qloo evidence alone** (`research-position/v1`). The brand core comes only from Qloo's category tags for the brand; adjacency only from clearly labelled user context, which never changes evidence.
 3. **Recorded research is real, bundled and labelled.** Only live-origin evidence rebuilt by `backend/scripts/demo/build-recorded-baseline.ts` may be listed; never synthetic fixtures or benchmark profiles.
 4. **No scan token in a URL**, and no enabled paid action while its admission is paused. Canonical record: `docs/sprint-9c/BRAND_FIRST_RESEARCH_WORKSPACE.md`.

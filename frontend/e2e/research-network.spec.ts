@@ -1,0 +1,95 @@
+/**
+ * The unified research network in the browser. Every live response is SYNTHETIC (backend/tests/fixtures/synthetic/
+ * comparative-e2e.json); the recorded Loewe research is real stored Qloo evidence re-read offline. No test here
+ * reaches Qloo or a model.
+ */
+import { readFileSync } from "node:fs";
+import { expect, test, type Page, type Route } from "@playwright/test";
+
+type Fixture = { baseline: { scanId: string; scanStatus: string }; parent: { created: { jobId: string }; view: unknown } };
+const fixture = JSON.parse(readFileSync(new URL("../../backend/tests/fixtures/synthetic/comparative-e2e.json", import.meta.url), "utf8")) as Fixture;
+const json = (route: Route, value: unknown, status = 200) => route.fulfill({ status, contentType: "application/json", body: JSON.stringify(value) });
+
+async function stubLive(page: Page) {
+  const calls = { handoffs: [] as unknown[], questions: [] as unknown[] };
+  await page.route("**/api/agent/admissions", (route) => json(route, { status: "accepting" }));
+  await page.route("**/api/brands/**", (route) => {
+    const path = new URL(route.request().url()).pathname;
+    if (path === "/api/brands/status") return json(route, { enabled: true, semantics: "baseline_admission_only" });
+    if (path === "/api/brands/resolve") return json(route, { resolutionId: "00000000-0000-4000-8000-000000000030", accessToken: "syn-token", status: "RESOLVED", entity: { qlooId: "SYN-BR-3001", label: "Larkspur Velo" } });
+    if (path === "/api/brands/baselines" && route.request().method() === "POST") return json(route, { scanId: fixture.baseline.scanId, scanStatus: "QUEUED", reused: false, cached: false }, 202);
+    if (path === `/api/brands/baselines/${fixture.baseline.scanId}`) return json(route, { scanStatus: fixture.baseline.scanStatus, providerCallCount: 2, stages: [{ stage: "tags", status: "COMPLETE" }], result: fixture.baseline });
+    return json(route, { error: "not_found" }, 404);
+  });
+  await page.route("**/api/research/handoff/jobs", (route) => { calls.handoffs.push(route.request().postDataJSON()); return json(route, fixture.parent.created, 202); });
+  // Each SYNTHETIC question gets its own job id; every job reads back the same SYNTHETIC completed view.
+  await page.route("**/api/agent/jobs", (route) => {
+    calls.questions.push(route.request().postDataJSON());
+    return json(route, { ...fixture.parent.created, jobId: `00000000-0000-4000-8000-${String(calls.questions.length).padStart(12, "0")}` }, 202);
+  });
+  await page.route("**/api/agent/jobs/*", (route) => json(route, fixture.parent.view));
+  return calls;
+}
+
+async function startLarkspur(page: Page) {
+  await page.goto("/");
+  await page.getByLabel("Brand name").fill("Larkspur Velo");
+  await page.getByRole("button", { name: "Find brand" }).click();
+  await page.getByRole("button", { name: /Start research/u }).click();
+  await expect(page.getByTestId("research-network")).toBeVisible();
+}
+
+test("recorded research opens as a network: brand, directions, a direction dossier, and no paid call", async ({ page }) => {
+  const paid: string[] = [];
+  page.on("request", (request) => { if (request.method() === "POST" && /\/api\/(agent|research|brands)\//u.test(request.url())) paid.push(request.url()); });
+  await page.goto("/?research=loewe");
+  await expect(page.getByTestId("network-node-brand")).toHaveCount(1);
+  await expect(page.getByTestId("network-node-direction")).toHaveCount(2);
+  await expect(page.getByTestId("network-dossier")).toContainText("Cultural fingerprint");
+  await page.getByRole("treeitem", { name: "Direction: Model, Direction" }).click();
+  const dossier = page.getByTestId("network-dossier");
+  await expect(dossier.getByRole("heading", { name: "Why it is here" })).toBeVisible();
+  await expect(dossier.getByTestId("network-elasticity")).toContainText("Not measured yet");
+  await expect(page.getByTestId("network-node-connection").first()).toBeVisible();
+  await expect(page.getByText("distance on the board is not cultural distance")).toBeVisible();
+  expect(paid).toEqual([]);
+});
+
+test("SYNTHETIC investigating a direction attaches the agent's validated result to it", async ({ page }) => {
+  const calls = await stubLive(page);
+  await startLarkspur(page);
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
+  await page.getByTestId("network-investigate").click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
+  await expect(page.getByTestId("network-dossier")).toContainText("Inconclusive");
+  expect(calls.handoffs).toHaveLength(1);
+  const body = calls.handoffs[0] as Record<string, unknown>;
+  expect(Object.keys(body).sort()).toEqual(["idempotencyKey", "scanId", "territoryId"]);
+  expect(page.url()).not.toContain("syn-token");
+});
+
+test("SYNTHETIC a question from the composer names the brand; a follow-up carries only its run context", async ({ page }) => {
+  const calls = await stubLive(page);
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("Where could Larkspur Velo go next?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
+  expect(calls.questions[0]).toEqual({ query: "Where could Larkspur Velo go next?", brand: "Larkspur Velo" });
+  await page.getByLabel(/Continue from/u).fill("Narrow it to gravel events");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(2);
+  const followUp = calls.questions[1] as { query: string; context?: { runId: string }; brand?: string };
+  expect(followUp.brand).toBeUndefined();
+  expect(typeof followUp.context?.runId).toBe("string");
+});
+
+test("SYNTHETIC the network is kept in the research library and reopens with its investigations", async ({ page }) => {
+  await stubLive(page);
+  await startLarkspur(page);
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
+  await page.getByTestId("network-investigate").click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
+  await page.getByRole("button", { name: "Research library" }).click();
+  await page.getByTestId("research-library").getByRole("button", { name: /Larkspur Velo/u }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
+});
