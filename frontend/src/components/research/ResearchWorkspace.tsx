@@ -1,10 +1,10 @@
 "use client";
 
 import type { AnyBrandBaselineResult, QueryResponse } from "@cultural-elasticity/shared";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { formatDate } from "@/lib/research-summary";
 import type { ResearchSection } from "@/lib/research-route";
-import { buildResearchView, type UserContext, type UserPosition } from "@/lib/research-view";
+import { buildResearchView } from "@/lib/research-view";
 import { ConnectionExplorer } from "./ConnectionExplorer";
 import { DirectionList } from "./DirectionList";
 import { FingerprintOverview } from "./FingerprintOverview";
@@ -13,28 +13,6 @@ import { DeepResearchPanel } from "./DeepResearchPanel";
 import type { ComparativeFinding } from "./ComparativeResearchPanel";
 import { RecordedComparativeDemo } from "./RecordedComparativeDemo";
 
-const contextKey = (scanId: string) => `ce.research.context.${scanId}`;
-
-/** The user's own context is a per-tab convenience. It is never sent to the server and never becomes evidence. */
-function useUserContext(scanId: string): [UserContext, (concept: string, position: UserPosition) => void] {
-  const [context, setContext] = useState<UserContext>({});
-  useEffect(() => {
-    try {
-      const saved: unknown = JSON.parse(sessionStorage.getItem(contextKey(scanId)) ?? "{}");
-      if (saved && typeof saved === "object" && !Array.isArray(saved)) {
-        setContext(Object.fromEntries(Object.entries(saved).filter((entry): entry is [string, UserPosition] => entry[1] === "current" || entry[1] === "new")));
-      }
-    } catch { setContext({}); }
-  }, [scanId]);
-  const update = (concept: string, position: UserPosition) => setContext((current) => {
-    const next = { ...current };
-    if (position === "unsure") delete next[concept];
-    else next[concept] = position;
-    try { sessionStorage.setItem(contextKey(scanId), JSON.stringify(next)); } catch { /* Storage may be blocked; the choice still applies on this page. */ }
-    return next;
-  });
-  return [context, update];
-}
 
 const SECTIONS: { id: ResearchSection; label: (counts: { connections: number; directions: number }) => string }[] = [
   { id: "overview", label: () => "Cultural fingerprint" },
@@ -53,11 +31,10 @@ export function ResearchWorkspace({ researchKey, result, section, item, deepRese
   onNavigate: (section: ResearchSection, item?: string | null, replace?: boolean) => void;
   onHome: () => void;
 }) {
-  const [context, setUserContext] = useUserContext(result.scanId);
   const [investigation, setInvestigation] = useState<{ territoryId?: string; proposedDirection?: string } | null>(null);
   const [finding, setFinding] = useState<QueryResponse | null>(null);
   const [comparative, setComparative] = useState<ComparativeFinding | null>(null);
-  const view = useMemo(() => buildResearchView(result, context), [result, context]);
+  const view = useMemo(() => buildResearchView(result, {}), [result]);
   const counts = { connections: view.connections.length, directions: view.directions.length };
 
   return (
@@ -98,7 +75,6 @@ export function ResearchWorkspace({ researchKey, result, section, item, deepRese
             deepResearch={deepResearch}
             onSelect={(key) => onNavigate("directions", key)}
             onClear={() => onNavigate("directions", null)}
-            onContext={setUserContext}
             onDeepResearch={(territoryId) => setInvestigation({ territoryId })}
             onPropose={(proposedDirection) => setInvestigation({ proposedDirection })}
           />

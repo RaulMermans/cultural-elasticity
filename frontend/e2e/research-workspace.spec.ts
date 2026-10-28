@@ -115,19 +115,6 @@ test("recorded journey: fingerprint, connection evidence, direction limits, summ
   expect(paid).toEqual([]);
 });
 
-test("user context is labelled as the user's and reaches the summary, never the evidence", async ({ page }) => {
-  await stub(page);
-  await page.goto("/?research=loewe&view=directions");
-  const fashion = page.getByRole("article", { name: "Fashion" });
-  await fashion.getByLabel("A new direction").check();
-  await expect(page.getByText("Adjacent research direction (your context)")).toBeVisible();
-  await expect(fashion).toContainText("That is your context, not Qloo evidence.");
-  await expect(fashion).toContainText("One Qloo tag observation.");
-  await page.getByRole("link", { name: "Summary" }).click();
-  await expect(page.getByRole("heading", { name: "Your context" })).toBeVisible();
-  await expect(page.getByTestId("research-summary")).toContainText("1 direction you marked as new can be researched further.");
-});
-
 test("keyboard only: tabs, arrow keys through connections, Enter to inspect, focus returns", async ({ page }) => {
   await stub(page);
   await page.goto("/?research=loewe");

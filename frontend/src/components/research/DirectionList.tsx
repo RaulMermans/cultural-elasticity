@@ -1,23 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { POSITION_COPY, USER_POSITION_COPY } from "@/lib/research-copy";
-import type { DirectionView, PositionCategory, ResearchView, UserPosition } from "@/lib/research-view";
+import { POSITION_COPY } from "@/lib/research-copy";
+import type { DirectionView, PositionCategory, ResearchView } from "@/lib/research-view";
 import { MasterDetail, onListKey } from "./ConnectionExplorer";
 import { EvidenceDetail, directionDetail } from "./EvidenceDetail";
 
 const ORDER: PositionCategory[] = ["ADJACENT", "OBSERVED", "UNRESOLVED", "ESTABLISHED"];
 
-function DirectionCard({ direction, brand, selected, canInvestigate, onInspect, onContext, onInvestigate }: {
+function DirectionCard({ direction, brand, selected, canInvestigate, onInspect, onInvestigate }: {
   direction: DirectionView;
   brand: string;
   selected: boolean;
   canInvestigate: boolean;
   onInspect: () => void;
-  onContext: (position: UserPosition) => void;
   onInvestigate: () => void;
 }) {
-  const name = `rw-context-${direction.key}`;
+  const name = `rw-direction-${direction.key}`;
   return (
     <article className="rw-direction" data-category={direction.category} aria-labelledby={`${name}-title`}>
       {direction.categoryBasis === "user" ? <p className="rw-direction__label">{direction.categoryLabel}</p> : null}
@@ -32,27 +31,17 @@ function DirectionCard({ direction, brand, selected, canInvestigate, onInspect, 
       <div className="rw-direction__actions">
         <button type="button" className="ghost" data-row={direction.key} aria-current={selected ? "true" : undefined} onClick={onInspect}>Inspect the evidence for {direction.name}</button>
         {canInvestigate ? <button type="button" className="primary" onClick={onInvestigate}>Prepare investigation of {direction.name}</button> : null}
-        <fieldset className="rw-context">
-          <legend>Your context <span className="quiet">(optional, not Qloo evidence)</span></legend>
-          {(["unsure", "current", "new"] as const).map((value) => (
-            <label key={value}>
-              <input type="radio" name={name} value={value} checked={direction.userPosition === value} onChange={() => onContext(value)} />
-              {USER_POSITION_COPY[value]}
-            </label>
-          ))}
-        </fieldset>
       </div>
     </article>
   );
 }
 
-export function DirectionList({ view, selectedKey, deepResearch, onSelect, onClear, onContext, onDeepResearch, onPropose }: {
+export function DirectionList({ view, selectedKey, deepResearch, onSelect, onClear, onDeepResearch, onPropose }: {
   view: ResearchView;
   selectedKey: string | null;
   deepResearch: "available" | "unavailable";
   onSelect: (key: string) => void;
   onClear: () => void;
-  onContext: (concept: string, position: UserPosition) => void;
   onDeepResearch: (territoryId: string) => void;
   onPropose: (direction: string) => void;
 }) {
@@ -92,7 +81,7 @@ export function DirectionList({ view, selectedKey, deepResearch, onSelect, onCle
               <div key={category} className="rw-direction-group">
                 <h3 className="rw-direction-group__title">{POSITION_COPY[category].label}</h3>
                 {view.directions.filter((item) => item.category === category).map((direction) => (
-                  <DirectionCard key={direction.key} direction={direction} brand={brand} selected={direction.key === selectedKey} canInvestigate={deepResearch === "available"} onInspect={() => onSelect(direction.key)} onInvestigate={() => onDeepResearch(direction.id)} onContext={(position) => onContext(direction.canonicalConcept, position)} />
+                  <DirectionCard key={direction.key} direction={direction} brand={brand} selected={direction.key === selectedKey} canInvestigate={deepResearch === "available"} onInspect={() => onSelect(direction.key)} onInvestigate={() => onDeepResearch(direction.id)} />
                 ))}
               </div>
             ))}
