@@ -2,7 +2,7 @@
 
 import type { AgentRunResponse, AnyBrandBaselineResult, QueryResponse } from "@cultural-elasticity/shared";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { evidenceSections, reasonCopy } from "@/components/atlas/atlas-model";
+import { reasonCopy } from "@/components/atlas/atlas-model";
 import { elasticityVerdict } from "@/lib/elasticity-verdict";
 import { evidenceTerm } from "@/lib/evidence-presentation";
 import type { JobActivity } from "@/lib/job-envelope";
@@ -15,6 +15,8 @@ import { NetworkBoard, type BoardInset } from "./NetworkBoard";
 const BOARD_INSET: BoardInset = { top: 64, right: 430, bottom: 150, left: 70 };
 import { useResearchNetwork } from "./use-research-network";
 import { useResearchLayout } from "./use-research-layout";
+import { TerritoryReadingView } from "./TerritoryReading";
+import { territoryReading } from "@/lib/territory-reading";
 
 const clip = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text);
 
@@ -44,18 +46,11 @@ function ElasticityBlock({ elasticity, brand, pending, investigated, onMeasure, 
   );
 }
 
-/** What Qloo showed, what the methodology calculated and what is missing, for one territory of one run. */
-function TerritoryEvidence({ response, territoryKey, name }: { response: QueryResponse; territoryKey: string | null; name: string }) {
-  const sections = evidenceSections(response, { territoryKey, territoryName: territoryKey ? null : name, runId: response.investigation?.runId ?? null });
-  if (!sections.territorySpecific) return null;
-  return <div data-testid="network-territory-evidence">
-    <h3>What Qloo showed for {name}</h3>
-    <ul>{sections.observed.map((line) => <li key={line}>{line}</li>)}</ul>
-    <h3>What was calculated</h3>
-    <ul>{sections.calculated.map((line) => <li key={line}>{line}</li>)}</ul>
-    <h3>Why it is not complete</h3>
-    <ul>{sections.unavailable.map((line) => <li key={line}>{line}</li>)}</ul>
-  </div>;
+/** A territory's plain reading when the run has one; otherwise the elasticity state alone. */
+function Reading({ result, territoryKey, brand, pending, investigated, onMeasure, busy }: { result: AgentRunResponse | null | undefined; territoryKey: string | null; brand: string; pending?: boolean; investigated?: boolean; onMeasure?: () => void; busy?: boolean }) {
+  const reading = pending ? null : territoryReading(result, territoryKey, brand);
+  if (reading) return <TerritoryReadingView reading={reading} brand={brand} onMeasure={onMeasure} busy={busy} />;
+  return <ElasticityBlock elasticity={pending ? null : elasticityOf(result, territoryKey)} brand={brand} pending={pending} investigated={investigated} onMeasure={onMeasure} busy={busy} />;
 }
 
 /** Removing a branch takes two deliberate steps. It only changes this browser's board; spend already made stays spent. */
@@ -156,8 +151,9 @@ function InquiryDossier({ inquiry, node, brand, branch, onAnswer, onAsk, onMeasu
     {response && !running ? <InquiryResult response={response} /> : null}
     {!running && response && !response.investigation && onRephrase ? <button type="button" className="rw-secondary" disabled={busy} onClick={onRephrase}>Rephrase it as a question</button> : null}
     {onRetry ? <button type="button" className="primary" data-testid="network-retry" disabled={busy} onClick={onRetry}>Try again</button> : null}
-    {!running && response?.investigation ? <ElasticityBlock elasticity={elasticityOf(result, territory?.territoryKey ?? null)} brand={brand} investigated onMeasure={onMeasure} busy={busy} /> : running ? <ElasticityBlock elasticity={null} brand={brand} pending /> : null}
-    {!running && response?.investigation && territory ? <TerritoryEvidence response={response} territoryKey={territory.territoryKey} name={territory.name} /> : null}
+    {!running && response?.investigation ? (territory || response.territories.length <= 1
+      ? <Reading result={result} territoryKey={territory?.territoryKey ?? null} brand={brand} investigated onMeasure={onMeasure} busy={busy} />
+      : <p className="quiet">This question looked at {response.territories.length} territories. Open each card around it to see how it fits {brand}.</p>) : running ? <ElasticityBlock elasticity={null} brand={brand} pending /> : null}
     {waiting ? <form className="rn-answer" onSubmit={(event) => { event.preventDefault(); if (answer.trim()) { onAnswer(answer.trim()); setAnswer(""); } }}>
       <label htmlFor="rn-answer">Your answer</label>
       <input id="rn-answer" value={answer} maxLength={1000} onChange={(event) => setAnswer(event.target.value)} />
@@ -174,8 +170,7 @@ function FindingDossier({ node, inquiry, brand, onInvestigate, onMeasure, busy }
     <p className="kicker">Territory found by the agent</p>
     <h2>{node.label}</h2>
     <p className="rn-status" data-tone={node.tone}>{node.status}</p>
-    <ElasticityBlock elasticity={elasticityOf(response?.investigation?.result, node.territoryKey)} brand={brand} investigated onMeasure={onMeasure} busy={busy} />
-    {response?.investigation ? <TerritoryEvidence response={response} territoryKey={node.territoryKey} name={node.label} /> : null}
+    <Reading result={response?.investigation?.result} territoryKey={node.territoryKey} brand={brand} pending={Boolean(inquiry && isPending(inquiry))} investigated onMeasure={onMeasure} busy={busy} />
     <h3>Continue this path</h3>
     <p className="quiet">It came up in another question. Investigating it gives it its own direction on the board.</p>
     <button type="button" className="primary" disabled={busy} onClick={onInvestigate}>Investigate {node.label} as a direction</button>
@@ -191,8 +186,7 @@ function NewDirectionDossier({ node, inquiries, brand, canAsk, busy, onInvestiga
     <p className="kicker">New direction</p>
     <h2>{node.label}</h2>
     <p className="quiet">Opened by your questions. It was not among the directions the brand&apos;s baseline found, so its connections come only from the investigations below.</p>
-    <ElasticityBlock elasticity={elasticityOf(latest?.response?.investigation?.result, territory?.territoryKey ?? null)} brand={brand} pending={running} investigated={Boolean(latest)} />
-    {latest?.response && territory ? <TerritoryEvidence response={latest.response} territoryKey={territory.territoryKey} name={territory.name} /> : null}
+    <Reading result={latest?.response?.investigation?.result} territoryKey={territory?.territoryKey ?? null} brand={brand} pending={running} investigated={Boolean(latest)} />
     {inquiries.length ? <><h3>Investigations and questions on this direction</h3><ul className="rn-links">{inquiries.map((item) => <li key={item.jobId}><button type="button" className="rn-link" onClick={() => onSelect(inquiryNodeId(item.jobId))}>{item.question}</button></li>)}</ul></> : null}
     {canAsk && !inquiries.length ? <button type="button" className="primary" disabled={busy || running} onClick={onInvestigate}>Investigate this direction</button> : null}
     <p className="quiet">Select it and ask below to branch a new question from it.</p>
@@ -213,7 +207,8 @@ function DirectionDossier({ view, direction, inquiries, canInvestigate, busy, on
     <h3>Its cultural fingerprint</h3>
     <p>{direction.signals.join("; ")}. {direction.strength}.</p>
     {connections.length ? <><h3>Connections behind it</h3><ul>{connections.map((item) => <li key={item.key}><strong>{item.name}</strong> <span className="quiet">{item.contextLine}</span></li>)}</ul></> : null}
-    <ElasticityBlock elasticity={elasticityOf(latest?.response?.investigation?.result, branchTerritory(latest?.response ?? null, direction.name)?.territoryKey ?? null)} brand={view.brand.name} pending={running} />
+    {latest ? <Reading result={latest.response?.investigation?.result} territoryKey={branchTerritory(latest.response, direction.name)?.territoryKey ?? null} brand={view.brand.name} pending={running} investigated />
+      : <ElasticityBlock elasticity={null} brand={view.brand.name} pending={running} />}
     <h3>Still unknown</h3>
     <ul>{direction.unknown.map((line) => <li key={line}>{line}</li>)}</ul>
     {inquiries.length ? <><h3>Investigations and questions on this direction</h3><ul className="rn-links">{inquiries.map((item) => <li key={item.jobId}><button type="button" className="rn-link" onClick={() => onSelect(inquiryNodeId(item.jobId))}>{item.question}</button></li>)}</ul></> : null}

@@ -193,9 +193,11 @@ test("SYNTHETIC a compared territory explains its result in plain words and show
   await page.getByRole("button", { name: "Ask the agent" }).click();
   await page.getByRole("treeitem", { name: /Territory: Mountain Town/u }).click();
   const dossier = page.getByTestId("network-dossier");
-  await expect(dossier.getByTestId("network-verdict")).toContainText("A natural fit in this comparison");
-  await expect(dossier).toContainText("It ranked 1 of 3");
-  await expect(dossier.getByTestId("network-territory-evidence")).toBeVisible();
+  await expect(dossier.getByTestId("network-verdict")).toContainText("Natural fit");
+  await expect(dossier.getByRole("list", { name: /Where it sits/u }).locator("[aria-current]")).toHaveText("Natural fit");
+  await expect(dossier.getByRole("heading", { name: "How it ranked" })).toBeVisible();
+  await expect(dossier.locator(".rr-rank li[data-current]")).toContainText("Mountain Town");
+  await expect(dossier).toContainText("not a forecast of sales");
   await expect(dossier.getByRole("button", { name: "Investigate Mountain Town as a direction" })).toBeVisible();
 });
 
