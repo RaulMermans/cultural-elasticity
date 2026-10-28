@@ -6,7 +6,7 @@ Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Bouti
 
 ## Deployment release contract (permanent)
 
-Before merging a release, run `pnpm check:deployment-config` and follow [the Vercel/Railway release runbook](docs/operations/DEPLOYMENT_RELEASE_CONTRACT.md). The offline guard prevents checked-in config regressions; **remote platform settings and hosted behavior must be verified separately**. Railway follows `main` and can deploy after each merge; Vercel's prior preview-only ignored-build rule must never be restored accidentally. Public exposure and paid investigations remain independent approval gates.
+Releases follow the `/cultural-elasticity-release` Claude Code skill. Before merging, run `node scripts/release/preflight.mjs`; after Vercel and Railway deploy, run `node scripts/release/verify-production.mjs --public-mode --expect-admissions closed`, which reads fresh provider metadata and the hosted endpoints and prints `RELEASE_VERIFIED`, `RELEASE_DEGRADED` or `RELEASE_FAILED`. The policy is [the Vercel/Railway release contract](docs/operations/DEPLOYMENT_RELEASE_CONTRACT.md). The offline guard prevents checked-in config regressions; **remote platform settings and hosted behavior must be verified separately**. Railway follows `main` and can deploy after each merge; Vercel's prior preview-only ignored-build rule must never be restored accidentally. Public exposure and paid investigations remain independent approval gates.
 
 ## Sprint 9J: Live validation and production reliability
 

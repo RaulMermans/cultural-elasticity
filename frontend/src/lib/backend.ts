@@ -1,7 +1,7 @@
 import "server-only";
 import { interpretAdmissionProbe, type AdmissionView } from "./admissions";
 import { backendBaseUrl, backendConfigIssues } from "./backend-url";
-import { admissionForVisitor, PAID_OPERATOR_HEADER } from "./operator";
+import { admissionForOperatorCheck, admissionForVisitor, PAID_OPERATOR_HEADER } from "./operator";
 import {
   isAgentRunResponse,
   isAnalysisIngredients,
@@ -162,9 +162,11 @@ async function backendFetch(path: string, init: RequestInit, timeoutMs: number, 
 /** Server-only brand baseline proxy. The browser supplies only an opaque scan token, never the internal secret. */
 export async function brandBaselineFetch(path: string, init: RequestInit = {}, visitorId?: string, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
   if (!/^\/api\/brands\/(?:status|resolve|baselines(?:\/[0-9a-f-]{36}(?:\/(?:territories|evidence))?)?)$/u.test(path)) return null;
-  // Resolution and a new scan dispatch Qloo calls; reads never carry the operator credential.
+  // Resolution and a new scan dispatch Qloo calls. The free status read also carries the credential so Railway
+  // can say whether this caller may start research; scan reads never carry it.
   const paid = init.method === "POST" && (path === "/api/brands/resolve" || path === "/api/brands/baselines");
-  return backendFetch(path, init, 15_000, visitorId, paid ? operator : null);
+  const status = (init.method ?? "GET") === "GET" && path === "/api/brands/status";
+  return backendFetch(path, init, 15_000, visitorId, paid || status ? operator : null);
 }
 
 export type AdmissionProbe = AdmissionView;
@@ -174,14 +176,20 @@ export type AdmissionProbe = AdmissionView;
  * view with no boot id, credential flags, or spend figures. This is not a paid
  * provider call. A reachable service that is not accepting is paused, never disconnected.
  */
-export async function getAdmissionStatus(operatorPresent = false): Promise<AdmissionProbe> {
+export async function getAdmissionStatus(operator: string | null = null): Promise<AdmissionProbe> {
   if (backendConfigIssues().length > 0) return { status: "unavailable" };
   const ready = await backendFetch("/ready", {}, 2500);
   const readyBody = ready && isRecord(ready.body) ? ready.body : null;
   const dependencies = isRecord(readyBody?.dependencies) ? readyBody.dependencies : null;
   // An older backend without the field is treated as requiring the operator: fail closed.
   const operatorRequired = dependencies?.paidOperatorRequired !== false;
-  if (readyBody?.acceptingInvestigations === true) return admissionForVisitor({ status: "accepting" }, { operatorRequired, operatorPresent });
+  if (readyBody?.acceptingInvestigations === true) {
+    const view = admissionForVisitor({ status: "accepting" }, { operatorRequired, operatorPresent: operator !== null });
+    if (view.status !== "accepting" || !operatorRequired) return view;
+    // A present cookie may hold an expired or revoked credential: ask Railway (a free read) before enabling Ask.
+    const brand = await backendFetch("/api/brands/status", {}, 2500, undefined, operator);
+    return admissionForOperatorCheck(view, brand && isRecord(brand.body) ? brand.body.operator : undefined);
+  }
   if (readyBody?.acceptingInvestigations === false) return { status: "paused" };
   const health = ready ? null : await backendFetch("/health", {}, 2000);
   return interpretAdmissionProbe({ ready, health });

@@ -26,11 +26,11 @@ Neither an isolated successful provider build nor a healthy old backend proves t
 | Backend source | Same canonical Git repository, `main`, **no pinned old SHA** |
 | Backend build | `backend/Dockerfile` from monorepo root; shared workspace included |
 | Health | `/health` and actual runtime readiness |
-| Replicas | **One** while jobs/spend ledger are process-local |
+| Replicas | **One**: jobs and the in-process spend view are process-local (the operator-run ledger is durable, below) |
 | Database | Existing PostgreSQL and volume; never recreate or migrate implicitly |
 | Research spending | `CE_ACCEPT_INVESTIGATIONS=0` and baseline admission off by default, until independently approved |
 | Paid operator gate (Sprint 9J) | Every paid start on a public runtime needs `CE_PAID_OPERATOR_TOKEN` (≥ 32 chars, distinct from other secrets) plus an unexpired `CE_PAID_OPERATOR_EXPIRES_AT`; absent on production except during an approved run |
-| Run-wide Qloo ceiling (Sprint 9J) | `CE_PROCESS_QLOO_CALL_LIMIT` set to the approved total for an approved run; process-local |
+| Run-wide ceilings (Sprint 9J) | `CE_PROCESS_QLOO_CALL_LIMIT` = the approved Qloo total. Qloo dispatches and model reservations are also taken durably in `baseline_budget_accounts`, keyed by the operator-token hash, so a restart never grants the same credential a fresh allowance. Model reservations are not returned: $2.00 at a $0.50 reserve allows at most 4 job starts per credential |
 
 ## Verification levels
 
@@ -39,6 +39,16 @@ Neither an isolated successful provider build nor a healthy old backend proves t
 **Remote configuration, before any release claim**: inspect provider dashboards/API for the settings above. On Vercel, confirm the real Ignored Build Step field is cleared; GitHub-only tests cannot see this dashboard property. Confirm protected `READY` **production** deployment (not merely a `READY` preview). On Railway confirm `SUCCESS`, actual deployed Git SHA/branch, one replica, source not pinned, configured limits and paused admission. Confirm `main` and running frontend/backend code are compatible.
 
 **Hosted integration, before publicizing**: exercise the protected frontend → Railway `/health` / admissions paths, baseline and recorded demo, a real source-grounded research result where authorized, source/provenance rendering and export. Use the existing remote smoke and Vercel protection probe, and explicitly note when paid live testing was not authorized. A 401 protected page is not a failure; an anonymously accessible supposedly protected page **is** a security failure.
+
+## Automated release verification (Sprint 9L, every release)
+
+Procedure: the `/cultural-elasticity-release` skill (`.claude/skills/cultural-elasticity-release/SKILL.md`).
+
+1. `node scripts/release/preflight.mjs` on the release SHA (on `main`): repository identity, clean tree, touched areas, migrations flagged for approval, and the full offline gate. It records `.release/preflight-<sha>.json`, the accepted local equivalent while GitHub Actions jobs cannot start (`CI_NOT_RUN`).
+2. After both providers deploy: `node scripts/release/verify-production.mjs --public-mode --expect-admissions closed` (drop `--public-mode` if Vercel Authentication is back on; use `--expect-admissions open` only inside an approved window). It reads fresh Vercel and Railway metadata, the running revision, the cumulative baseline budget and the hosted endpoints, never prints a secret value, starts no paid work, and exits with `RELEASE_VERIFIED` (0), `RELEASE_DEGRADED` (3) or `RELEASE_FAILED` (1).
+3. `E2E_HOSTED_URL=<production> pnpm --filter frontend exec playwright test -c playwright.hosted.config.ts acceptance`: the anonymous browser checks always run; the live journey only with owner approval.
+
+The verdict rules (`scripts/release/classify.mjs`) are regression-tested in `scripts/release/classify.test.mjs`, which runs inside `pnpm check:deployment-config`. A frontend-only skew is accepted only when no file between Railway's serving SHA and the release matches `railway.json` watch patterns; paused admissions are never an infrastructure failure.
 
 ## Optional machine-checkable remote preflight
 
@@ -126,11 +136,11 @@ Vercel: use a previously verified `READY` deployment only if rollback is necessa
    - delete the operator token;
    - redeploy from `main`;
    - confirm `/ready` returns `ADMISSIONS_PAUSED` and `/ops/status` shows 0 jobs and 0 reserved;
-   - record `/ops/status` `spend` and `qlooDispatch` before shutdown, because both reset on restart.
+   - record `/ops/status` `spend`, `qlooDispatch` and `runLedger` before closing: the in-process view resets on restart, while the durable `runLedger` rows remain.
 
 **Public paid launch.** This remains **not approved**. It additionally needs:
 
-- durable admission and spend accounting, since the ledger and Qloo counter are in memory today;
+- durable admission and spend accounting per user (the operator-run ledger is durable per credential, but jobs are in memory);
 - a verified provider-side hard cap;
 - per-user authorization;
 - a separate security review.

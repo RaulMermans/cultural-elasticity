@@ -130,6 +130,7 @@ Canonical record: `docs/sprint-9j/LIVE_VALIDATION_AND_RELEASE_REPORT.md`.
 4. **PRs never consume Anthropic or Qloo credits.** `.github/workflows/ci.yml` has `contents: read` and empty provider keys. Do not add `pull_request_target`, deploy tokens, or `eval:agent:live` to pull-request CI.
 5. **Railway stays one replica, admissions off, until a live run is separately approved.** Connecting GitHub must not enable PR environments or unreviewed auto-deploys.
 6. **Operator `/ops/status` may expose Git SHA and branch.** It must never expose secrets, commit messages, or provider keys.
+7. **Every release ends in a verdict** (Sprint 9L): `RELEASE_VERIFIED`, `RELEASE_DEGRADED` or `RELEASE_FAILED` from `node scripts/release/verify-production.mjs`, after `node scripts/release/preflight.mjs`. Follow the `/cultural-elasticity-release` skill (`.claude/skills/cultural-elasticity-release/SKILL.md`) to deploy, verify, repair drift or run a bounded live window. Green provider deployments alone are not a release.
 
 ## Deployment regression prevention (permanent, October 27, 2026)
 
@@ -191,6 +192,9 @@ pnpm test:e2e           # browser tests against a SYNTHETIC job API; never live 
 pnpm feasibility:qloo   # live; report its result separately
 pnpm smoke:offline
 pnpm smoke:docker       # local image; no provider network for the MCP handshake
+node scripts/release/preflight.mjs   # release candidate on main: records local evidence while CI is billing-blocked
+node scripts/release/verify-production.mjs --public-mode --expect-admissions closed
+                        # read-only: fresh Vercel/Railway metadata + HTTP; prints the release verdict; no paid call
 pnpm smoke:remote -- https://<backend-origin>
                         # deployed backend, admissions paused only; no paid call (secrets from env)
 node scripts/vercel-protection-probe.mjs https://<vercel-url>

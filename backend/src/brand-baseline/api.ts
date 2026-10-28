@@ -9,6 +9,25 @@ import { resolveBrand } from "./research.js";
 import { createBaselineBody, resolveBrandBody } from "./schema.js";
 import { BaselineWorker, createLiveBaselineCallGate } from "./worker.js";
 
+export type BrandStatus = {
+  /** True only when this caller could start a scan now: admissions open and, where required, a valid operator credential. */
+  enabled: boolean;
+  admissionsOpen: boolean;
+  operator: "authorized" | "operator_required" | "operator_expired";
+  semantics: "baseline_admission_for_caller";
+};
+
+/**
+ * Sprint 9L: availability for the caller, not the process. A visitor without a valid paid-operator credential
+ * must not see an enabled brand search that Railway then refuses. The credential is evaluated only on a request
+ * that passed internal auth, so a direct anonymous probe learns nothing about it. A free read: no Qloo call.
+ */
+export function brandStatusForCaller(admissionsOpen: boolean, headers: Record<string, unknown>, env: NodeJS.ProcessEnv = process.env): BrandStatus {
+  const decision = verifyInternalAuth(headers, env) ? verifyPaidOperator(headers, env) : { ok: false as const, code: "operator_required" as const };
+  const operator = decision.ok ? "authorized" : decision.code;
+  return { enabled: admissionsOpen && decision.ok, admissionsOpen, operator, semantics: "baseline_admission_for_caller" };
+}
+
 const idParams = z.strictObject({ id: z.uuid() });
 const tokenHeader = "x-baseline-token";
 
@@ -59,7 +78,7 @@ export async function brandBaselineRoutes(app: FastifyInstance): Promise<void> {
     return reply.code(503).send({ error: "baseline_unavailable" });
   };
 
-  app.get("/api/brands/status", async () => ({ enabled: enabled && liveEnabled && Boolean(repository), semantics: "baseline_admission_only" }));
+  app.get("/api/brands/status", async (request) => brandStatusForCaller(enabled && liveEnabled && Boolean(repository), request.headers as Record<string, unknown>));
 
   app.get("/ops/baselines", async (request, reply) => {
     if (!operatorToken() || !verifyOperator(request.headers as Record<string, unknown>)) return reply.code(404).send({ error: "not_found" });
