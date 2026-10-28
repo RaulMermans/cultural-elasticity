@@ -7,7 +7,7 @@ import { elasticityVerdict } from "@/lib/elasticity-verdict";
 import { evidenceTerm } from "@/lib/evidence-presentation";
 import type { JobActivity } from "@/lib/job-envelope";
 import { hypothesisOutcomeCopy } from "@/lib/research-copy";
-import { BRAND_NODE, branchDirection, buildNetwork, canRetry, directionNodeId, inquiryNodeId, isPending, normName, layoutNetwork, type Inquiry, type NetworkNode } from "@/lib/research-network";
+import { BRAND_NODE, branchDirection, buildNetwork, lineageOf, territoryAncestor, canRetry, directionNodeId, inquiryNodeId, isPending, normName, layoutNetwork, type Inquiry, type NetworkNode } from "@/lib/research-network";
 import { buildResearchView, type ConnectionView, type DirectionView, type ResearchView } from "@/lib/research-view";
 import { NetworkBoard, type BoardInset } from "./NetworkBoard";
 
@@ -258,30 +258,38 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   const layout = useResearchLayout(view.scanId);
   const positions = useMemo(() => layout.apply(layoutNetwork(nodes)), [nodes, layout]);
   const byId = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
+  // Ties are drawn between territory cards (directions and found territories), never between question cards. A
+  // question's evidence counts for the territory card it grew from, when the question was about that territory.
   const links = useMemo(() => {
-    const sources: LinkSource[] = [];
-    const top = (id: string) => { let node = byId.get(id); while (node?.parentId && node.parentId !== BRAND_NODE) node = byId.get(node.parentId); return node?.id ?? id; };
+    const cards = new Map<string, LinkSource>();
+    const add = (cardId: string, name: string, items: EvidenceItem[]) => {
+      const card = cards.get(cardId) ?? { nodeId: cardId, lineage: lineageOf(nodes, cardId), name, items: [] };
+      card.items = [...card.items, ...items];
+      cards.set(cardId, card);
+    };
     for (const node of nodes) {
       if (node.kind === "direction" && node.directionKey) {
         const direction = view.directions.find((item) => item.key === node.directionKey);
-        if (direction?.canonicalConcept) sources.push({ nodeId: node.id, branch: top(node.id), name: node.label, items: [{ id: direction.canonicalConcept, label: direction.name, kind: "concept" }] });
+        if (direction?.canonicalConcept) add(node.id, node.label, [{ id: direction.canonicalConcept, label: direction.name, kind: "concept" }]);
         continue;
       }
       if (node.kind !== "inquiry" && node.kind !== "finding") continue;
       const inquiry = network.inquiries.find((item) => item.jobId === node.jobId);
       const result = inquiry?.response?.investigation?.result;
-      if (!result || (inquiry && isPending(inquiry))) continue;
-      const branch = branchDirection(nodes, node.id);
-      // A question stands for its branch's own territory; any other territory it found has its own card.
-      const own = branch ? inquiry!.response?.territories.find((item) => normName(item.name) === normName(branch.label)) : undefined;
-      if (node.kind === "inquiry" && !own) continue;
-      const key = node.kind === "finding" ? node.territoryKey : own?.territoryKey ?? null;
-      // Named by the territory the result is about, so the same territory found twice is never a tie.
-      const found = territoryItems(result, key);
-      if (found?.items.length) sources.push({ nodeId: node.id, branch: top(node.id), name: found.name, items: found.items });
+      if (!inquiry || !result || isPending(inquiry)) continue;
+      if (node.kind === "finding") {
+        const found = territoryItems(result, node.territoryKey);
+        if (found?.items.length) add(node.id, found.name, found.items);
+        continue;
+      }
+      const card = node.parentId ? territoryAncestor(nodes, node.parentId) : null;
+      const own = card ? inquiry.response?.territories.find((item) => normName(item.name) === normName(card.label)) : undefined;
+      if (!card || !own) continue;
+      const found = territoryItems(result, own.territoryKey);
+      if (found?.items.length) add(card.id, card.label, found.items);
     }
-    return crossLinks(sources);
-  }, [nodes, byId, view, network.inquiries]);
+    return crossLinks([...cards.values()]);
+  }, [nodes, view, network.inquiries]);
   const selected = byId.get(selectedId) ?? byId.get(BRAND_NODE)!;
   const previousCount = useRef(network.inquiries.length);
 
@@ -353,7 +361,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     dossier = <NewDirectionDossier node={directionNode} inquiries={branchInquiries(directionNode.id)} brand={view.brand.name} canAsk={live} busy={network.starting} onInvestigate={() => investigateTerritory(directionNode.label)} onSelect={setSelectedId} />;
   } else if (selected.kind === "inquiry") {
     const inquiry = inquiryOf(selected);
-    const branch = branchOfSelected?.label ?? null;
+    const branch = (selected.parentId ? territoryAncestor(nodes, selected.parentId) : null)?.label ?? null;
     dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
   } else if (selected.kind === "finding") {
     const parentInquiry = inquiryOf(selected);

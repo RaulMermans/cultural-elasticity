@@ -53,6 +53,26 @@ export const inquiryNodeId = (jobId: string) => `inq:${jobId}`;
 export const newDirectionId = (name: string) => `new:${name}`;
 export const normName = (value: string) => value.normalize("NFKC").trim().replace(/\s+/gu, " ").toLowerCase();
 
+/** The nearest card above a node (or the node itself) that stands for one territory: a direction or a finding. */
+export function territoryAncestor(nodes: readonly NetworkNode[], id: string): NetworkNode | null {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  let node = byId.get(id) ?? null;
+  for (let guard = 0; node && guard < 64; guard += 1) {
+    if (node.kind === "direction" || node.kind === "finding") return node;
+    node = node.parentId ? byId.get(node.parentId) ?? null : null;
+  }
+  return null;
+}
+
+/** Every id from the node up to the brand. */
+export function lineageOf(nodes: readonly NetworkNode[], id: string): string[] {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const out: string[] = [];
+  let node = byId.get(id) ?? null;
+  for (let guard = 0; node && guard < 64; guard += 1) { out.push(node.id); node = node.parentId ? byId.get(node.parentId) ?? null : null; }
+  return out;
+}
+
 /** The territory a branch is about: the label of the nearest direction above the node, if any. */
 export function branchDirection(nodes: readonly NetworkNode[], id: string): NetworkNode | null {
   const byId = new Map(nodes.map((node) => [node.id, node]));
@@ -116,6 +136,7 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
   // new direction for a territory the baseline did not list. Matching is by the territory name the server returned.
   const directionByName = new Map(directions.map((direction) => [normName(direction.name), directionNodeId(direction.key)]));
   const branchName = new Map<string, string>(directions.map((direction) => [directionNodeId(direction.key), normName(direction.name)]));
+  const findingByName = new Map<string, string>();
   const ordered = [...inquiries].sort((a, b) => a.createdAt - b.createdAt);
   for (const inquiry of ordered) {
     const id = inquiryNodeId(inquiry.jobId);
@@ -124,9 +145,13 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
     const runId = inquiry.response?.investigation?.runId ?? null;
     let parentId = ids.has(inquiry.parentId) ? inquiry.parentId : BRAND_NODE;
     const named = inquiry.response?.territories ?? [];
-    if (parentId === BRAND_NODE && named[0]) {
+    // A broad question (where could the brand go?) stays on the brand; its candidates become findings under it.
+    const intent = inquiry.response?.handoff?.intent ?? null;
+    const aboutOne = intent ? intent !== "explore_frontier" : named.length === 1;
+    if (parentId === BRAND_NODE && named[0] && aboutOne) {
       const name = normName(named[0].name);
-      const existing = directionByName.get(name) ?? newDirectionId(name);
+      // Grow from where the territory already is: a baseline direction, then a card where it was found, then a new direction.
+      const existing = directionByName.get(name) ?? findingByName.get(name) ?? newDirectionId(name);
       if (!ids.has(existing)) {
         ids.add(existing);
         directionByName.set(name, existing);
@@ -149,6 +174,7 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
       if (ids.has(findingId)) return;
       ids.add(findingId);
       branchName.set(findingId, normName(territory.name));
+      if (!findingByName.has(normName(territory.name))) findingByName.set(normName(territory.name), findingId);
       nodes.push({ id: findingId, parentId: id, kind: "finding", label: territory.name, tone: copy.tone, status: copy.statusLabel, runId, territoryKey: territory.territoryKey, directionKey: null, jobId: inquiry.jobId });
     });
   }

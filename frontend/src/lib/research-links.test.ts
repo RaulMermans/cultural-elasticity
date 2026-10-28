@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { crossLinks, type LinkSource } from "./research-links.ts";
 
-const source = (nodeId: string, branch: string, name: string, ids: string[]): LinkSource => ({ nodeId, branch, name, items: ids.map((id) => ({ id, label: `SYN ${id}`, kind: id.startsWith("tag") ? "taste" : "example" })) });
+const source = (nodeId: string, parent: string, name: string, ids: string[]): LinkSource => ({ nodeId, lineage: [nodeId, parent, "brand"], name, items: ids.map((id) => ({ id, label: `SYN ${id}`, kind: id.startsWith("tag") ? "taste" : "example" })) });
 
 test("cards on different branches that share Qloo identifiers are tied, with what they share", () => {
   const links = crossLinks([
@@ -14,8 +14,8 @@ test("cards on different branches that share Qloo identifiers are tied, with wha
   assert.deepEqual(links.map((link) => [link.a, link.b, link.shared.map((item) => item.id)]), [["n1", "n2", ["tag:x", "ent:2"]]]);
 });
 
-test("the same branch, or the same territory twice, is never a tie", () => {
-  assert.deepEqual(crossLinks([source("n1", "dir:a", "SYN One", ["ent:1"]), source("n2", "dir:a", "SYN Two", ["ent:1"])]), []);
+test("a card and what grew from it, or the same territory twice, is never a tie", () => {
+  assert.deepEqual(crossLinks([source("n1", "dir:a", "SYN One", ["ent:1"]), source("n2", "n1", "SYN Two", ["ent:1"])]), []);
   assert.deepEqual(crossLinks([source("n1", "dir:a", "SYN One", ["ent:1"]), source("n2", "dir:b", "syn  one", ["ent:1"])]), []);
 });
 

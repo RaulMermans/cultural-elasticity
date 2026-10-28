@@ -9,7 +9,8 @@ import { normName } from "./research-network.ts";
 
 export type EvidenceKind = "taste" | "example" | "concept";
 export type EvidenceItem = { id: string; label: string; kind: EvidenceKind };
-export type LinkSource = { nodeId: string; branch: string; name: string; items: EvidenceItem[] };
+/** lineage: the card's own id and every id above it, so a card is never tied to its own ancestors or descendants. */
+export type LinkSource = { nodeId: string; lineage: readonly string[]; name: string; items: EvidenceItem[] };
 export type CrossLink = { a: string; b: string; shared: EvidenceItem[] };
 
 /** The territory a result is about, and the Qloo identifiers it carries. */
@@ -29,8 +30,8 @@ export function territoryItems(result: AgentRunResponse | null | undefined, terr
 const KIND_ORDER: Record<EvidenceKind, number> = { concept: 0, taste: 1, example: 2 };
 
 /**
- * Links between sources on different branches that share at least one identifier. The same territory investigated
- * twice is not a link. Ordered by how many identifiers they share, then by node id, so the result is deterministic.
+ * Links between territory cards that share at least one identifier and do not grow from one another. The same
+ * territory investigated twice is not a link. Ordered by how many identifiers they share, then by node id, so the result is deterministic.
  */
 export function crossLinks(sources: readonly LinkSource[], max = 10): CrossLink[] {
   const links: CrossLink[] = [];
@@ -38,7 +39,7 @@ export function crossLinks(sources: readonly LinkSource[], max = 10): CrossLink[
     for (let j = i + 1; j < sources.length; j += 1) {
       const a = sources[i]!;
       const b = sources[j]!;
-      if (a.branch === b.branch || normName(a.name) === normName(b.name)) continue;
+      if (a.lineage.includes(b.nodeId) || b.lineage.includes(a.nodeId) || normName(a.name) === normName(b.name)) continue;
       const theirs = new Set(b.items.map((item) => item.id));
       const shared = [...new Map(a.items.filter((item) => theirs.has(item.id)).map((item) => [item.id, item])).values()]
         .sort((x, y) => KIND_ORDER[x.kind] - KIND_ORDER[y.kind] || x.label.localeCompare(y.label));

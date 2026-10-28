@@ -254,6 +254,22 @@ test("SYNTHETIC cards on different branches that share Qloo identifiers are tied
   await page.getByRole("button", { name: "Ask the agent" }).click();
   await expect(page.getByTestId("network-tie")).toHaveCount(1);
   await page.getByRole("treeitem", { name: /Territory: Trail Running/u }).click();
-  await expect(page.getByTestId("network-shared")).toContainText("How far can Larkspur Velo extend into Gravel Riding?");
+  await expect(page.getByTestId("network-shared").getByRole("button", { name: "Gravel Riding" })).toBeVisible();
   await expect(page.getByTestId("network-shared")).toContainText("not a similarity score");
+});
+
+test("SYNTHETIC a broad question stays on the brand and a later question about one of its finds grows from that card", async ({ page }) => {
+  await stubLive(page);
+  const broad = structuredClone(fixture.compare.view) as { response: { handoff: { intent: string } | null } };
+  if (broad.response.handoff) broad.response.handoff.intent = "explore_frontier";
+  await page.route("**/api/agent/jobs/*", (route) => json(route, route.request().url().endsWith("000000000001") ? broad : fixture.parent.view));
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("Where could Larkspur Velo go next outdoors?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-node-finding")).toHaveCount(3);
+  await page.getByRole("treeitem", { name: /Brand: Larkspur Velo/u }).click();
+  await page.getByLabel(/Ask a research question about/u).fill("How far can Larkspur Velo extend into Gravel Riding?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(2);
+  await expect(page.getByRole("treeitem", { name: /New direction/u })).toHaveCount(0);
 });

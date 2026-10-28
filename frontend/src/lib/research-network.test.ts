@@ -18,17 +18,23 @@ test("the brand is the root, directions hang from it, and inquiries attach to th
 
 test("a brand question joins the direction it names, or opens a new one; other territories become findings", () => {
   const territory = (name: string, key: string) => ({ name, investigationState: "INVESTIGATED", territoryKey: key, evidenceStatus: "PARTIAL_EVIDENCE", analysisRoute: null });
-  const done = (names: ReturnType<typeof territory>[]) => ({ status: "completed", response: response({ territories: names } as Partial<QueryResponse>) });
+  const done = (names: ReturnType<typeof territory>[], intent: string | null = null) => ({ status: "completed", response: response({ territories: names, handoff: intent ? { intent } : null } as Partial<QueryResponse>) });
   const nodes = buildNetwork("B", [direction("a")], [
     inquiry("job1", BRAND_NODE, done([territory("SYNTHETIC a", "k1")])),
-    inquiry("job2", BRAND_NODE, done([territory("SYNTHETIC New", "k2"), territory("SYNTHETIC Ref", "k3")])),
+    inquiry("job2", BRAND_NODE, done([territory("SYNTHETIC New", "k2"), territory("SYNTHETIC Ref", "k3")], "compare_territories")),
     inquiry("job3", "dir:a", { ...done([territory("SYNTHETIC a", "k1")]), origin: "direction" }),
+    // A broad question stays on the brand; a later question about one of its candidates grows from that card.
+    inquiry("job4", BRAND_NODE, done([territory("SYNTHETIC Wide", "k4"), territory("SYNTHETIC Other", "k5")], "explore_frontier")),
+    inquiry("job5", BRAND_NODE, done([territory("SYNTHETIC Wide", "k4")])),
   ]);
+  assert.equal(nodes.find((node) => node.id === "inq:job4")!.parentId, BRAND_NODE);
+  assert.equal(nodes.find((node) => node.id === "inq:job5")!.parentId, "find:job4:k4");
+  assert.equal(nodes.find((node) => node.id === "new:synthetic wide"), undefined);
   assert.equal(nodes.find((node) => node.id === "inq:job1")!.parentId, "dir:a");
   const opened = nodes.find((node) => node.id === "new:synthetic new")!;
   assert.deepEqual([opened.kind, opened.parentId, opened.status], ["direction", BRAND_NODE, "New direction"]);
   assert.equal(nodes.find((node) => node.id === "inq:job2")!.parentId, "new:synthetic new");
-  const findings = nodes.filter((node) => node.kind === "finding");
+  const findings = nodes.filter((node) => node.kind === "finding" && node.parentId === "inq:job2");
   assert.deepEqual(findings.map((node) => [node.label, node.parentId, node.tone, node.runId]), [["SYNTHETIC Ref", "inq:job2", "partial", "run-1"]]);
   assert.equal(branchDirection(nodes, "find:job2:k3")!.id, "new:synthetic new");
 });
