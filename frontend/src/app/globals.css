@@ -1082,6 +1082,24 @@ body:not(:has(.atlas)) .sprint { margin-bottom: 0; opacity: 0.7; }
 .rn-shared__list > li { padding: 0.55rem 0.7rem; border-radius: 12px; background: #f7f3fb; border: 1px solid #e2d6ef; display: grid; gap: 6px; }
 .rn-shared .rr-chips li { background: #fffdf8; border-color: #e2d6ef; }
 .rn-shared .rr-chips li[data-kind="concept"] { border-style: dashed; }
+.rn-tie { cursor: pointer; }
+.rn-tie:hover circle { fill: #8a6bb0; }
+.rn-tie:hover text { fill: #fff; }
+.rn-tie circle { r: 15; }
+.rn-bridge-wire { fill: none; stroke: #8a6bb0; stroke-width: 2; stroke-dasharray: 0.02 0.015; opacity: 0.7; }
+.rn-bridge-wire[data-active="true"] { opacity: 1; stroke-width: 2.6; }
+.rn-card[data-kind="bridge"] .rn-card__body { fill: #f3edf9; stroke: #8a6bb0; stroke-dasharray: 6 4; }
+.rn-card[data-kind="bridge"] .rn-card__dot { fill: #8a6bb0; }
+.rn-card[data-kind="bridge"][data-selected="true"] .rn-card__body { stroke: #5d4483; stroke-dasharray: none; }
+.rn-x { color: #8a6bb0; font-weight: 400; }
+.rn-ends { display: flex; flex-wrap: wrap; gap: 6px; margin: var(--ce-space-2) 0; }
+.rn-end { border: 1px solid #e2d6ef; background: #f7f3fb; border-radius: var(--ce-radius-pill); padding: 0.3rem 0.75rem; font: inherit; font-size: 0.85rem; cursor: pointer; }
+.rn-suggest { list-style: none; margin: 0; padding: 0 !important; display: grid; gap: var(--ce-space-2); }
+.rn-suggest li { display: grid; gap: 2px; }
+.rn-suggest__q { text-align: left; border: 1px solid #d8c7ea; background: linear-gradient(135deg, #f7f3fb, #fffdf8); border-radius: 12px; padding: 0.6rem 0.8rem; font: inherit; font-weight: 600; cursor: pointer; color: var(--ce-ink); }
+.rn-suggest__q:hover:not(:disabled) { border-color: #8a6bb0; box-shadow: 0 4px 12px rgba(93, 68, 131, 0.15); }
+.rn-suggest__q:disabled { opacity: 0.55; cursor: default; }
+.rn-open-tie { justify-self: start; border: 0; background: #8a6bb0; color: #fff; border-radius: var(--ce-radius-pill); padding: 0.25rem 0.7rem; font: inherit; font-size: 0.8rem; cursor: pointer; }
 @keyframes rn-step { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes rn-dots { 0%, 100% { transform: translateY(0); opacity: 0.35; } 50% { transform: translateY(-4px); opacity: 1; } }
 @keyframes rn-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(74, 122, 88, 0.0); } 50% { box-shadow: 0 0 0 6px rgba(74, 122, 88, 0.12); } }

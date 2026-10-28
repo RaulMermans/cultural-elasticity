@@ -7,7 +7,7 @@ import { elasticityVerdict } from "@/lib/elasticity-verdict";
 import { evidenceTerm } from "@/lib/evidence-presentation";
 import type { JobActivity } from "@/lib/job-envelope";
 import { hypothesisOutcomeCopy } from "@/lib/research-copy";
-import { BRAND_NODE, branchDirection, buildNetwork, lineageOf, territoryAncestor, canRetry, directionNodeId, inquiryNodeId, isPending, normName, layoutNetwork, type Inquiry, type NetworkNode } from "@/lib/research-network";
+import { BRAND_NODE, branchDirection, bridgeId, buildNetwork, layoutWithBridges, lineageOf, territoryAncestor, type Bridge, canRetry, directionNodeId, inquiryNodeId, isPending, normName, layoutNetwork, type Inquiry, type NetworkNode } from "@/lib/research-network";
 import { buildResearchView, type ConnectionView, type DirectionView, type ResearchView } from "@/lib/research-view";
 import { NetworkBoard, type BoardInset } from "./NetworkBoard";
 
@@ -17,7 +17,7 @@ import { useResearchNetwork } from "./use-research-network";
 import { useResearchLayout } from "./use-research-layout";
 import { TerritoryReadingView } from "./TerritoryReading";
 import { territoryReading } from "@/lib/territory-reading";
-import { crossLinks, territoryItems, type CrossLink, type EvidenceItem, type LinkSource } from "@/lib/research-links";
+import { connectionQuestions, crossLinks, territoryItems, type CrossLink, type EvidenceItem, type LinkSource } from "@/lib/research-links";
 
 const clip = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text);
 
@@ -66,10 +66,38 @@ function SharedAcross({ links, selectedId, byId, onSelect }: { links: CrossLink[
       if (!other) return null;
       return <li key={other.id}>
         <button type="button" className="rn-link" onClick={() => onSelect(other.id)}>{other.label}</button>
+        <button type="button" className="rn-open-tie" onClick={() => onSelect(bridgeId(link.a, link.b))}>Explore this connection</button>
         <ul className="rr-chips">{link.shared.slice(0, 6).map((item) => <li key={item.id} data-kind={item.kind} title={KIND_WORD[item.kind]}>{item.label}</li>)}</ul>
       </li>;
     })}</ul>
   </section>;
+}
+
+/** An opened connection: what two territory cards share, and questions that branch from the connection itself. */
+function ConnectionDossier({ node, link, byId, brand, inquiries, canAsk, busy, onAsk, onSelect }: { node: NetworkNode; link: CrossLink | null; byId: ReadonlyMap<string, NetworkNode>; brand: string; inquiries: Inquiry[]; canAsk: boolean; busy: boolean; onAsk: (question: string) => void; onSelect: (id: string) => void }) {
+  const [aId, bId] = node.id.slice(4).split("|");
+  const a = byId.get(aId ?? "");
+  const b = byId.get(bId ?? "");
+  const asked = new Set(inquiries.map((item) => normName(item.question)));
+  const suggestions = a && b ? connectionQuestions(brand, a.label, b.label, link?.shared ?? []).filter((item) => !asked.has(normName(item.question))) : [];
+  return <>
+    <p className="kicker">Connection across branches</p>
+    <h2>{a?.label ?? "?"} <span className="rn-x">×</span> {b?.label ?? "?"}</h2>
+    <p className="quiet">These two sit on different branches, and Qloo&apos;s evidence for them carries the same signals. Shared evidence, not a similarity score.</p>
+    <div className="rn-ends">
+      {a ? <button type="button" className="rn-end" onClick={() => onSelect(a.id)}>{a.label}</button> : null}
+      {b ? <button type="button" className="rn-end" onClick={() => onSelect(b.id)}>{b.label}</button> : null}
+    </div>
+    {link?.shared.length ? <div className="rr-section"><h3>What they share</h3><p className="rr-hint">The same Qloo concept, taste signal or example entity appears in both.</p>
+      <ul className="rr-chips">{link.shared.map((item) => <li key={item.id} data-kind={item.kind} title={KIND_WORD[item.kind]}>{item.label}</li>)}</ul></div> : null}
+    {inquiries.length ? <><h3>Explored from this connection</h3><ul className="rn-links">{inquiries.map((item) => <li key={item.jobId}><button type="button" className="rn-link" onClick={() => onSelect(inquiryNodeId(item.jobId))}>{item.question}</button></li>)}</ul></> : null}
+    {suggestions.length ? <div className="rr-section" data-testid="network-connection-questions"><h3>Questions to explore it</h3>
+      <ul className="rn-suggest">{suggestions.map((item) => <li key={item.question}>
+        <button type="button" className="rn-suggest__q" disabled={!canAsk || busy} onClick={() => onAsk(item.question)}>{item.question}</button>
+        <span className="rr-hint">{item.why}</span>
+      </li>)}</ul></div> : null}
+    <p className="quiet">Or ask your own below: it will branch from this connection.</p>
+  </>;
 }
 
 /** Removing a branch takes two deliberate steps. It only changes this browser's board; spend already made stays spent. */
@@ -237,6 +265,39 @@ function DirectionDossier({ view, direction, inquiries, canInvestigate, busy, on
   </>;
 }
 
+// Ties are drawn between territory cards (directions and found territories), never between question cards. A
+// question's evidence counts for the territory card it grew from, when the question was about that territory.
+function tiesOf(nodes: readonly NetworkNode[], view: ResearchView, inquiries: readonly Inquiry[]): CrossLink[] {
+  const cards = new Map<string, LinkSource>();
+  const add = (cardId: string, name: string, items: EvidenceItem[]) => {
+    const card = cards.get(cardId) ?? { nodeId: cardId, lineage: lineageOf(nodes, cardId), name, items: [] };
+    card.items = [...card.items, ...items];
+    cards.set(cardId, card);
+  };
+  for (const node of nodes) {
+    if (node.kind === "direction" && node.directionKey) {
+      const direction = view.directions.find((item) => item.key === node.directionKey);
+      if (direction?.canonicalConcept) add(node.id, node.label, [{ id: direction.canonicalConcept, label: direction.name, kind: "concept" }]);
+      continue;
+    }
+    if (node.kind !== "inquiry" && node.kind !== "finding") continue;
+    const inquiry = inquiries.find((item) => item.jobId === node.jobId);
+    const result = inquiry?.response?.investigation?.result;
+    if (!inquiry || !result || isPending(inquiry)) continue;
+    if (node.kind === "finding") {
+      const found = territoryItems(result, node.territoryKey);
+      if (found?.items.length) add(node.id, found.name, found.items);
+      continue;
+    }
+    const card = node.parentId ? territoryAncestor(nodes, node.parentId) : null;
+    const own = card ? inquiry.response?.territories.find((item) => normName(item.name) === normName(card.label)) : undefined;
+    if (!card || !own) continue;
+    const found = territoryItems(result, own.territoryKey);
+    if (found?.items.length) add(card.id, card.label, found.items);
+  }
+return crossLinks([...cards.values()]);
+}
+
 /** A card and every card that grew from it: dragging a card carries its branch. */
 function branchOf(nodes: readonly NetworkNode[], id: string): string[] {
   const out = [id];
@@ -254,42 +315,22 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     const direction = view.directions.find((item) => directionNodeId(item.key) === openDirection);
     return direction ? { nodeId: directionNodeId(direction.key), connections: connectionsFor(view, direction).map((item) => ({ key: item.key, name: item.name })) } : null;
   }, [view, openDirection]);
-  const nodes = useMemo(() => buildNetwork(view.brand.name, view.directions, network.inquiries, expanded), [view, network.inquiries, expanded]);
+  // First pass: the tree without bridges, from which ties are found. Second pass adds the opened bridges.
+  const baseNodes = useMemo(() => buildNetwork(view.brand.name, view.directions, network.inquiries, expanded), [view, network.inquiries, expanded]);
+  const links = useMemo(() => tiesOf(baseNodes, view, network.inquiries), [baseNodes, view, network.inquiries]);
+  const bridges = useMemo(() => {
+    const labels = new Map(baseNodes.map((node) => [node.id, node.label]));
+    const open = new Set(network.inquiries.map((item) => item.parentId).filter((id) => id.startsWith("tie:")));
+    if (selectedId.startsWith("tie:")) open.add(selectedId);
+    return [...open].flatMap((id): Bridge[] => {
+      const [a, b] = id.slice(4).split("|");
+      return a && b && labels.has(a) && labels.has(b) ? [{ id, a, b, label: `${labels.get(a)} × ${labels.get(b)}` }] : [];
+    });
+  }, [baseNodes, network.inquiries, selectedId]);
+  const nodes = useMemo(() => bridges.length ? buildNetwork(view.brand.name, view.directions, network.inquiries, expanded, bridges) : baseNodes, [baseNodes, bridges, view, network.inquiries, expanded]);
   const layout = useResearchLayout(view.scanId);
-  const positions = useMemo(() => layout.apply(layoutNetwork(nodes)), [nodes, layout]);
+  const positions = useMemo(() => layout.apply(layoutWithBridges(nodes, bridges)), [nodes, bridges, layout]);
   const byId = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
-  // Ties are drawn between territory cards (directions and found territories), never between question cards. A
-  // question's evidence counts for the territory card it grew from, when the question was about that territory.
-  const links = useMemo(() => {
-    const cards = new Map<string, LinkSource>();
-    const add = (cardId: string, name: string, items: EvidenceItem[]) => {
-      const card = cards.get(cardId) ?? { nodeId: cardId, lineage: lineageOf(nodes, cardId), name, items: [] };
-      card.items = [...card.items, ...items];
-      cards.set(cardId, card);
-    };
-    for (const node of nodes) {
-      if (node.kind === "direction" && node.directionKey) {
-        const direction = view.directions.find((item) => item.key === node.directionKey);
-        if (direction?.canonicalConcept) add(node.id, node.label, [{ id: direction.canonicalConcept, label: direction.name, kind: "concept" }]);
-        continue;
-      }
-      if (node.kind !== "inquiry" && node.kind !== "finding") continue;
-      const inquiry = network.inquiries.find((item) => item.jobId === node.jobId);
-      const result = inquiry?.response?.investigation?.result;
-      if (!inquiry || !result || isPending(inquiry)) continue;
-      if (node.kind === "finding") {
-        const found = territoryItems(result, node.territoryKey);
-        if (found?.items.length) add(node.id, found.name, found.items);
-        continue;
-      }
-      const card = node.parentId ? territoryAncestor(nodes, node.parentId) : null;
-      const own = card ? inquiry.response?.territories.find((item) => normName(item.name) === normName(card.label)) : undefined;
-      if (!card || !own) continue;
-      const found = territoryItems(result, own.territoryKey);
-      if (found?.items.length) add(card.id, card.label, found.items);
-    }
-    return crossLinks([...cards.values()]);
-  }, [nodes, view, network.inquiries]);
   const selected = byId.get(selectedId) ?? byId.get(BRAND_NODE)!;
   const previousCount = useRef(network.inquiries.length);
 
@@ -339,7 +380,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   const branchOfSelected = branchDirection(nodes, selected.id);
   // A run the server let go cannot carry a follow-up; its question then starts fresh on the same direction.
   const selectedLost = selected.jobId ? Boolean(inquiryOf(selected)?.lost) : false;
-  const askFrom = selected.runId && !selectedLost ? selected : directionNode.kind === "direction" ? directionNode : branchOfSelected;
+  const askFrom = selected.runId && !selectedLost ? selected : selected.kind === "bridge" ? selected : directionNode.kind === "direction" ? directionNode : branchOfSelected;
   const branchInquiries = (nodeId: string) => nodes.filter((node) => node.parentId === nodeId && node.kind === "inquiry").map(inquiryOf).filter((item): item is Inquiry => item !== null);
   /** Any started or reused inquiry becomes the selection, so its answer is in view. */
   const open = (started: Promise<string | null>) => started.then((jobId) => { if (jobId) setSelectedId(inquiryNodeId(jobId)); return jobId; });
@@ -359,6 +400,10 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     dossier = <DirectionDossier view={view} direction={direction} inquiries={branchInquiries(directionNode.id)} canInvestigate={canInvestigate && Boolean(scanToken)} busy={network.starting} onInvestigate={() => void network.investigateDirection(direction.id, direction.name, directionNode.id)} onSelect={setSelectedId} />;
   } else if (directionNode.kind === "direction") {
     dossier = <NewDirectionDossier node={directionNode} inquiries={branchInquiries(directionNode.id)} brand={view.brand.name} canAsk={live} busy={network.starting} onInvestigate={() => investigateTerritory(directionNode.label)} onSelect={setSelectedId} />;
+  } else if (selected.kind === "bridge") {
+    const [a, b] = selected.id.slice(4).split("|");
+    const link = links.find((item) => item.a === a && item.b === b) ?? null;
+    dossier = <ConnectionDossier node={selected} link={link} byId={byId} brand={view.brand.name} inquiries={branchInquiries(selected.id)} canAsk={live} busy={network.starting} onAsk={(text) => void open(network.ask(text, selected))} onSelect={setSelectedId} />;
   } else if (selected.kind === "inquiry") {
     const inquiry = inquiryOf(selected);
     const branch = (selected.parentId ? territoryAncestor(nodes, selected.parentId) : null)?.label ?? null;
@@ -377,7 +422,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     dossier = <>{dossier}<SharedAcross links={related} selectedId={selected.id} byId={byId} onSelect={setSelectedId} /></>;
   }
 
-  const removable = selected.kind === "inquiry" || (selected.kind === "direction" && !selected.directionKey);
+  const removable = selected.kind === "inquiry" || selected.kind === "bridge" || (selected.kind === "direction" && !selected.directionKey);
   if (removable) {
     const branch = branchOf(nodes, selected.id);
     const jobIds = [...new Set(branch.map((id) => byId.get(id)?.jobId).filter((id): id is string => Boolean(id)))];
@@ -409,10 +454,10 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
         <aside className="rn-dossier" aria-live="polite" data-testid="network-dossier">{dossier}</aside>
         <form className="rn-composer" onSubmit={submit} data-testid="network-composer">
           <label htmlFor="rn-question">
-            {askFrom?.kind === "direction" ? <>Ask about <strong>{clip(askFrom.label, 48)}</strong> for {view.brand.name}</> : askFrom ? <>Continue from <strong>{clip(askFrom.label, 48)}</strong></> : <>Ask a research question about <strong>{view.brand.name}</strong></>}
+            {askFrom?.kind === "bridge" ? <>Ask about the connection <strong>{clip(askFrom.label, 60)}</strong></> : askFrom?.kind === "direction" ? <>Ask about <strong>{clip(askFrom.label, 48)}</strong> for {view.brand.name}</> : askFrom ? <>Continue from <strong>{clip(askFrom.label, 48)}</strong></> : <>Ask a research question about <strong>{view.brand.name}</strong></>}
           </label>
           <div className="rn-composer__row">
-            <input id="rn-question" ref={composerRef} value={question} maxLength={2000} placeholder={askFrom?.kind === "direction" ? `How far can ${view.brand.name} extend into ${askFrom.label}? Which audiences overlap?` : askFrom ? "Ask a follow-up, narrow it down, or switch territory" : `Where could ${view.brand.name} go next? How far can ${view.brand.name} extend into tennis?`} onChange={(event) => setQuestion(event.target.value)} disabled={!live} />
+            <input id="rn-question" ref={composerRef} value={question} maxLength={2000} placeholder={askFrom?.kind === "bridge" ? "What do these two share for the brand? Which audiences overlap?" : askFrom?.kind === "direction" ? `How far can ${view.brand.name} extend into ${askFrom.label}? Which audiences overlap?` : askFrom ? "Ask a follow-up, narrow it down, or switch territory" : `Where could ${view.brand.name} go next? How far can ${view.brand.name} extend into tennis?`} onChange={(event) => setQuestion(event.target.value)} disabled={!live} />
             <button type="submit" className="primary" disabled={!live || network.starting || !question.trim()}>{network.starting ? "Starting…" : "Ask the agent"}</button>
           </div>
           <p className="quiet">{live ? "The agent plans its own Qloo lookups within a fixed budget. Every number it reports comes from Qloo." : "Live research is off, so new questions can’t start. You can still explore this network."}</p>

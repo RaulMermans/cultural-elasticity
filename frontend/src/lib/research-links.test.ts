@@ -1,7 +1,7 @@
 /** SYNTHETIC sources: cross-branch ties are shared Qloo identifiers only, never a score. */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { crossLinks, type LinkSource } from "./research-links.ts";
+import { connectionQuestions, crossLinks, type LinkSource } from "./research-links.ts";
 
 const source = (nodeId: string, parent: string, name: string, ids: string[]): LinkSource => ({ nodeId, lineage: [nodeId, parent, "brand"], name, items: ids.map((id) => ({ id, label: `SYN ${id}`, kind: id.startsWith("tag") ? "taste" : "example" })) });
 
@@ -23,4 +23,13 @@ test("ties are ordered by how much they share, deterministically, and capped", (
   const sources = [source("a", "b1", "A", ["e1"]), source("b", "b2", "B", ["e1", "e2"]), source("c", "b3", "C", ["e1", "e2"])];
   assert.deepEqual(crossLinks(sources).map((link) => `${link.a}-${link.b}`), ["b-c", "a-b", "a-c"]);
   assert.equal(crossLinks(sources, 1).length, 1);
+});
+
+test("connection questions name both ends and the shared ground, never an example entity as a territory", () => {
+  const questions = connectionQuestions("SYN BRAND", "SYN A", "SYN B", [
+    { id: "ent:1", label: "SYN Example", kind: "example" },
+    { id: "tag:1", label: "SYN Common", kind: "taste" },
+  ]).map((item) => item.question);
+  assert.deepEqual(questions, ["Compare SYN A with SYN B for SYN BRAND", "How far can SYN BRAND extend into SYN Common?", "Where could SYN BRAND go next between SYN A and SYN B?"]);
+  assert.equal(connectionQuestions("B", "A1", "B1", [{ id: "e", label: "E", kind: "example" }]).length, 2);
 });

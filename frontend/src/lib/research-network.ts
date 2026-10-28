@@ -29,7 +29,14 @@ export type Inquiry = {
   createdAt: number;
 };
 
-export type NetworkKind = "brand" | "direction" | "connection" | "inquiry" | "finding";
+export type NetworkKind = "brand" | "direction" | "connection" | "inquiry" | "finding" | "bridge";
+
+/**
+ * An opened tie between two territory cards that share Qloo identifiers. Questions asked from it branch from the
+ * connection itself. It has no lineage parent: it sits between its two ends.
+ */
+export type Bridge = { id: string; a: string; b: string; label: string };
+export const bridgeId = (a: string, b: string) => `tie:${a}|${b}`;
 
 export type NetworkNode = {
   id: string;
@@ -117,7 +124,7 @@ export function inquiryState(inquiry: Inquiry): { tone: AtlasTone; status: strin
 /** Qloo connections shown around an opened direction. They are what Qloo returned, never investigation steps. */
 export type ExpandedDirection = { nodeId: string; connections: { key: string; name: string }[] };
 
-export function buildNetwork(brand: string, directions: readonly DirectionView[], inquiries: readonly Inquiry[], expanded: ExpandedDirection | null = null): NetworkNode[] {
+export function buildNetwork(brand: string, directions: readonly DirectionView[], inquiries: readonly Inquiry[], expanded: ExpandedDirection | null = null, bridges: readonly Bridge[] = []): NetworkNode[] {
   const nodes: NetworkNode[] = [{ id: BRAND_NODE, parentId: null, kind: "brand", label: brand, tone: "idle", status: "Brand", runId: null, territoryKey: null, directionKey: null, jobId: null }];
   const ids = new Set([BRAND_NODE]);
   for (const direction of directions) {
@@ -137,10 +144,19 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
   const directionByName = new Map(directions.map((direction) => [normName(direction.name), directionNodeId(direction.key)]));
   const branchName = new Map<string, string>(directions.map((direction) => [directionNodeId(direction.key), normName(direction.name)]));
   const findingByName = new Map<string, string>();
+  const bridgeById = new Map(bridges.map((bridge) => [bridge.id, bridge]));
+  // A bridge appears once both of its ends are on the board.
+  const openBridge = (id: string) => {
+    const bridge = bridgeById.get(id);
+    if (!bridge || ids.has(id) || !ids.has(bridge.a) || !ids.has(bridge.b)) return;
+    ids.add(id);
+    nodes.push({ id, parentId: null, kind: "bridge", label: bridge.label, tone: "idle", status: "Connection", runId: null, territoryKey: null, directionKey: null, jobId: null });
+  };
   const ordered = [...inquiries].sort((a, b) => a.createdAt - b.createdAt);
   for (const inquiry of ordered) {
     const id = inquiryNodeId(inquiry.jobId);
     if (ids.has(id)) continue;
+    openBridge(inquiry.parentId);
     const state = inquiryState(inquiry);
     const runId = inquiry.response?.investigation?.runId ?? null;
     let parentId = ids.has(inquiry.parentId) ? inquiry.parentId : BRAND_NODE;
@@ -178,6 +194,7 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
       nodes.push({ id: findingId, parentId: id, kind: "finding", label: territory.name, tone: copy.tone, status: copy.statusLabel, runId, territoryKey: territory.territoryKey, directionKey: null, jobId: inquiry.jobId });
     });
   }
+  for (const bridge of bridges) openBridge(bridge.id);
   return nodes;
 }
 
@@ -236,6 +253,54 @@ export function layoutNetwork(nodes: readonly Pick<NetworkNode, "id" | "parentId
     place(root, 0, -Math.PI / 2, (3 * Math.PI) / 2);
   }
   return positions;
+}
+
+/**
+ * Lays out the tree, then places each bridge between its two ends (bowed away from the brand, like its tie) and
+ * fans the questions asked from it outward from there.
+ */
+export function layoutWithBridges(nodes: readonly NetworkNode[], bridges: readonly Bridge[]): Map<string, Point> {
+  const byParent = new Map<string, string[]>();
+  for (const node of nodes) if (node.parentId) byParent.set(node.parentId, [...(byParent.get(node.parentId) ?? []), node.id]);
+  const hanging = new Set<string>();
+  const collect = (id: string) => { for (const kid of byParent.get(id) ?? []) if (!hanging.has(kid)) { hanging.add(kid); collect(kid); } };
+  const present = nodes.filter((node) => node.kind === "bridge").map((node) => node.id);
+  for (const id of present) { hanging.add(id); collect(id); }
+  const positions = layoutNetwork(nodes.filter((node) => !hanging.has(node.id)));
+  for (const id of present) {
+    const bridge = bridges.find((item) => item.id === id);
+    const from = bridge ? positions.get(bridge.a) : undefined;
+    const to = bridge ? positions.get(bridge.b) : undefined;
+    if (!from || !to) continue;
+    const point = bridgePoint(from, to);
+    positions.set(id, point);
+    const fan = (parent: string, origin: Point, angle: number, depth: number) => {
+      const kids = byParent.get(parent) ?? [];
+      kids.forEach((kid, index) => {
+        if (positions.has(kid)) return;
+        const spread = kids.length > 1 ? (index - (kids.length - 1) / 2) * 0.55 : 0;
+        const a = angle + spread;
+        const at = { x: Math.round(origin.x + Math.cos(a) * 250), y: Math.round(origin.y + Math.sin(a) * 250) };
+        positions.set(kid, at);
+        fan(kid, at, a, depth + 1);
+      });
+    };
+    fan(id, point, Math.atan2(point.y, point.x) || -Math.PI / 2, 1);
+  }
+  return positions;
+}
+
+/** Where a tie between two cards bows to: sideways, away from the brand at the centre. Shared by tie and bridge. */
+export function bridgePoint(from: Point, to: Point): Point {
+  const mx = (from.x + to.x) / 2;
+  const my = (from.y + to.y) / 2;
+  const span = Math.hypot(to.x - from.x, to.y - from.y) || 1;
+  const nx = -(to.y - from.y) / span;
+  const ny = (to.x - from.x) / span;
+  const away = nx * mx + ny * my < 0 ? -1 : 1;
+  const bow = Math.max(140, span * 0.35);
+  // The midpoint of a quadratic curve with this control point.
+  return { x: Math.round(mx + (nx * bow * away) / 2), y: Math.round(my + (ny * bow * away) / 2) };
 }
 
 export function networkBounds(positions: ReadonlyMap<string, Point>, margin = 150): { x: number; y: number; width: number; height: number } {

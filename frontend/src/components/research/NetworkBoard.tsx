@@ -11,9 +11,10 @@ export const CARD: Record<NetworkNode["kind"], { width: number; height: number; 
   connection: { width: 150, height: 44, chars: 18 },
   inquiry: { width: 240, height: 84, chars: 26 },
   finding: { width: 180, height: 70, chars: 20 },
+  bridge: { width: 230, height: 70, chars: 26 },
 };
 
-const KIND_LABEL: Record<NetworkNode["kind"], string> = { brand: "Brand", direction: "Direction", connection: "Qloo connection", inquiry: "Question", finding: "Territory" };
+const KIND_LABEL: Record<NetworkNode["kind"], string> = { brand: "Brand", direction: "Direction", connection: "Qloo connection", inquiry: "Question", finding: "Territory", bridge: "Connection" };
 
 function wrap(text: string, chars: number, lines: number): string[] {
   const out: string[] = [];
@@ -98,8 +99,8 @@ export function NetworkBoard({ nodes, positions, links = [], selectedId, onSelec
   };
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    // Cards and the zoom controls take their own clicks; capturing the pointer here would swallow them.
-    if ((event.target as Element).closest(".rn-card, .rn-zoom")) return;
+    // Cards, ties and the zoom controls take their own clicks; capturing the pointer here would swallow them.
+    if ((event.target as Element).closest(".rn-card, .rn-zoom, .rn-tie")) return;
     drag.current = { x: event.clientX, y: event.clientY, vx: view.x, vy: view.y, moved: false };
     event.currentTarget.setPointerCapture(event.pointerId);
   };
@@ -157,7 +158,16 @@ export function NetworkBoard({ nodes, positions, links = [], selectedId, onSelec
             return <path key={`edge:${node.id}`} className="rn-wire" data-kind={node.kind} data-tone={node.tone} pathLength={1}
               d={`M ${from.x} ${from.y} Q ${mx * 0.82} ${my * 0.82} ${to.x} ${to.y}`} />;
           })}
-          {links.filter((link) => positions.has(link.a) && positions.has(link.b)).map((link) => {
+          {nodes.filter((node) => node.kind === "bridge").flatMap((node) => {
+            const [a, b] = node.id.slice(4).split("|");
+            const at = positions.get(node.id);
+            return [a, b].map((end) => {
+              const to = end ? positions.get(end) : undefined;
+              if (!at || !to) return null;
+              return <path key={`bridge:${node.id}:${end}`} className="rn-bridge-wire" data-active={node.id === selectedId ? "true" : undefined} pathLength={1} d={`M ${at.x} ${at.y} L ${to.x} ${to.y}`} />;
+            });
+          })}
+          {links.filter((link) => positions.has(link.a) && positions.has(link.b) && !positions.has(`tie:${link.a}|${link.b}`)).map((link) => {
             const from = positions.get(link.a)!;
             const to = positions.get(link.b)!;
             // Bow the tie sideways, away from the brand, so it reads as a bridge across branches, not a lineage edge.
@@ -173,7 +183,10 @@ export function NetworkBoard({ nodes, positions, links = [], selectedId, onSelec
             const active = link.a === selectedId || link.b === selectedId;
             const bx = 0.25 * from.x + 0.5 * cx + 0.25 * to.x;
             const by = 0.25 * from.y + 0.5 * cy + 0.25 * to.y;
-            return <g key={`tie:${link.a}:${link.b}`} className="rn-tie" data-active={active ? "true" : undefined} data-testid="network-tie">
+            const open = () => onSelect(`tie:${link.a}|${link.b}`);
+            return <g key={`tie:${link.a}:${link.b}`} className="rn-tie" data-active={active ? "true" : undefined} data-testid="network-tie"
+              role="button" tabIndex={0} aria-label={`Explore the connection: ${link.shared.length} shared Qloo signal${link.shared.length === 1 ? "" : "s"}`}
+              onClick={open} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); } }}>
               <title>{`Shares ${link.shared.length} Qloo signal${link.shared.length === 1 ? "" : "s"}: ${link.shared.slice(0, 5).map((item) => item.label).join(", ")}`}</title>
               <path d={`M ${from.x} ${from.y} Q ${cx} ${cy} ${to.x} ${to.y}`} pathLength={1} />
               <circle cx={bx} cy={by} r={13} />

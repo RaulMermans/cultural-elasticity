@@ -48,3 +48,13 @@ export function crossLinks(sources: readonly LinkSource[], max = 10): CrossLink[
   }
   return links.sort((x, y) => y.shared.length - x.shared.length || x.a.localeCompare(y.a) || x.b.localeCompare(y.b)).slice(0, max);
 }
+
+/** Questions that look into what two tied territories share. Templates over the tie's own labels; nothing inferred. */
+export function connectionQuestions(brand: string, a: string, b: string, shared: readonly EvidenceItem[]): { question: string; why: string }[] {
+  const common = shared.find((item) => item.kind !== "example" && normName(item.label) !== normName(a) && normName(item.label) !== normName(b));
+  return [
+    { question: `Compare ${a} with ${b} for ${brand}`, why: "Measures both in one Qloo comparison, so you can see which fits better." },
+    ...(common ? [{ question: `How far can ${brand} extend into ${common.label}?`, why: `Investigates what they have in common, ${common.label}, as a territory of its own.` }] : []),
+    { question: `Where could ${brand} go next between ${a} and ${b}?`, why: "Looks for other territories that sit near both." },
+  ];
+}

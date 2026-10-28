@@ -273,3 +273,34 @@ test("SYNTHETIC a broad question stays on the brand and a later question about o
   await expect(page.getByTestId("network-node-inquiry")).toHaveCount(2);
   await expect(page.getByRole("treeitem", { name: /New direction/u })).toHaveCount(0);
 });
+
+test("SYNTHETIC a connection opens as its own card, proposes questions, and its questions branch from it", async ({ page }) => {
+  const calls = await stubLive(page);
+  const other = structuredClone(fixture.parent.view) as { response: { territories: { name: string; territoryKey: string }[]; investigation: { result: { territories: { key: string; label: string; resolvedConcept: unknown }[] } } } };
+  other.response.territories = other.response.territories.map((item) => ({ ...item, name: "Trail Running", territoryKey: "trail_running" }));
+  other.response.investigation.result.territories = other.response.investigation.result.territories.map((item) => ({ ...item, key: "trail_running", label: "Trail Running", resolvedConcept: null }));
+  await page.route("**/api/agent/jobs/*", (route) => json(route, route.request().url().endsWith("000000000001") ? fixture.parent.view : other));
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("How far can Larkspur Velo extend into Gravel Riding?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
+  await page.getByLabel(/Ask about/u).fill("How far can Larkspur Velo extend into Trail Running?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  const tie = page.getByRole("button", { name: /Explore the connection/u });
+  await tie.focus();
+  await tie.press("Enter");
+  const bridge = page.getByRole("treeitem", { name: /Connection: .*Gravel Riding.*Trail Running|Connection: .*Trail Running.*Gravel Riding/u });
+  await expect(bridge).toBeVisible();
+  const questions = page.getByTestId("network-connection-questions");
+  await expect(questions).toContainText("Where could Larkspur Velo go next between");
+  await questions.getByRole("button", { name: /^Compare / }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(3);
+  const asked = calls.questions[2] as { query: string; brand: string; context?: unknown };
+  expect(asked.query).toMatch(/^Compare (Gravel Riding with Trail Running|Trail Running with Gravel Riding) for Larkspur Velo$/u);
+  expect(asked).toEqual({ query: asked.query, brand: "Larkspur Velo" });
+  // The new question hangs from the connection card, which stays on the board after the selection moves on.
+  await page.getByRole("treeitem", { name: /Brand: Larkspur Velo/u }).click();
+  await expect(bridge).toBeVisible();
+  await expect(page.getByTestId("network-tie")).toHaveCount(0);
+});

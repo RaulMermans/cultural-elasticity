@@ -129,7 +129,9 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
     const context = followUpContext(from);
     const direction = !context && from?.kind === "direction" ? from : null;
     // placeUnder keeps a fresh brand question on the branch it was started from (e.g. a territory found there).
-    const parentId = placeUnder ?? (context && from ? from.id : direction ? direction.id : "brand");
+    // A question asked from an opened connection branches from that connection.
+    const bridge = !context && from?.kind === "bridge" ? from : null;
+    const parentId = placeUnder ?? (context && from ? from.id : direction ? direction.id : bridge ? bridge.id : "brand");
     const same = latest.current.find((item) => normName(item.question) === normName(question) && !canRetry(item));
     if (same) {
       setNotice("You already asked this, so its answer is open. Use Try again on a failed one to run it again.");
