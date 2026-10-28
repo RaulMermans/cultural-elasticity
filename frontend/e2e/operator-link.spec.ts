@@ -23,6 +23,12 @@ test("an operator link authorizes the browser and returns home without leaving t
 
 test("a rejected operator link stays on the page and says nothing was stored", async ({ page }) => {
   await page.goto("/operator#token=short");
-  await expect(page.getByTestId("operator-status")).toContainText("The credential was not accepted.");
+  await expect(page.getByTestId("operator-status")).toContainText("This link was not accepted.");
   expect(page.url()).not.toContain("short");
+});
+
+test("the operator page has no credential screen and returns home without a link", async ({ page }) => {
+  await page.goto("/operator");
+  await page.waitForURL((url) => url.pathname === "/", { timeout: 30_000 });
+  await expect(page.getByLabel("Operator credential")).toHaveCount(0);
 });
