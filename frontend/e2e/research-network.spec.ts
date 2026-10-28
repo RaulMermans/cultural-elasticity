@@ -111,3 +111,19 @@ test("SYNTHETIC a lost investigation can be tried again and takes the failed car
     { query: "Where could Larkspur Velo go next?", brand: "Larkspur Velo" },
   ]);
 });
+
+test("the zoom controls zoom the board and fit it again", async ({ page }) => {
+  await page.goto("/?research=loewe");
+  const layer = page.getByTestId("network-canvas").locator("svg > g");
+  const scale = async () => Number((await layer.getAttribute("transform"))?.match(/scale\(([\d.]+)\)/u)?.[1]);
+  // The board fits itself once it knows its size; read the scale only after it has settled.
+  let fitted = 0;
+  await expect(async () => { const first = await scale(); await page.waitForTimeout(200); fitted = await scale(); expect(fitted).toBe(first); }).toPass();
+  await page.getByRole("button", { name: "Zoom in" }).click();
+  expect(await scale()).toBeGreaterThan(fitted);
+  await page.getByRole("button", { name: "Zoom out" }).click();
+  await page.getByRole("button", { name: "Zoom out" }).click();
+  expect(await scale()).toBeLessThan(fitted);
+  await page.getByRole("button", { name: "Fit the network" }).click();
+  expect(await scale()).toBeCloseTo(fitted, 5);
+});

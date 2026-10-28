@@ -94,7 +94,8 @@ export function NetworkBoard({ nodes, positions, selectedId, onSelect, label, in
   };
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if ((event.target as Element).closest(".rn-card")) return;
+    // Cards and the zoom controls take their own clicks; capturing the pointer here would swallow them.
+    if ((event.target as Element).closest(".rn-card, .rn-zoom")) return;
     drag.current = { x: event.clientX, y: event.clientY, vx: view.x, vy: view.y, moved: false };
     event.currentTarget.setPointerCapture(event.pointerId);
   };
