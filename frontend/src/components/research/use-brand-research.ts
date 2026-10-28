@@ -76,7 +76,7 @@ export function useBrandResearch() {
         const response = await fetch(`/api/brands/baselines/${pointer.scanId}`, { headers: { "x-baseline-token": pointer.token }, cache: "no-store" });
         const body = await json(response);
         if (!active) return;
-        if (!response.ok || !body) { setError(response.status === 404 ? "This scan could not be reopened. Its access may have expired; start a new scan or open recorded research." : apiErrorCopy(body?.error)); return; }
+        if (!response.ok || !body) { setError(response.status === 404 ? "This scan could not be reopened. Its access may have expired; start a new scan." : apiErrorCopy(body?.error)); return; }
         const status = typeof body.scanStatus === "string" ? body.scanStatus : "RUNNING";
         const stages = Array.isArray(body.stages) ? body.stages.filter((stage): stage is { stage: string; status: string } => typeof stage?.stage === "string" && typeof stage?.status === "string") : [];
         const result = isBrandBaselineResult(body.result) ? body.result : null;

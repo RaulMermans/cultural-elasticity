@@ -17,6 +17,8 @@ import { useResearchNetwork } from "./use-research-network";
 import { useResearchLayout } from "./use-research-layout";
 import { TerritoryReadingView } from "./TerritoryReading";
 import { territoryReading } from "@/lib/territory-reading";
+import { buildNetworkReport } from "@/lib/network-report";
+import { downloadReportHtml, downloadReportPdf } from "@/lib/report-download";
 import { connectionQuestions, crossLinks, territoryItems, type CrossLink, type EvidenceItem, type LinkSource } from "@/lib/research-links";
 
 const clip = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text);
@@ -280,7 +282,7 @@ function DirectionDossier({ view, direction, inquiries, canInvestigate, busy, on
     {inquiries.length ? <><h3>Investigations and questions on this direction</h3><ul className="rn-links">{inquiries.map((item) => <li key={item.jobId}><button type="button" className="rn-link" onClick={() => onSelect(inquiryNodeId(item.jobId))}>{item.question}</button></li>)}</ul></> : null}
     {canInvestigate
       ? <button type="button" className="primary" data-testid="network-investigate" disabled={busy || running} onClick={onInvestigate}>{running ? "Investigating…" : investigations.length ? "Investigate again" : "Investigate this direction"}</button>
-      : <p className="quiet">This direction comes from recorded research, so it can&apos;t be investigated directly. Ask about it in the question box below instead.</p>}
+      : <p className="quiet">This research was reopened without its scan session, so the direction can&apos;t be investigated directly. Ask about it in the question box below instead.</p>}
   </>;
 }
 
@@ -327,7 +329,7 @@ function branchOf(nodes: readonly NetworkNode[], id: string): string[] {
   return out;
 }
 
-export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onHome, onClassic, onSections }: { result: AnyBrandBaselineResult; scanToken: string | null; canAsk: boolean; canInvestigate: boolean; onHome: () => void; onClassic: () => void; onSections: () => void }) {
+export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onHome, onBack }: { result: AnyBrandBaselineResult; scanToken: string | null; canAsk: boolean; canInvestigate: boolean; onHome: () => void; onBack: () => void }) {
   const view = useMemo(() => buildResearchView(result, {}), [result]);
   const network = useResearchNetwork({ scanId: view.scanId, brand: view.brand.name, scanToken });
   const [selectedId, setSelectedId] = useState<string>(BRAND_NODE);
@@ -416,6 +418,24 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     void open(network.ask(text, askFrom)).then((started) => { if (started) setQuestion(""); });
   };
 
+  // The report is built from what is on the board right now, stamped with the moment it is downloaded.
+  const [reporting, setReporting] = useState<"pdf" | "html" | null>(null);
+  const download = async (format: "pdf" | "html") => {
+    setReporting(format);
+    try {
+      const report = buildNetworkReport({ view, nodes, inquiries: network.inquiries, links, now: new Date() });
+      if (format === "html") downloadReportHtml(report);
+      else await downloadReportPdf(report);
+    } finally {
+      setReporting(null);
+    }
+  };
+  /** The board is kept as you work; this writes it once more before leaving. */
+  const saveAndBack = () => {
+    network.saveNow();
+    onBack();
+  };
+
   let dossier;
   if (directionNode.kind === "direction" && directionNode.directionKey) {
     const direction = view.directions.find((item) => item.key === directionNode.directionKey)!;
@@ -468,9 +488,13 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
           <h1 id="rn-title" tabIndex={-1}>{view.brand.name}</h1>
         </div>
         <div className="rn-header__actions">
-          <button type="button" className="ghost" onClick={onHome}>Research library</button>
-          <button type="button" className="ghost" onClick={onSections}>Sections view</button>
-          <button type="button" className="ghost" onClick={onClassic}>Research brief</button>
+          <button type="button" className="rw-secondary" onClick={onHome} data-testid="network-home">Home</button>
+          <button type="button" className="rw-secondary" onClick={saveAndBack} data-testid="network-save-back">Save and go back</button>
+          <div className="rn-report" data-testid="network-report">
+            <span className="rn-report__label">Download report</span>
+            <button type="button" className="primary" onClick={() => void download("pdf")} disabled={reporting !== null}>{reporting === "pdf" ? "Preparing…" : "PDF"}</button>
+            <button type="button" className="primary" onClick={() => void download("html")} disabled={reporting !== null}>{reporting === "html" ? "Preparing…" : "HTML"}</button>
+          </div>
         </div>
       </header>
       <div className="rn-stage">

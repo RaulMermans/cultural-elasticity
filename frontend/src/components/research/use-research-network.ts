@@ -173,5 +173,7 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
     setInquiries((current) => current.filter((item) => !gone.has(item.jobId)));
   }, []);
 
-  return { inquiries, notice, starting, investigateDirection, ask, answer, retry, forget, forgetMany, clearNotice: () => setNotice(null) };
+  const saveNow = useCallback(() => { if (loadedFor === scanId) save(scanId, latest.current); }, [loadedFor, scanId]);
+
+  return { inquiries, notice, starting, investigateDirection, ask, answer, retry, forget, forgetMany, saveNow, clearNotice: () => setNotice(null) };
 }

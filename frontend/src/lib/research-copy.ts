@@ -131,11 +131,11 @@ export function availabilityCopy(status: BrandResearchAvailability): { label: st
     case "available":
       return { label: "New brand research available.", detail: "Research runs a short, fixed set of Qloo lookups for the brand you confirm." };
     case "paused":
-      return { label: "New research is temporarily unavailable.", detail: "The research service is connected, but it is not accepting new brand research right now. Recorded research still opens instantly." };
+      return { label: "New research is temporarily unavailable.", detail: "The research service is connected, but it is not accepting new brand research right now. Research in your library still opens." };
     case "unavailable":
-      return { label: "The research service can't be reached right now.", detail: "New research can't start. Recorded research still opens, because it is stored with the product." };
+      return { label: "The research service can't be reached right now.", detail: "New research can't start. Research in your library still opens." };
     default:
-      return { label: "Checking whether new research is available.", detail: "Recorded research is available while we check." };
+      return { label: "Checking whether new research is available.", detail: "Research in your library still opens while we check." };
   }
 }
 

@@ -1,7 +1,7 @@
 /**
  * Research-truth, provenance and copy scenarios for the brand research workspace adapter.
- * Inputs: the recorded Loewe research (real stored Qloo evidence, re-read offline), the stored as-run 0.1 Loewe
- * result, and SYNTHETIC fixtures. Nothing here calls a provider.
+ * Inputs: the Loewe research derived from a live canary (real stored Qloo evidence, re-read offline, kept with the
+ * Sprint 9B.1 evidence), the stored as-run 0.1 Loewe result, and SYNTHETIC fixtures. Nothing here calls a provider.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -12,13 +12,13 @@ import { buildSummary, renderSummaryHtml } from "./research-summary.ts";
 import { buildResearchView, connectionKey } from "./research-view.ts";
 
 const read = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
-const catalog = read("../demo/recorded-baselines.json") as { items: { key: string; kind: string; evidenceOrigin: string; sourceFixture: string; result: BrandBaselineResult }[] };
-const loewe = catalog.items.find((item) => item.key === "loewe")!.result;
 const loeweAsRun = read("../../../evals/fixtures/live/loewe-baseline-canary-2.live.json").asRunResult.payload as AnyBrandBaselineResult;
 const synthetic = read("../../../backend/tests/fixtures/synthetic/brand-baseline-e2e-v2.json") as { fixtureType: string; results: Record<"hypotheses" | "zeroTerritory" | "insufficient" | "partialProvider", BrandBaselineResult> };
 const legacySynthetic = read("../../../backend/tests/fixtures/synthetic/brand-baseline-e2e.json") as { result: AnyBrandBaselineResult };
 const derived = read("../../../docs/sprint-9b1/evidence/loewe-canary-2.derived-0.2.json") as { result: BrandBaselineResult };
-const jacquemus = read("../demo/recorded-example.json") as { responses: QueryResponse[] };
+const loewe = structuredClone(derived.result);
+/** A SYNTHETIC completed investigation of another brand (Larkspur Velo). */
+const otherBrand = (read("../../../backend/tests/fixtures/synthetic/comparative-e2e.json") as { parent: { view: { response: QueryResponse } } }).parent.view.response;
 
 /** Words that must never appear in ordinary user copy. */
 const INTERNAL = /urn:|mcp-|correlation|entity_tags|QUERY_SCOPED|OBSERVED_ASSOCIATION|PARTIAL_EVIDENCE|ce-brand-baseline|PROVIDER_CONFIRMED|GENERIC_TYPE|BRAND_CLASSIFICATION|AUDIENCE_TASTE|INSUFFICIENT_EVIDENCE|ADMISSIONS_PAUSED|_[A-Z]{3,}/u;
@@ -33,8 +33,7 @@ const userCopy = (view: ReturnType<typeof buildResearchView>) => [
 
 // ---------- RESEARCH TRUTH ----------
 
-test("RT-01 recorded Loewe research is the unmodified stored projection", () => {
-  assert.deepEqual(loewe, derived.result);
+test("RT-01 the Loewe research is a derived projection of a stored live scan", () => {
   assert.equal(loewe.execution.recordedOrLive, "recorded");
   assert.equal(loewe.execution.derivedFrom?.scanId, "b3a92759-2d28-4fdb-aeca-ca7845750f38");
 });
@@ -225,15 +224,6 @@ test("PV-04 legacy synthetic 0.1 directions render with an honest missing-explan
   for (const direction of view.directions) assert.match(direction.why, /was not recorded/u);
 });
 
-test("PV-05 the recorded catalog contains only live-origin evidence, never synthetic fixtures", () => {
-  for (const item of catalog.items) {
-    assert.equal(item.kind, "RECORDED_BASELINE");
-    assert.equal(item.evidenceOrigin, "live");
-    assert.doesNotMatch(item.sourceFixture, /synthetic|benchmarks/u);
-    assert.doesNotMatch(JSON.stringify(item.result), /SYNTHETIC|syn-/u);
-  }
-});
-
 test("PV-06 source list is one entry per Qloo call", () => {
   const view = buildResearchView(loewe);
   assert.equal(view.method.sources.length, new Set(loewe.fingerprint.provenance.map((ref) => ref.correlationId)).size);
@@ -310,8 +300,8 @@ test("SM-05 summary generation is deterministic", () => {
   assert.equal(a, b);
 });
 
-test("SM-06 a different brand's recorded investigation cannot enter the brief", () => {
-  const response = jacquemus.responses.find((item) => item.investigation?.result?.status === "COMPLETE")!;
+test("SM-06 a different brand's investigation cannot enter the brief", () => {
+  const response = otherBrand;
   const summary = buildSummary(buildResearchView(loewe), response);
   assert.match(summary.sections.find((item) => item.id === "observations")!.items[0]!.text, /No completed, matching/u);
   assert.equal(summary.sources.length, buildResearchView(loewe).method.sources.length);

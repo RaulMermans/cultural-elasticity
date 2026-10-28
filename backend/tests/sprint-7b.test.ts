@@ -1,7 +1,5 @@
 /** Sprint 7B: spend overage, visitor-adjacent backend identity, readiness semantics, runtime spend. SYNTHETIC. */
-import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { parseQueryResponse, type QueryResponse } from "@cultural-elasticity/shared";
 import { buildApp } from "../src/app.js";
 import { resetAdmission } from "../src/api/admission.js";
 import { readiness } from "../src/api/health.js";
@@ -204,22 +202,6 @@ describe("readiness semantics", () => {
     expect(probed.qloo.status).toBe("ok");
     expect(probed.haiku.status).toBe("failed");
     expect(readiness().semantics.providerConnectivity).toBe("not_verified_by_this_endpoint");
-  });
-});
-
-describe("recorded demo provenance", () => {
-  it("keeps the 23 October 2026 source hash and incomplete parent", () => {
-    const artifact = JSON.parse(readFileSync(new URL("../../frontend/src/demo/recorded-example.json", import.meta.url), "utf8")) as {
-      kind: string;
-      recordedAt: string;
-      sourceSha256: string;
-      responses: QueryResponse[];
-    };
-    expect(artifact.kind).toBe("RECORDED_EXAMPLE");
-    expect(artifact.recordedAt).toBe("2026-10-23T06:28:19.052Z");
-    expect(artifact.sourceSha256).toBe("064c7f6e87692a45cc5790cf4901b879dd75d8ecbb0b72ad2aee0a76e41d3f75");
-    expect(artifact.responses[0]?.state).toBe("INVESTIGATION_INCOMPLETE");
-    expect(parseQueryResponse(artifact.responses[0]).ok).toBe(true);
   });
 });
 

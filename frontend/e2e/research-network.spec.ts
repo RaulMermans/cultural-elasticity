@@ -1,6 +1,6 @@
 /**
  * The unified research network in the browser. Every live response is SYNTHETIC (backend/tests/fixtures/synthetic/
- * comparative-e2e.json); the recorded Loewe research is real stored Qloo evidence re-read offline. No test here
+ * comparative-e2e.json). No test here
  * reaches Qloo or a model.
  */
 import { readFileSync } from "node:fs";
@@ -33,26 +33,25 @@ async function stubLive(page: Page) {
 
 async function startLarkspur(page: Page) {
   await page.goto("/");
-  await page.getByLabel("Brand name").fill("Larkspur Velo");
+  await page.getByRole("combobox", { name: "Brand name" }).fill("Larkspur Velo");
   await page.getByRole("button", { name: "Find brand" }).click();
   await page.getByRole("button", { name: /Start research/u }).click();
   await expect(page.getByTestId("research-network")).toBeVisible();
 }
 
-test("recorded research opens as a network: brand, directions, a direction dossier, and no paid call", async ({ page }) => {
-  const paid: string[] = [];
-  page.on("request", (request) => { if (request.method() === "POST" && /\/api\/(agent|research|brands)\//u.test(request.url())) paid.push(request.url()); });
-  await page.goto("/?research=loewe");
+test("SYNTHETIC research opens as a network: brand, directions, a direction dossier, and no agent call", async ({ page }) => {
+  const calls = await stubLive(page);
+  await startLarkspur(page);
   await expect(page.getByTestId("network-node-brand")).toHaveCount(1);
-  await expect(page.getByTestId("network-node-direction")).toHaveCount(2);
+  await expect(page.getByTestId("network-node-direction").first()).toBeVisible();
   await expect(page.getByTestId("network-dossier")).toContainText("Cultural fingerprint");
-  await page.getByRole("treeitem", { name: "Direction: Model, Direction" }).click();
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
   const dossier = page.getByTestId("network-dossier");
   await expect(dossier.getByRole("heading", { name: "Why it is here" })).toBeVisible();
   await expect(dossier.getByTestId("network-elasticity")).toContainText("Not measured yet");
   await expect(page.getByTestId("network-node-connection").first()).toBeVisible();
   await expect(page.getByText("distance on the board is not cultural distance")).toBeVisible();
-  expect(paid).toEqual([]);
+  expect([...calls.handoffs, ...calls.questions]).toEqual([]);
 });
 
 test("SYNTHETIC investigating a direction attaches the agent's validated result to it", async ({ page }) => {
@@ -89,7 +88,7 @@ test("SYNTHETIC the network is kept in the research library and reopens with its
   await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
   await page.getByTestId("network-investigate").click();
   await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
-  await page.getByRole("button", { name: "Research library" }).click();
+  await page.getByTestId("network-home").click();
   await page.getByTestId("research-library").getByRole("button", { name: /Larkspur Velo/u }).click();
   await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
 });
@@ -112,8 +111,9 @@ test("SYNTHETIC a lost investigation can be tried again and takes the failed car
   ]);
 });
 
-test("the zoom controls zoom the board and fit it again", async ({ page }) => {
-  await page.goto("/?research=loewe");
+test("SYNTHETIC the zoom controls zoom the board and fit it again", async ({ page }) => {
+  await stubLive(page);
+  await startLarkspur(page);
   const layer = page.getByTestId("network-canvas").locator("svg > g");
   const scale = async () => Number((await layer.getAttribute("transform"))?.match(/scale\(([\d.]+)\)/u)?.[1]);
   // The board fits itself once it knows its size; read the scale only after it has settled.
@@ -145,9 +145,11 @@ test("SYNTHETIC a running investigation shows the agent's live steps", async ({ 
   await expect(activity.getByLabel("The agent is thinking")).toBeVisible();
 });
 
-test("cards can be dragged with their branch, the arrangement is kept, and Tidy restores it", async ({ page }) => {
-  await page.goto("/?research=loewe");
-  const card = page.getByRole("treeitem", { name: "Direction: Model, Direction" });
+test("SYNTHETIC cards can be dragged with their branch, the arrangement is kept, and Tidy restores it", async ({ page }) => {
+  await stubLive(page);
+  await startLarkspur(page);
+  await page.getByTestId("network-dossier").getByRole("heading").first().waitFor();
+  const card = page.getByRole("treeitem", { name: /Direction: Slow Touring/u });
   const where = async () => card.evaluate((element) => (element as SVGGElement).style.transform);
   const before = await where();
   const box = (await card.boundingBox())!;
@@ -307,10 +309,10 @@ test("SYNTHETIC a connection opens as its own card, proposes questions, and its 
   await expect(page.getByTestId("network-tie")).toHaveCount(0);
 });
 
-test("SYNTHETIC the brand box suggests your research and recorded brands as you type, without calling Qloo", async ({ page }) => {
+test("SYNTHETIC the brand box suggests your research as you type, without calling Qloo", async ({ page }) => {
   await stubLive(page);
   await startLarkspur(page);
-  await page.getByRole("button", { name: "Research library" }).click();
+  await page.getByTestId("network-home").click();
   const resolves: string[] = [];
   page.on("request", (request) => { if (request.url().includes("/api/brands/resolve")) resolves.push(request.url()); });
   const box = page.getByRole("combobox", { name: "Brand name" });
@@ -320,8 +322,9 @@ test("SYNTHETIC the brand box suggests your research and recorded brands as you 
   await expect(list.getByRole("option").first()).toContainText("Larkspur Velo");
   await expect(list.getByRole("option").first()).toContainText("Your research");
   await expect(list.getByRole("option").last()).toContainText("Find “lark” in Qloo");
-  await box.fill("loe");
-  await expect(list.getByRole("option").first()).toContainText("Recorded research");
+  // Nothing of yours matches: the list stays closed and Find brand does the search.
+  await box.fill("zzz");
+  await expect(list).toHaveCount(0);
   await box.fill("lark");
   await box.press("ArrowDown");
   await box.press("Enter");

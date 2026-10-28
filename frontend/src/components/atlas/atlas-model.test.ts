@@ -203,30 +203,6 @@ test("evidence follows the territory key and fails closed", async () => {
   assert.doesNotMatch(wrongRun.observed.join(" "), /Sea/u);
 });
 
-test("the recorded example is labelled, live-origin, and parseable without a provider", async () => {
-  const { readFileSync } = await import("node:fs");
-  const { parseQueryResponse } = await import("@cultural-elasticity/shared");
-  const artifact = JSON.parse(readFileSync(new URL("../../demo/recorded-example.json", import.meta.url), "utf8")) as {
-    kind: string;
-    recordedAt: string;
-    note: string;
-    responses: QueryResponse[];
-  };
-  assert.equal(artifact.kind, "RECORDED_EXAMPLE");
-  assert.match(artifact.recordedAt, /^\d{4}-\d{2}-\d{2}T/u);
-  assert.match(artifact.note, /does not call a provider/iu);
-  assert.equal(artifact.responses[0]?.state, "INVESTIGATION_INCOMPLETE");
-  assert.ok(artifact.responses.length >= 1);
-  for (const item of artifact.responses) {
-    const parsed = parseQueryResponse(item);
-    assert.equal(parsed.ok, true, parsed.ok ? "" : JSON.stringify(parsed.issues));
-    assert.ok(item.interpretation?.interpretationWarnings.includes("RECORDED_EXAMPLE"));
-    const result = item.investigation?.result;
-    assert.ok(result && result.status !== "NEEDS_INPUT");
-    assert.equal(result.evidenceOrigin, "live");
-  }
-});
-
 test("competitor copy stays non-equivalent", () => {
   assert.match(reasonCopy("UNSUPPORTED_OPERATION", "compare_brands"), /not available yet/iu);
   assert.match(reasonCopy("UNSUPPORTED_OPERATION", "compare_brands"), /different question/iu);
@@ -290,10 +266,10 @@ test("layout is deterministic, keeps long names, and holds deep branches without
   assert.ok(boxOf(nodes[2]!, first.get("c")!).height >= 76);
 });
 
-test("the recorded example lays out without overlapping panels", async () => {
+test("a SYNTHETIC parent and comparison lay out without overlapping panels", async () => {
   const { readFileSync } = await import("node:fs");
-  const artifact = JSON.parse(readFileSync(new URL("../../demo/recorded-example.json", import.meta.url), "utf8")) as { responses: QueryResponse[] };
-  const nodes = buildAtlas(artifact.responses);
+  const fixture = JSON.parse(readFileSync(new URL("../../../../backend/tests/fixtures/synthetic/comparative-e2e.json", import.meta.url), "utf8")) as { parent: { view: { response: QueryResponse } }; compare: { view: { response: QueryResponse } } };
+  const nodes = buildAtlas([fixture.parent.view.response, fixture.compare.view.response]);
   const placed = layoutAtlas(nodes, new Map());
   const boxes = nodes.map((node) => boxOf(node, placed.get(node.id)!));
   assert.ok(boxes.length >= 5);

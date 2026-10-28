@@ -1,6 +1,6 @@
 /**
  * Brand suggestions while typing. They come only from what this browser already holds: research the user has run
- * (the library) and recorded research. Typing never calls Qloo; a new brand is still found with an explicit search.
+ * (the library). Typing never calls Qloo; a new brand is still found with an explicit search.
  */
 export type SuggestionSource<T> = { label: string; detail: string; kind: "library" | "recorded"; value: T; at: number };
 

@@ -936,7 +936,11 @@ body:not(:has(.atlas)) .sprint { margin-bottom: 0; opacity: 0.7; }
 .rn { display: grid; gap: var(--ce-space-4); padding: var(--ce-space-4) var(--ce-space-4) var(--ce-space-6); }
 .rn-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: var(--ce-space-4); max-width: 1600px; width: 100%; margin: 0 auto; }
 .rn-header h1 { margin: 0; font-family: var(--ce-serif); font-size: clamp(2rem, 4vw, 3rem); }
-.rn-header__actions { display: flex; gap: var(--ce-space-2); flex-wrap: wrap; }
+.rn-header__actions { display: flex; gap: var(--ce-space-2); flex-wrap: wrap; align-items: center; }
+.rn-header__actions .rw-secondary { margin: 0; }
+.rn-report { display: inline-flex; align-items: center; gap: 4px; padding: 4px 4px 4px 14px; border-radius: var(--ce-radius-pill); background: #fffdf8; border: 1px solid var(--ce-line); }
+.rn-report__label { font-size: 0.85rem; font-weight: 600; margin-right: 4px; }
+.rn-report .primary { padding: 0.45rem 0.9rem; border-radius: var(--ce-radius-pill); }
 .rn-stage { position: relative; height: max(640px, calc(100vh - 210px)); max-width: 1600px; width: 100%; margin: 0 auto; border-radius: 18px; overflow: hidden; border: 1px solid var(--ce-line); box-shadow: var(--ce-shadow); }
 .rn-board { position: absolute; inset: 0; background-color: #f7f3ec; background-image: radial-gradient(circle, #d6ccbb 1.2px, transparent 1.3px); cursor: grab; touch-action: none; user-select: none; }
 .rn-board:active { cursor: grabbing; }

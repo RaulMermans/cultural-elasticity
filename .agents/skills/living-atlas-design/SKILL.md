@@ -1,7 +1,7 @@
 ---
 name: living-atlas-design
 description: Design and experience rules for the Cultural Elasticity product UI (brand research workspace and Living Atlas). Use when changing the product UI, visual language, atlas layout, evidence presentation, or motion. This is a development skill, not a runtime investigation skill.
-version: "6"
+version: "7"
 ---
 
 # Living Atlas design and experience
@@ -10,9 +10,9 @@ Version 5. This file is the authority for product UI decisions. Tokens are imple
 
 Version 5 makes the **brand research workspace** the default product view and the Living Atlas an optional exploration view (`?mode=atlas`). It keeps Cultural Observatory and every rule from versions 1–4, which still govern the Atlas. Version 4 added stage-aligned lineage edges, a docked evidence dossier, human-readable methodology presentation, and distinct connected-paused versus disconnected labels.
 
-## Research network (version 6)
+## Research network (version 7)
 
-Version 6 makes the **research network** the default view of a brand's research (`research-network.ts`, `ResearchNetwork.tsx`, `NetworkBoard.tsx`). One living board replaces the four tabs: the brand in the middle, its baseline directions around it, and every investigation attached to the node it was asked from. The section workspace below stays available ("Sections view", `layout=tabs`, and any `view=` link) and holds the printable brief.
+The **research network** is the only view of a brand's research (`research-network.ts`, `ResearchNetwork.tsx`, `NetworkBoard.tsx`): the brand in the middle, its baseline directions around it, and every investigation attached to the node it was asked from. Version 7 removed the section workspace and the bundled recorded research. The header offers Home, Save and go back, and a report download (PDF and HTML, stamped with the download date and time) built by `network-report.ts`.
 
 - **Lineage only.** An edge means investigated-from. Ring, angle and card size are layout, never affinity, distance, confidence or elasticity. The board says so.
 - **Opening a direction** shows its Qloo connections as small cards around it and a dossier: why it is here, its fingerprint, the connections behind it, what is unknown, and the degree of elasticity.
@@ -31,8 +31,8 @@ The default journey is: select brand → cultural fingerprint → connections �
 - **Evidence detail has four parts:** what was observed, what this might mean, what we cannot conclude, what to investigate next. Query-scoped entities say "Returned when researching related artists. Qloo did not confirm its type individually." Positions are "position N of M" within one Qloo call, where M counts everything that call returned, and are never called a ranking.
 - **Empty is useful.** Zero directions says "We found cultural connections, but not enough evidence for a new direction" and keeps the fingerprint. Insufficient evidence is missing evidence, not a finding.
 - **Copy is centralised** in `frontend/src/lib/research-copy.ts`. Components never print a backend code. Unknown codes get a neutral fallback.
-- **Recorded research** is bundled real evidence (`frontend/src/demo/recorded-baselines.json`, built by `backend/scripts/demo/build-recorded-baseline.ts`). It opens with no provider call and says it is recorded. Never list synthetic fixtures or benchmark profiles there.
-- **Paused research:** the brand field stays usable for finding recorded research ("Find recorded research"). No enabled control may start a scan or a deep investigation while the matching admission is paused or unreachable.
+- **No recorded research** ships with the product. The brand box suggests only the user's own library.
+- **Paused research:** Find brand is disabled; the library still opens. No enabled control may start a scan or a deep investigation while the matching admission is paused or unreachable.
 - **Summary** is deterministic, built from the same view model as the screen, printable and downloadable as escaped HTML. It never adds a recommendation.
 
 This skill is not one of the seven runtime agent skills. Do not register it in `backend/src/agent/skills/`.
@@ -118,7 +118,7 @@ Desktop shows the tree on the observatory field. Edges are drawn in the same coo
 
 ## Interaction hierarchy
 
-The opening screen (brand discovery) answers three questions above the fold: what this is, how to start, and that recorded research can be opened without waiting. When new brand research is paused or unreachable, the primary action opens the recorded brand research.
+The opening screen (brand discovery) answers two questions above the fold: what this is and how to start. When new brand research is paused or unreachable it says so plainly.
 
 Inside the Atlas (`?mode=atlas`), when live investigations are paused or disconnected, the primary action is **Explore the Jacquemus investigation**. Do not present an enabled Ask that can only return `ADMISSIONS_PAUSED`.
 
@@ -133,7 +133,7 @@ Admission labels:
 
 Never label a reachable paused backend as disconnected.
 
-When live investigations are accepting, expose them as a clearly labelled **Ask a cultural question** entry. The recorded example remains available and labelled as recorded.
+When live investigations are accepting, expose them as a clearly labelled **Ask a cultural question** entry.
 
 Territory actions (inspect, narrow, compare, return) appear after a territory is selected. One selected territory is the active context. Status is written in words, not carried by color alone.
 
@@ -185,7 +185,6 @@ Target WCAG 2.2 AA. Visible focus, labels on fields, dialogs with names, status 
 - ≥1100px: context rail, atlas, selected finding. The dossier occupies the finding column. Below 1440px it stays the finding-column width so the atlas does not shrink further.
 - 721–1099px: compact context header, full-width atlas, finding or dossier beneath. Do not force a third column that clips the tree.
 - ≤720px: guided branch list. No desktop graph. No horizontal overflow.
-- The landing preview scales the recorded tree to fit its pane. It is a complete peek, not a clipped fragment.
 
 Primary CTA remains above the fold at 1440×900 and 390×844.
 
@@ -195,7 +194,7 @@ Dense dashboards, consoles, card grids, chatbot transcripts, neon, heavy gradien
 
 ## Regression
 
-A UI change needs the atlas model tests, evidence-presentation tests, research-view and research-route tests, admissions tests, and the synthetic browser suite (`pnpm test:e2e`). Workspace changes are checked at 320 / 390 / 768 / 1440 / 1920. A change to tokens, type, or evidence language needs a look at the rendered opening screen, the recorded example, a selected territory, the inspector, a paused live entry, a failure, and 320 / 390 / 768 / 1440 viewports. Check keyboard access and `prefers-reduced-motion`. Do not treat a successful compile as visual acceptance. No overlap, clipped label, or dangling edge is acceptable.
+A UI change needs the atlas model tests, evidence-presentation tests, research-view and research-route tests, admissions tests, and the synthetic browser suite (`pnpm test:e2e`). Workspace changes are checked at 320 / 390 / 768 / 1440 / 1920. A change to tokens, type, or evidence language needs a look at the rendered opening screen, a synthetic investigation, a selected territory, the inspector, a paused live entry, a failure, and 320 / 390 / 768 / 1440 viewports. Check keyboard access and `prefers-reduced-motion`. Do not treat a successful compile as visual acceptance. No overlap, clipped label, or dangling edge is acceptable.
 
 ## Review
 

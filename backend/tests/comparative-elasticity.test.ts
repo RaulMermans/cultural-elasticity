@@ -36,12 +36,14 @@ import {
   QueryAlreadyExecutedError,
 } from "../src/agent/comparative-bridge.js";
 import { validateClaims } from "../src/agent/claim-validator.js";
+import { replayCanary } from "../scripts/brand-baseline-eval/replay.js";
 import { parseMethodologyInput, type MethodologyInputRaw } from "../src/methodology/contracts.js";
 import { analyzeElasticity } from "../src/methodology/elasticity.js";
 import type { AgentAnalysisResult, AgentTerritoryResult, AnyBrandBaselineResult, ComparativeReferenceCandidate } from "@cultural-elasticity/shared";
 
 const liveTracePath = path.resolve(import.meta.dirname, "../../docs/sprint-9g/evidence/loewe-boutique-hospitality.live.json");
-const recordedBaselinesPath = path.resolve(import.meta.dirname, "../../frontend/src/demo/recorded-baselines.json");
+/** The live Loewe baseline canary, re-read offline by the current baseline code. No provider call. */
+const LOEWE_CANARY = "evals/fixtures/live/loewe-baseline-canary-2.live.json";
 const liveBenchmarkPath = path.resolve(import.meta.dirname, "../../evals/benchmarks/cultural-elasticity-v0/evidence/jacquemus.live.json");
 
 const SYN_BRAND = { id: "SYN-BR-9001", label: "SYNTHETIC Brand", resolution: "confirmed" };
@@ -192,11 +194,10 @@ describe("Sprint 9H: Comparative Cultural Elasticity Suite", () => {
   });
 
   // 9. Inconclusive hypothesis escalation
-  it("9. The recorded live Loewe hypothesis cannot be escalated without server-verified references", () => {
-    // Real recorded evidence: the Sprint 9G live investigation and the recorded live Loewe baseline.
+  it("9. The live Loewe hypothesis cannot be escalated without server-verified references", () => {
+    // Real evidence: the Sprint 9G live investigation and the live Loewe baseline canary.
     const liveTrace = JSON.parse(fs.readFileSync(liveTracePath, "utf8")) as AgentAnalysisResult;
-    const recorded = JSON.parse(fs.readFileSync(recordedBaselinesPath, "utf8")) as { items: { key: string; result: AnyBrandBaselineResult }[] };
-    const baseline = recorded.items.find((item) => item.key === "loewe")!.result;
+    const baseline = replayCanary(LOEWE_CANARY).result as AnyBrandBaselineResult;
     const target = liveTrace.territories[0]!;
     expect(liveTrace.hypothesisAssessment?.outcome).toBe("INCONCLUSIVE");
     expect(representationProblem(target)).toBeNull();
