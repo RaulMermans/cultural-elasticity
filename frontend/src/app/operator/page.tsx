@@ -1,22 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Sprint 9J operator page. Unlinked from the product; it only hands the operator's credential to the
  * HttpOnly session route (or clears it). Railway decides on every paid start whether it is valid and
  * unexpired, so this page grants nothing by itself, and a visitor without the credential gains nothing here.
+ * `/operator#token=…` (opened by scripts/live-test-open.sh) stores it without the form: a fragment never
+ * reaches a server or its logs, and it is removed from the address bar before the request is sent.
  */
 export default function OperatorPage() {
   const [token, setToken] = useState("");
   const [state, setState] = useState<"idle" | "busy" | "stored" | "cleared" | "rejected">("idle");
 
+  async function store(credential: string): Promise<boolean> {
+    setState("busy");
+    const response = await fetch("/api/operator/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token: credential }) }).catch(() => null);
+    const stored = response?.status === 204;
+    setState(stored ? "stored" : "rejected");
+    return stored;
+  }
+
+  useEffect(() => {
+    const fromLink = new URLSearchParams(window.location.hash.slice(1)).get("token");
+    if (!fromLink) return;
+    window.history.replaceState(null, "", window.location.pathname);
+    void store(fromLink).then((stored) => { if (stored) window.location.replace("/"); });
+  }, []);
+
   async function authorize(event: React.FormEvent) {
     event.preventDefault();
-    setState("busy");
-    const response = await fetch("/api/operator/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token }) }).catch(() => null);
+    const credential = token;
     setToken("");
-    setState(response?.status === 204 ? "stored" : "rejected");
+    await store(credential);
   }
 
   async function signOut() {
