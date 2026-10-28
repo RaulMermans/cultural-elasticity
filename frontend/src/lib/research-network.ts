@@ -49,6 +49,20 @@ const PENDING = new Set(["queued", "running"]);
 
 export const directionNodeId = (key: string) => `dir:${key}`;
 export const inquiryNodeId = (jobId: string) => `inq:${jobId}`;
+/** A direction opened by a question, for a territory the baseline did not list. */
+export const newDirectionId = (name: string) => `new:${name}`;
+export const normName = (value: string) => value.normalize("NFKC").trim().replace(/\s+/gu, " ").toLowerCase();
+
+/** The territory a branch is about: the label of the nearest direction above the node, if any. */
+export function branchDirection(nodes: readonly NetworkNode[], id: string): NetworkNode | null {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  let node = byId.get(id) ?? null;
+  for (let guard = 0; node && guard < 64; guard += 1) {
+    if (node.kind === "direction") return node;
+    node = node.parentId ? byId.get(node.parentId) ?? null : null;
+  }
+  return null;
+}
 
 const ASSESSMENT_TONE: Record<string, { tone: AtlasTone; status: string }> = {
   WORTH_FURTHER_INVESTIGATION: { tone: "supported", status: "Worth pursuing" },
@@ -96,22 +110,43 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
       nodes.push({ id: connectionId, parentId: id, kind: "connection", label: connection.name, tone: "idle", status: "Qloo connection", runId: null, territoryKey: null, directionKey: direction.key, jobId: null });
     }
   }
+  // Every inquiry lives on a direction's branch. A question about the brand joins the direction it names, or opens a
+  // new direction for a territory the baseline did not list. Matching is by the territory name the server returned.
+  const directionByName = new Map(directions.map((direction) => [normName(direction.name), directionNodeId(direction.key)]));
+  const branchName = new Map<string, string>(directions.map((direction) => [directionNodeId(direction.key), normName(direction.name)]));
   const ordered = [...inquiries].sort((a, b) => a.createdAt - b.createdAt);
   for (const inquiry of ordered) {
     const id = inquiryNodeId(inquiry.jobId);
     if (ids.has(id)) continue;
     const state = inquiryState(inquiry);
     const runId = inquiry.response?.investigation?.runId ?? null;
-    const parentId = ids.has(inquiry.parentId) ? inquiry.parentId : BRAND_NODE;
+    let parentId = ids.has(inquiry.parentId) ? inquiry.parentId : BRAND_NODE;
+    const named = inquiry.response?.territories ?? [];
+    if (parentId === BRAND_NODE && named[0]) {
+      const name = normName(named[0].name);
+      const existing = directionByName.get(name) ?? newDirectionId(name);
+      if (!ids.has(existing)) {
+        ids.add(existing);
+        directionByName.set(name, existing);
+        branchName.set(existing, name);
+        nodes.push({ id: existing, parentId: BRAND_NODE, kind: "direction", label: named[0].name, tone: "hypothesis", status: "New direction", runId: null, territoryKey: null, directionKey: null, jobId: null });
+      }
+      parentId = existing;
+    }
     ids.add(id);
+    const branch = branchName.get(parentId) ?? null;
+    if (branch) branchName.set(id, branch);
     nodes.push({ id, parentId, kind: "inquiry", label: inquiry.question, tone: state.tone, status: state.status, runId, territoryKey: null, directionKey: null, jobId: inquiry.jobId });
-    // A direction investigation is about that direction; a question can name or discover several territories.
+    // A direction investigation is about that direction; a question can name or discover other territories. The
+    // branch's own territory is shown on the inquiry itself, never repeated as a finding.
     if (inquiry.origin !== "question" || !inquiry.response) continue;
     inquiry.response.territories.forEach((territory, index) => {
+      if (branch && normName(territory.name) === branch) return;
       const copy = territoryCopy(inquiry.response!, territory);
       const findingId = `find:${inquiry.jobId}:${territory.territoryKey ?? index}`;
       if (ids.has(findingId)) return;
       ids.add(findingId);
+      branchName.set(findingId, normName(territory.name));
       nodes.push({ id: findingId, parentId: id, kind: "finding", label: territory.name, tone: copy.tone, status: copy.statusLabel, runId, territoryKey: territory.territoryKey, directionKey: null, jobId: inquiry.jobId });
     });
   }

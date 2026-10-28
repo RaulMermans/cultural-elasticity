@@ -3,7 +3,7 @@
 import { parseQueryResponse } from "@cultural-elasticity/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { parseActivity, parseJobEnvelope, publicFailure, type JobEnvelope } from "@/lib/job-envelope";
-import { followUpContext, inquiryNodeId, isPending, type Inquiry, type InquiryOrigin, type NetworkNode } from "@/lib/research-network";
+import { canRetry, followUpContext, inquiryNodeId, isPending, normName, type Inquiry, type InquiryOrigin, type NetworkNode } from "@/lib/research-network";
 
 const POLL_MS = 2000;
 const storageKey = (scanId: string) => `ce.network.${scanId}`;
@@ -118,11 +118,24 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
     return begin("/api/research/handoff/jobs", { scanId, territoryId: directionId, idempotencyKey: crypto.randomUUID() }, { "x-baseline-token": scanToken }, { parentId, origin: "direction", question: `Investigate ${directionName}` });
   }, [begin, scanId, scanToken]);
 
-  /** A question from the composer: a follow-up of the selected investigation, or a new question about the brand. */
+  /**
+   * A question from the composer. From an investigation or territory it is a follow-up of that run. From a direction
+   * it is a new question on that direction's branch; when the text does not name the direction, the direction is
+   * sent as the caller's explicit territory. Otherwise it is a new question about the brand.
+   * Asking exactly what is already answered on the same branch opens that answer instead of paying for it again.
+   */
   const ask = useCallback((question: string, from: NetworkNode | null) => {
     const context = followUpContext(from);
-    const body = context ? { query: question, context } : { query: question, brand };
-    return begin("/api/agent/jobs", body, {}, { parentId: context && from ? from.id : "brand", origin: "question", question });
+    const direction = !context && from?.kind === "direction" ? from : null;
+    const parentId = context && from ? from.id : direction ? direction.id : "brand";
+    const same = latest.current.find((item) => normName(item.question) === normName(question) && !canRetry(item));
+    if (same) {
+      setNotice("You already asked this, so its answer is open. Use Try again on a failed one to run it again.");
+      return Promise.resolve(same.jobId);
+    }
+    const names = direction && !normName(question).includes(normName(direction.label)) ? { territories: [direction.label] } : {};
+    const body = context ? { query: question, context } : { query: question, brand, ...names };
+    return begin("/api/agent/jobs", body, {}, { parentId, origin: "question", question });
   }, [begin, brand]);
 
   const answer = useCallback((inquiry: Inquiry, clarification: string) => {

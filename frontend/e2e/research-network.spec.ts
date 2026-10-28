@@ -6,7 +6,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test, type Page, type Route } from "@playwright/test";
 
-type Fixture = { baseline: { scanId: string; scanStatus: string }; parent: { created: { jobId: string }; view: unknown } };
+type Fixture = { baseline: { scanId: string; scanStatus: string }; parent: { created: { jobId: string }; view: unknown }; compare: { view: unknown } };
 const fixture = JSON.parse(readFileSync(new URL("../../backend/tests/fixtures/synthetic/comparative-e2e.json", import.meta.url), "utf8")) as Fixture;
 const json = (route: Route, value: unknown, status = 200) => route.fulfill({ status, contentType: "application/json", body: JSON.stringify(value) });
 
@@ -162,4 +162,39 @@ test("cards can be dragged with their branch, the arrangement is kept, and Tidy 
   await expect.poll(where).toBe(after);
   await page.getByRole("button", { name: "Tidy the layout" }).click();
   await expect.poll(where).toBe(before);
+});
+
+test("SYNTHETIC questions branch from a direction: a brand question joins or opens one, and a repeat opens the answer", async ({ page }) => {
+  const calls = await stubLive(page);
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("How far can Larkspur Velo extend into Gravel Riding?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  // The SYNTHETIC answer is about Gravel Riding, which the baseline did not list: it opens a new direction.
+  await expect(page.getByRole("treeitem", { name: "Direction: Gravel Riding, New direction" })).toBeVisible();
+  await expect(page.getByTestId("network-node-finding")).toHaveCount(0);
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
+  await expect(page.getByText(/Ask about/u)).toContainText("Slow Touring");
+  await page.getByLabel(/Ask about/u).fill("Which audiences overlap?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(2);
+  expect(calls.questions[1]).toEqual({ query: "Which audiences overlap?", brand: "Larkspur Velo", territories: ["Slow Touring"] });
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
+  await page.getByLabel(/Ask about/u).fill("which audiences  overlap?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByText("You already asked this")).toBeVisible();
+  expect(calls.questions).toHaveLength(2);
+});
+
+test("SYNTHETIC a compared territory explains its result in plain words and shows its evidence", async ({ page }) => {
+  await stubLive(page);
+  await page.route("**/api/agent/jobs/*", (route) => json(route, fixture.compare.view));
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("Compare Gravel Riding with Alpine Hiking and Mountain Town");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await page.getByRole("treeitem", { name: /Territory: Mountain Town/u }).click();
+  const dossier = page.getByTestId("network-dossier");
+  await expect(dossier.getByTestId("network-verdict")).toContainText("A natural fit in this comparison");
+  await expect(dossier).toContainText("It ranked 1 of 3");
+  await expect(dossier.getByTestId("network-territory-evidence")).toBeVisible();
+  await expect(dossier.getByRole("button", { name: "Investigate Mountain Town as a direction" })).toBeVisible();
 });

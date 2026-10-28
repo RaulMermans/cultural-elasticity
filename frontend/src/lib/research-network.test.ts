@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { QueryResponse } from "@cultural-elasticity/shared";
-import { BRAND_NODE, buildNetwork, canRetry, followUpContext, inquiryState, layoutNetwork, type Inquiry } from "./research-network.ts";
+import { BRAND_NODE, branchDirection, buildNetwork, canRetry, followUpContext, inquiryState, layoutNetwork, type Inquiry } from "./research-network.ts";
 import type { DirectionView } from "./research-view.ts";
 
 const direction = (key: string) => ({ key, id: `t-${key}`, name: `SYNTHETIC ${key}` }) as DirectionView;
@@ -16,15 +16,21 @@ test("the brand is the root, directions hang from it, and inquiries attach to th
   ]);
 });
 
-test("a question's territories become findings under it; a direction investigation adds none", () => {
-  const territories = [{ name: "SYNTHETIC T", investigationState: "INVESTIGATED", territoryKey: "k1", evidenceStatus: "PARTIAL_EVIDENCE", analysisRoute: null }];
-  const done = { status: "completed", response: response({ territories } as Partial<QueryResponse>) };
-  const nodes = buildNetwork("B", [direction("a")], [inquiry("job1", BRAND_NODE, done), inquiry("job2", "dir:a", { ...done, origin: "direction" })]);
-  const finding = nodes.find((node) => node.kind === "finding")!;
-  assert.equal(finding.parentId, "inq:job1");
-  assert.equal(finding.runId, "run-1");
-  assert.equal(finding.tone, "partial");
-  assert.equal(nodes.filter((node) => node.kind === "finding").length, 1);
+test("a brand question joins the direction it names, or opens a new one; other territories become findings", () => {
+  const territory = (name: string, key: string) => ({ name, investigationState: "INVESTIGATED", territoryKey: key, evidenceStatus: "PARTIAL_EVIDENCE", analysisRoute: null });
+  const done = (names: ReturnType<typeof territory>[]) => ({ status: "completed", response: response({ territories: names } as Partial<QueryResponse>) });
+  const nodes = buildNetwork("B", [direction("a")], [
+    inquiry("job1", BRAND_NODE, done([territory("SYNTHETIC a", "k1")])),
+    inquiry("job2", BRAND_NODE, done([territory("SYNTHETIC New", "k2"), territory("SYNTHETIC Ref", "k3")])),
+    inquiry("job3", "dir:a", { ...done([territory("SYNTHETIC a", "k1")]), origin: "direction" }),
+  ]);
+  assert.equal(nodes.find((node) => node.id === "inq:job1")!.parentId, "dir:a");
+  const opened = nodes.find((node) => node.id === "new:synthetic new")!;
+  assert.deepEqual([opened.kind, opened.parentId, opened.status], ["direction", BRAND_NODE, "New direction"]);
+  assert.equal(nodes.find((node) => node.id === "inq:job2")!.parentId, "new:synthetic new");
+  const findings = nodes.filter((node) => node.kind === "finding");
+  assert.deepEqual(findings.map((node) => [node.label, node.parentId, node.tone, node.runId]), [["SYNTHETIC Ref", "inq:job2", "partial", "run-1"]]);
+  assert.equal(branchDirection(nodes, "find:job2:k3")!.id, "new:synthetic new");
 });
 
 test("inquiry state reads only the job and the validated response", () => {
