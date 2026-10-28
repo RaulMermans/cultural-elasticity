@@ -17,6 +17,8 @@ import { expect, test, type Page } from "@playwright/test";
 
 const OPERATOR = process.env.E2E_OPERATOR_TOKEN ?? "";
 const BRAND = process.env.E2E_BRAND ?? "Zara";
+/** Optional second question, e.g. a direction expected to be inelastic for the brand. One more paid start. */
+const SECOND_QUESTION = process.env.E2E_SECOND_QUESTION ?? "";
 const EVIDENCE = process.env.E2E_EVIDENCE_DIR ?? "test-results/hosted-evidence";
 const PAID = /^\/api\/(agent\/jobs|research\/(handoff|compare)\/jobs|brands\/(resolve|baselines))$/u;
 mkdirSync(EVIDENCE, { recursive: true });
@@ -136,6 +138,23 @@ test.describe("LIVE authorized journey", () => {
     note("investigation_settled", { outcome, tone: await inquiry.getAttribute("data-tone"), dossier: dossier.slice(0, 2500), nodes: await page.locator("[data-testid^='network-node-']").count() });
     await shot("06-investigation-result");
 
+    // 4b. A second, contrasting question from the composer (expected to be inelastic). Never retried.
+    let inquiries = 1;
+    if (SECOND_QUESTION) {
+      await page.getByTestId("network-node-brand").click();
+      await page.getByLabel(/Ask a research question about/u).fill(SECOND_QUESTION);
+      await page.getByRole("button", { name: "Ask the agent" }).click();
+      note("second_question_started", { question: SECOND_QUESTION });
+      await expect(page.getByTestId("network-node-inquiry")).toHaveCount(2, { timeout: 60_000 });
+      inquiries = 2;
+      const second = page.getByTestId("network-node-inquiry").nth(1);
+      await expect(second).not.toHaveAttribute("data-tone", "running", { timeout: 40 * 60_000 });
+      await second.click();
+      const reading = (await page.getByTestId("network-dossier").innerText()).replace(/\s+/gu, " ");
+      note("second_question_settled", { outcome: await second.getAttribute("aria-label"), tone: await second.getAttribute("data-tone"), dossier: reading.slice(0, 2500) });
+      await shot("06b-second-question-result");
+    }
+
     // 5. Export HTML and PDF from the same research.
     for (const format of ["HTML", "PDF"] as const) {
       const downloading = page.waitForEvent("download");
@@ -155,7 +174,7 @@ test.describe("LIVE authorized journey", () => {
     await shot("07-library");
     await library.getByRole("button").first().click();
     await expect(page.getByTestId("research-network")).toBeVisible({ timeout: 60_000 });
-    await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1, { timeout: 30_000 });
+    await expect(page.getByTestId("network-node-inquiry")).toHaveCount(inquiries, { timeout: 30_000 });
     await shot("08-reopened");
     note("reopened_from_library");
 
