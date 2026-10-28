@@ -5,6 +5,6 @@ export const dynamic = "force-dynamic";
 
 /** Public admission view. Never forwards boot id, credentials, or spend. */
 export async function GET(request: Request): Promise<Response> {
-  const view = await getAdmissionStatus(operatorOf(request) !== null);
+  const view = await getAdmissionStatus(operatorOf(request));
   return Response.json(view, { headers: { "cache-control": "no-store" } });
 }

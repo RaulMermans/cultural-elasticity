@@ -23,3 +23,6 @@ backend/feasibility-output/
 
 .DS_Store
 *.log
+
+# Local release evidence (scripts/release); may name deployments, never secrets
+.release/

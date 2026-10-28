@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { backendConfigIssues } from "./backend-url.ts";
-import { admissionForVisitor, clearedOperatorCookie, operatorCookie, readOperatorCredential } from "./operator.ts";
+import { admissionForOperatorCheck, admissionForVisitor, clearedOperatorCookie, operatorCookie, readOperatorCredential } from "./operator.ts";
 
 const TOKEN = "SYNTHETIC-operator-credential-0000000000";
 
@@ -34,4 +34,14 @@ test("a half-configured production server is reported, never shown as connected"
   assert.deepEqual(backendConfigIssues({ NODE_ENV: "production", BACKEND_URL: "ftp://api.example.test", CE_INTERNAL_API_SECRET: "x".repeat(32) }), ["BACKEND_URL_INVALID"]);
   assert.deepEqual(backendConfigIssues({ NODE_ENV: "production", BACKEND_URL: "not a url", CE_INTERNAL_API_SECRET: "x".repeat(32) }), ["BACKEND_URL_INVALID"]);
   assert.deepEqual(backendConfigIssues({ NODE_ENV: "production", BACKEND_URL: "https://api.example.test", CE_INTERNAL_API_SECRET: "x".repeat(32) }), []);
+});
+
+test("Sprint 9L: a present but expired or rejected credential never keeps Ask enabled", () => {
+  assert.deepEqual(admissionForOperatorCheck({ status: "accepting" }, "authorized"), { status: "accepting" });
+  assert.deepEqual(admissionForOperatorCheck({ status: "accepting" }, "operator_expired"), { status: "paused" });
+  assert.deepEqual(admissionForOperatorCheck({ status: "accepting" }, "operator_required"), { status: "paused" });
+  assert.deepEqual(admissionForOperatorCheck({ status: "accepting" }, "something-new"), { status: "paused" });
+  // An older backend without the field keeps the presence-based view; Railway still refuses every unauthorized start.
+  assert.deepEqual(admissionForOperatorCheck({ status: "accepting" }, undefined), { status: "accepting" });
+  assert.deepEqual(admissionForOperatorCheck({ status: "paused" }, "authorized"), { status: "paused" });
 });

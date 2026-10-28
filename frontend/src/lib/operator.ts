@@ -46,3 +46,13 @@ export function admissionForVisitor(view: AdmissionView, options: { operatorRequ
   if (view.status === "accepting" && options.operatorRequired && !options.operatorPresent) return { status: "paused" };
   return view;
 }
+
+/**
+ * Railway's verdict on the presented credential (`/api/brands/status` `operator`). Only "authorized" keeps an
+ * accepting view; an expired or rejected credential reads as paused. An older backend without the field (or an
+ * unreachable one) leaves the presence-based view unchanged, since Railway still refuses every unauthorized start.
+ */
+export function admissionForOperatorCheck(view: AdmissionView, operator: unknown): AdmissionView {
+  if (view.status !== "accepting" || operator === undefined) return view;
+  return operator === "authorized" ? view : { status: "paused" };
+}
