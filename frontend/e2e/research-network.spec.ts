@@ -127,3 +127,39 @@ test("the zoom controls zoom the board and fit it again", async ({ page }) => {
   await page.getByRole("button", { name: "Fit the network" }).click();
   expect(await scale()).toBeCloseTo(fitted, 5);
 });
+
+test("SYNTHETIC a running investigation shows the agent's live steps", async ({ page }) => {
+  await stubLive(page);
+  const running = { ...(fixture.parent.view as Record<string, unknown>), status: "running", stage: "investigating", stageLabel: "Investigating available evidence", response: null,
+    activity: [
+      { kind: "step", label: "Looked up an entity in Qloo", detail: "SYNTHETIC: resolve the brand first.", status: "info" },
+      { kind: "tool", label: "Asked Qloo for associated entities", detail: "SYNTHETIC: 12 entities returned", status: "ok" },
+    ] };
+  await page.route("**/api/agent/jobs/*", (route) => json(route, running));
+  await startLarkspur(page);
+  await page.getByLabel(/Ask a research question about/u).fill("Where could Larkspur Velo go next?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  const activity = page.getByTestId("network-activity");
+  await expect(activity).toContainText("Asked Qloo for associated entities");
+  await expect(activity).toContainText("SYNTHETIC: resolve the brand first.");
+  await expect(activity.getByLabel("The agent is thinking")).toBeVisible();
+});
+
+test("cards can be dragged with their branch, the arrangement is kept, and Tidy restores it", async ({ page }) => {
+  await page.goto("/?research=loewe");
+  const card = page.getByRole("treeitem", { name: "Direction: Model, Direction" });
+  const where = async () => card.evaluate((element) => (element as SVGGElement).style.transform);
+  const before = await where();
+  const box = (await card.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 + 120, box.y + box.height / 2 + 80, { steps: 8 });
+  await page.mouse.up();
+  const after = await where();
+  expect(after).not.toBe(before);
+  await expect(page.getByTestId("network-dossier")).not.toContainText("Why it is here");
+  await page.reload();
+  await expect.poll(where).toBe(after);
+  await page.getByRole("button", { name: "Tidy the layout" }).click();
+  await expect.poll(where).toBe(before);
+});

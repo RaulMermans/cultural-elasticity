@@ -68,11 +68,11 @@ export function templateSynthesis(brandLabel: string | null, results: AgentTerri
 function templateFollowUps(results: AgentTerritoryResult[]): string[] {
   const out: string[] = [];
   for (const r of results) {
-    if (r.robustness && (r.robustness.level === "LOW" || r.robustness.level === "INSUFFICIENT")) out.push(`Add or swap exemplars for ${r.label} to test whether its position holds.`);
-    else if (r.analysisRoute === "PARTIAL_CULTURAL_ANALYSIS" || r.analysisRoute === "DESCRIPTIVE_ANALYSIS") out.push(`Add represented reference territories of the same entity type so ${r.label} can be placed in a comparison set.`);
-    else if (r.analysisRoute === "INSUFFICIENT_EVIDENCE") out.push(`Rephrase ${r.label} as a concept Qloo recognises, or name example entities for it.`);
+    if (r.robustness && (r.robustness.level === "LOW" || r.robustness.level === "INSUFFICIENT")) out.push(`Does ${r.label}'s position hold with other exemplars?`);
+    else if (r.analysisRoute === "PARTIAL_CULTURAL_ANALYSIS" || r.analysisRoute === "DESCRIPTIVE_ANALYSIS") out.push(`How does ${r.label} compare with other territories of the same kind?`);
+    else if (r.analysisRoute === "INSUFFICIENT_EVIDENCE") out.push(`Which Qloo concept or example entities best describe ${r.label}?`);
   }
-  out.push("Review the exemplar choices behind each territory before acting on any class.");
+  out.push("Which exemplars sit behind each territory?");
   return [...new Set(out)].slice(0, 6);
 }
 

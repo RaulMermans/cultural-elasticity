@@ -9,7 +9,8 @@
  * many run at once, and carries an opaque access token. Qloo calls stay serialized by the shared tool provider.
  */
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
-import type { QueryResponse } from "@cultural-elasticity/shared";
+import type { AgentTrace, QueryResponse } from "@cultural-elasticity/shared";
+import { jobActivity, type JobActivity } from "./activity.js";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../errors.js";
 import type { SpendBound } from "../../ops/spend.js";
 import { observedUsage } from "../../ops/usage.js";
@@ -27,6 +28,8 @@ export type JobView = {
   stopping: boolean;
   response: QueryResponse | null;
   error: { code: string; message: string } | null;
+  /** What the agent is doing, read from its live trace. Model reasons are its own notes, never evidence. */
+  activity: JobActivity[];
 };
 
 export type JobCreated = JobView & { accessToken: string };
@@ -83,6 +86,7 @@ type Job = {
   finishedAt: number | null;
   expiresAt: number;
   controller: AbortController;
+  trace: AgentTrace | null;
   timer: ReturnType<typeof setTimeout> | null;
   spend?: SpendBound;
 };
@@ -153,6 +157,7 @@ export class JobManager {
       finishedAt: null,
       expiresAt: now + runLimitMs(request, this.maxRunMs) + this.ttlMs,
       controller: new AbortController(),
+      trace: null,
       timer: null,
     };
     this.jobs.set(job.id, job);
@@ -250,6 +255,7 @@ export class JobManager {
     const hooks: QueryHooks = {
       signal: job.controller.signal,
       onProgress: (event) => this.note(job, event),
+      onTrace: (trace) => { job.trace = trace; },
       onPreview: (response) => {
         if (job.controller.signal.aborted || job.status !== "running") return;
         job.response = structuredClone(response);
@@ -343,6 +349,7 @@ export class JobManager {
       stopping: false,
       response: null,
       error: { code: "JOB_EXPIRED", message: "This investigation is no longer held. You can start a new one." },
+      activity: [],
     };
   }
 
@@ -374,6 +381,7 @@ export class JobManager {
       stopping: job.stopping,
       response: job.response,
       error: job.error,
+      activity: job.status === "expired" ? [] : jobActivity(job.trace),
     };
   }
 }

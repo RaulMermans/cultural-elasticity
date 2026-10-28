@@ -1004,6 +1004,32 @@ body:not(:has(.atlas)) .sprint { margin-bottom: 0; opacity: 0.7; }
 .rn-composer__row input { flex: 1; font-size: 1rem; }
 .rn-composer .primary { border-radius: 12px; }
 .rn-composer p { margin: 0; font-size: 0.8rem; }
+.rn-trace { margin-top: var(--ce-space-3); border: 1px solid #d5e3d7; border-radius: 14px; background: linear-gradient(180deg, #f4f9f4, #fffdf8); padding: var(--ce-space-3); }
+.rn-trace[data-live="true"] { box-shadow: 0 0 0 0 rgba(74, 122, 88, 0.35); animation: rn-glow 2.4s ease-in-out infinite; }
+.rn-trace ol { list-style: none; margin: 0; padding: 0 0 0 1.1rem; display: grid; gap: var(--ce-space-2); max-height: 340px; overflow-y: auto; position: relative; border-left: 2px dashed #c9d8cc; }
+.rn-trace li { position: relative; display: grid; gap: 2px; animation: rn-step 360ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.rn-trace li::before { content: ""; position: absolute; left: calc(-1.1rem - 6px); top: 0.35rem; width: 10px; height: 10px; border-radius: 50%; background: #fffdf8; border: 2px solid var(--ce-botanical); }
+.rn-trace li[data-kind="step"]::before { background: var(--ce-botanical); }
+.rn-trace li[data-status="empty"]::before { border-color: var(--ce-brass); }
+.rn-trace li[data-status="failed"]::before { border-color: #a14a3a; background: #f6e1dc; }
+.rn-trace__label { font-weight: 600; font-size: 0.88rem; }
+.rn-trace li[data-kind="step"] .rn-trace__detail { font-style: italic; color: var(--ce-ink-soft); }
+.rn-trace__detail { font-size: 0.85rem; color: var(--ce-muted); line-height: 1.4; overflow-wrap: anywhere; }
+.rn-trace__thinking { display: flex !important; gap: 5px; padding: 0.3rem 0; }
+.rn-trace__thinking::before { border-style: dotted !important; animation: rn-blink 0.8s ease-in-out infinite alternate; }
+.rn-trace__thinking span { width: 7px; height: 7px; border-radius: 50%; background: var(--ce-botanical); animation: rn-dots 1.1s ease-in-out infinite; }
+.rn-trace__thinking span:nth-child(2) { animation-delay: 0.15s; }
+.rn-trace__thinking span:nth-child(3) { animation-delay: 0.3s; }
+.rn-trace__note { margin: var(--ce-space-2) 0 0; font-size: 0.75rem; }
+.rn-trace-details { margin-top: var(--ce-space-4); }
+.rn-trace-details summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; }
+.rn-card { cursor: grab; }
+.rn-card[data-dragging="true"] { cursor: grabbing; transition: none !important; }
+.rn-card[data-dragging="true"] .rn-card__float { animation-play-state: paused; }
+.rn-card[data-dragging="true"] .rn-card__body { filter: drop-shadow(0 14px 18px rgba(26, 22, 18, 0.22)); }
+@keyframes rn-step { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes rn-dots { 0%, 100% { transform: translateY(0); opacity: 0.35; } 50% { transform: translateY(-4px); opacity: 1; } }
+@keyframes rn-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(74, 122, 88, 0.0); } 50% { box-shadow: 0 0 0 6px rgba(74, 122, 88, 0.12); } }
 @keyframes rn-pop { from { transform: scale(0.55); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes rn-float { from { transform: translateY(-2.5px); } to { transform: translateY(2.5px); } }
 @keyframes rn-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
@@ -1012,7 +1038,7 @@ body:not(:has(.atlas)) .sprint { margin-bottom: 0; opacity: 0.7; }
 @keyframes rn-blink { from { opacity: 1; } to { opacity: 0.3; } }
 @keyframes rn-slide { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
-  .rn-card, .rn-card__pop, .rn-card__float, .rn-card__halo, .rn-wire, .rn-dossier, .rn-card[data-tone="running"] .rn-card__dot { animation: none !important; transition: none !important; }
+  .rn-card, .rn-card__pop, .rn-card__float, .rn-card__halo, .rn-wire, .rn-dossier, .rn-card[data-tone="running"] .rn-card__dot, .rn-trace, .rn-trace li, .rn-trace__thinking span, .rn-trace__thinking::before { animation: none !important; transition: none !important; }
 }
 @media (max-width: 1000px) {
   .rn-stage { height: auto; display: grid; overflow: visible; border: 0; box-shadow: none; }

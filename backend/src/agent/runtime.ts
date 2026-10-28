@@ -16,7 +16,7 @@
  * validator's reasons (no generic self-reflection). When no material evidence gap remains and the model
  * still proposes nothing acceptable, the runtime analyzes the ready territories itself.
  */
-import type { AgentDecisionTrace, AgentRunResponse, InvestigationLink } from "@cultural-elasticity/shared";
+import type { AgentDecisionTrace, AgentRunResponse, AgentTrace, InvestigationLink } from "@cultural-elasticity/shared";
 import { runAnalysis } from "./analysis-runner.js";
 import { applyConceptDedup } from "./concept-dedup.js";
 import { buildDecisionContext, contextSize } from "./context.js";
@@ -62,6 +62,8 @@ export type RunOptions = {
   spend?: SpendBound;
   /** Queue wait and query-layer interpretation measured outside the agent loop. */
   admission?: { queueWaitMs?: number; interpretationMs?: number };
+  /** Receives the run's live trace once, so a watcher can show progress. The trace stays owned by the runtime. */
+  onTrace?: (trace: AgentTrace) => void;
 };
 
 /** Rejection codes a repair attempt can act on (the validator's reason tells the model what to change). */
@@ -105,6 +107,7 @@ export class AgentRuntime {
       state.trace.investigationLink = options.link;
     }
     this.store.put(state);
+    options.onTrace?.(state.trace);
     const spans = attachRecorder(state, state.runId);
     spans.record({ runId: state.runId, phase: "RUN_START", operation: "run", startOffsetMs: 0, durationMs: 0 });
     if ((options.admission?.queueWaitMs ?? 0) > 0) {
@@ -122,9 +125,10 @@ export class AgentRuntime {
   }
 
   /** Resumes a NEEDS_INPUT run with the user's clarification. Budgets already spent stay spent. */
-  async continue(runId: string, clarification: string, options: { signal?: AbortSignal; spend?: SpendBound } = {}): Promise<AgentRunResponse> {
+  async continue(runId: string, clarification: string, options: { signal?: AbortSignal; spend?: SpendBound; onTrace?: (trace: AgentTrace) => void } = {}): Promise<AgentRunResponse> {
     const state = this.store.get(runId);
     if (!state) throw new RunNotFoundError(runId);
+    options.onTrace?.(state.trace);
     if (state.status !== "NEEDS_INPUT") throw new RunNotWaitingError(runId, state.status);
     const text = clarification.trim().slice(0, 1_000);
     if (!text) throw new AgentInputError([{ path: "clarification", message: "must be non-empty" }]);

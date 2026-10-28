@@ -10,7 +10,7 @@
  * interpreting it again. The /api/agent/continue clarification path is separate and unchanged.
  */
 import { createHash, randomUUID } from "node:crypto";
-import { QUERY_SCHEMA_VERSION, type AgentRunResponse, type InvestigationLink, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type QueryResponse, type QueryState, type QueryTelemetry, type QueryTerritoryNode } from "@cultural-elasticity/shared";
+import { QUERY_SCHEMA_VERSION, type AgentRunResponse, type AgentTrace, type InvestigationLink, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type QueryResponse, type QueryState, type QueryTelemetry, type QueryTerritoryNode } from "@cultural-elasticity/shared";
 import { priceUsd } from "../finalizer.js";
 import { interpretCeilingUsd } from "../../ops/pricing.js";
 import type { SpendBound } from "../../ops/spend.js";
@@ -51,6 +51,8 @@ export type QueryHooks = {
   /** Server-validated baseline identity; never supplied by a query proposal. */
   expectedBrandId?: string;
   onProgress?: (event: QueryProgress) => void;
+  /** The agent run's live trace, for a readable activity view. */
+  onTrace?: (trace: AgentTrace) => void;
   /** A real gate outcome, published before a long investigation. Territories are not yet investigated. */
   onPreview?: (response: QueryResponse) => void;
   /** Per-job spend envelope. A refused call is incomplete, not fabricated evidence. */
@@ -89,7 +91,7 @@ export class QueryService {
     telemetry.parentRunId = runId;
     if (hooks?.signal?.aborted) return this.cancelledResponse(telemetry, null, "Cancelled before the answer was applied.");
     hooks?.onProgress?.({ phase: "investigating", intent: null });
-    const result = await this.deps.runtime.continue(runId, clarification, { signal: hooks?.signal, spend: hooks?.spend });
+    const result = await this.deps.runtime.continue(runId, clarification, { signal: hooks?.signal, spend: hooks?.spend, onTrace: hooks?.onTrace });
     return this.finishRun(telemetry, null, result, hooks);
   }
 
@@ -211,6 +213,7 @@ export class QueryService {
       signal: hooks?.signal,
       spend: hooks?.spend,
       expectedBrandId: hooks?.expectedBrandId,
+      onTrace: hooks?.onTrace,
       admission: { queueWaitMs: hooks?.queueWaitMs, interpretationMs: telemetry.interpretationLatencyMs },
     });
     telemetry.childRunId = result.runId;

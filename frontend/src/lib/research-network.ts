@@ -5,6 +5,7 @@
  */
 import type { QueryResponse } from "@cultural-elasticity/shared";
 import { runCopy, territoryCopy, type AtlasTone, type Point } from "../components/atlas/atlas-model.ts";
+import type { JobActivity } from "./job-envelope.ts";
 import type { DirectionView } from "./research-view.ts";
 
 export const BRAND_NODE = "brand";
@@ -23,6 +24,8 @@ export type Inquiry = {
   response: QueryResponse | null;
   /** The server no longer holds the job (expired, or the process restarted). */
   lost: boolean;
+  /** The agent's live steps, as the server last reported them. */
+  activity?: JobActivity[];
   createdAt: number;
 };
 

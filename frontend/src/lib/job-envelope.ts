@@ -3,6 +3,20 @@ import { parseQueryResponse, type QueryResponse } from "@cultural-elasticity/sha
 const STATUSES = new Set(["queued", "running", "completed", "failed", "cancelled", "expired"]);
 const STAGES = new Set(["queued", "interpreting", "investigating", "preparing", "done"]);
 
+/** One readable step of a running agent: its own one-line reason, or what a tool call returned. Never evidence. */
+export type JobActivity = { kind: "step" | "tool"; label: string; detail: string; status: "ok" | "empty" | "failed" | "info" };
+
+const ACTIVITY_KINDS = new Set(["step", "tool"]);
+const ACTIVITY_STATUSES = new Set(["ok", "empty", "failed", "info"]);
+
+/** Malformed entries are dropped; activity is a view of progress, so it never invalidates the job. */
+export function parseActivity(value: unknown): JobActivity[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is JobActivity => isRecord(item) && typeof item.kind === "string" && ACTIVITY_KINDS.has(item.kind)
+    && typeof item.label === "string" && typeof item.detail === "string" && typeof item.status === "string" && ACTIVITY_STATUSES.has(item.status))
+    .slice(-40).map(({ kind, label, detail, status }) => ({ kind, label: label.slice(0, 120), detail: detail.slice(0, 240), status }));
+}
+
 export type JobEnvelope = {
   jobId: string;
   accessToken?: string;
@@ -12,6 +26,7 @@ export type JobEnvelope = {
   stopping: boolean;
   response: QueryResponse | null;
   error: { code: string; message: string } | null;
+  activity: JobActivity[];
 };
 
 export function parseJobEnvelope(value: unknown): { ok: true; job: JobEnvelope } | { ok: false } {
@@ -37,6 +52,7 @@ export function parseJobEnvelope(value: unknown): { ok: true; job: JobEnvelope }
       stopping: value.stopping,
       response,
       error: value.error === null ? null : (value.error as { code: string; message: string }),
+      activity: parseActivity(value.activity),
     },
   };
 }

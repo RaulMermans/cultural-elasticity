@@ -4,14 +4,16 @@ import type { AgentRunResponse, AnyBrandBaselineResult, QueryResponse } from "@c
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { reasonCopy } from "@/components/atlas/atlas-model";
 import { evidenceTerm } from "@/lib/evidence-presentation";
+import type { JobActivity } from "@/lib/job-envelope";
 import { hypothesisOutcomeCopy } from "@/lib/research-copy";
-import { BRAND_NODE, buildNetwork, canRetry, directionNodeId, inquiryNodeId, layoutNetwork, type Inquiry, type NetworkNode } from "@/lib/research-network";
+import { BRAND_NODE, buildNetwork, canRetry, directionNodeId, inquiryNodeId, isPending, layoutNetwork, type Inquiry, type NetworkNode } from "@/lib/research-network";
 import { buildResearchView, type ConnectionView, type DirectionView, type ResearchView } from "@/lib/research-view";
 import { NetworkBoard, type BoardInset } from "./NetworkBoard";
 
 /** Floating legend (top), dossier (right) and composer (bottom) cover these parts of the board. */
 const BOARD_INSET: BoardInset = { top: 64, right: 430, bottom: 150, left: 70 };
 import { useResearchNetwork } from "./use-research-network";
+import { useResearchLayout } from "./use-research-layout";
 
 const clip = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text);
 
@@ -82,7 +84,23 @@ function InquiryResult({ response }: { response: QueryResponse }) {
   </>;
 }
 
-function InquiryDossier({ inquiry, node, onAnswer, onAsk, onMeasure, onRetry, busy }: { inquiry: Inquiry; node: NetworkNode; onAnswer: (text: string) => void; onAsk: (question: string) => void; onMeasure?: () => void; onRetry?: () => void; busy: boolean }) {
+/** The agent's steps as the server reports them. Its reasons are its own notes, never evidence. */
+function AgentActivity({ entries, live }: { entries: JobActivity[]; live: boolean }) {
+  const list = useRef<HTMLOListElement>(null);
+  useEffect(() => { if (live) list.current?.lastElementChild?.scrollIntoView({ block: "nearest" }); }, [entries.length, live]);
+  return <div className="rn-trace" data-live={live ? "true" : undefined} data-testid="network-activity">
+    <ol ref={list} aria-live={live ? "polite" : undefined}>
+      {entries.map((entry, index) => <li key={index} data-kind={entry.kind} data-status={entry.status} style={{ animationDelay: `${Math.min(index, 6) * 40}ms` }}>
+        <span className="rn-trace__label">{entry.label}</span>
+        {entry.detail ? <span className="rn-trace__detail">{entry.detail}</span> : null}
+      </li>)}
+      {live ? <li className="rn-trace__thinking" aria-label="The agent is thinking"><span /><span /><span /></li> : null}
+    </ol>
+    <p className="quiet rn-trace__note">Steps come from the agent's trace. Its stated reasons are its own notes, not evidence; every number comes from Qloo.</p>
+  </div>;
+}
+
+function InquiryDossier({ inquiry, node, onAnswer, onAsk, onMeasure, onRetry, onRephrase, busy }: { inquiry: Inquiry; node: NetworkNode; onAnswer: (text: string) => void; onAsk: (question: string) => void; onMeasure?: () => void; onRetry?: () => void; onRephrase?: () => void; busy: boolean }) {
   const [answer, setAnswer] = useState("");
   const response = inquiry.response;
   const result = response?.investigation?.result;
@@ -94,7 +112,9 @@ function InquiryDossier({ inquiry, node, onAnswer, onAsk, onMeasure, onRetry, bu
     <h2>{inquiry.question}</h2>
     <p className="rn-status" data-tone={node.tone} role="status">{running ? `The agent is working: ${inquiry.stageLabel || "investigating"}` : node.status}</p>
     {inquiry.lost ? <p className="quiet">The research service no longer holds this investigation (it expired or restarted). Its question stays in your network; try it again to continue.</p> : null}
+    {running ? <AgentActivity entries={inquiry.activity ?? []} live /> : null}
     {response && !running ? <InquiryResult response={response} /> : null}
+    {!running && response && !response.investigation && onRephrase ? <button type="button" className="rw-secondary" disabled={busy} onClick={onRephrase}>Rephrase it as a question</button> : null}
     {onRetry ? <button type="button" className="primary" data-testid="network-retry" disabled={busy} onClick={onRetry}>Try again</button> : null}
     {!running && response?.investigation ? <ElasticityBlock elasticity={elasticityOf(result, null)} investigated onMeasure={onMeasure} busy={busy} /> : running ? <ElasticityBlock elasticity={null} pending /> : null}
     {waiting ? <form className="rn-answer" onSubmit={(event) => { event.preventDefault(); if (answer.trim()) { onAnswer(answer.trim()); setAnswer(""); } }}>
@@ -102,6 +122,7 @@ function InquiryDossier({ inquiry, node, onAnswer, onAsk, onMeasure, onRetry, bu
       <input id="rn-answer" value={answer} maxLength={1000} onChange={(event) => setAnswer(event.target.value)} />
       <button type="submit" className="primary" disabled={busy || !answer.trim()}>Answer</button>
     </form> : null}
+    {!running && inquiry.activity?.length ? <details className="rn-trace-details"><summary>How the agent worked ({inquiry.activity.length} steps)</summary><AgentActivity entries={inquiry.activity} live={false} /></details> : null}
     {followUps.length ? <><h3>Continue this path</h3><ul className="rn-links">{followUps.map((step) => <li key={step}><button type="button" className="rn-link" disabled={busy} onClick={() => onAsk(step)}>{step}</button></li>)}</ul></> : null}
   </>;
 }
@@ -140,6 +161,13 @@ function DirectionDossier({ view, direction, inquiries, canInvestigate, busy, on
   </>;
 }
 
+/** A card and every card that grew from it: dragging a card carries its branch. */
+function branchOf(nodes: readonly NetworkNode[], id: string): string[] {
+  const out = [id];
+  for (let index = 0; index < out.length; index += 1) for (const node of nodes) if (node.parentId === out[index] && !out.includes(node.id)) out.push(node.id);
+  return out;
+}
+
 export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onHome, onClassic, onSections }: { result: AnyBrandBaselineResult; scanToken: string | null; canAsk: boolean; canInvestigate: boolean; onHome: () => void; onClassic: () => void; onSections: () => void }) {
   const view = useMemo(() => buildResearchView(result, {}), [result]);
   const network = useResearchNetwork({ scanId: view.scanId, brand: view.brand.name, scanToken });
@@ -151,7 +179,8 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     return direction ? { nodeId: directionNodeId(direction.key), connections: connectionsFor(view, direction).map((item) => ({ key: item.key, name: item.name })) } : null;
   }, [view, openDirection]);
   const nodes = useMemo(() => buildNetwork(view.brand.name, view.directions, network.inquiries, expanded), [view, network.inquiries, expanded]);
-  const positions = useMemo(() => layoutNetwork(nodes), [nodes]);
+  const layout = useResearchLayout(view.scanId);
+  const positions = useMemo(() => layout.apply(layoutNetwork(nodes)), [nodes, layout]);
   const byId = useMemo(() => new Map(nodes.map((node) => [node.id, node])), [nodes]);
   const selected = byId.get(selectedId) ?? byId.get(BRAND_NODE)!;
   const previousCount = useRef(network.inquiries.length);
@@ -214,9 +243,10 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     dossier = <DirectionDossier view={view} direction={direction} inquiries={related} canInvestigate={canInvestigate && Boolean(scanToken)} busy={network.starting} onInvestigate={() => void network.investigateDirection(direction.id, direction.name, directionNode.id)} onSelect={setSelectedId} />;
   } else if (selected.kind === "inquiry") {
     const inquiry = inquiryOf(selected);
-    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} busy={network.starting || !live} onAnswer={(text) => void network.answer(inquiry, text)} onAsk={(text) => void network.ask(text, selected)} onMeasure={measureFor(inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} /> : null;
+    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} busy={network.starting || !live} onAnswer={(text) => void network.answer(inquiry, text)} onAsk={(text) => void network.ask(text, selected)} onMeasure={measureFor(inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
   } else if (selected.kind === "finding") {
-    dossier = <FindingDossier node={selected} inquiry={inquiryOf(selected)} brand={view.brand.name} busy={network.starting || !live} onAsk={(text) => void network.ask(text, selected)} onMeasure={measureFor(selected.label)} />;
+    const parentInquiry = inquiryOf(selected);
+    dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onAsk={(text) => void network.ask(text, selected)} onMeasure={measureFor(selected.label)} />;
   } else {
     dossier = <BrandDossier view={view} onSelect={setSelectedId} />;
   }
@@ -235,7 +265,8 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
         </div>
       </header>
       <div className="rn-stage">
-        <NetworkBoard nodes={nodes} positions={positions} selectedId={selected.id} onSelect={setSelectedId} label={`Research network for ${view.brand.name}`} inset={BOARD_INSET} />
+        <NetworkBoard nodes={nodes} positions={positions} selectedId={selected.id} onSelect={setSelectedId}
+          onMove={(id, dx, dy, origin) => layout.move(branchOf(nodes, id), origin, dx, dy)} onTidy={layout.reset} moved={layout.moved} label={`Research network for ${view.brand.name}`} inset={BOARD_INSET} />
         <ul className="rn-legend" aria-label="Legend">
           <li data-tone="brand">Brand</li><li data-tone="hypothesis">Direction</li><li data-tone="running">Agent investigating</li><li data-tone="supported">Worth pursuing</li><li data-tone="partial">Inconclusive or partial</li><li data-tone="unsupported">Not supported or not run</li>
         </ul>

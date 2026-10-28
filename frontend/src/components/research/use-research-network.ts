@@ -2,7 +2,7 @@
 
 import { parseQueryResponse } from "@cultural-elasticity/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { parseJobEnvelope, publicFailure, type JobEnvelope } from "@/lib/job-envelope";
+import { parseActivity, parseJobEnvelope, publicFailure, type JobEnvelope } from "@/lib/job-envelope";
 import { followUpContext, inquiryNodeId, isPending, type Inquiry, type InquiryOrigin, type NetworkNode } from "@/lib/research-network";
 
 const POLL_MS = 2000;
@@ -16,7 +16,7 @@ function load(scanId: string): Inquiry[] {
     return saved.filter((item): item is Inquiry => typeof item?.jobId === "string" && typeof item?.token === "string" && typeof item?.parentId === "string" && typeof item?.question === "string")
       .map((item) => {
         const parsed = item.response ? parseQueryResponse(item.response) : null;
-        return { ...item, response: parsed?.ok ? parsed.response : null };
+        return { ...item, response: parsed?.ok ? parsed.response : null, activity: parseActivity(item.activity) };
       });
   } catch { return []; }
 }
@@ -31,7 +31,7 @@ async function readJson(response: Response): Promise<unknown> {
 
 function merge(inquiry: Inquiry, view: JobEnvelope): Inquiry {
   const parsed = view.response ? parseQueryResponse(view.response) : null;
-  return { ...inquiry, status: view.status, stageLabel: view.stageLabel, response: parsed?.ok ? parsed.response : inquiry.response };
+  return { ...inquiry, status: view.status, stageLabel: view.stageLabel, response: parsed?.ok ? parsed.response : inquiry.response, activity: view.activity.length ? view.activity : inquiry.activity ?? [] };
 }
 
 export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: string; brand: string; scanToken: string | null }) {

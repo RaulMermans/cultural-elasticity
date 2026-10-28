@@ -36,12 +36,16 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 /** Space covered by floating panels, kept clear when the board fits the network. */
 export type BoardInset = { top: number; right: number; bottom: number; left: number };
 
-export function NetworkBoard({ nodes, positions, selectedId, onSelect, label, inset }: { nodes: NetworkNode[]; positions: ReadonlyMap<string, Point>; selectedId: string; onSelect: (id: string) => void; label: string; inset: BoardInset }) {
+export function NetworkBoard({ nodes, positions, selectedId, onSelect, onMove, onTidy, moved, label, inset }: { nodes: NetworkNode[]; positions: ReadonlyMap<string, Point>; selectedId: string; onSelect: (id: string) => void; onMove: (id: string, dx: number, dy: number, origin: ReadonlyMap<string, Point>) => void; onTidy: () => void; moved: boolean; label: string; inset: BoardInset }) {
   const host = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 1200, height: 720 });
   const [view, setView] = useState<View>({ x: 600, y: 360, k: 1 });
   const drag = useRef<{ x: number; y: number; vx: number; vy: number; moved: boolean } | null>(null);
   const touched = useRef(false);
+  // A card drag moves the card's branch; a press that never moves is a click.
+  const cardDrag = useRef<{ id: string; x: number; y: number; moved: boolean; origin: ReadonlyMap<string, Point> } | null>(null);
+  const [dragging, setDragging] = useState<string | null>(null);
+  const suppressClick = useRef(false);
 
   const fit = useCallback(() => {
     const bounds = networkBounds(positions, 150);
@@ -109,6 +113,30 @@ export function NetworkBoard({ nodes, positions, selectedId, onSelect, label, in
   };
   const onPointerUp = () => { drag.current = null; };
 
+  const onCardDown = (event: PointerEvent<SVGGElement>, id: string) => {
+    if (event.button !== 0) return;
+    cardDrag.current = { id, x: event.clientX, y: event.clientY, moved: false, origin: new Map(positions) };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const onCardMove = (event: PointerEvent<SVGGElement>) => {
+    const start = cardDrag.current;
+    if (!start) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (!start.moved && Math.abs(dx) + Math.abs(dy) < 4) return;
+    if (!start.moved) { start.moved = true; touched.current = true; setDragging(start.id); }
+    onMove(start.id, dx / view.k, dy / view.k, start.origin);
+  };
+  const onCardUp = () => {
+    suppressClick.current = Boolean(cardDrag.current?.moved);
+    cardDrag.current = null;
+    setDragging(null);
+  };
+  const onCardClick = (id: string) => {
+    if (suppressClick.current) { suppressClick.current = false; return; }
+    onSelect(id);
+  };
+
   const onKey = (event: KeyboardEvent<SVGGElement>, id: string) => {
     if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(id); }
   };
@@ -136,10 +164,11 @@ export function NetworkBoard({ nodes, positions, selectedId, onSelect, label, in
             const selected = node.id === selectedId;
             const top = -card.height / 2;
             return (
-              <g key={node.id} className="rn-card" data-kind={node.kind} data-tone={node.tone} data-selected={selected ? "true" : undefined}
+              <g key={node.id} className="rn-card" data-kind={node.kind} data-tone={node.tone} data-selected={selected ? "true" : undefined} data-dragging={dragging === node.id ? "true" : undefined}
                 style={{ transform: `translate(${point.x}px, ${point.y}px)` }} role="treeitem" aria-selected={selected} tabIndex={0}
                 aria-label={`${KIND_LABEL[node.kind]}: ${node.label}, ${node.status}`} data-testid={`network-node-${node.kind}`}
-                onClick={() => onSelect(node.id)} onKeyDown={(event) => onKey(event, node.id)}>
+                onPointerDown={(event) => onCardDown(event, node.id)} onPointerMove={onCardMove} onPointerUp={onCardUp} onPointerCancel={onCardUp}
+                onClick={() => onCardClick(node.id)} onKeyDown={(event) => onKey(event, node.id)}>
                 <g className="rn-card__float" style={{ animationDelay: `${(index % 7) * -0.9}s` }}>
                   <g className="rn-card__pop">
                     {node.tone === "running" ? <rect className="rn-card__halo" x={-card.width / 2 - 8} y={top - 8} width={card.width + 16} height={card.height + 16} rx={22} /> : null}
@@ -160,6 +189,7 @@ export function NetworkBoard({ nodes, positions, selectedId, onSelect, label, in
         <button type="button" onClick={() => zoom(1.2)} aria-label="Zoom in">+</button>
         <button type="button" onClick={() => zoom(1 / 1.2)} aria-label="Zoom out">−</button>
         <button type="button" onClick={() => { touched.current = false; fit(); }} aria-label="Fit the network">Fit</button>
+        {moved ? <button type="button" onClick={() => { touched.current = false; onTidy(); }} aria-label="Tidy the layout" title="Put every card back in its place">Tidy</button> : null}
       </div>
     </div>
   );
