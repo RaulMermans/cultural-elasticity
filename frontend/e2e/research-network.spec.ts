@@ -296,6 +296,8 @@ test("SYNTHETIC a connection opens as its own card, proposes questions, and its 
   await expect(questions).not.toContainText("Where could");
   await questions.getByRole("button", { name: /^Compare / }).click();
   await expect(page.getByTestId("network-node-inquiry")).toHaveCount(3);
+  // The answer is about one of the connection's ends, which is never repeated as a new card under the question.
+  await expect(page.getByRole("treeitem", { name: /Territory: Trail Running/u })).toHaveCount(1);
   const asked = calls.questions[2] as { query: string; brand: string; context?: unknown };
   expect(asked.query).toMatch(/^Compare (Gravel Riding with Trail Running|Trail Running with Gravel Riding) for Larkspur Velo$/u);
   expect(asked).toEqual({ query: asked.query, brand: "Larkspur Velo" });

@@ -180,7 +180,26 @@ function branchTerritory(response: QueryResponse | null, branch: string | null) 
   return (branch ? response.territories.find((item) => normName(item.name) === normName(branch)) : null) ?? (response.territories.length === 1 ? response.territories[0]! : null);
 }
 
-function InquiryDossier({ inquiry, node, brand, branch, onAnswer, onAsk, onMeasure, onRetry, onRephrase, busy }: { inquiry: Inquiry; node: NetworkNode; brand: string; branch: string | null; onAnswer: (text: string) => void; onAsk: (question: string) => void; onMeasure?: () => void; onRetry?: () => void; onRephrase?: () => void; busy: boolean }) {
+/** How each territory of a multi-territory question placed, read from its result; each row opens that territory's card. */
+function Placements({ response, brand, locate, onSelect }: { response: QueryResponse; brand: string; locate: (name: string, key: string | null, index: number) => string | null; onSelect: (id: string) => void }) {
+  const result = response.investigation?.result;
+  const rows = response.territories.map((territory, index) => {
+    const reading = territoryReading(result, territory.territoryKey, brand);
+    const position = reading?.compared.find((item) => item.current)?.position ?? null;
+    return { name: territory.name, fit: reading?.fit?.label ?? null, position, of: reading?.compared.length ?? 0, id: locate(territory.name, territory.territoryKey, index) };
+  }).sort((a, b) => (a.position ?? 99) - (b.position ?? 99));
+  return <div className="rr-section" data-testid="network-placements">
+    <h3>How each one placed</h3>
+    <p className="rr-hint">From this question&apos;s own Qloo comparison{rows.some((row) => row.position) ? `, strongest link to ${brand} first. The order holds only within this set` : ""}.</p>
+    <ol className="rr-rank">{rows.map((row) => <li key={row.name}>
+      <span className="rr-rank__n">{row.position ?? "–"}</span>
+      {row.id ? <button type="button" className="rn-link rr-rank__name" onClick={() => onSelect(row.id!)}>{row.name}</button> : <span className="rr-rank__name">{row.name}</span>}
+      <span className="rr-rank__fit">{row.fit ?? "Not ranked"}</span>
+    </li>)}</ol>
+  </div>;
+}
+
+function InquiryDossier({ inquiry, node, brand, branch, locate, onSelect, onAnswer, onAsk, onMeasure, onRetry, onRephrase, busy }: { inquiry: Inquiry; node: NetworkNode; brand: string; branch: string | null; locate: (name: string, key: string | null, index: number) => string | null; onSelect: (id: string) => void; onAnswer: (text: string) => void; onAsk: (question: string) => void; onMeasure?: () => void; onRetry?: () => void; onRephrase?: () => void; busy: boolean }) {
   const [answer, setAnswer] = useState("");
   const response = inquiry.response;
   const result = response?.investigation?.result;
@@ -200,7 +219,7 @@ function InquiryDossier({ inquiry, node, brand, branch, onAnswer, onAsk, onMeasu
     {onRetry ? <button type="button" className="primary" data-testid="network-retry" disabled={busy} onClick={onRetry}>Try again</button> : null}
     {!running && response?.investigation ? (territory || response.territories.length <= 1
       ? <Reading result={result} territoryKey={territory?.territoryKey ?? null} brand={brand} investigated onMeasure={onMeasure} busy={busy} />
-      : <p className="quiet">This question looked at {response.territories.length} territories. Open each card around it to see how it fits {brand}.</p>) : running ? <ElasticityBlock elasticity={null} brand={brand} pending /> : null}
+      : <Placements response={response} brand={brand} locate={locate} onSelect={onSelect} />) : running ? <ElasticityBlock elasticity={null} brand={brand} pending /> : null}
     {waiting ? <form className="rn-answer" onSubmit={(event) => { event.preventDefault(); if (answer.trim()) { onAnswer(answer.trim()); setAnswer(""); } }}>
       <label htmlFor="rn-answer">Your answer</label>
       <input id="rn-answer" value={answer} maxLength={1000} onChange={(event) => setAnswer(event.target.value)} />
@@ -270,7 +289,10 @@ function DirectionDossier({ view, direction, inquiries, canInvestigate, busy, on
 function tiesOf(nodes: readonly NetworkNode[], view: ResearchView, inquiries: readonly Inquiry[]): CrossLink[] {
   const cards = new Map<string, LinkSource>();
   const add = (cardId: string, name: string, items: EvidenceItem[]) => {
-    const card = cards.get(cardId) ?? { nodeId: cardId, lineage: lineageOf(nodes, cardId), name, items: [] };
+    const lineage = lineageOf(nodes, cardId);
+    // The top-level branch: the last id before the brand (a bridge's questions have no brand above them).
+    const branch = lineage.length > 1 && lineage[lineage.length - 1] === BRAND_NODE ? lineage[lineage.length - 2]! : lineage[lineage.length - 1]!;
+    const card = cards.get(cardId) ?? { nodeId: cardId, branch, name, items: [] };
     card.items = [...card.items, ...items];
     cards.set(cardId, card);
   };
@@ -324,7 +346,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     if (selectedId.startsWith("tie:")) open.add(selectedId);
     return [...open].flatMap((id): Bridge[] => {
       const [a, b] = id.slice(4).split("|");
-      return a && b && labels.has(a) && labels.has(b) ? [{ id, a, b, label: `${labels.get(a)} × ${labels.get(b)}` }] : [];
+      return a && b && labels.has(a) && labels.has(b) ? [{ id, a, b, label: `${labels.get(a)} × ${labels.get(b)}`, aLabel: labels.get(a)!, bLabel: labels.get(b)! }] : [];
     });
   }, [baseNodes, network.inquiries, selectedId]);
   const nodes = useMemo(() => bridges.length ? buildNetwork(view.brand.name, view.directions, network.inquiries, expanded, bridges) : baseNodes, [baseNodes, bridges, view, network.inquiries, expanded]);
@@ -407,7 +429,14 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   } else if (selected.kind === "inquiry") {
     const inquiry = inquiryOf(selected);
     const branch = (selected.parentId ? territoryAncestor(nodes, selected.parentId) : null)?.label ?? null;
-    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
+    // A territory of this question is either its own card here, or one of the connection's ends it was asked from.
+    const ends = selected.parentId?.startsWith("tie:") ? selected.parentId.slice(4).split("|") : [];
+    const locate = (name: string, key: string | null, index: number) => {
+      const finding = `find:${selected.jobId}:${key ?? index}`;
+      if (byId.has(finding)) return finding;
+      return ends.find((end) => normName(byId.get(end)?.label ?? "") === normName(name)) ?? null;
+    };
+    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} locate={locate} onSelect={setSelectedId} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
   } else if (selected.kind === "finding") {
     const parentInquiry = inquiryOf(selected);
     dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateTerritory(selected.label, selected.id)} onMeasure={measureFor(selected.label)} />;

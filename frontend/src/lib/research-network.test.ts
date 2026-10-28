@@ -80,3 +80,13 @@ test("a finished answer kept in the browser stays readable when the server has l
   assert.equal(needsRefresh(inquiry("j7", BRAND_NODE, { status: "completed", response: refused })), false);
   assert.equal(needsRefresh(inquiry("j8", BRAND_NODE)), true);
 });
+
+test("a question asked from a connection never repeats the connection's ends as findings", () => {
+  const territory = (name: string, key: string) => ({ name, investigationState: "INVESTIGATED", territoryKey: key, evidenceStatus: "EVIDENCE_SUPPORTED_TERRITORY", analysisRoute: null });
+  const ends = [territory("SYNTHETIC a", "k1"), territory("SYNTHETIC b", "k2")];
+  const nodes = buildNetwork("B", [direction("a"), direction("b")], [
+    inquiry("job1", "tie:dir:a|dir:b", { status: "completed", response: response({ territories: [...ends, territory("SYNTHETIC Shared", "k3")], handoff: { intent: "compare_territories" } } as unknown as Partial<QueryResponse>) }),
+  ], null, [{ id: "tie:dir:a|dir:b", a: "dir:a", b: "dir:b", label: "SYNTHETIC a × SYNTHETIC b", aLabel: "SYNTHETIC a", bLabel: "SYNTHETIC b" }]);
+  assert.equal(nodes.find((node) => node.id === "inq:job1")!.parentId, "tie:dir:a|dir:b");
+  assert.deepEqual(nodes.filter((node) => node.kind === "finding").map((node) => node.label), ["SYNTHETIC Shared"]);
+});

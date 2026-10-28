@@ -35,7 +35,7 @@ export type NetworkKind = "brand" | "direction" | "connection" | "inquiry" | "fi
  * An opened tie between two territory cards that share Qloo identifiers. Questions asked from it branch from the
  * connection itself. It has no lineage parent: it sits between its two ends.
  */
-export type Bridge = { id: string; a: string; b: string; label: string };
+export type Bridge = { id: string; a: string; b: string; label: string; aLabel: string; bLabel: string };
 export const bridgeId = (a: string, b: string) => `tie:${a}|${b}`;
 
 export type NetworkNode = {
@@ -142,7 +142,8 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
   // Every inquiry lives on a direction's branch. A question about the brand joins the direction it names, or opens a
   // new direction for a territory the baseline did not list. Matching is by the territory name the server returned.
   const directionByName = new Map(directions.map((direction) => [normName(direction.name), directionNodeId(direction.key)]));
-  const branchName = new Map<string, string>(directions.map((direction) => [directionNodeId(direction.key), normName(direction.name)]));
+  // The territories each branch is already about. A connection is about both of its ends.
+  const branchName = new Map<string, string[]>(directions.map((direction) => [directionNodeId(direction.key), [normName(direction.name)]]));
   const findingByName = new Map<string, string>();
   const bridgeById = new Map(bridges.map((bridge) => [bridge.id, bridge]));
   // A bridge appears once both of its ends are on the board.
@@ -150,6 +151,7 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
     const bridge = bridgeById.get(id);
     if (!bridge || ids.has(id) || !ids.has(bridge.a) || !ids.has(bridge.b)) return;
     ids.add(id);
+    branchName.set(id, [normName(bridge.aLabel), normName(bridge.bLabel)]);
     nodes.push({ id, parentId: null, kind: "bridge", label: bridge.label, tone: "idle", status: "Connection", runId: null, territoryKey: null, directionKey: null, jobId: null });
   };
   const ordered = [...inquiries].sort((a, b) => a.createdAt - b.createdAt);
@@ -171,7 +173,7 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
       if (!ids.has(existing)) {
         ids.add(existing);
         directionByName.set(name, existing);
-        branchName.set(existing, name);
+        branchName.set(existing, [name]);
         nodes.push({ id: existing, parentId: BRAND_NODE, kind: "direction", label: named[0].name, tone: "hypothesis", status: "New direction", runId: null, territoryKey: null, directionKey: null, jobId: null });
       }
       parentId = existing;
@@ -181,15 +183,15 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
     if (branch) branchName.set(id, branch);
     nodes.push({ id, parentId, kind: "inquiry", label: inquiry.question, tone: state.tone, status: state.status, runId, territoryKey: null, directionKey: null, jobId: inquiry.jobId });
     // A direction investigation is about that direction; a question can name or discover other territories. The
-    // branch's own territory is shown on the inquiry itself, never repeated as a finding.
+    // branch's own territories (a connection's two ends) are never repeated as findings.
     if (inquiry.origin !== "question" || !inquiry.response) continue;
     inquiry.response.territories.forEach((territory, index) => {
-      if (branch && normName(territory.name) === branch) return;
+      if (branch?.includes(normName(territory.name))) return;
       const copy = territoryCopy(inquiry.response!, territory);
       const findingId = `find:${inquiry.jobId}:${territory.territoryKey ?? index}`;
       if (ids.has(findingId)) return;
       ids.add(findingId);
-      branchName.set(findingId, normName(territory.name));
+      branchName.set(findingId, [normName(territory.name)]);
       if (!findingByName.has(normName(territory.name))) findingByName.set(normName(territory.name), findingId);
       nodes.push({ id: findingId, parentId: id, kind: "finding", label: territory.name, tone: copy.tone, status: copy.statusLabel, runId, territoryKey: territory.territoryKey, directionKey: null, jobId: inquiry.jobId });
     });
