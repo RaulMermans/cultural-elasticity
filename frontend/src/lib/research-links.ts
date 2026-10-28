@@ -55,6 +55,8 @@ export function connectionQuestions(brand: string, a: string, b: string, shared:
   return [
     { question: `Compare ${a} with ${b} for ${brand}`, why: "Measures both in one Qloo comparison, so you can see which fits better." },
     ...(common ? [{ question: `How far can ${brand} extend into ${common.label}?`, why: `Investigates what they have in common, ${common.label}, as a territory of its own.` }] : []),
-    { question: `Where could ${brand} go next between ${a} and ${b}?`, why: "Looks for other territories that sit near both." },
+    // One investigation per question: an open search between two named territories is a compound request the
+    // query gate refuses, so the third proposal is a single comparison that includes their shared ground.
+    ...(common ? [{ question: `Compare ${a}, ${b} and ${common.label} for ${brand}`, why: `Ranks both next to what they share, in one Qloo comparison.` }] : []),
   ];
 }

@@ -293,7 +293,7 @@ test("SYNTHETIC a connection opens as its own card, proposes questions, and its 
   const bridge = page.getByRole("treeitem", { name: /Connection: .*Gravel Riding.*Trail Running|Connection: .*Trail Running.*Gravel Riding/u });
   await expect(bridge).toBeVisible();
   const questions = page.getByTestId("network-connection-questions");
-  await expect(questions).toContainText("Where could Larkspur Velo go next between");
+  await expect(questions).not.toContainText("Where could");
   await questions.getByRole("button", { name: /^Compare / }).click();
   await expect(page.getByTestId("network-node-inquiry")).toHaveCount(3);
   const asked = calls.questions[2] as { query: string; brand: string; context?: unknown };

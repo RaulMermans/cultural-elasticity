@@ -196,7 +196,7 @@ function InquiryDossier({ inquiry, node, brand, branch, onAnswer, onAsk, onMeasu
     {inquiry.lost && node.status !== "No longer available" ? <p className="quiet">Its answer is kept in this browser. The research service has let the run go, so a new question from here starts fresh on the same direction.</p> : null}
     {running ? <AgentActivity entries={inquiry.activity ?? []} live /> : null}
     {response && !running ? <InquiryResult response={response} /> : null}
-    {!running && response && !response.investigation && onRephrase ? <button type="button" className="rw-secondary" disabled={busy} onClick={onRephrase}>Rephrase it as a question</button> : null}
+    {!running && response && !response.investigation && onRephrase ? <button type="button" className="rw-secondary" disabled={busy} onClick={onRephrase}>Edit and ask again</button> : null}
     {onRetry ? <button type="button" className="primary" data-testid="network-retry" disabled={busy} onClick={onRetry}>Try again</button> : null}
     {!running && response?.investigation ? (territory || response.territories.length <= 1
       ? <Reading result={result} territoryKey={territory?.territoryKey ?? null} brand={brand} investigated onMeasure={onMeasure} busy={busy} />

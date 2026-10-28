@@ -30,6 +30,6 @@ test("connection questions name both ends and the shared ground, never an exampl
     { id: "ent:1", label: "SYN Example", kind: "example" },
     { id: "tag:1", label: "SYN Common", kind: "taste" },
   ]).map((item) => item.question);
-  assert.deepEqual(questions, ["Compare SYN A with SYN B for SYN BRAND", "How far can SYN BRAND extend into SYN Common?", "Where could SYN BRAND go next between SYN A and SYN B?"]);
-  assert.equal(connectionQuestions("B", "A1", "B1", [{ id: "e", label: "E", kind: "example" }]).length, 2);
+  assert.deepEqual(questions, ["Compare SYN A with SYN B for SYN BRAND", "How far can SYN BRAND extend into SYN Common?", "Compare SYN A, SYN B and SYN Common for SYN BRAND"]);
+  assert.deepEqual(connectionQuestions("B", "A1", "B1", [{ id: "e", label: "E", kind: "example" }]).map((item) => item.question), ["Compare A1 with B1 for B"]);
 });
