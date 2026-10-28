@@ -30,7 +30,8 @@ test("a half-configured production server is reported, never shown as connected"
   assert.deepEqual(backendConfigIssues({ NODE_ENV: "development" }), []);
   assert.deepEqual(backendConfigIssues({ NODE_ENV: "production" }), ["BACKEND_URL_MISSING", "INTERNAL_SECRET_MISSING"]);
   assert.deepEqual(backendConfigIssues({ NODE_ENV: "production", BACKEND_URL: "https://api.example.test" }), ["INTERNAL_SECRET_MISSING"]);
-  assert.deepEqual(backendConfigIssues({ NODE_ENV: "production", BACKEND_URL: "http://api.example.test", CE_INTERNAL_API_SECRET: "x".repeat(32) }), ["BACKEND_URL_INVALID"]);
+  assert.deepEqual(backendConfigIssues({ NODE_ENV: "production", BACKEND_URL: "http://api.internal.test:4000", CE_INTERNAL_API_SECRET: "x".repeat(32) }), []);
+  assert.deepEqual(backendConfigIssues({ NODE_ENV: "production", BACKEND_URL: "ftp://api.example.test", CE_INTERNAL_API_SECRET: "x".repeat(32) }), ["BACKEND_URL_INVALID"]);
   assert.deepEqual(backendConfigIssues({ NODE_ENV: "production", BACKEND_URL: "not a url", CE_INTERNAL_API_SECRET: "x".repeat(32) }), ["BACKEND_URL_INVALID"]);
   assert.deepEqual(backendConfigIssues({ NODE_ENV: "production", BACKEND_URL: "https://api.example.test", CE_INTERNAL_API_SECRET: "x".repeat(32) }), []);
 });

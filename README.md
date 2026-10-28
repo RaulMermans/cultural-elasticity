@@ -8,6 +8,16 @@ Built for the **Qloo Agentic Hackathon**. First test case: **Jacquemus → Bouti
 
 Before merging a release, run `pnpm check:deployment-config` and follow [the Vercel/Railway release runbook](docs/operations/DEPLOYMENT_RELEASE_CONTRACT.md). The offline guard prevents checked-in config regressions; **remote platform settings and hosted behavior must be verified separately**. Railway follows `main` and can deploy after each merge; Vercel's prior preview-only ignored-build rule must never be restored accidentally. Public exposure and paid investigations remain independent approval gates.
 
+## Sprint 9J: Live validation and production reliability
+
+- **Connection.** The production frontend now reaches Railway: the Vercel Production environment was missing its backend settings.
+- **Paid access.** Every paid start needs a scoped, expiring operator credential, enforced on Railway. One run-wide Qloo ceiling bounds an approved run.
+- **Hosted audit.** The recorded Loewe and Living Atlas journeys pass a real-browser audit of the deployment at three viewports.
+- **Verification.** The `eval:live` and fresh-clone test defects are fixed.
+- **Live run.** The genuine Qloo + Haiku comparison run was authorized but **not run**. Paid admission remains off.
+
+See [the 9J report](docs/sprint-9j/LIVE_VALIDATION_AND_RELEASE_REPORT.md).
+
 ## Sprint 9F — One research journey
 
 The brand research workspace is the primary product journey: submit a brand name to the existing admission-gated Qloo identity resolver or open clearly labelled recorded research; inspect the cultural landscape; preview and explicitly start an authorized investigation; review validated findings and export the same research brief. The historical Living Atlas is retained for archived deep links and the recorded Jacquemus investigation, without a competing top-level product navigation. Public paid admission remains off. See [the Sprint 9F audit and contract](docs/sprint-9f/UNIFIED_PRODUCT_EXPERIENCE.md).

@@ -20,8 +20,8 @@ Neither an isolated successful provider build nor a healthy old backend proves t
 | Frontend project | Vercel `cultural-elasticity` (`prj_AHQcMcLFwGUOpRmepvwcc89LyOYo`) |
 | Framework/build | Next.js, Node 22, root `frontend`, `sourceFilesOutsideRootDirectory=true` |
 | Vercel Ignored Build Step | **Unconfigured**: no rule that silently cancels `main` |
-| Vercel access | `ssoProtection.deploymentType=all` until separate public-launch approval |
-| Frontend server env (production) | Metadata confirms `BACKEND_URL` and `CE_INTERNAL_API_SECRET`; values must never be logged |
+| Vercel access | `ssoProtection.deploymentType=all`, except while the owner's **public recorded-demo mode** is authorized (Sprint 9J: off since 2026-10-27, with paid admission off) |
+| Frontend server env (production **and** preview) | `BACKEND_URL` and `CE_INTERNAL_API_SECRET` exist **for the Production target** (Sprint 9J found them Preview-only, which made production show "unavailable"); values must never be logged. `vercel env ls` lists names per target. |
 | Backend project/service | Railway `cultural-elasticity` / `cultural-elasticity-api` |
 | Backend source | Same canonical Git repository, `main`, **no pinned old SHA** |
 | Backend build | `backend/Dockerfile` from monorepo root; shared workspace included |
@@ -29,6 +29,8 @@ Neither an isolated successful provider build nor a healthy old backend proves t
 | Replicas | **One** while jobs/spend ledger are process-local |
 | Database | Existing PostgreSQL and volume; never recreate or migrate implicitly |
 | Research spending | `CE_ACCEPT_INVESTIGATIONS=0` and baseline admission off by default, until independently approved |
+| Paid operator gate (Sprint 9J) | Every paid start on a public runtime needs `CE_PAID_OPERATOR_TOKEN` (≥ 32 chars, distinct from other secrets) plus an unexpired `CE_PAID_OPERATOR_EXPIRES_AT`; absent on production except during an approved run |
+| Run-wide Qloo ceiling (Sprint 9J) | `CE_PROCESS_QLOO_CALL_LIMIT` set to the approved total for an approved run; process-local |
 
 ## Verification levels
 
@@ -105,3 +107,30 @@ A public-launch approval is a distinct change to the security contract: review a
 Vercel: use a previously verified `READY` deployment only if rollback is necessary and explicitly authorized; preserve auth protection and check the resulting alias/target. Railway: use a verified prior SUCCESS deployment on the same service, retaining the existing database, region and one-replica policy. Record deployed SHA and reconcile the source configuration afterward. Neither rollback can restore in-memory agent jobs.
 
 **Known limits at creation:** Vercel's current latest production deployment was READY and All Deployments protection remained enabled; Railway's latest `main` deployment was SUCCESS. The production Vercel environment-variable metadata endpoint returned 403, so complete hosted integration and remote release preflight are still **NOT_VERIFIED**. GitHub Actions jobs remained billing-blocked.
+
+## Public recorded-demo mode versus a paid launch (Sprint 9J)
+
+**Public recorded-demo mode.** The owner temporarily authorized it. Vercel Authentication is off, and every admission flag is 0.
+
+- Anyone can browse the recorded Loewe research and the Jacquemus Atlas, inspect evidence and export recorded briefs.
+- Every paid route answers 503 (paused) or 404.
+- The Vercel protection probe will report the app as anonymously reachable. That is expected in this mode, and a failure in any other.
+
+**Approved operator run.** This is not a public launch.
+
+1. Merge or deploy code that contains the 9J operator gate. Never open admission on a build without it.
+2. Set `CE_PAID_OPERATOR_TOKEN` with an expiry of at most a few hours, the approved `CE_SPEND_BUDGET_USD`, `CE_INVESTIGATION_RESERVE_USD` (public floor $0.50), `CE_PROCESS_QLOO_CALL_LIMIT` and baseline limits. Then open admission.
+3. The operator stores the credential through `POST /api/operator/session`, which sets an HttpOnly cookie. Anonymous visitors keep seeing *paused*, and Railway answers 403 to any paid start without the credential.
+4. Afterwards:
+   - set every admission flag to 0;
+   - delete the operator token;
+   - redeploy from `main`;
+   - confirm `/ready` returns `ADMISSIONS_PAUSED` and `/ops/status` shows 0 jobs and 0 reserved;
+   - record `/ops/status` `spend` and `qlooDispatch` before shutdown, because both reset on restart.
+
+**Public paid launch.** This remains **not approved**. It additionally needs:
+
+- durable admission and spend accounting, since the ledger and Qloo counter are in memory today;
+- a verified provider-side hard cap;
+- per-user authorization;
+- a separate security review.

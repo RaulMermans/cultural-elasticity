@@ -21,7 +21,7 @@ export function backendConfigIssues(env: NodeJS.ProcessEnv = process.env): Backe
   if (!url) issues.push("BACKEND_URL_MISSING");
   else {
     try {
-      if (new URL(url).protocol !== "https:") issues.push("BACKEND_URL_INVALID");
+      if (!["https:", "http:"].includes(new URL(url).protocol)) issues.push("BACKEND_URL_INVALID");
     } catch {
       issues.push("BACKEND_URL_INVALID");
     }

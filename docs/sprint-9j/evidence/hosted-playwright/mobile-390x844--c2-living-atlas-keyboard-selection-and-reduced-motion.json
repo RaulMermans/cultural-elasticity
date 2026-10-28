@@ -1,0 +1,13 @@
+{
+  "project": "mobile-390x844",
+  "test": "C2. Living Atlas keyboard selection and reduced motion",
+  "status": "passed",
+  "failed": [],
+  "errors": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "paidPosts": [],
+  "providerHosts": [],
+  "leaked": 0,
+  "requests": 15
+}
