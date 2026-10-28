@@ -306,3 +306,25 @@ test("SYNTHETIC a connection opens as its own card, proposes questions, and its 
   await expect(bridge).toBeVisible();
   await expect(page.getByTestId("network-tie")).toHaveCount(0);
 });
+
+test("SYNTHETIC the brand box suggests your research and recorded brands as you type, without calling Qloo", async ({ page }) => {
+  await stubLive(page);
+  await startLarkspur(page);
+  await page.getByRole("button", { name: "Research library" }).click();
+  const resolves: string[] = [];
+  page.on("request", (request) => { if (request.url().includes("/api/brands/resolve")) resolves.push(request.url()); });
+  const box = page.getByRole("combobox", { name: "Brand name" });
+  await box.fill("lark");
+  const list = page.getByTestId("brand-suggestions");
+  await expect(list.getByRole("option")).toHaveCount(2);
+  await expect(list.getByRole("option").first()).toContainText("Larkspur Velo");
+  await expect(list.getByRole("option").first()).toContainText("Your research");
+  await expect(list.getByRole("option").last()).toContainText("Find “lark” in Qloo");
+  await box.fill("loe");
+  await expect(list.getByRole("option").first()).toContainText("Recorded research");
+  await box.fill("lark");
+  await box.press("ArrowDown");
+  await box.press("Enter");
+  await expect(page.getByTestId("research-network")).toBeVisible();
+  expect(resolves).toEqual([]);
+});

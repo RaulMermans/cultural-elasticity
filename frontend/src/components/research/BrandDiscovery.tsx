@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { brandSuggestions, type SuggestionSource } from "@/lib/brand-suggestions";
 import { RESOLUTION_COPY, availabilityCopy, type BrandResearchAvailability } from "@/lib/research-copy";
 import type { RecordedEntry } from "@/lib/recorded-research";
 import { sameName } from "@/lib/research-route";
@@ -38,6 +39,34 @@ export function BrandDiscovery({ catalog, availability, resolution, busy, error,
   };
   const open = (entry: RecordedEntry) => entry.kind === "baseline" ? onOpenRecorded(entry.key) : onOpenInvestigation();
 
+  // Suggestions narrow as you type, from research already in this browser. Typing never calls Qloo.
+  type BrandPick = { kind: "library"; entry: LibraryEntry } | { kind: "recorded"; entry: RecordedEntry };
+  const sources = useMemo<SuggestionSource<BrandPick>[]>(() => [
+    ...library.map((entry) => ({ label: entry.brand, detail: `Your research · ${formatDate(new Date(entry.startedAt).toISOString())}`, kind: "library" as const, value: { kind: "library" as const, entry }, at: entry.startedAt })),
+    ...catalog.filter((entry) => entry.kind === "baseline").map((entry) => ({ label: entry.brand, detail: `Recorded research · ${formatDate(entry.recordedAt)}`, kind: "recorded" as const, value: { kind: "recorded" as const, entry }, at: Date.parse(entry.recordedAt) || 0 })),
+  ], [library, catalog]);
+  const [listOpen, setListOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const suggestions = useMemo(() => brandSuggestions(name, sources), [name, sources]);
+  const canSearch = live && name.trim().length >= 2 && !suggestions.some((item) => sameName(item.label, name));
+  const options = suggestions.length + (canSearch ? 1 : 0);
+  const showList = listOpen && options > 0;
+  const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const choose = (index: number) => {
+    setListOpen(false);
+    setActive(-1);
+    const pick = suggestions[index];
+    if (!pick) { submit(); return; }
+    if (pick.value.kind === "library") onOpenLibrary(pick.value.entry);
+    else open(pick.value.entry);
+  };
+  const onKey = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "ArrowDown" && options) { event.preventDefault(); setListOpen(true); setActive((current) => (current + 1) % options); }
+    else if (event.key === "ArrowUp" && options) { event.preventDefault(); setListOpen(true); setActive((current) => (current <= 0 ? options - 1 : current - 1)); }
+    else if (event.key === "Enter" && showList && active >= 0) { event.preventDefault(); choose(active); }
+    else if (event.key === "Escape") { setListOpen(false); setActive(-1); }
+  };
+
   return (
     <div className="rw-discovery" data-testid="brand-discovery" data-availability={availability}>
       <section className="rw-discovery__intro" aria-labelledby="rw-discovery-title">
@@ -63,7 +92,26 @@ export function BrandDiscovery({ catalog, availability, resolution, busy, error,
         <form onSubmit={(event) => { event.preventDefault(); submit(); }}>
           <label htmlFor="rw-brand">Brand name</label>
           <div className="rw-search">
-            <input id="rw-brand" value={name} minLength={2} maxLength={200} required autoComplete="off" placeholder="For example, Loewe" onChange={(event) => { setName(event.target.value); setLookup(null); onClearResolution(); }} />
+            <div className="rw-combo">
+              <input id="rw-brand" value={name} minLength={2} maxLength={200} required autoComplete="off" placeholder="For example, Loewe"
+                role="combobox" aria-expanded={showList} aria-controls="rw-brand-options" aria-autocomplete="list"
+                aria-activedescendant={showList && active >= 0 ? `rw-brand-option-${active}` : undefined}
+                onFocus={() => setListOpen(true)} onBlur={() => { blurTimer.current = setTimeout(() => setListOpen(false), 120); }} onKeyDown={onKey}
+                onChange={(event) => { setName(event.target.value); setLookup(null); setListOpen(true); setActive(-1); onClearResolution(); }} />
+              {showList ? <ul id="rw-brand-options" role="listbox" className="rw-combo__list" aria-label="Brand suggestions" data-testid="brand-suggestions"
+                onMouseDown={(event) => { event.preventDefault(); if (blurTimer.current) clearTimeout(blurTimer.current); }}>
+                {suggestions.map((item, index) => <li key={`${item.kind}:${item.label}`} id={`rw-brand-option-${index}`} role="option" aria-selected={active === index} data-kind={item.kind}
+                  onMouseEnter={() => setActive(index)} onClick={() => choose(index)}>
+                  <span className="rw-combo__name">{item.label}</span>
+                  <span className="rw-combo__detail">{item.detail}</span>
+                </li>)}
+                {canSearch ? <li id={`rw-brand-option-${suggestions.length}`} role="option" aria-selected={active === suggestions.length} data-kind="search"
+                  onMouseEnter={() => setActive(suggestions.length)} onClick={() => choose(suggestions.length)}>
+                  <span className="rw-combo__name">Find “{name.trim()}” in Qloo</span>
+                  <span className="rw-combo__detail">Checks the brand with one Qloo lookup</span>
+                </li> : null}
+              </ul> : null}
+            </div>
             <button type="submit" className={live ? "primary" : "rw-secondary"} disabled={busy}>{busy ? "Searching…" : live ? "Find brand" : "Find recorded research"}</button>
           </div>
         </form>
