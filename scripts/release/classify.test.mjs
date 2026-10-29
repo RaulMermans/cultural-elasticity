@@ -234,3 +234,9 @@ test("a secret value in the report is detected before anything is printed", () =
   assert.deepEqual(leakedSecrets(JSON.stringify({ a: `x${secret}y` }), { CE_INTERNAL_API_SECRET: secret, OTHER: "absent-value-000" }), ["CE_INTERNAL_API_SECRET"]);
   assert.deepEqual(leakedSecrets("{}", { SHORT: "abc" }), []);
 });
+
+test("a closed window keeps the last applied baseline limit without a false degradation", () => {
+  const e = healthy();
+  e.ops.baselineBudget = { limitCalls: 21, usedCalls: 7 };
+  assert.equal(verdict(e).verdict, "RELEASE_VERIFIED");
+});
