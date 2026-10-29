@@ -87,7 +87,12 @@ Crocs, investigated end to end on the hosted product on 2026-10-29, with live Ql
   - *We expected a break. Qloo's evidence did not support that, and the result is reported as found.*
 - **Cost.** 35 Qloo calls and $0.0215 of model usage for both investigations.
 
-A real **Cultural break** has not been shown in a documented production run yet. The attempt for this release was pre-registered in [docs/sprint-9m/CULTURAL_BREAK_PROTOCOL.md](docs/sprint-9m/CULTURAL_BREAK_PROTOCOL.md), and its results are in [docs/sprint-9m/LIVE_EVALUATION_EVIDENCE.md](docs/sprint-9m/LIVE_EVALUATION_EVIDENCE.md). The rules were not changed to produce one.
+Patagonia was run on 2026-10-29 by an anonymous visitor on desktop and mobile, exactly as a judge would. Evidence is in [docs/sprint-9m/LIVE_EVALUATION_EVIDENCE.md](docs/sprint-9m/LIVE_EVALUATION_EVIDENCE.md).
+
+- **Patagonia → Ethical Consumption: Not settled.** It ranked 1 of 3 against Natural Fibers and Performance Driven, but robustness was low.
+- **Patagonia → luxury jewelry, and → nightclubs: Not measured.** Too few Qloo-supported alternatives to form a comparison.
+
+A real **Cultural break** has not been shown in a documented production run yet. We [pre-registered](docs/sprint-9m/CULTURAL_BREAK_PROTOCOL.md) an attempt with fixed candidates and a stopping rule. Both contrasts came back Not measured. The rules were not changed to produce one.
 
 ## How the agent works
 

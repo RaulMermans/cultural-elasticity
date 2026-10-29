@@ -137,9 +137,10 @@ All of the following were live on the hosted product, with real Qloo and real Cl
 **Patagonia** (Sprint 9M, run as an anonymous visitor exactly as a judge would; [evidence](https://github.com/RaulMermans/cultural-elasticity/blob/main/docs/sprint-9m/LIVE_EVALUATION_EVIDENCE.md)):
 
 - **Ethical Consumption:** ranked 1 of 3 against Natural Fibers and Performance Driven, but robustness was low, so the honest reading is **Not settled** rather than a Natural fit.
-- **Luxury jewelry:** RESULT_PENDING.
+- **Luxury jewelry** and **nightclubs** (asked on desktop and mobile): **Not measured**. Qloo supported only one reference territory, so no position is claimed.
+- **Usage:** 70 Qloo calls and $0.039 of model usage for three investigations.
 
-A real **Cultural break** was pre-registered as a target before these runs, with fixed candidates and a stopping rule; we did not change any rule to produce one. RESULT_PENDING.
+Before these runs we pre-registered an attempt to show a real **Cultural break**, with fixed candidates and a stopping rule. Both contrast questions came back Not measured, so this release has **not yet demonstrated a Cultural break** in production. We did not change any rule or re-run any question to produce one.
 
 ### What makes it original
 
@@ -172,7 +173,12 @@ Curated screenshots from the live product are in [`docs/media/`](../media/):
 
 | File | Shows |
 | --- | --- |
-| `hero-network.png` | Use as the primary image |
+| `hero-network.png` | **Primary image.** Patagonia's live cultural network |
+| `02-brand-resolved.png` | Qloo confirms the brand before any scan |
+| `03-direction-evidence.png` | A direction with its Qloo evidence |
+| `04-agent-investigating.png` | The agent's live steps, with each Qloo lookup |
+| `05-reading-not-settled.png` | A finished investigation and its honest reading |
+| `07-saved-library.png` | Saved research ready to reopen |
 
 ## Video
 

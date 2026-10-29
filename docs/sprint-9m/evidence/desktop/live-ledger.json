@@ -1,0 +1,143 @@
+{
+  "brand": "Patagonia",
+  "ledger": [
+    {
+      "step": "anonymous_public_evaluation_visitor",
+      "at": "2026-10-29T07:01:51.417Z"
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T07:01:56.313Z",
+      "detail": {
+        "path": "/api/brands/resolve",
+        "status": "RESOLVED",
+        "error": null,
+        "qlooId": "DB4CE34E-3A63-4947-946F-9D52502C5762",
+        "label": "Patagonia",
+        "jobId": null,
+        "scanId": null
+      }
+    },
+    {
+      "step": "brand_resolved",
+      "at": "2026-10-29T07:01:56.847Z",
+      "detail": {
+        "button": "Start research on Patagonia"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T07:01:57.121Z",
+      "detail": {
+        "path": "/api/brands/baselines",
+        "status": "QUEUED",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": null,
+        "scanId": "52160149-3cb4-4f60-885a-4124e4f696e7"
+      }
+    },
+    {
+      "step": "baseline_network",
+      "at": "2026-10-29T07:02:30.145Z",
+      "detail": {
+        "directions": 5,
+        "url": "https://cultural-elasticity-raulmermans-projects.vercel.app/?research=session"
+      }
+    },
+    {
+      "step": "investigation_started",
+      "at": "2026-10-29T07:02:30.724Z",
+      "detail": {
+        "direction": "Direction: Ethical Consumption, Direction"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T07:02:34.223Z",
+      "detail": {
+        "path": "/api/research/handoff/jobs",
+        "status": "running",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": "74aec4e7-a1c5-4784-8206-6f50044b354c",
+        "scanId": null
+      }
+    },
+    {
+      "step": "investigation_settled",
+      "at": "2026-10-29T07:06:05.279Z",
+      "detail": {
+        "outcome": "Question: Investigate Ethical Consumption, Investigated",
+        "tone": "idle",
+        "dossier": "AGENT INVESTIGATION Investigate Ethical Consumption Investigated Within the comparison set of Ethical Consumption, Natural Fibers and Performance Driven, Ethical Consumption holds the leading relative position, but this is a provisional read that rests on low representation robustness and cannot be taken as settled. Natural Fibers and Performance Driven share the same secondary position, so the run shows no clear separation between the target and the reference territories beyond that ordering. The evidence cannot establish how far Patagonia could extend into Ethical Consumption, since it rests on a small exemplar panel per territory and the conditioned list for the target is truncated. Any conclusion holds only for the comparison set shown. Ethical Consumption: Within the comparison set of Ethical Consumption, Natural Fibers and Performance Driven, Ethical Consumption ranks first, but robustness is low, so this position is not presented as stable across the panelled exemplars. Provisionally classed as UNCERTAIN_REPRESENTATION_SENSITIVE, relative to this comparison set only. A brand-conditioned query returned supported entities led by Allbirds, Frank And Oak, Greenpeace, New Seasons Market and Asket, but the list is truncated, so it gives only a partial view of association. Natural Fibers: Within the same comparison set, Natural Fibers ranks second, and robustness is low, so the placement is provisional. Shared cultural signals are sparse, with folk and friendship as the consistently shared signals across its exemplars. Performance Driven: Within the same comparison set, Performance Driven also ranks second, tied with Natural Fibers, and robustness is low, so the placement is not stable. No shared cultural signals come through among the exemplars that could be profiled, so the signal read is thin. How well does Ethical Consumption fit Patagonia? Not settledPROVISIONAL Qloo's answer for Ethical Consumption changes with the examples used to stand for it, so it can't be called yet. Natural fit Credible stretch Cultural break Not placed on the scale until the evidence settles. Could change: a different set of examples could move this ranking. How it ranked How strongly Qloo links each one to Patagonia, strongest first. The order holds only within these 3. 1 Ethical Consumption THIS ONE 2 Natural Fibers 2 Performance Driven Qloo's closest matches for Patagonia here Within Ethical Consumption, what Qloo associates most with Patagonia, in Qloo's order. Allbirds Fr",
+        "nodes": 7
+      }
+    },
+    {
+      "step": "second_question_started",
+      "at": "2026-10-29T07:06:06.087Z",
+      "detail": {
+        "question": "How far can Patagonia extend into luxury jewelry?"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T07:06:06.324Z",
+      "detail": {
+        "path": "/api/agent/jobs",
+        "status": "running",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": "7661b78e-525f-4ae4-95b5-259d69c14146",
+        "scanId": null
+      }
+    },
+    {
+      "step": "second_question_settled",
+      "at": "2026-10-29T07:08:58.976Z",
+      "detail": {
+        "outcome": "Question: How far can Patagonia extend into luxury jewelry?, Investigated",
+        "tone": "idle",
+        "dossier": "RESEARCH QUESTION How far can Patagonia extend into luxury jewelry? Investigated For Patagonia, the results can describe which brand exemplars and brand-conditioned entities Qloo links to luxury jewelry, but they cannot establish how far the brand could extend into that territory. No relative position or robustness is available, and the comparison set is too small to place luxury jewelry against ethical fashion. Shared cultural signals across the luxury jewelry exemplars are absent, so the evidence is sparse and should be read as partial association rather than a measure of extension. luxury jewelry: The luxury jewelry view rests on a small named panel of brand exemplars that Qloo links to the concept, which describes association only and does not map the extent of the move. A brand-conditioned query for luxury jewelry returns only sparse support, led by Michele Watches, Anil Arjandas Jewels and Sara Weinstock. Filtered shared cultural signals across the luxury jewelry exemplars fall in a band of none, and no signal is consistently shared, so the panel offers no common cultural thread to interpret. ethical fashion: The ethical fashion reference view rests on People Tree, ABLE Clothing and Girlfriend Collective as brand exemplars that Qloo links to the concept. A brand-conditioned query for ethical fashion is supported and returns a broader list led by Inkkas, The Elephant Pants and Mam Originals, although the list is truncated. The ethical fashion route is partial and relative position is unavailable, so it serves only as a descriptive reference rather than a ranked comparison. How well does luxury jewelry fit Patagonia? Not measured yet luxury jewelry hasn't been compared with other territories yet, so Qloo can't say how well it fits. Measure it with a Qloo comparison Qloo's closest matches for Patagonia here Within luxury jewelry, what Qloo associates most with Patagonia, in Qloo's order. Michele Watches Anil Arjandas Jewels Sara Weinstock Examples that stand for it What the agent used to represent luxury jewelry in the comparison. Sara Weinstock Michele Watches Anil Arjandas Jewels What we don't know yet luxury jewelry wasn't ranked against other territories, so there is no comparison yet. Technical notes This describes cultural taste from Qloo. It is not a forecast of sales or demand. How the agent worked (40 steps) Continue this path How does luxury jewelry compare with ethical fashion for Patagonia? Which other luxury jewelry brands does Qloo associa"
+      }
+    },
+    {
+      "step": "report_exported",
+      "at": "2026-10-29T07:08:59.196Z",
+      "detail": {
+        "format": "HTML",
+        "file": "patagonia-cultural-research_2026-10-29_0808.html",
+        "bytes": 14908
+      }
+    },
+    {
+      "step": "report_exported",
+      "at": "2026-10-29T07:08:59.338Z",
+      "detail": {
+        "format": "PDF",
+        "file": "patagonia-cultural-research_2026-10-29_0808.pdf",
+        "bytes": 32235
+      }
+    },
+    {
+      "step": "reopened_from_library",
+      "at": "2026-10-29T07:08:59.955Z"
+    },
+    {
+      "step": "done",
+      "at": "2026-10-29T07:08:59.955Z",
+      "detail": {
+        "paidStarts": 4
+      }
+    }
+  ],
+  "problems": {
+    "console": [],
+    "pageErrors": [],
+    "serverErrors": []
+  }
+}
