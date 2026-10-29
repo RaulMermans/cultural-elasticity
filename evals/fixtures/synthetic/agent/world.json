@@ -381,6 +381,106 @@
    "id": "urn:tag:subgenre:syn:thrash_revival",
    "name": "Thrash Revival Scene",
    "type": "urn:tag:subgenre:syn"
+  },
+  {
+   "id": "urn:tag:cuisine:syn:coffee_houses",
+   "name": "Coffee Houses",
+   "type": "urn:tag:cuisine:syn"
+  },
+  {
+   "id": "urn:tag:category:synplace:bakery_culture",
+   "name": "Bakery Culture",
+   "type": "urn:tag:category:synplace"
+  },
+  {
+   "id": "urn:tag:category:synplace:tea_salons",
+   "name": "Tea Salons",
+   "type": "urn:tag:category:synplace"
+  },
+  {
+   "id": "urn:tag:keyword:syn:botanical_ritual",
+   "name": "Botanical Ritual",
+   "type": "urn:tag:keyword:syn"
+  },
+  {
+   "id": "urn:tag:industry:syn:apothecary_care",
+   "name": "Apothecary Care",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:genre:synmedia:kitchen_tv",
+   "name": "Kitchen Television",
+   "type": "urn:tag:genre:synmedia"
+  },
+  {
+   "id": "urn:tag:genre:synmedia:cookbook_shelf",
+   "name": "Cookbook Shelf",
+   "type": "urn:tag:genre:synmedia"
+  },
+  {
+   "id": "urn:tag:genre:synmusic:bedroom_indie",
+   "name": "Bedroom Indie",
+   "type": "urn:tag:genre:synmusic"
+  },
+  {
+   "id": "urn:tag:genre:synmusic:night_electronic",
+   "name": "Night Electronic",
+   "type": "urn:tag:genre:synmusic"
+  },
+  {
+   "id": "urn:tag:keyword:synmedia:slow_drama",
+   "name": "Slow Drama",
+   "type": "urn:tag:keyword:synmedia"
+  },
+  {
+   "id": "urn:tag:keyword:synmedia:novel_adaptation",
+   "name": "Novel Adaptation",
+   "type": "urn:tag:keyword:synmedia"
+  },
+  {
+   "id": "urn:tag:genre:synbrand:apothecary_fashion",
+   "name": "Apothecary Fashion",
+   "type": "urn:tag:genre:synbrand"
+  },
+  {
+   "id": "urn:tag:industry:syn:everyday_basics",
+   "name": "Everyday Basics",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:genre:synbrand:capsule_wardrobe",
+   "name": "Capsule Wardrobe",
+   "type": "urn:tag:genre:synbrand"
+  },
+  {
+   "id": "urn:tag:genre:synmusic:lofi_beats",
+   "name": "Lofi Beats",
+   "type": "urn:tag:genre:synmusic"
+  },
+  {
+   "id": "urn:tag:keyword:synmedia:city_life",
+   "name": "City Life",
+   "type": "urn:tag:keyword:synmedia"
+  },
+  {
+   "id": "urn:tag:genre:synmedia:street_photo",
+   "name": "Street Photo",
+   "type": "urn:tag:genre:synmedia"
+  },
+  {
+   "id": "urn:tag:genre:synfilm:design_docs",
+   "name": "Design Documentaries",
+   "type": "urn:tag:genre:synfilm"
+  },
+  {
+   "id": "urn:tag:category:synplace:lantern_markets",
+   "name": "Lantern Markets",
+   "type": "urn:tag:category:synplace"
+  },
+  {
+   "id": "urn:tag:keyword:synplace:street_griddle",
+   "name": "Street Griddle",
+   "type": "urn:tag:keyword:synplace"
   }
  ],
  "entities": [
@@ -1717,6 +1817,168 @@
    "popularity": 0.4,
    "tags": [
     "urn:tag:music:syn:porch_folk"
+   ]
+  },
+  {
+   "id": "SYN-BR-9N01",
+   "name": "Halden Apothecary",
+   "type": "brand",
+   "popularity": 0.93,
+   "tags": [
+    "urn:tag:industry:syn:apothecary_care",
+    "urn:tag:keyword:syn:botanical_ritual"
+   ],
+   "profileOnlyTags": [
+    "urn:tag:genre:synbrand:apothecary_fashion",
+    "urn:tag:genre:synmedia:kitchen_tv",
+    "urn:tag:genre:synmedia:cookbook_shelf",
+    "urn:tag:genre:synmusic:bedroom_indie",
+    "urn:tag:genre:synmusic:night_electronic",
+    "urn:tag:keyword:synmedia:slow_drama",
+    "urn:tag:keyword:synmedia:novel_adaptation"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N01",
+   "name": "Ashgrove Roasting Room",
+   "type": "place",
+   "popularity": 0.88,
+   "tags": [
+    "urn:tag:cuisine:syn:coffee_houses",
+    "urn:tag:category:synplace:bakery_culture",
+    "urn:tag:keyword:syn:botanical_ritual"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N02",
+   "name": "Brindle Coffee Parlour",
+   "type": "place",
+   "popularity": 0.86,
+   "tags": [
+    "urn:tag:cuisine:syn:coffee_houses",
+    "urn:tag:category:synplace:bakery_culture",
+    "urn:tag:category:synplace:tea_salons"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N03",
+   "name": "Copperline Coffee Hall",
+   "type": "place",
+   "popularity": 0.84,
+   "tags": [
+    "urn:tag:cuisine:syn:coffee_houses",
+    "urn:tag:category:synplace:bakery_culture",
+    "urn:tag:category:synplace:tea_salons"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N04",
+   "name": "Dunmore Roastery",
+   "type": "place",
+   "popularity": 0.82,
+   "tags": [
+    "urn:tag:cuisine:syn:coffee_houses"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N11",
+   "name": "Eastfield Bread Loft",
+   "type": "place",
+   "popularity": 0.8,
+   "tags": [
+    "urn:tag:category:synplace:bakery_culture",
+    "urn:tag:keyword:syn:botanical_ritual"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N12",
+   "name": "Fernhill Bakehouse",
+   "type": "place",
+   "popularity": 0.78,
+   "tags": [
+    "urn:tag:category:synplace:bakery_culture"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N13",
+   "name": "Gorse Lane Bakery",
+   "type": "place",
+   "popularity": 0.76,
+   "tags": [
+    "urn:tag:category:synplace:bakery_culture"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N21",
+   "name": "Heathmoor Salon",
+   "type": "place",
+   "popularity": 0.79,
+   "tags": [
+    "urn:tag:category:synplace:tea_salons",
+    "urn:tag:keyword:syn:botanical_ritual"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N22",
+   "name": "Ivybridge Parlour",
+   "type": "place",
+   "popularity": 0.77,
+   "tags": [
+    "urn:tag:category:synplace:tea_salons",
+    "urn:tag:keyword:syn:botanical_ritual"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N23",
+   "name": "Juniper Pavilion",
+   "type": "place",
+   "popularity": 0.75,
+   "tags": [
+    "urn:tag:category:synplace:tea_salons"
+   ]
+  },
+  {
+   "id": "SYN-BR-9N02",
+   "name": "Corvid Basics",
+   "type": "brand",
+   "popularity": 0.94,
+   "tags": [
+    "urn:tag:industry:syn:everyday_basics"
+   ],
+   "profileOnlyTags": [
+    "urn:tag:genre:synbrand:capsule_wardrobe",
+    "urn:tag:genre:synmusic:lofi_beats",
+    "urn:tag:keyword:synmedia:city_life",
+    "urn:tag:genre:synmedia:street_photo",
+    "urn:tag:genre:synfilm:design_docs"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N31",
+   "name": "Kestle Night Market",
+   "type": "place",
+   "popularity": 0.9,
+   "tags": [
+    "urn:tag:category:synplace:lantern_markets",
+    "urn:tag:keyword:synplace:street_griddle"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N32",
+   "name": "Larch Street Stalls",
+   "type": "place",
+   "popularity": 0.7,
+   "tags": [
+    "urn:tag:keyword:synplace:street_griddle"
+   ]
+  },
+  {
+   "id": "SYN-PL-9N33",
+   "name": "Millbrook Food Court",
+   "type": "place",
+   "popularity": 0.68,
+   "tags": [
+    "urn:tag:keyword:synplace:street_griddle"
    ]
   }
  ],

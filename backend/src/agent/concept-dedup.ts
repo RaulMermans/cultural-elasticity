@@ -125,6 +125,13 @@ export function structuralDuplicate(state: AgentRunState, a: TerritoryState, b: 
   if (a.concept && b.concept) {
     const brandId = state.brand.entity?.id;
     const discoverySource = new Set(state.related.filter((r) => r.subjectId === brandId).flatMap((r) => r.memberIds));
+    // Sprint 9N (AGENTS 5A.2 rule 4, applied to references): a reference candidate found on the target's exemplar
+    // profiles co-occurs with the target there by construction (they are its pool members); those profiles are its
+    // discovery source, not evidence of duplication. Pool overlap above still catches real duplicates.
+    if (state.feasibilityPolicy === "enforce") {
+      const [target, reference] = a.role === "target" && b.role === "reference" ? [a, b] : b.role === "target" && a.role === "reference" ? [b, a] : [null, null];
+      if (target && reference) for (const e of target.representation?.exemplars ?? []) discoverySource.add(e.id);
+    }
     const carrying = [...state.profiles.values()].filter((p) => p.subjectId !== brandId && !discoverySource.has(p.subjectId) && (p.tagIds.includes(a.concept!.id) || p.tagIds.includes(b.concept!.id)));
     const both = carrying.filter((p) => p.tagIds.includes(a.concept!.id) && p.tagIds.includes(b.concept!.id));
     if (both.length >= 2 && both.length / carrying.length >= CO_OCCURRENCE_SHARE) return { verdict: "NEAR_DUPLICATE", layer: "structural", basis: `the two Qloo concept tags co-occur in ${both.length} of ${carrying.length} profiles carrying either`, morphologyOnly: false };

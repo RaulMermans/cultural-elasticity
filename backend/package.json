@@ -28,6 +28,7 @@
     "eval:agent:live": "tsx scripts/eval-agent-live.ts",
     "eval:agent:budget": "tsx scripts/live-gate-budget.ts",
     "eval:agent:replay": "tsx scripts/replay-evaluators.ts",
+    "eval:d2d": "tsx scripts/eval-d2d.ts",
     "eval:query": "tsx scripts/eval-query.ts",
     "living-atlas:live": "tsx scripts/living-atlas-live.ts",
     "perf:agent": "tsx scripts/perf-agent.ts",

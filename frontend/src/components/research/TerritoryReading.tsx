@@ -1,6 +1,7 @@
 "use client";
 
 import { FIT_STEPS, type TerritoryReading } from "@/lib/territory-reading";
+import { DecisionCardView } from "./DecisionCard";
 import { TagChip } from "./TagChip";
 
 function Chips({ title, hint, items }: { title: string; hint: string; items: string[] }) {
@@ -27,6 +28,8 @@ export function TerritoryReadingView({ reading, brand, onMeasure, busy }: { read
       {!fit && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure} data-testid="network-measure">Measure it with a Qloo comparison</button> : null}
     </div>
 
+    {reading.decision ? <DecisionCardView card={reading.decision} /> : null}
+
     {reading.compared.length > 1 ? <div className="rr-section">
       <h3>How it ranked</h3>
       <p className="rr-hint">How strongly Qloo links each one to {brand}, strongest first. The order holds only within these {reading.compared.length}.</p>
@@ -41,7 +44,7 @@ export function TerritoryReadingView({ reading, brand, onMeasure, busy }: { read
     {reading.closestMatches.length ? <Chips title={`Qloo's closest matches for ${brand} here`} hint={`Within ${name}, what Qloo associates most with ${brand}, in Qloo's order.`} items={reading.closestMatches} /> : null}
     {reading.examples.length ? <Chips title="Examples that stand for it" hint={`What the agent used to represent ${name} in the comparison.`} items={reading.examples} /> : null}
 
-    {reading.unknowns.length ? <div className="rr-section">
+    {!reading.decision && reading.unknowns.length ? <div className="rr-section">
       <h3>What we don&apos;t know yet</h3>
       <ul className="rr-unknowns">{reading.unknowns.map((line) => <li key={line}>{line}</li>)}</ul>
     </div> : null}

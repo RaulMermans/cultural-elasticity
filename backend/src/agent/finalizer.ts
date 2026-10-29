@@ -8,6 +8,7 @@
  * The synthesis can explain results. It cannot change a route, class, level or number: those are
  * copied from deterministic code into the result regardless of what the model wrote.
  */
+import { comparativeRun, finalFeasibility } from "./feasibility.js";
 import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type Limitation } from "@cultural-elasticity/shared";
 import { reconcileLatency } from "../ops/latency.js";
 import { recorderOf, reconcileSpanCoverage } from "../ops/spans.js";
@@ -339,6 +340,7 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
     comparisonSetConstruction: comparisonSetConstruction(state, results),
     layers: layers(state, results, { text: summaryText, source, passed: finalViolations.length === 0 }, final.followUpOptions, final.findings),
     failureCategory: null,
+    ...(comparativeRun(state) && { comparisonFeasibility: finalFeasibility(state) }),
   };
   result.failureCategory = classifyRunFailure(result);
   return result;

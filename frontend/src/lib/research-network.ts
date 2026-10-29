@@ -105,7 +105,10 @@ const ASSESSMENT_TONE: Record<string, { tone: AtlasTone; status: string }> = {
  * other directions. Null when there is nothing concrete to propose (the user names references instead).
  */
 export function measureQuestion(brand: string, target: string, result: AgentRunResponse | null | undefined, directions: readonly string[]): string | null {
-  const compared = Boolean(result && result.status !== "NEEDS_INPUT" && result.territories.some((territory) => territory.role === "reference"));
+  // Sprint 9N: a comparison attempt that Qloo's evidence blocked (feasibility LIKELY_REPEATS) counts as compared, so the
+  // one-click follow-up is a named comparison, never the same "how far" question again.
+  const done = result && result.status !== "NEEDS_INPUT" ? result : null;
+  const compared = Boolean(done && (done.territories.some((territory) => territory.role === "reference") || done.comparisonFeasibility?.repeat === "LIKELY_REPEATS"));
   if (!compared) return `How far can ${brand} extend into ${target}?`;
   const others = [...new Map(directions.filter((name) => normName(name) !== normName(target)).map((name) => [normName(name), name])).values()];
   return others.length >= 2 ? `Compare ${target} with ${others[0]} and ${others[1]}` : null;

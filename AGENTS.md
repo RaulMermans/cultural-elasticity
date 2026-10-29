@@ -93,14 +93,14 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 
 1. **Brand-first is the default UX.** The research network (design skill version 7) is the only view over the canonical baseline result; the section workspace was removed. It never adds evidence, scores, ranks by opportunity, or calls a model or Qloo to display a result.
 2. **Core versus adjacent is never inferred from Qloo evidence alone** (`research-position/v1`). The brand core comes only from Qloo's category tags for the brand; adjacency only from clearly labelled user context, which never changes evidence.
-3. **The product ships no recorded research.** The bundled Loewe, Jacquemus and comparative demos were removed (Sprint 9K); research comes only from the user's own scans. Stored live evidence lives in `evals/` and `docs/` for tests only. The downloadable report (`network-report.ts`) restates results on the board: counts and per-comparison ranks, never a cross-call score or forecast.
+3. **The product ships no recorded research.** The bundled Loewe, Jacquemus and comparative demos were removed (Sprint 9K); research comes only from the user's own scans. *(Amended in Sprints 9M and 9N: the home page links two static reports recorded from live runs on 2026-10-29, Patagonia and Crocs. They are byte-identical to stored evidence, dated, labelled as recorded, and opening them runs nothing. No interactive recorded demo is bundled.)* Stored live evidence lives in `evals/` and `docs/` for tests only. The downloadable report (`network-report.ts`) restates results on the board: counts and per-comparison ranks, never a cross-call score or forecast.
 4. **No scan token in a URL**, and no enabled paid action while its admission is paused. Canonical record: `docs/sprint-9c/BRAND_FIRST_RESEARCH_WORKSPACE.md`.
 
 ## Agentic research handoff (Sprint 9D)
 
 1. **A baseline direction is a hypothesis.** The server rereads the authorized scan, verifies territory ownership and supporting provenance, and pins the canonical Qloo brand ID before using the existing agent runtime. Selection does not upgrade support.
 2. **The research finding and brief are projections.** They preserve source scope, validated claims and recorded/live origin. Comparison reads completed same-brand results only and makes no provider call or cross-call numerical ranking. Canonical record: `docs/sprint-9d/AGENTIC_INTELLIGENCE_AND_STRATEGIC_DECISION.md`.
-3. **Agent jobs are still in process.** Handoff idempotency and job results disappear on backend restart. Public paid investigations remain disabled pending separate readiness and durability decisions. The Sprint 9D benchmark has no LLM-only arm yet; do not claim measured comparative Qloo value.
+3. **Agent jobs are still in process.** Handoff idempotency and job results disappear on backend restart. Public paid investigations remain disabled pending separate readiness and durability decisions. *(Superseded for the approved window 2026-10-29 → 2026-11-06T05:00Z by the Sprint 9M public evaluation below; outside an approved evaluation this rule still holds.)* The Sprint 9D benchmark has no LLM-only arm yet; do not claim measured comparative Qloo value.
 
 ## Comparative handoff and cross-domain relationships (Sprint 9I)
 
@@ -127,6 +127,15 @@ Canonical record: `docs/sprint-9j/LIVE_VALIDATION_AND_RELEASE_REPORT.md`.
 1. **Anonymous paid research only inside an approved public evaluation.** It requires `CE_PUBLIC_EVALUATION=1`, an id, a future expiry, an explicit `CE_PROCESS_QLOO_CALL_LIMIT` and `DATABASE_URL`, and it fails closed without any of them. Open it only with `scripts/public-evaluation-open.sh` and an owner-approved Qloo and USD total.
 2. **Caps are durable and global.** The ledger is keyed by the evaluation id. Per-network quotas are keyed by an HMAC of the client address, never the address itself. A restart, a new cookie or a new visitor never grants a fresh allowance.
 3. **Verify with `--expect-admissions public`.** Its probes cannot dispatch. The kill switch is `scripts/public-evaluation-close.sh`.
+
+## Discovery to decision (permanent, from Sprint 9N)
+
+1. **Comparison feasibility is a projection, not a planner** (`comparison-feasibility/v1`, `backend/src/agent/feasibility.ts`). FEASIBLE, UNCERTAIN or INFEASIBLE come from readiness, `referencePlan` and the probe ledger. UNCERTAIN is never INFEASIBLE. The model reads `focus.feasibility` and cannot change it. No threshold of the methodology or the semantic validator moves with it.
+2. **Prefer observed type evidence.** A reference candidate seen on the profile of an entity of the comparison type ranks first. A namespace's name never implies a type.
+3. **Reference probing is bounded.** After 4 empty reference probes, with references still missing and no usable probed candidate, FULL is not feasible (`NO_REFERENCE_YIELD`). Probes that cannot change the outcome are refused. Deferrals of type-less probes apply only with ≥ 2 turns of slack and are never bans.
+4. **Co-occurrence in a reference's discovery profiles is not duplication.** The target's exemplar profiles are its discovery source. Pool overlap still decides duplicates.
+5. **One decision card for every surface** (`packages/shared/src/decision-card.ts`). The live reading, the report and the evals use the same projection. It shows recorded values only, interprets evidence without forecasting outcomes, and never suggests asking a question again that Qloo's evidence blocked (`repeat: LIKELY_REPEATS`).
+6. **Report the arms honestly.** `pnpm eval:d2d` compares `observe` (the Sprint 9M flow) with `enforce` on identical synthetic fixtures, and reads recorded live artefacts as run. It is never live evidence and has no independent holdout. `CE_FEASIBILITY_POLICY=observe` is the rollback. Canonical record: `docs/sprint-9n/DISCOVERY_TO_DECISION_OPTIMIZATION.md`.
 
 ## Deployment provenance (permanent, from Sprint 8F)
 
@@ -191,6 +200,9 @@ pnpm eval:agent:live -- --arms baseline,model --stability 3 --approved-usd <N>
                         # refuses (exit 4, no call) unless the owner-approved ceiling covers the reserved exposure
 pnpm eval:agent:replay -- <dir>
                         # offline replay of current evaluators/stability metrics over stored live results
+pnpm eval:d2d           # offline Discovery-to-Decision suite: observe vs enforce arms (synthetic) + recorded live artefacts as run
+pnpm eval:d2d -- --score <dir> [<dir>]
+                        # score stored agent results with the same metrics (offline half of a model comparison)
 pnpm eval:query         # offline gate/handoff replay over the query manifest (synthetic); never NLU evidence
 pnpm eval:query -- --live
 pnpm test:e2e           # browser tests against a SYNTHETIC job API; never live Qloo or Haiku

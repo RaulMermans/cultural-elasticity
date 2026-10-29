@@ -1,0 +1,445 @@
+{
+ "fixtureType": "synthetic",
+ "version": "discovery-decision-eval/v1",
+ "notice": "SYNTHETIC and RECORDED evaluation cases for Sprint 9N. Runtime cases run against the synthetic agent world (fictional SYN- entities) in two arms: observe (the Sprint 9M control flow) and enforce (Sprint 9N default). Recorded cases read live artefacts stored by earlier sprints, as run. Live-target cases have no stored trace and are not run. None of this is new Qloo or model evidence.",
+ "holdout": "None. Every runtime case was written during Sprint 9N, after the live traces were read; Sprint 9O live runs are the first independent test.",
+ "cases": [
+  {
+   "id": "d2d-live-type-evidence",
+   "kind": "runtime",
+   "dimension": "comparison",
+   "split": "development",
+   "description": "Live L-M1/L-M2 failure class: the model probes brand-profile media and music tags as place references while place-profile tags of the target's own exemplars wait. Type-evidence ordering and bounded probing should reach a valid comparison without empty reference probes.",
+   "policy": "baseline",
+   "wrap": "brand_tags_first",
+   "request": {
+    "userQuery": "Could Halden Apothecary move into coffee houses?",
+    "brand": "Halden Apothecary",
+    "territories": [
+     "Coffee Houses"
+    ]
+   },
+   "expect": {
+    "routes": {
+     "coffee_houses": "FULL_RELATIVE_ANALYSIS"
+    },
+    "maxEmptyProbes": 1,
+    "feasibility": "FEASIBLE"
+   }
+  },
+  {
+   "id": "d2d-type-evidence-plain",
+   "kind": "runtime",
+   "dimension": "comparison",
+   "split": "development",
+   "description": "Same world without the live-behaviour instrument (the baseline policy follows the runtime's candidate order).",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Halden Apothecary move into coffee houses?",
+    "brand": "Halden Apothecary",
+    "territories": [
+     "Coffee Houses"
+    ]
+   },
+   "expect": {
+    "routes": {
+     "coffee_houses": "FULL_RELATIVE_ANALYSIS"
+    },
+    "maxEmptyProbes": 1
+   }
+  },
+  {
+   "id": "d2d-thin-target-panel",
+   "kind": "runtime",
+   "dimension": "comparison",
+   "split": "development",
+   "description": "Uniqlo → Manga failure class (structural analogue, not a replay): one exemplar passes target validation, so exemplar-derived references can be at most WEAK and only brand-profile tags could count; those return no place members. Expected: honest PARTIAL, early justified abstention, LIKELY_REPEATS.",
+   "policy": "baseline",
+   "wrap": "brand_tags_first",
+   "request": {
+    "userQuery": "Could Corvid Basics move into lantern markets?",
+    "brand": "Corvid Basics",
+    "territories": [
+     "Lantern Markets"
+    ]
+   },
+   "expect": {
+    "routes": {
+     "lantern_markets": "PARTIAL_CULTURAL_ANALYSIS"
+    },
+    "feasibility": "INFEASIBLE",
+    "repeat": "LIKELY_REPEATS",
+    "maxEmptyProbes": 5,
+    "nextActionNot": "RUN_AGAIN"
+   }
+  },
+  {
+   "id": "d2d-thin-target-panel-plain",
+   "kind": "runtime",
+   "dimension": "comparison",
+   "split": "development",
+   "description": "Thin-panel world without the instrument.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Corvid Basics move into lantern markets?",
+    "brand": "Corvid Basics",
+    "territories": [
+     "Lantern Markets"
+    ]
+   },
+   "expect": {
+    "routes": {
+     "lantern_markets": "PARTIAL_CULTURAL_ANALYSIS"
+    },
+    "feasibility": "INFEASIBLE",
+    "repeat": "LIKELY_REPEATS"
+   }
+  },
+  {
+   "id": "d2d-named-comparison",
+   "kind": "runtime",
+   "dimension": "comparison",
+   "split": "development",
+   "description": "The suggested next action for a blocked move: the user names the comparison (three Qloo-grounded territories). Must reach FULL in both arms.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "For Halden Apothecary compare coffee houses, bakery culture and tea salons.",
+    "brand": "Halden Apothecary",
+    "territories": [
+     "Coffee Houses",
+     "Bakery Culture",
+     "Tea Salons"
+    ]
+   },
+   "expect": {
+    "routes": {
+     "coffee_houses": "FULL_RELATIVE_ANALYSIS",
+     "bakery_culture": "FULL_RELATIVE_ANALYSIS",
+     "tea_salons": "FULL_RELATIVE_ANALYSIS"
+    }
+   }
+  },
+  {
+   "id": "d2d-budget-exhausted",
+   "kind": "runtime",
+   "dimension": "efficiency",
+   "split": "development",
+   "description": "A tight Qloo budget stops reference construction. The partial finding must say the run's own budget, not Qloo's evidence, blocked it (MAY_CHANGE) and may suggest running again.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Halden Apothecary move into coffee houses?",
+    "brand": "Halden Apothecary",
+    "territories": [
+     "Coffee Houses"
+    ],
+    "limits": {
+     "maxQlooCalls": 9
+    }
+   },
+   "expect": {
+    "notFull": [
+     "coffee_houses"
+    ],
+    "repeat": "MAY_CHANGE"
+   }
+  },
+  {
+   "id": "d2d-provider-error-reference",
+   "kind": "runtime",
+   "dimension": "comparison",
+   "split": "development",
+   "description": "A non-retryable provider error on a reference probe is never evidence: the failed call adds no member and the result stays honest.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Halden Apothecary move into coffee houses?",
+    "brand": "Halden Apothecary",
+    "territories": [
+     "Coffee Houses"
+    ]
+   },
+   "faults": [
+    {
+     "operation": "recommend",
+     "whenInputContains": "bakery_culture",
+     "status": "error",
+     "code": "SYNTHETIC_TIMEOUT",
+     "retryable": false,
+     "times": 3
+    }
+   ],
+   "expect": {
+    "noEvidenceFromFailedCalls": true
+   }
+  },
+  {
+   "id": "d2d-partial-provider-reference",
+   "kind": "runtime",
+   "dimension": "comparison",
+   "split": "development",
+   "description": "A partial Qloo answer on a reference probe is flagged, never treated as complete evidence.",
+   "policy": "baseline",
+   "request": {
+    "userQuery": "Could Halden Apothecary move into coffee houses?",
+    "brand": "Halden Apothecary",
+    "territories": [
+     "Coffee Houses"
+    ]
+   },
+   "faults": [
+    {
+     "operation": "recommend",
+     "whenInputContains": "tea_salons",
+     "status": "partial",
+     "times": 1
+    }
+   ],
+   "expect": {}
+  },
+  {
+   "id": "ref:ir-move",
+   "kind": "scenario",
+   "dimension": "comparison",
+   "split": "existing",
+   "scenario": "ir-move",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:ir-compare",
+   "kind": "scenario",
+   "dimension": "comparison",
+   "split": "existing",
+   "scenario": "ir-compare",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:s5-references-before-analysis",
+   "kind": "scenario",
+   "dimension": "efficiency",
+   "split": "existing",
+   "scenario": "s5-references-before-analysis",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:s51-references-late-still-feasible",
+   "kind": "scenario",
+   "dimension": "efficiency",
+   "split": "existing",
+   "scenario": "s51-references-late-still-feasible",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:s5-meaningless-reference-refused",
+   "kind": "scenario",
+   "dimension": "comparison",
+   "split": "existing",
+   "scenario": "s5-meaningless-reference-refused",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:sk-semantic-veto",
+   "kind": "scenario",
+   "dimension": "comparison",
+   "split": "existing",
+   "scenario": "sk-semantic-veto",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:ex-single-member",
+   "kind": "scenario",
+   "dimension": "comparison",
+   "split": "existing",
+   "scenario": "ex-single-member",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:rv-place-representation",
+   "kind": "scenario",
+   "dimension": "comparison",
+   "split": "existing",
+   "scenario": "rv-place-representation",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:ie-unmeasurable",
+   "kind": "scenario",
+   "dimension": "comparison",
+   "split": "existing",
+   "scenario": "ie-unmeasurable",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:bc-qloo-budget",
+   "kind": "scenario",
+   "dimension": "efficiency",
+   "split": "existing",
+   "scenario": "bc-qloo-budget",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:bc-retry-once",
+   "kind": "scenario",
+   "dimension": "efficiency",
+   "split": "existing",
+   "scenario": "bc-retry-once",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:ir-frontier",
+   "kind": "scenario",
+   "dimension": "discovery",
+   "split": "existing",
+   "scenario": "ir-frontier",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:sk-frontier-two-channels",
+   "kind": "scenario",
+   "dimension": "discovery",
+   "split": "existing",
+   "scenario": "sk-frontier-two-channels",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:dtd-unsupported-hypothesis",
+   "kind": "scenario",
+   "dimension": "discovery",
+   "split": "existing",
+   "scenario": "dtd-unsupported-hypothesis",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:dtd-near-duplicate",
+   "kind": "scenario",
+   "dimension": "discovery",
+   "split": "existing",
+   "scenario": "dtd-near-duplicate",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:sk-frontier-morph-duplicate",
+   "kind": "scenario",
+   "dimension": "discovery",
+   "split": "existing",
+   "scenario": "sk-frontier-morph-duplicate",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "ref:s52-frontier-namespace-type-evidence",
+   "kind": "scenario",
+   "dimension": "discovery",
+   "split": "existing",
+   "scenario": "s52-frontier-namespace-type-evidence",
+   "description": "Existing synthetic agent scenario, run in both feasibility arms; its original expectations must hold in both (no regression)."
+  },
+  {
+   "id": "rec:L-C1",
+   "kind": "recorded",
+   "dimension": "decision",
+   "split": "recorded-live",
+   "artifact": "evals/qloo-value/artifacts/live_model-L-C1.json",
+   "description": "Rapha compare (FULL, live Haiku, pre-9N engine). Recorded live evidence from an earlier sprint: measured as run (pre-9N engine); never replayed through the provider, never regenerated."
+  },
+  {
+   "id": "rec:L-C2",
+   "kind": "recorded",
+   "dimension": "efficiency",
+   "split": "recorded-live",
+   "artifact": "evals/qloo-value/artifacts/live_model-L-C2.json",
+   "description": "Liquid Death compare (PARTIAL; 9 empty probes, 3 timeouts). Recorded live evidence from an earlier sprint: measured as run (pre-9N engine); never replayed through the provider, never regenerated."
+  },
+  {
+   "id": "rec:L-M1",
+   "kind": "recorded",
+   "dimension": "efficiency",
+   "split": "recorded-live",
+   "artifact": "evals/qloo-value/artifacts/live_model-L-M1.json",
+   "description": "Aesop → coffee (PARTIAL; 7 empty brand-profile reference probes). Recorded live evidence from an earlier sprint: measured as run (pre-9N engine); never replayed through the provider, never regenerated."
+  },
+  {
+   "id": "rec:L-M2",
+   "kind": "recorded",
+   "dimension": "efficiency",
+   "split": "recorded-live",
+   "artifact": "evals/qloo-value/artifacts/live_model-L-M2.json",
+   "description": "Yeti → fly fishing (PARTIAL; references probed before exemplar profiles). Recorded live evidence from an earlier sprint: measured as run (pre-9N engine); never replayed through the provider, never regenerated."
+  },
+  {
+   "id": "rec:L-M3",
+   "kind": "recorded",
+   "dimension": "efficiency",
+   "split": "recorded-live",
+   "artifact": "evals/qloo-value/artifacts/live_model-L-M3.json",
+   "description": "Le Creuset → tea (PARTIAL; turns ran out). Recorded live evidence from an earlier sprint: measured as run (pre-9N engine); never replayed through the provider, never regenerated."
+  },
+  {
+   "id": "rec:L-E1",
+   "kind": "recorded",
+   "dimension": "discovery",
+   "split": "recorded-live",
+   "artifact": "evals/qloo-value/artifacts/live_model-L-E1.json",
+   "description": "Oatly frontier. Recorded live evidence from an earlier sprint: measured as run (pre-9N engine); never replayed through the provider, never regenerated."
+  },
+  {
+   "id": "rec:L-E2",
+   "kind": "recorded",
+   "dimension": "discovery",
+   "split": "recorded-live",
+   "artifact": "evals/qloo-value/artifacts/live_model-L-E2.json",
+   "description": "Allbirds frontier. Recorded live evidence from an earlier sprint: measured as run (pre-9N engine); never replayed through the provider, never regenerated."
+  },
+  {
+   "id": "live:uniqlo-manga",
+   "kind": "live-target",
+   "dimension": "comparison",
+   "split": "sprint-9o",
+   "target": "Uniqlo → Manga",
+   "syntheticAnalogue": "d2d-thin-target-panel",
+   "description": "Hosted live observation with no stored agent trace in the repository (jobs are in-process). A Sprint 9O regression target: LIVE_QLOO_VALIDATION_NOT_RUN in Sprint 9N. The analogue is a hypothesis about the failure class, not a replay."
+  },
+  {
+   "id": "live:crocs-fine-dining",
+   "kind": "live-target",
+   "dimension": "comparison",
+   "split": "sprint-9o",
+   "target": "Crocs → Fine dining",
+   "syntheticAnalogue": "d2d-live-type-evidence",
+   "description": "Hosted live observation with no stored agent trace in the repository (jobs are in-process). A Sprint 9O regression target: LIVE_QLOO_VALIDATION_NOT_RUN in Sprint 9N. The analogue is a hypothesis about the failure class, not a replay."
+  },
+  {
+   "id": "live:crocs-fiction",
+   "kind": "live-target",
+   "dimension": "comparison",
+   "split": "sprint-9o",
+   "target": "Crocs → Fiction",
+   "syntheticAnalogue": "d2d-thin-target-panel",
+   "description": "Hosted live observation with no stored agent trace in the repository (jobs are in-process). A Sprint 9O regression target: LIVE_QLOO_VALIDATION_NOT_RUN in Sprint 9N. The analogue is a hypothesis about the failure class, not a replay."
+  },
+  {
+   "id": "live:patagonia-ethical-consumption",
+   "kind": "live-target",
+   "dimension": "comparison",
+   "split": "sprint-9o",
+   "target": "Patagonia → Ethical Consumption",
+   "syntheticAnalogue": null,
+   "description": "Hosted live observation with no stored agent trace in the repository (jobs are in-process). A Sprint 9O regression target: LIVE_QLOO_VALIDATION_NOT_RUN in Sprint 9N. The analogue is a hypothesis about the failure class, not a replay."
+  },
+  {
+   "id": "live:patagonia-luxury-jewelry",
+   "kind": "live-target",
+   "dimension": "comparison",
+   "split": "sprint-9o",
+   "target": "Patagonia → Luxury jewelry",
+   "syntheticAnalogue": "d2d-thin-target-panel",
+   "description": "Hosted live observation with no stored agent trace in the repository (jobs are in-process). A Sprint 9O regression target: LIVE_QLOO_VALIDATION_NOT_RUN in Sprint 9N. The analogue is a hypothesis about the failure class, not a replay."
+  },
+  {
+   "id": "live:patagonia-nightclubs",
+   "kind": "live-target",
+   "dimension": "comparison",
+   "split": "sprint-9o",
+   "target": "Patagonia → Nightclubs",
+   "syntheticAnalogue": "d2d-thin-target-panel",
+   "description": "Hosted live observation with no stored agent trace in the repository (jobs are in-process). A Sprint 9O regression target: LIVE_QLOO_VALIDATION_NOT_RUN in Sprint 9N. The analogue is a hypothesis about the failure class, not a replay."
+  }
+ ]
+}

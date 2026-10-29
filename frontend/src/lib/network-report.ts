@@ -217,6 +217,7 @@ export function buildNetworkReport(input: { view: ResearchView; nodes: readonly 
         meta: readingLine(item),
         text: item.reading.fit ? item.reading.fit.meaning : `${item.card.label} has not been compared with other territories yet.`,
         bullets: [
+          ...(item.reading.decision ? [`Implication: ${item.reading.decision.implication.label}. ${item.reading.decision.implication.text}`, ...item.reading.decision.nextActions.map((action) => `Next: ${action.text}`)] : []),
           ...(item.reading.sharedTastes.length ? [`Tastes shared with ${brand}: ${item.reading.sharedTastes.slice(0, 6).join(", ")}`] : []),
           ...(item.reading.closestMatches.length ? [`Qloo's closest matches for ${brand} here: ${item.reading.closestMatches.slice(0, 6).join(", ")}`] : []),
           ...(item.reading.examples.length ? [`Examples standing for it: ${item.reading.examples.slice(0, 6).join(", ")}`] : []),

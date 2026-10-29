@@ -42,6 +42,7 @@ import { abandonedToolCalls, cacheKey } from "./qloo-gateway.js";
 import type { SkillDefinition } from "./skills/contracts.js";
 import { skillRef } from "./skills/contracts.js";
 import type { SkillRegistry } from "./skills/registry.js";
+import { referenceProbeRefusal } from "./feasibility.js";
 import { analysisReserve } from "./analysis-runner.js";
 import type { RankableType } from "./contracts.js";
 import { frontierCompletionReserve, outsideFrontierEvidenceBase, recordAnchorDecision, ungroundedFrontierProbeReason, unproductiveHypothesisProbeReason } from "./frontier.js";
@@ -134,6 +135,9 @@ export function valueOfToolCall(state: AgentRunState, tool: string, input: Recor
     if (barren) return { value: "NONE", reason: `${barren.barren}; probe an untried supported entity type instead (${barren.untried.join(", ") || "none left"}), anchor a concept with members, or declare_concept_only` };
     const namespace = barrenReferenceNamespace(state, tagId, input.targetType as RankableType);
     if (namespace) return { value: "NONE", reason: namespace, code: "REFERENCE_NAMESPACE_BARREN" };
+    // Sprint 9N: reference probes that cannot change the comparison outcome (feasibility.ts, enforce policy only).
+    const infeasible = referenceProbeRefusal(state, tagId, input.targetType as RankableType);
+    if (infeasible) return { value: "NONE", reason: infeasible.reason, code: infeasible.code };
     // Sprint 5A.2 (after the more specific reference rule): namespace evidence defers a type the namespace has shown to be
     // barren while the concept has better-evidenced options.
     const namespaceBarren = namespaceTypeBarren(state, tagId, input.targetType as RankableType);

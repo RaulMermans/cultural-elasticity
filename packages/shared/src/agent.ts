@@ -260,6 +260,56 @@ export type CompletionFeasibility = {
   reason: string;
 };
 
+/**
+ * Sprint 9N: the measurement-first feasibility of a comparative investigation (comparison-feasibility/v1). Every field
+ * is derived from run state and Qloo evidence by deterministic code; the model reads it and cannot change it.
+ *   FEASIBLE    the comparison set can be completed from evidence already in hand (probed references with members)
+ *   UNCERTAIN   completion depends on evidence not yet collected (unprobed candidates, profiles, the target panel)
+ *   INFEASIBLE  a full comparison cannot be built in this run; the result is the supported partial finding
+ */
+export type ComparisonFeasibilityStatus = "FEASIBLE" | "UNCERTAIN" | "INFEASIBLE";
+
+export type ComparisonFeasibilityBlocker =
+  | "TARGET_NOT_ANCHORED"
+  | "TARGET_UNSUPPORTED"
+  | "TARGET_NOT_REPRESENTED"
+  | "TARGET_CONCEPT_ONLY"
+  | "THIN_TARGET_PANEL"
+  | "REFERENCE_DISCOVERY_PENDING"
+  | "REFERENCE_PROBES_PENDING"
+  | "NO_REFERENCE_YIELD"
+  | "NO_MEANINGFUL_REFERENCE_CANDIDATES"
+  | "TURN_BUDGET"
+  | "QLOO_BUDGET"
+  | "CANDIDATE_SLOTS"
+  | "SKILL_BUDGET";
+
+export type ComparisonFeasibility = {
+  rulesVersion: "comparison-feasibility/v1";
+  iteration: number;
+  status: ComparisonFeasibilityStatus;
+  target: { key: string | null; label: string | null; anchored: boolean; represented: boolean; entityType: string | null; validExemplars: number };
+  compatibleEntityType: string | null;
+  /** Meaningful represented territories of the compatible type (targets included) and the methodology minimum. */
+  meaningfulTerritories: number;
+  requiredTerritories: number;
+  missingReferences: number;
+  pendingReferences: string[];
+  candidates: { meaningful: number; probedWithMembers: number; typeEvidenced: number; unprobed: number };
+  /** Brand-independent reference probes of the compatible type in this run, and how many came back without eligible members. */
+  referenceProbes: { made: number; empty: number; limit: number };
+  capacity: { turnsLeft: number; qlooCallsLeft: number; turnsNeeded: number; callsNeeded: number };
+  blocker: { code: ComparisonFeasibilityBlocker; detail: string } | null;
+  /** The single action with the greatest justified progress, or null when nothing can change the outcome. */
+  nextAction: { action: string; detail: string } | null;
+  stopReasons: string[];
+  /**
+   * Would the same question, asked again with the same budget, likely end the same way? LIKELY_REPEATS when the blocker
+   * is Qloo's evidence (it does not change between runs); MAY_CHANGE when it was the run's own budget or progress.
+   */
+  repeat: "LIKELY_REPEATS" | "MAY_CHANGE";
+};
+
 // ---- Sprint 4: skills, quality, deduplication, comparison sets, next-action value ----
 
 /** Primary failure category of a run or eval case (Sprint 4 taxonomy). */
@@ -547,6 +597,8 @@ export type AgentTrace = {
   representationPlans?: { iteration: number; plan: ComparisonRepresentationPlan }[];
   /** Sprint 5A.1: completion-feasibility checks, recorded whenever the verdict or reason changes. */
   completion?: ({ iteration: number } & CompletionFeasibility)[];
+  /** Sprint 9N: comparison-feasibility assessments, recorded whenever the status, blocker or next action changes. */
+  feasibility?: ComparisonFeasibility[];
   /** Sprint 5A.2: every anchoring of a generated candidate (who anchored it, to what, on which Qloo evidence) and refusals. */
   anchorDecisions?: AnchorDecision[];
   /** Sprint 5A.2: the evidence-ranked probe recommended per unresolved territory, recorded whenever it changes. */
@@ -669,6 +721,11 @@ export type AgentAnalysisResult = {
   layers: AgentResultLayers;
   /** Primary failure category when the run did not complete with measurable evidence; null otherwise. */
   failureCategory: AgentFailureCategory | null;
+  /**
+   * Sprint 9N: the last comparison-feasibility assessment made before the targets were analyzed (comparative runs only).
+   * Absent on older results and on runs that were not a comparison.
+   */
+  comparisonFeasibility?: ComparisonFeasibility | null;
 };
 
 export type AgentNeedsInputResponse = {

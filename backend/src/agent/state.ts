@@ -146,6 +146,14 @@ export type AgentRunState = {
   turnOpen: boolean;
   /** Sprint 5A.1: targets whose off-type anchoring was deferred once for entity-type alignment. */
   alignmentDeferrals: Set<string>;
+  /**
+   * Sprint 9N: "enforce" (default) applies the comparison-feasibility rules (type-evidence ordering, bounded reference
+   * probing, thin-panel discovery); "observe" only records the assessment and keeps the Sprint 9M control flow (the
+   * before/after evaluation arm and the rollback path, CE_FEASIBILITY_POLICY=observe).
+   */
+  feasibilityPolicy: "enforce" | "observe";
+  /** Sprint 9N: the comparison-feasibility assessment taken just before a target was first analyzed. */
+  feasibilityAtAnalysis: import("@cultural-elasticity/shared").ComparisonFeasibility | null;
   /** Sprint 5B.1: parent-child link of a query-layer run (server-recorded; null for a run started outside it). */
   link: InvestigationLink | null;
   startedAt: number;
@@ -207,6 +215,8 @@ export function createRunState(request: AgentRequest, model: AgentModelInfo, too
     timing: { analysisMs: 0, synthesisMs: 0 },
     turnOpen: false,
     alignmentDeferrals: new Set(),
+    feasibilityPolicy: "enforce",
+    feasibilityAtAnalysis: null,
     link: null,
     startedAt: Date.now(),
     toolCallCounter: 0,

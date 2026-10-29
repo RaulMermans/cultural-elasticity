@@ -3,7 +3,7 @@
  * read from the deterministic result (class, ranks, robustness, shared signals, conditioned evidence, exemplars);
  * nothing is computed, estimated or ranked here. Sentences restate those values; none forecasts commercial outcomes.
  */
-import type { AgentRunResponse, AgentTerritoryResult } from "@cultural-elasticity/shared";
+import { decisionCard, type AgentRunResponse, type AgentTerritoryResult, type DecisionCard, type DecisionCardContext } from "@cultural-elasticity/shared";
 
 export type FitStep = "NATURAL_ADJACENCY" | "CREDIBLE_STRETCH" | "CULTURAL_BREAK";
 
@@ -25,6 +25,8 @@ export type TerritoryReading = {
   concept: string | null;
   unknowns: string[];
   technical: string[];
+  /** Sprint 9N: the Strategic Decision Card for this territory (the same projection the report uses). */
+  decision: DecisionCard | null;
 };
 
 const FIT_LABEL: Record<string, string> = {
@@ -70,7 +72,7 @@ const unique = (items: (string | null | undefined)[]) => [...new Set(items.filte
 
 type Done = Exclude<AgentRunResponse, { status: "NEEDS_INPUT" }>;
 
-export function territoryReading(result: AgentRunResponse | null | undefined, territoryKey: string | null, brand: string): TerritoryReading | null {
+export function territoryReading(result: AgentRunResponse | null | undefined, territoryKey: string | null, brand: string, context: DecisionCardContext = {}): TerritoryReading | null {
   if (!result || result.status === "NEEDS_INPUT") return null;
   const done = result as Done;
   const territory: AgentTerritoryResult | undefined = territoryKey
@@ -112,5 +114,6 @@ export function territoryReading(result: AgentRunResponse | null | undefined, te
     concept: territory.resolvedConcept?.label ?? null,
     unknowns,
     technical: unique([...territory.keyEvidence, ...territory.limitations.map((limitation) => limitation.detail)]),
+    decision: decisionCard(done, territory.key, context),
   };
 }

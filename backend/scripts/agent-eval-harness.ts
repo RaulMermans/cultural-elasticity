@@ -104,7 +104,9 @@ export type Scenario = {
    * Sprint 5A test instrument: wraps the baseline policy to reproduce a failure behaviour observed in live model
    * traces (eager_analyze: analyze the targets as soon as they are ready, as Sprint 4's live model did).
    */
-  wrap?: "eager_analyze";
+  wrap?: "eager_analyze" | "brand_tags_first";
+  /** Sprint 9N: the runtime arm. Omitted = the production default ("enforce"); "observe" tests a pre-9N rule in isolation. */
+  feasibilityPolicy?: "enforce" | "observe";
   expect: Expect;
 };
 
@@ -121,6 +123,30 @@ class EagerAnalyze implements AgentModel {
     const ready = context.territories.filter((t) => t.role === "target" && t.status !== "analyzed" && t.readiness === "ready").map((t) => t.key);
     if (!refused && ready.length > 0 && context.actions.includes("analyze")) return Promise.resolve({ decisions: [{ action: "analyze", targetIds: ready, reasonSummary: "the target is represented; analyze it now" }] });
     return this.inner.decide(context);
+  }
+}
+
+/**
+ * Sprint 9N test instrument: reproduces the live L-M1/L-M2 behaviour (Haiku probed brand-profile media and music
+ * genres as references before, or instead of, the candidates on the target exemplars' profiles). Reference candidates
+ * from the brand's own profile are moved to the front; like a live model reading rejectedApproaches, a candidate the
+ * runtime refused (its tag id appears in a refusal) is not proposed again.
+ */
+class BrandTagsFirst implements AgentModel {
+  private readonly refused = new Set<string>();
+  constructor(private readonly inner: AgentModel) {}
+  get info() {
+    return this.inner.info;
+  }
+  decide(context: AgentDecisionContext) {
+    for (const r of [...(context.repair?.rejections ?? []), ...(context.lastTurn?.rejections ?? [])]) for (const m of r.reason.matchAll(/urn:tag:[^\s,\])]+/gu)) this.refused.add(m[0]);
+    const candidates = context.evidence.referenceCandidates;
+    if (!candidates) return this.inner.decide(context);
+    const brandFirst = [...candidates].filter((c) => !this.refused.has(c.tagId)).sort((a, b) => Number(b.justification.includes("brand's own Qloo profile")) - Number(a.justification.includes("brand's own Qloo profile")));
+    return this.inner.decide({ ...context, evidence: { ...context.evidence, referenceCandidates: brandFirst } });
+  }
+  get synthesize() {
+    return this.inner.synthesize?.bind(this.inner);
   }
 }
 
@@ -251,12 +277,14 @@ export function methodologyConsistent(r: AgentAnalysisResult): boolean {
   return true;
 }
 
-export async function runScenario(s: Scenario): Promise<ScenarioResult> {
+/** Sprint 9N: `feasibilityPolicy` selects the runtime arm ("observe" reproduces the Sprint 9M control flow). */
+export async function runScenario(s: Scenario, options: { feasibilityPolicy?: "enforce" | "observe" } = {}): Promise<ScenarioResult> {
   const world = syntheticWorldSchema.parse(JSON.parse(readFileSync(WORLD_PATH, "utf8")));
   const policy = s.policy === "scripted" ? new ScriptedAgentModel(s.steps ?? [], s.synthesis ?? [], s.id) : new BaselinePolicyModel();
-  const inner = s.wrap === "eager_analyze" ? new EagerAnalyze(policy) : policy;
+  const inner = s.wrap === "eager_analyze" ? new EagerAnalyze(policy) : s.wrap === "brand_tags_first" ? new BrandTagsFirst(policy) : policy;
   const model = new Recording(inner);
-  const runtime = new AgentRuntime({ model, provider: createScriptedToolProvider(world, s.faults ?? []) });
+  const policyArm = options.feasibilityPolicy ?? s.feasibilityPolicy;
+  const runtime = new AgentRuntime({ model, provider: createScriptedToolProvider(world, s.faults ?? []), ...(policyArm && { feasibilityPolicy: policyArm }) });
   let response = await runtime.run(s.request);
   if (response.status === "NEEDS_INPUT" && s.answer) response = await runtime.continue(response.runId, s.answer);
   const failures = [...check(s, response), ...checkContexts(s, model.contexts)];
