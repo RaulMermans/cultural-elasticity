@@ -7,7 +7,7 @@ import { elasticityVerdict } from "@/lib/elasticity-verdict";
 import { evidenceTerm } from "@/lib/evidence-presentation";
 import type { JobActivity } from "@/lib/job-envelope";
 import { hypothesisOutcomeCopy } from "@/lib/research-copy";
-import { BRAND_NODE, branchDirection, bridgeId, buildNetwork, layoutWithBridges, lineageOf, territoryAncestor, type Bridge, canRetry, directionNodeId, inquiryNodeId, isPending, normName, type Inquiry, type NetworkNode } from "@/lib/research-network";
+import { BRAND_NODE, measureQuestion, branchDirection, bridgeId, buildNetwork, layoutWithBridges, lineageOf, territoryAncestor, type Bridge, canRetry, directionNodeId, inquiryNodeId, isPending, normName, type Inquiry, type NetworkNode } from "@/lib/research-network";
 import { buildResearchView, type ConnectionView, type DirectionView, type ResearchView } from "@/lib/research-view";
 import { NetworkBoard, type BoardInset } from "./NetworkBoard";
 
@@ -43,8 +43,8 @@ function ElasticityBlock({ elasticity, brand, pending, investigated, onMeasure, 
         <p className="rn-elasticity__label">{elasticity.label} <span className="quiet">(provisional)</span></p>
         <p className="rn-verdict" data-testid="network-verdict"><strong>In short:</strong> {verdict!.headline}</p>
         {verdict!.lines.length ? <ul>{verdict!.lines.map((line) => <li key={line}>{line}</li>)}</ul> : null}
-      </> : <p className="quiet">{pending ? "Being measured by the investigation." : investigated ? "Not measured by this investigation. A degree of elasticity needs a comparison with other territories from the same Qloo evidence." : "Not measured yet. Elasticity is only measured by an investigation, from Qloo evidence compared within one set."}</p>}
-      {!elasticity && !pending && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure}>Measure it: compare with territories you name</button> : null}
+      </> : <p className="quiet">{pending ? "Being measured by the investigation." : investigated ? "Not measured by this investigation yet. A degree of elasticity needs a comparison with other territories from the same Qloo evidence; measure it below." : "Not measured yet. Elasticity is only measured by an investigation, from Qloo evidence compared within one set."}</p>}
+      {!elasticity && !pending && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure} data-testid="network-measure">Measure it with a Qloo comparison</button> : null}
     </div>
   );
 }
@@ -375,12 +375,14 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   }, [selectedId, byId]);
 
   /**
-   * A comparison within one Qloo call is what measures elasticity. The user names the reference territories: guessed
-   * references (baseline tags) often do not resolve as Qloo concepts, and the comparison then measures nothing.
+   * A comparison within one Qloo call is what measures elasticity. One click asks the follow-up that can measure it
+   * (`measureQuestion`); only when there is nothing concrete to propose does the user name the references.
    */
   const composerRef = useRef<HTMLInputElement>(null);
-  const measureFor = (label: string) => {
+  const measureFor = (label: string, result?: AgentRunResponse | null) => {
     if (!live) return undefined;
+    const question = measureQuestion(view.brand.name, label, result, view.directions.map((direction) => direction.name));
+    if (question) return () => void open(network.ask(question, askFrom));
     return () => {
       setQuestion(`Compare ${label} with `);
       composerRef.current?.focus();
@@ -456,10 +458,10 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
       if (byId.has(finding)) return finding;
       return ends.find((end) => normName(byId.get(end)?.label ?? "") === normName(name)) ?? null;
     };
-    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} locate={locate} onSelect={setSelectedId} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
+    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} locate={locate} onSelect={setSelectedId} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question, inquiry.response?.investigation?.result)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
   } else if (selected.kind === "finding") {
     const parentInquiry = inquiryOf(selected);
-    dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateTerritory(selected.label, selected.id)} onMeasure={measureFor(selected.label)} />;
+    dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateTerritory(selected.label, selected.id)} onMeasure={measureFor(selected.label, parentInquiry?.response?.investigation?.result)} />;
   } else {
     dossier = <BrandDossier view={view} onSelect={setSelectedId} />;
   }

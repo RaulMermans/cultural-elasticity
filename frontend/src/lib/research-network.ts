@@ -3,7 +3,7 @@
  * them. An edge means "investigated from". Position on the canvas is lineage only; it never encodes affinity,
  * distance, confidence, elasticity or a recommendation. Every status here is read from a validated server response.
  */
-import type { QueryResponse } from "@cultural-elasticity/shared";
+import type { AgentRunResponse, QueryResponse } from "@cultural-elasticity/shared";
 import { runCopy, territoryCopy, type AtlasTone, type Point } from "../components/atlas/atlas-model.ts";
 import type { JobActivity } from "./job-envelope.ts";
 import type { DirectionView } from "./research-view.ts";
@@ -93,10 +93,23 @@ export function branchDirection(nodes: readonly NetworkNode[], id: string): Netw
 
 const ASSESSMENT_TONE: Record<string, { tone: AtlasTone; status: string }> = {
   WORTH_FURTHER_INVESTIGATION: { tone: "supported", status: "Worth pursuing" },
-  INCONCLUSIVE: { tone: "partial", status: "Inconclusive" },
+  INCONCLUSIVE: { tone: "partial", status: "Not measured yet" },
   NOT_SUPPORTED_BY_CURRENT_EVIDENCE: { tone: "unsupported", status: "Not supported" },
   UNABLE_TO_COMPLETE_RESEARCH: { tone: "incomplete", status: "Could not complete" },
 };
+
+/**
+ * Sprint 9L: the follow-up that can turn an unmeasured reading into a measured one. Elasticity is only measured by a
+ * comparison inside one Qloo call, so: if no comparison was tried, ask the comparative question (the runtime builds
+ * and validates its own references); if one was tried and still measured nothing, compare with two of the brand's
+ * other directions. Null when there is nothing concrete to propose (the user names references instead).
+ */
+export function measureQuestion(brand: string, target: string, result: AgentRunResponse | null | undefined, directions: readonly string[]): string | null {
+  const compared = Boolean(result && result.status !== "NEEDS_INPUT" && result.territories.some((territory) => territory.role === "reference"));
+  if (!compared) return `How far can ${brand} extend into ${target}?`;
+  const others = [...new Map(directions.filter((name) => normName(name) !== normName(target)).map((name) => [normName(name), name])).values()];
+  return others.length >= 2 ? `Compare ${target} with ${others[0]} and ${others[1]}` : null;
+}
 
 /** The state of one inquiry, from its job and validated response only. */
 export function inquiryState(inquiry: Inquiry): { tone: AtlasTone; status: string } {

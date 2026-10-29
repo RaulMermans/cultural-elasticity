@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { QueryResponse } from "@cultural-elasticity/shared";
-import { BRAND_NODE, branchDirection, buildNetwork, canRetry, followUpContext, needsRefresh, inquiryState, layoutNetwork, type Inquiry } from "./research-network.ts";
+import { BRAND_NODE, branchDirection, buildNetwork, measureQuestion, canRetry, followUpContext, needsRefresh, inquiryState, layoutNetwork, type Inquiry } from "./research-network.ts";
 import type { DirectionView } from "./research-view.ts";
 
 const direction = (key: string) => ({ key, id: `t-${key}`, name: `SYNTHETIC ${key}` }) as DirectionView;
@@ -89,4 +89,17 @@ test("a question asked from a connection never repeats the connection's ends as 
   ], null, [{ id: "tie:dir:a|dir:b", a: "dir:a", b: "dir:b", label: "SYNTHETIC a × SYNTHETIC b", aLabel: "SYNTHETIC a", bLabel: "SYNTHETIC b" }]);
   assert.equal(nodes.find((node) => node.id === "inq:job1")!.parentId, "tie:dir:a|dir:b");
   assert.deepEqual(nodes.filter((node) => node.kind === "finding").map((node) => node.label), ["SYNTHETIC Shared"]);
+});
+
+test("Sprint 9L: an unmeasured reading always gets a concrete follow-up that can measure it", () => {
+  const directions = ["Fiction", "Hip Hop", "casual footwear", "fiction"];
+  // No comparison tried (single check, or no result): ask the comparative question.
+  assert.equal(measureQuestion("Crocs", "Fiction", null, directions), "How far can Crocs extend into Fiction?");
+  const single = { status: "COMPLETE", territories: [{ role: "target" }] } as never;
+  assert.equal(measureQuestion("Crocs", "Fiction", single, directions), "How far can Crocs extend into Fiction?");
+  // A comparison was tried and measured nothing: compare with two other directions, never the target itself.
+  const compared = { status: "COMPLETE", territories: [{ role: "target" }, { role: "reference" }] } as never;
+  assert.equal(measureQuestion("Crocs", "Fiction", compared, directions), "Compare Fiction with Hip Hop and casual footwear");
+  // Nothing concrete to propose: the user names the references.
+  assert.equal(measureQuestion("Crocs", "Fiction", compared, ["Fiction", "Hip Hop"]), null);
 });

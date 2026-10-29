@@ -23,7 +23,7 @@ export function TerritoryReadingView({ reading, brand, onMeasure, busy }: { read
       </ol> : null}
       {fit && !fit.onScale ? <p className="rr-offscale">Not placed on the scale until the evidence settles.</p> : null}
       {reading.steadiness ? <p className="rr-steady" data-steady={reading.steadiness.steady ? "true" : "false"}>{reading.steadiness.text}</p> : null}
-      {!fit && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure}>Measure it: compare with territories you name</button> : null}
+      {!fit && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure} data-testid="network-measure">Measure it with a Qloo comparison</button> : null}
     </div>
 
     {reading.compared.length > 1 ? <div className="rr-section">

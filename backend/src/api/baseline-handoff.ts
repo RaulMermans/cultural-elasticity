@@ -33,7 +33,7 @@ export function buildDeepInvestigationRequest(result: AnyBrandBaselineResult, te
     throw new HandoffError("TERRITORY_UNSUPPORTED");
   }
   const objective = `Investigate whether Qloo evidence supports ${territory.name} as a cultural research direction for ${result.brand.name}.`;
-  const agentRequest = agentRequestSchema.parse({ userQuery: agentQuery(result.brand.name, territory.name), intent: "analyze_move", brand: result.brand.name, territories: [territory.name], researchMode: "single_hypothesis_v1" });
+  const agentRequest = agentRequestSchema.parse({ userQuery: agentQuery(result.brand.name, territory.name), intent: "analyze_move", brand: result.brand.name, territories: [territory.name] });
   return {
     version: "ce-deep-investigation/0.1",
     baselineScanId: result.scanId,
@@ -62,6 +62,6 @@ export function buildProposedInvestigationRequest(result: AnyBrandBaselineResult
     evidence: [],
     limitations: ["This direction was proposed by the user. The baseline contains no Qloo evidence for it; the agent must resolve and investigate it afresh."],
     authorization: "BASELINE_TOKEN_AND_AGENT_ADMISSION",
-    agentRequest: agentRequestSchema.parse({ userQuery: agentQuery(result.brand.name, name), intent: "analyze_move", brand: result.brand.name, territories: [name], researchMode: "single_hypothesis_v1" }),
+    agentRequest: agentRequestSchema.parse({ userQuery: agentQuery(result.brand.name, name), intent: "analyze_move", brand: result.brand.name, territories: [name] }),
   };
 }
