@@ -1,0 +1,118 @@
+{
+  "caseId": "9o-c4-holdout-discovery",
+  "brand": "Carhartt",
+  "question": null,
+  "ledger": [
+    {
+      "step": "anonymous_public_evaluation_visitor",
+      "at": "2026-10-29T16:58:41.817Z"
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T16:58:45.661Z",
+      "detail": {
+        "path": "/api/brands/resolve",
+        "status": "RESOLVED",
+        "error": null,
+        "qlooId": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+        "label": "Carhartt",
+        "jobId": null,
+        "scanId": null
+      }
+    },
+    {
+      "step": "brand_resolved",
+      "at": "2026-10-29T16:58:45.988Z",
+      "detail": {
+        "button": "Start research on Carhartt"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T16:58:46.249Z",
+      "detail": {
+        "path": "/api/brands/baselines",
+        "status": "QUEUED",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": null,
+        "scanId": "9590783f-a63e-468c-8dc7-d75cbce7f26f"
+      }
+    },
+    {
+      "step": "baseline_network",
+      "at": "2026-10-29T16:59:19.401Z",
+      "detail": {
+        "directions": 5,
+        "url": "https://cultural-elasticity-raulmermans-projects.vercel.app/?research=session"
+      }
+    },
+    {
+      "step": "investigation_started",
+      "at": "2026-10-29T16:59:20.819Z",
+      "detail": {
+        "direction": "Direction: Blue Collar, Direction"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T16:59:23.144Z",
+      "detail": {
+        "path": "/api/research/handoff/jobs",
+        "status": "running",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": "442f24bb-eb7e-45e4-8fba-eac0ab376dad",
+        "scanId": null
+      }
+    },
+    {
+      "step": "investigation_settled",
+      "at": "2026-10-29T17:00:17.806Z",
+      "detail": {
+        "outcome": "Question: Investigate Blue Collar, Investigated",
+        "tone": "idle",
+        "dossier": "AGENT INVESTIGATION Investigate Blue Collar Investigated How well does Blue Collar fit Carhartt? Not measured yet Blue Collar hasn't been compared with other territories yet, so Qloo can't say how well it fits. Measure it with a Qloo comparison What this means Not measured yet: Blue Collar has no position relative to other territories. Inconclusive evidence. There is no measured position for Blue Collar yet, so the evidence is inconclusive. What remains uncertain Qloo does not support Blue Collar as a concept, so nothing could be compared with it. Qloo could not match Blue Collar to one of its concepts. Qloo describes cultural taste; it does not show whether people would buy. Next useful step Name the comparison yourself: compare Blue Collar with country and Outdoor Adventure Enthusiasts, two other directions Qloo found for Carhartt. Asking the same question again would likely repeat the same work; qualitative research with people is the next useful evidence. From a live Qloo investigation. An interpretation of cultural evidence, not a forecast of commercial results. Technical notes This describes cultural taste from Qloo. It is not a forecast of sales or demand. The agent's write-up The results cannot show how far Carhartt can extend into Blue Collar. Blue Collar did not resolve to a Qloo concept, so no comparison set, relative position, robustness or classification was produced for it. The evidence therefore says nothing about the extent of Carhartt's affinity with this territory. Blue Collar: The territory's route is “not enough evidence” and it carries the TERRITORY_UNRESOLVED limitation, so no territory-level reading of Carhartt's association with Blue Collar is available. No Qloo concept anchors Blue Collar, and its representation capability is unsupported, so the territory cannot be mapped onto Qloo's cultural graph for this brand. How the agent worked (17 steps) Continue this path Which Qloo concepts could represent Blue Collar as a territory for Carhartt? Which other territories could be compared with Blue Collar for Carhartt? What cultural signals does Carhartt show in territories that do resolve in Qloo? Remove this branch…",
+        "nodes": 7
+      }
+    },
+    {
+      "step": "report_exported",
+      "at": "2026-10-29T17:00:18.327Z",
+      "detail": {
+        "format": "HTML",
+        "file": "carhartt-cultural-research_2026-10-29_1800.html",
+        "bytes": 11101
+      }
+    },
+    {
+      "step": "report_exported",
+      "at": "2026-10-29T17:00:18.716Z",
+      "detail": {
+        "format": "PDF",
+        "file": "carhartt-cultural-research_2026-10-29_1800.pdf",
+        "bytes": 24233
+      }
+    },
+    {
+      "step": "reopened_from_library",
+      "at": "2026-10-29T17:00:19.694Z"
+    },
+    {
+      "step": "done",
+      "at": "2026-10-29T17:00:19.694Z",
+      "detail": {
+        "paidStarts": 3
+      }
+    }
+  ],
+  "problems": {
+    "console": [
+      "Failed to load resource: the server responded with a status of 404 ()"
+    ],
+    "pageErrors": [],
+    "serverErrors": []
+  }
+}
