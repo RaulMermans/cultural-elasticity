@@ -54,6 +54,15 @@ test("SYNTHETIC research opens as a network: brand, directions, a direction doss
   expect([...calls.handoffs, ...calls.questions]).toEqual([]);
 });
 
+test("SYNTHETIC tapping a tag drafts a question about it into the composer and sends nothing", async ({ page }) => {
+  const calls = await stubLive(page);
+  await startLarkspur(page);
+  await page.getByTestId("network-dossier").getByTestId("tag-chip").filter({ hasText: "Slow Touring" }).first().click();
+  await expect(page.getByLabel(/Ask a research question about/u)).toHaveValue("How far can Larkspur Velo extend into Slow Touring?");
+  await expect(page.getByLabel(/Ask a research question about/u)).toBeFocused();
+  expect([...calls.handoffs, ...calls.questions]).toEqual([]);
+});
+
 test("SYNTHETIC investigating a direction attaches the agent's validated result to it", async ({ page }) => {
   const calls = await stubLive(page);
   await startLarkspur(page);

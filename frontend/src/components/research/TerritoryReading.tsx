@@ -1,12 +1,13 @@
 "use client";
 
 import { FIT_STEPS, type TerritoryReading } from "@/lib/territory-reading";
+import { TagChip } from "./TagChip";
 
 function Chips({ title, hint, items }: { title: string; hint: string; items: string[] }) {
   return <div className="rr-section">
     <h3>{title}</h3>
     <p className="rr-hint">{hint}</p>
-    <ul className="rr-chips">{items.map((item) => <li key={item}>{item}</li>)}</ul>
+    <ul className="rr-chips">{items.map((item) => <TagChip key={item} label={item} kind="entity" />)}</ul>
   </div>;
 }
 
