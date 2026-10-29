@@ -150,3 +150,27 @@ describe("Sprint 9O drop reasons the reader sees are the runtime's observation (
     expect(state.candidateRejections.at(-1)?.reason).toBe("the one probe returned no place entities");
   });
 });
+
+describe("Sprint 9O runtime reference discovery (build_comparison_set v5)", () => {
+  const run = async (policy: "enforce" | "observe") => {
+    const { AgentRuntime } = await import("../src/agent/runtime.js");
+    const { BaselinePolicyModel } = await import("../src/agent/model/baseline.js");
+    return new AgentRuntime({ model: new BaselinePolicyModel(), provider: scripted(), feasibilityPolicy: policy }).run({ userQuery: "How far can Osterley Field Supply extend into Reading Rooms?", brand: "Osterley Field Supply", territories: ["Reading Rooms"] });
+  };
+
+  it("collects the exemplar profiles and probes the needed type-evidenced references once, attributed to the skill", async () => {
+    const r = await run("enforce");
+    const sweep = r.trace.referenceDiscovery ?? [];
+    expect(sweep).toHaveLength(1);
+    expect(sweep[0]!.entityType).toBe("place");
+    expect(sweep[0]!.probes.map((p) => p.tagId).sort()).toEqual([LISTEN, PRINT]);
+    expect(sweep[0]!.probes.every((p) => (p.eligible ?? 0) >= 2)).toBe(true);
+    const sweepCalls = r.trace.toolCalls.filter((c) => c.tool === "qloo_recommend" && [PRINT, LISTEN].includes((c.arguments as { tagIds: string[] }).tagIds[0]!));
+    expect(sweepCalls.every((c) => c.skill?.id === "build_comparison_set" && c.skill.version === 5)).toBe(true);
+    expect("territories" in r && r.territories.find((t) => t.label === "Reading Rooms")?.analysisRoute).toBe("FULL_RELATIVE_ANALYSIS");
+  });
+
+  it("does not run under the observe rollback", async () => {
+    expect((await run("observe")).trace.referenceDiscovery ?? []).toHaveLength(0);
+  });
+});

@@ -37,6 +37,7 @@ import { comparisonRepresentationPlan, preferredTypeFor } from "./representation
 import { applyInterpretation, resolveInterpretation } from "./router.js";
 import { RunStore } from "./run-store.js";
 import { clearDerivedCache } from "./derived-cache.js";
+import { runReferenceDiscovery } from "./reference-discovery.js";
 import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState, type TerritoryGrounding } from "./state.js";
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
 import type { SpendBound } from "../ops/spend.js";
@@ -189,6 +190,9 @@ export class AgentRuntime {
         if (this.spendRefused(state, "decision")) {
           return await this.exhausted(state, "the authorized model spend cannot cover another decision; findings already supported were kept");
         }
+
+        // Sprint 9O: the runtime's own reference search, once, before the model chooses references (reference-discovery.ts).
+        if (await runReferenceDiscovery(state, this.registry, this.deps.provider, this.skills)) continue;
 
         state.usage.iterations += 1;
         state.turnOpen = true;

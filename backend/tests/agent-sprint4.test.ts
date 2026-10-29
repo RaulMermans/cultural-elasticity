@@ -76,7 +76,7 @@ describe("runtime skills", () => {
       // bounded reference probing; eval evidence in `pnpm eval:d2d`.
       resolve_territory: 5,
       build_territory_representation: 4,
-      build_comparison_set: 4,
+      build_comparison_set: 5,
       explore_candidate_territories: 5,
       analyze_territories: 3,
     });

@@ -162,6 +162,8 @@ export type AgentRunState = {
   feasibilityPolicy: "enforce" | "observe";
   /** Sprint 9N: the comparison-feasibility assessment taken just before a target was first analyzed. */
   feasibilityAtAnalysis: import("@cultural-elasticity/shared").ComparisonFeasibility | null;
+  /** Sprint 9O: the runtime ran its reference search (once per run). */
+  referenceDiscoveryDone?: boolean;
   /** Sprint 5B.1: parent-child link of a query-layer run (server-recorded; null for a run started outside it). */
   link: InvestigationLink | null;
   startedAt: number;
