@@ -1,6 +1,7 @@
 import "server-only";
 import { interpretAdmissionProbe, type AdmissionView } from "./admissions";
 import { backendBaseUrl, backendConfigIssues } from "./backend-url";
+import type { Caller } from "./job-route";
 import { admissionForOperatorCheck, admissionForVisitor, PAID_OPERATOR_HEADER } from "./operator";
 import {
   isAgentRunResponse,
@@ -17,11 +18,12 @@ import {
 export type BackendStatus = "connected" | "unavailable";
 export { backendBaseUrl };
 
-function internalHeaders(extra?: HeadersInit, visitorId?: string, operator?: string | null): Headers {
+function internalHeaders(extra?: HeadersInit, caller?: Caller, operator?: string | null): Headers {
   const headers = new Headers(extra);
   const secret = process.env.CE_INTERNAL_API_SECRET?.trim();
   if (secret) headers.set("x-ce-internal-auth", secret);
-  if (visitorId) headers.set("x-ce-visitor", visitorId);
+  if (caller?.id) headers.set("x-ce-visitor", caller.id);
+  if (caller?.network) headers.set("x-ce-network", caller.network);
   if (operator) headers.set(PAID_OPERATOR_HEADER, operator);
   return headers;
 }
@@ -142,13 +144,13 @@ export async function postQuery(path: "/api/agent/interpret" | "/api/agent/query
 }
 
 /** `operator` is forwarded only by the paid-start callers below; Railway verifies it independently. */
-async function backendFetch(path: string, init: RequestInit, timeoutMs: number, visitorId?: string, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
+async function backendFetch(path: string, init: RequestInit, timeoutMs: number, caller?: Caller, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
   const baseUrl = backendBaseUrl();
   if (!baseUrl) return null;
   try {
     const response = await fetch(new URL(path, baseUrl), {
       ...init,
-      headers: internalHeaders(init.headers, visitorId, operator),
+      headers: internalHeaders(init.headers, caller, operator),
       cache: "no-store",
       signal: AbortSignal.timeout(timeoutMs),
     });
@@ -160,13 +162,13 @@ async function backendFetch(path: string, init: RequestInit, timeoutMs: number, 
 }
 
 /** Server-only brand baseline proxy. The browser supplies only an opaque scan token, never the internal secret. */
-export async function brandBaselineFetch(path: string, init: RequestInit = {}, visitorId?: string, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
+export async function brandBaselineFetch(path: string, init: RequestInit = {}, caller?: Caller, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
   if (!/^\/api\/brands\/(?:status|resolve|baselines(?:\/[0-9a-f-]{36}(?:\/(?:territories|evidence))?)?)$/u.test(path)) return null;
   // Resolution and a new scan dispatch Qloo calls. The free status read also carries the credential so Railway
   // can say whether this caller may start research; scan reads never carry it.
   const paid = init.method === "POST" && (path === "/api/brands/resolve" || path === "/api/brands/baselines");
   const status = (init.method ?? "GET") === "GET" && path === "/api/brands/status";
-  return backendFetch(path, init, 15_000, visitorId, paid || status ? operator : null);
+  return backendFetch(path, init, 15_000, caller, paid || status ? operator : null);
 }
 
 export type AdmissionProbe = AdmissionView;
@@ -200,27 +202,27 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /** Product path. The browser never calls the investigation API directly. */
-export async function createJob(body: unknown, visitorId?: string, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
-  return backendFetch("/api/agent/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }, 15_000, visitorId, operator);
+export async function createJob(body: unknown, caller?: Caller, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch("/api/agent/jobs", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }, 15_000, caller, operator);
 }
 
-export async function baselineHandoff(mode: "preview" | "jobs", body: unknown, token: string, visitorId?: string, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
-  return backendFetch(`/api/agent/handoff/${mode}`, { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": token }, body: JSON.stringify(body) }, 15_000, visitorId, mode === "jobs" ? operator : null);
+export async function baselineHandoff(mode: "preview" | "jobs", body: unknown, token: string, caller?: Caller, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/handoff/${mode}`, { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": token }, body: JSON.stringify(body) }, 15_000, caller, mode === "jobs" ? operator : null);
 }
 
 /** Sprint 9I comparative handoff. The browser sends identifiers and its two tokens; evidence stays on the server. */
-export async function comparativeHandoff(mode: "options" | "preview" | "jobs", body: unknown, scanToken: string, jobToken: string, visitorId?: string, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
-  return backendFetch(`/api/agent/handoff/compare/${mode}`, { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": scanToken, "x-job-token": jobToken }, body: JSON.stringify(body) }, 15_000, visitorId, mode === "jobs" ? operator : null);
+export async function comparativeHandoff(mode: "options" | "preview" | "jobs", body: unknown, scanToken: string, jobToken: string, caller?: Caller, operator?: string | null): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/handoff/compare/${mode}`, { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": scanToken, "x-job-token": jobToken }, body: JSON.stringify(body) }, 15_000, caller, mode === "jobs" ? operator : null);
 }
 
-export async function comparativeReport(id: string, jobToken: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
-  return backendFetch(`/api/agent/handoff/compare/${encodeURIComponent(id)}/report`, { headers: { "x-job-token": jobToken } }, 10_000, visitorId);
+export async function comparativeReport(id: string, jobToken: string, caller?: Caller): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/handoff/compare/${encodeURIComponent(id)}/report`, { headers: { "x-job-token": jobToken } }, 10_000, caller);
 }
 
-export async function readJob(id: string, token: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
-  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}`, { headers: { "x-job-token": token } }, 10_000, visitorId);
+export async function readJob(id: string, token: string, caller?: Caller): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}`, { headers: { "x-job-token": token } }, 10_000, caller);
 }
 
-export async function cancelJob(id: string, token: string, visitorId?: string): Promise<{ status: number; body: unknown } | null> {
-  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}/cancel`, { method: "POST", headers: { "x-job-token": token } }, 10_000, visitorId);
+export async function cancelJob(id: string, token: string, caller?: Caller): Promise<{ status: number; body: unknown } | null> {
+  return backendFetch(`/api/agent/jobs/${encodeURIComponent(id)}/cancel`, { method: "POST", headers: { "x-job-token": token } }, 10_000, caller);
 }

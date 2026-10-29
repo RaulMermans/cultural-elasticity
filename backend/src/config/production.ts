@@ -62,6 +62,38 @@ export function paidOperatorExpiry(env: NodeJS.ProcessEnv = process.env): number
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+/**
+ * Sprint 9M public evaluation: anonymous visitors may start paid research without the operator credential, but
+ * only while the evaluation is configured with an identifier and an expiry still in the future. The identifier
+ * keys the durable ledger, so a new allowance needs a new identifier; a missing or past expiry closes it.
+ */
+export function publicEvaluationId(env: NodeJS.ProcessEnv = process.env): string | undefined {
+  if (env.CE_PUBLIC_EVALUATION !== "1") return undefined;
+  const value = env.CE_PUBLIC_EVALUATION_ID?.trim();
+  return value && /^[A-Za-z0-9_.-]{4,64}$/u.test(value) ? value : undefined;
+}
+
+export function publicEvaluationExpiry(env: NodeJS.ProcessEnv = process.env): number | null {
+  const value = env.CE_PUBLIC_EVALUATION_EXPIRES_AT?.trim();
+  if (!value) return null;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function publicEvaluationActive(env: NodeJS.ProcessEnv = process.env, now = Date.now()): boolean {
+  const expiry = publicEvaluationExpiry(env);
+  return Boolean(publicEvaluationId(env)) && expiry !== null && expiry > now;
+}
+
+/** Durable quotas per visitor network during a public evaluation. Defaults are deliberately small. */
+export function publicEvaluationQuota(kind: "resolve" | "scan" | "investigation", env: NodeJS.ProcessEnv = process.env): number {
+  const raw = { resolve: env.CE_PUBLIC_QUOTA_RESOLVES, scan: env.CE_PUBLIC_QUOTA_SCANS, investigation: env.CE_PUBLIC_QUOTA_INVESTIGATIONS }[kind];
+  const fallback = { resolve: 10, scan: 4, investigation: 4 }[kind];
+  if (raw === undefined || raw.trim() === "") return fallback;
+  const parsed = Number(raw);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : 0;
+}
+
 function positiveNumber(value: string | undefined): number | null {
   if (value === undefined || value === "") return null;
   const parsed = Number(value);
@@ -86,6 +118,15 @@ export function validatePublicRuntime(env: NodeJS.ProcessEnv = process.env): Pro
   }
   if (paid && (paid === secret || paid === operatorToken(env))) {
     issues.push({ code: "PAID_OPERATOR_REUSED", message: "CE_PAID_OPERATOR_TOKEN must differ from the internal secret and the diagnostics operator token." });
+  }
+  if (env.CE_PUBLIC_EVALUATION === "1") {
+    if (!publicEvaluationId(env)) issues.push({ code: "PUBLIC_EVALUATION_ID_INVALID", message: "CE_PUBLIC_EVALUATION_ID must be 4-64 letters, digits, '.', '_' or '-'." });
+    if (publicEvaluationExpiry(env) === null) issues.push({ code: "PUBLIC_EVALUATION_EXPIRY_MISSING", message: "CE_PUBLIC_EVALUATION_EXPIRES_AT must be an ISO timestamp." });
+    const limit = Number(env.CE_PROCESS_QLOO_CALL_LIMIT ?? "");
+    if (!env.CE_PROCESS_QLOO_CALL_LIMIT?.trim() || !Number.isInteger(limit) || limit < 0) {
+      issues.push({ code: "PUBLIC_EVALUATION_QLOO_LIMIT_MISSING", message: "A public evaluation needs an explicit CE_PROCESS_QLOO_CALL_LIMIT." });
+    }
+    if (!env.DATABASE_URL?.trim()) issues.push({ code: "PUBLIC_EVALUATION_LEDGER_MISSING", message: "A public evaluation needs DATABASE_URL for durable quotas." });
   }
   if (positiveNumber(env.CE_SPEND_BUDGET_USD) === null) {
     issues.push({ code: "SPEND_BUDGET_MISSING", message: "CE_SPEND_BUDGET_USD must be a non-negative number." });

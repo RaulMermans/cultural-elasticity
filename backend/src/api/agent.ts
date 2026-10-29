@@ -25,8 +25,9 @@ import { admitVisitor, verifyInternalAuth, verifyPaidOperator } from "../ops/ide
 import { canAcceptInvestigations } from "../ops/lifecycle.js";
 import { opsMetrics } from "../ops/metrics.js";
 import { registerJobManager } from "../ops/server.js";
-import { spendLedger } from "../ops/spend.js";
-import { runLedger } from "../ops/run-ledger.js";
+import { spendLedger, type SpendReservation } from "../ops/spend.js";
+import { takePublicQuota } from "../ops/public-quota.js";
+import { runLedger, unusedReservationCents } from "../ops/run-ledger.js";
 import type { ObservedUsage } from "../ops/usage.js";
 
 /** Builds (or reuses) the runtime for a model choice. Injected in tests; lazily wired to live Qloo otherwise. */
@@ -107,7 +108,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
   return async function routes(app: FastifyInstance): Promise<void> {
     // Query-layer telemetry carries no raw query text (length + hash only), no prompt and no credential.
     const log = (telemetry: unknown) => app.log.info({ queryTelemetry: telemetry }, "query");
-    const reservations = new Map<string, { id: string; started: boolean }>();
+    const reservations = new Map<string, { id: string; started: boolean; durableCents: number }>();
     const handoffJobs = new Map<string, { directionKey: string; pending: Promise<unknown> }>();
     /** Investigations started from a baseline scan (job id → scan). Scan ownership is how siblings are found. */
     const handoffOrigins = new Map<string, { scanId: string }>();
@@ -143,6 +144,10 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
               overageUsd: settled?.overageUsd,
             });
             if (settled && settled.overageUsd > 0) opsMetrics().record("budget_exceeded", { overageUsd: settled.overageUsd });
+            // Sprint 9M: once the provider reported usage, the unused part of the durable reservation is returned,
+            // so a long public evaluation is bounded by real spend. Unknown usage keeps the whole reservation.
+            const unused = unusedReservationCents(hold.durableCents, settled);
+            if (unused > 0) void runLedger()?.release("model_usd_cents", unused);
             reservations.delete(jobId);
           }
         }
@@ -195,7 +200,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       void reply.code(429).send({ error: "too_many_requests", message: "Too many investigations were requested. Wait a moment and try again." });
       return false;
     };
-    const reserveSpend = async (reply: FastifyReply) => {
+    const reserveSpend = async (reply: FastifyReply): Promise<{ reservation: SpendReservation; durableCents: number } | null> => {
       const reserved = spendLedger().reserve();
       if (!reserved.ok) {
         opsMetrics().record(reserved.code === "budget_exhausted" ? "budget_exceeded" : "admission_rejected");
@@ -206,8 +211,9 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       // restart cannot reopen a model budget the in-memory ledger forgot.
       const ledger = runLedger();
       const budget = spendLedger().configuredBudgetUsd();
+      const durableCents = ledger ? Math.ceil(reserved.reservation.reservedUsd * 100) : 0;
       if (ledger) {
-        const durable = budget === null ? ({ ok: false, code: "ledger_unavailable" } as const) : await ledger.take("model_usd_cents", Math.ceil(reserved.reservation.reservedUsd * 100), Math.floor(budget * 100));
+        const durable = budget === null ? ({ ok: false, code: "ledger_unavailable" } as const) : await ledger.take("model_usd_cents", durableCents, Math.floor(budget * 100));
         if (!durable.ok) {
           spendLedger().settle(reserved.reservation.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
           opsMetrics().record(durable.code === "limit_reached" ? "budget_exceeded" : "admission_rejected");
@@ -216,7 +222,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
           return null;
         }
       }
-      return reserved.reservation;
+      return { reservation: reserved.reservation, durableCents };
     };
     const closed = (reply: FastifyReply) => {
       if (developmentRoutesOpen()) return false;
@@ -236,9 +242,15 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         throw error;
       }
     };
-    const enqueue = async (jobRequest: JobRequest, reply: FastifyReply) => {
-      const hold = await reserveSpend(reply);
-      if (!hold) return;
+    const enqueue = async (jobRequest: JobRequest, request: FastifyRequest, reply: FastifyReply) => {
+      const quota = await takePublicQuota(headersOf(request), "investigation");
+      if (!quota.ok) {
+        opsMetrics().record("admission_rejected");
+        return reply.code(quota.status).send({ error: quota.error, message: quota.message });
+      }
+      const held = await reserveSpend(reply);
+      if (!held) return;
+      const hold = held.reservation;
       opsMetrics().record("budget_reserved");
       return handle(reply, async () => {
         try {
@@ -246,13 +258,14 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
           const created = jobs.create(jobRequest, bound ? { spend: bound } : undefined);
           spendLedger().attach(hold.id, created.jobId);
           const started = created.status === "running";
-          reservations.set(created.jobId, { id: hold.id, started });
+          reservations.set(created.jobId, { id: hold.id, started, durableCents: held.durableCents });
           if (started) spendLedger().markStarted(hold.id);
           opsMetrics().record("job_accepted");
           reply.code(202);
           return created;
         } catch (error) {
           spendLedger().settle(hold.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
+          if (held.durableCents > 0) void runLedger()?.release("model_usd_cents", held.durableCents);
           throw error;
         }
       });
@@ -305,7 +318,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         if (rejectBaseline(query.data.model, reply)) return;
         jobRequest = { kind: "execute", body: query.data, model: modelChoice(query.data.model) };
       } else return reply.code(400).send({ error: "invalid_job_request", message: "The question could not be accepted." });
-      return enqueue(jobRequest, reply);
+      return enqueue(jobRequest, request, reply);
     });
     /**
      * Structured baseline handoff. The client cannot provide brand, evidence, objective, tools or budgets.
@@ -334,7 +347,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         return reply.code(200).send(prior);
       }
       const body = queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "analyze_move", territories: [prepared.territory.name] });
-      const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId }, reply));
+      const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId }, request, reply));
       handoffJobs.set(key, { directionKey: prepared.territory.id, pending });
       if (handoffJobs.size > 200) handoffJobs.delete(handoffJobs.keys().next().value!);
       const created = await pending;
@@ -457,7 +470,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       if (!admitCreate(request, reply)) return;
       const plan = planFor(context, handoff);
       const queryBodyValue = queryBody.parse({ query: handoff.request.userQuery, brand: handoff.request.brand, intent: "compare_territories", territories: handoff.request.territories });
-      const pending = Promise.resolve(enqueue({ kind: "execute", body: queryBodyValue, model: "auto", expectedBrandId: context.scan.brand.qlooId }, reply));
+      const pending = Promise.resolve(enqueue({ kind: "execute", body: queryBodyValue, model: "auto", expectedBrandId: context.scan.brand.qlooId }, request, reply));
       remember(comparativeKeys, key, { referenceKey, pending });
       const created = await pending;
       if (!created || typeof created !== "object" || !("jobId" in created)) comparativeKeys.delete(key);

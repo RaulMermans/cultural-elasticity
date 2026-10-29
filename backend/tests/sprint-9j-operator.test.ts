@@ -50,9 +50,9 @@ describe("verifyPaidOperator", () => {
   const header = (value: string) => ({ "x-ce-paid-operator": value });
 
   it("is not required on a private process without a token, and required once one is configured", () => {
-    expect(verifyPaidOperator({}, {})).toEqual({ ok: true });
+    expect(verifyPaidOperator({}, {})).toEqual({ ok: true, via: "open" });
     expect(verifyPaidOperator({}, { CE_PAID_OPERATOR_TOKEN: PAID })).toEqual({ ok: false, code: "operator_required" });
-    expect(verifyPaidOperator(header(PAID), { CE_PAID_OPERATOR_TOKEN: PAID })).toEqual({ ok: true });
+    expect(verifyPaidOperator(header(PAID), { CE_PAID_OPERATOR_TOKEN: PAID })).toEqual({ ok: true, via: "operator" });
   });
 
   it("fails closed on a public process: no token, no expiry, a past expiry or a wrong value are refused", () => {
@@ -64,7 +64,7 @@ describe("verifyPaidOperator", () => {
     expect(verifyPaidOperator(header(`${PAID}x`), { ...publicEnv, CE_PAID_OPERATOR_TOKEN: PAID, CE_PAID_OPERATOR_EXPIRES_AT: FUTURE })).toEqual({ ok: false, code: "operator_required" });
     // The internal secret is not an operator credential.
     expect(verifyPaidOperator({ "x-ce-internal-auth": SECRET, "x-ce-paid-operator": SECRET }, { ...publicEnv, CE_PAID_OPERATOR_TOKEN: PAID, CE_PAID_OPERATOR_EXPIRES_AT: FUTURE })).toEqual({ ok: false, code: "operator_required" });
-    expect(verifyPaidOperator(header(PAID), { ...publicEnv, CE_PAID_OPERATOR_TOKEN: PAID, CE_PAID_OPERATOR_EXPIRES_AT: FUTURE }, now)).toEqual({ ok: true });
+    expect(verifyPaidOperator(header(PAID), { ...publicEnv, CE_PAID_OPERATOR_TOKEN: PAID, CE_PAID_OPERATOR_EXPIRES_AT: FUTURE }, now)).toEqual({ ok: true, via: "operator" });
   });
 
   it("a public process refuses a weak paid token or one that reuses another credential", () => {
