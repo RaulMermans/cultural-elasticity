@@ -144,3 +144,21 @@ Vercel: use a previously verified `READY` deployment only if rollback is necessa
 - a verified provider-side hard cap;
 - per-user authorization;
 - a separate security review.
+
+## Public evaluation (Sprint 9M)
+
+The Devpost rules require the project to be "available free of charge and without any restriction" for judges until judging ends (2026-11-05, 23:45 ET). A **public evaluation** admits anonymous visitors to paid research without the operator credential, under durable caps. It needs a separate owner approval of the total exposure. The approval of 2026-10-29 covers:
+
+- 1,000 Qloo calls (400 for the baseline);
+- $5.00 of model spend;
+- per visitor network: 10 searches, 4 scans and 4 investigations;
+- expiry 2026-11-06T05:00:00Z.
+
+- **Open:** `CE_APPROVED_QLOO_CALLS=<n> CE_APPROVED_USD=<usd> scripts/public-evaluation-open.sh`. Both approvals are required, and there is no default spend.
+- **Verify:** `node scripts/release/verify-production.mjs --public-mode --expect-admissions public --max-qloo <n> --max-usd <usd>`. Its probes are malformed, so Railway admits and refuses them with 400 before any quota, model or Qloo call. Never verify an open evaluation with `--expect-admissions closed` or `open`, because those modes send a well-formed anonymous resolution.
+- **Kill switch:** `scripts/public-evaluation-close.sh` sets every admission flag to 0 and redeploys. The evaluation also closes by itself at `CE_PUBLIC_EVALUATION_EXPIRES_AT`.
+- **Durability:**
+  - The run ledger is keyed by `CE_PUBLIC_EVALUATION_ID`. Reopening the same id continues the same counters; a new id is a new allowance and needs a new approval.
+  - Per-network quotas live in `baseline_budget_accounts`, keyed by an HMAC of the Vercel client address. The address itself never reaches Railway.
+  - An unused model reservation is returned only after the provider reported usage.
+- **Still in process:** running jobs. A restart interrupts them, but budgets and quotas survive.
