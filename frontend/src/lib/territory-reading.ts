@@ -35,6 +35,14 @@ const FIT_LABEL: Record<string, string> = {
   INSUFFICIENT_EVIDENCE: "Not enough evidence",
 };
 
+/**
+ * Sprint 9M: the agent's validated write-up may name a class by its code. Shown to a reader, the code becomes its
+ * plain label; the text itself (and what the claim validator checked) is unchanged.
+ */
+export function readableClassCodes(text: string): string {
+  return text.replace(/\b(NATURAL_ADJACENCY|CREDIBLE_STRETCH|CULTURAL_BREAK|UNCERTAIN_REPRESENTATION_SENSITIVE|INSUFFICIENT_EVIDENCE)\b/gu, (code) => `“${FIT_LABEL[code]!.toLowerCase()}”`);
+}
+
 const MEANING: Record<string, (name: string, brand: string) => string> = {
   NATURAL_ADJACENCY: (name, brand) => `Qloo ties ${name} closely to ${brand}'s taste. In this comparison it reads as part of the brand's cultural world.`,
   CREDIBLE_STRETCH: (name, brand) => `Qloo finds real overlap between ${name} and ${brand}'s taste, but not at its centre. A step outward, not a leap.`,

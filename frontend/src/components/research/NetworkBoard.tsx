@@ -54,7 +54,8 @@ export function NetworkBoard({ nodes, positions, links = [], selectedId, onSelec
     const free = narrow ? { top: 60, right: 0, bottom: 60, left: 0 } : inset;
     const width = Math.max(200, size.width - free.left - free.right);
     const height = Math.max(200, size.height - free.top - free.bottom);
-    const k = clamp(Math.min(width / bounds.width, height / bounds.height), 0.3, 1.1);
+    // A small network on a large screen is drawn larger, so its cards stay readable without zooming.
+    const k = clamp(Math.min(width / bounds.width, height / bounds.height), 0.3, narrow ? 1.15 : 1.6);
     setView({ k, x: free.left + width / 2 - (bounds.x + bounds.width / 2) * k, y: free.top + height / 2 - (bounds.y + bounds.height / 2) * k });
   }, [positions, size, inset]);
 

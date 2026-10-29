@@ -57,16 +57,23 @@ export function BrandDiscovery({ availability, resolution, busy, error, hasSessi
   return (
     <div className="rw-discovery" data-testid="brand-discovery" data-availability={availability}>
       <section className="rw-discovery__intro" aria-labelledby="rw-discovery-title">
-        <p className="eyebrow">Brand research</p>
-        <h1 id="rw-discovery-title" tabIndex={-1}>Explore a brand&apos;s cultural connections.</h1>
+        <p className="eyebrow">Cultural Elasticity · built on Qloo</p>
+        <h1 id="rw-discovery-title" tabIndex={-1}>How far can a brand stretch before it stops feeling like itself?</h1>
         <p className="rw-discovery__lede">
-          See which cultural associations Qloo shows for a brand, check the evidence behind each one, and decide which directions deserve deeper research.
+          Enter a brand. Qloo maps its cultural fingerprint, then an AI agent investigates any territory you choose and places it against Qloo-validated alternatives, with the evidence and with what it still can&apos;t tell.
         </p>
-        <ol className="rw-steps" aria-label="What the research produces">
-          <li><strong>Cultural fingerprint</strong><span>What Qloo associates with the brand, and how complete that picture is.</span></li>
-          <li><strong>Connections</strong><span>Artists, places, films, books and tags, each with its evidence and limits.</span></li>
-          <li><strong>Directions to investigate</strong><span>Possible research directions, with what is still unknown.</span></li>
+        <ol className="rw-steps" aria-label="How the research works">
+          <li><strong>Cultural fingerprint</strong><span>What Qloo associates with the brand: artists, places, films, books and taste tags.</span></li>
+          <li><strong>Agent investigation</strong><span>Claude plans a bounded set of Qloo lookups for the territory you pick or ask about.</span></li>
+          <li><strong>A reading you can act on</strong><span>Where the territory sits, how steady that is, and what evidence is missing.</span></li>
         </ol>
+        <dl className="rw-outcomes" aria-label="What the outcomes mean">
+          <div><dt>Natural fit</dt><dd>Near the top of the comparison: close to the brand&apos;s observed taste.</dd></div>
+          <div><dt>Credible stretch</dt><dd>In the middle: further out, with real shared taste.</dd></div>
+          <div><dt>Cultural break</dt><dd>Near the bottom: little shared taste with the brand.</dd></div>
+          <div><dt>Not settled</dt><dd>The answer changes with the examples, or Qloo returned too little, so no call is made.</dd></div>
+        </dl>
+        <p className="rw-outcomes__note">Every outcome is relative to the alternatives the agent compared, never a forecast of sales. All numbers come from Qloo; the model only plans and explains.</p>
       </section>
 
       <section className="rw-discovery__search" aria-labelledby="rw-search-title">
@@ -98,6 +105,7 @@ export function BrandDiscovery({ availability, resolution, busy, error, hasSessi
           </div>
         </form>
         <p className="rw-availability" role="status" data-testid="research-availability"><strong>{copy.label}</strong> {copy.detail} {live ? "Search is submitted explicitly and Qloo checks the brand identity before any scan starts." : "Your research library below still opens."}</p>
+        <p className="rw-example">Want to see a finished result first? <a href="/examples/patagonia-2026-10-29.html" target="_blank" rel="noopener">Open a previously completed research report</a> (Patagonia, run live on 29 October 2026 with real Qloo and Claude calls; opening it runs nothing new).</p>
         {hasSessionScan ? <p><button type="button" className="ghost" onClick={onOpenSession}>Return to the research you started in this tab</button></p> : null}
         {library.length ? <section className="rw-library" aria-labelledby="rw-library-title" data-testid="research-library">
           <h2 id="rw-library-title">Your research library</h2>
