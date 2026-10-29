@@ -6,6 +6,8 @@ export const VERDICTS = ["RELEASE_VERIFIED", "RELEASE_DEGRADED", "RELEASE_FAILED
 export const APPROVED_MAX_QLOO_CALLS = 75;
 export const APPROVED_MAX_MODEL_USD = 2.0;
 export const MAX_OPERATOR_WINDOW_MS = 4 * 60 * 60 * 1000;
+/** Sprint 9M: a public evaluation may stay open for the judging period, never longer than this. */
+export const MAX_PUBLIC_EVALUATION_WINDOW_MS = 10 * 24 * 60 * 60 * 1000;
 
 export const REQUIRED_RAILWAY_ENV = [
   "NODE_ENV", "CE_PUBLIC_DEPLOYMENT", "CE_REPLICA_COUNT", "DATABASE_URL", "CE_INTERNAL_API_SECRET",
@@ -33,7 +35,9 @@ export function classifyRelease(e) {
   const failures = [];
   const degradations = [];
   const notes = [];
-  const expectOpen = e.expectAdmissions === "open";
+  // Sprint 9M: "public" is an approved public evaluation: open admissions without the operator credential.
+  const expectPublic = e.expectAdmissions === "public";
+  const expectOpen = e.expectAdmissions === "open" || expectPublic;
 
   // 1. Provider metadata, reusing the static contract for the fields it already owns.
   if (!e.vercel) degradations.push("VERCEL_METADATA_NOT_VERIFIED");
@@ -93,7 +97,16 @@ export function classifyRelease(e) {
     if (open && !expectOpen) failures.push("ADMISSIONS_OPEN_WITHOUT_APPROVED_WINDOW");
     if (!open && expectOpen) failures.push("ADMISSIONS_EXPECTED_OPEN");
     const expiry = f.paidOperatorExpiresAt ? Date.parse(f.paidOperatorExpiresAt) : null;
-    if (open) {
+    if (open && expectPublic) {
+      const end = f.publicEvaluationExpiresAt ? Date.parse(f.publicEvaluationExpiresAt) : null;
+      if (f.publicEvaluation !== "1" || !f.publicEvaluationId) failures.push("PUBLIC_EVALUATION_NOT_CONFIGURED");
+      if (end === null || !Number.isFinite(end)) failures.push("PUBLIC_EVALUATION_EXPIRY_MISSING");
+      else if (end <= e.now) failures.push("PUBLIC_EVALUATION_EXPIRED");
+      else if (end - e.now > MAX_PUBLIC_EVALUATION_WINDOW_MS) failures.push("PUBLIC_EVALUATION_WINDOW_TOO_LONG");
+      if (f.processQlooLimit === null || f.processQlooLimit > (e.approvedMaxQloo ?? APPROVED_MAX_QLOO_CALLS)) failures.push("QLOO_RUN_CEILING_NOT_WITHIN_APPROVAL");
+      if (f.spendBudgetUsd === null || f.spendBudgetUsd > (e.approvedMaxUsd ?? APPROVED_MAX_MODEL_USD)) failures.push("MODEL_BUDGET_NOT_WITHIN_APPROVAL");
+    } else if (open) {
+      if (f.publicEvaluation === "1") failures.push("PUBLIC_EVALUATION_OPEN_WITHOUT_APPROVAL");
       if (!env.names.includes("CE_PAID_OPERATOR_TOKEN")) failures.push("OPERATOR_TOKEN_MISSING");
       else if ((env.secretLengths.CE_PAID_OPERATOR_TOKEN ?? 0) < 32) failures.push("OPERATOR_TOKEN_WEAK");
       if (expiry === null || !Number.isFinite(expiry)) failures.push("OPERATOR_EXPIRY_MISSING");
@@ -127,12 +140,26 @@ export function classifyRelease(e) {
     // ADMISSIONS_PAUSED on a 503 is the intended closed state, never an infrastructure failure.
     if (ready.acceptingInvestigations === true && !expectOpen) failures.push("BACKEND_ACCEPTING_WITHOUT_APPROVED_WINDOW");
     if (ready.acceptingInvestigations !== true && expectOpen) failures.push("BACKEND_NOT_ACCEPTING_DURING_WINDOW");
-    if (ready.dependencies?.paidOperatorRequired !== true) failures.push("PAID_OPERATOR_NOT_REQUIRED");
+    if (expectPublic) {
+      if (ready.dependencies?.paidOperatorRequired !== false) failures.push("PUBLIC_EVALUATION_NOT_ADMITTING");
+    } else if (ready.dependencies?.paidOperatorRequired !== true) failures.push("PAID_OPERATOR_NOT_REQUIRED");
   }
   if (h.home?.status === 401 && e.publicMode !== true) notes.push("FRONTEND_PROTECTED_HTTP_CHECKS_LIMITED");
   else if (h.home?.status !== 200) failures.push("FRONTEND_HOME_FAILED");
   if (h.home?.status === 200 && e.publicMode !== true) failures.push("VERCEL_PROTECTION_GATE_FAILED");
-  if (h.home?.status === 200) {
+  if (h.home?.status === 200 && expectPublic) {
+    // The probe is a malformed resolution: Railway admits the anonymous caller, then refuses the body (400) before
+    // any quota or Qloo call. A 2xx would mean a probe dispatched; 403/503 means judges are locked out.
+    if (h.admissions?.body?.status === "unavailable" || h.admissions?.status !== 200) failures.push("FRONTEND_BACKEND_DISCONNECTED");
+    if (h.admissions?.body?.status !== "accepting") failures.push("PUBLIC_EVALUATION_ASK_NOT_ENABLED");
+    if (h.brandStatus?.status !== 200) failures.push("FRONTEND_BRAND_STATUS_FAILED");
+    else if (h.brandStatus.body?.enabled !== true) failures.push("PUBLIC_EVALUATION_BRAND_SEARCH_NOT_ENABLED");
+    const anon = h.anonymousResolve?.status;
+    if (anon === undefined) degradations.push("ANONYMOUS_PAID_START_NOT_PROBED");
+    else if (anon >= 200 && anon < 300) failures.push("PUBLIC_EVALUATION_PROBE_DISPATCHED");
+    else if ([403, 503].includes(anon)) failures.push("PUBLIC_EVALUATION_NOT_ADMITTING");
+    else if (anon !== 400) degradations.push("ANONYMOUS_PAID_START_UNEXPECTED_STATUS");
+  } else if (h.home?.status === 200) {
     if (h.admissions?.body?.status === "unavailable" || h.admissions?.status !== 200) failures.push("FRONTEND_BACKEND_DISCONNECTED");
     if (h.admissions?.body?.status === "accepting") failures.push("ANONYMOUS_SEES_ENABLED_ASK");
     if (h.brandStatus?.status !== 200) failures.push("FRONTEND_BRAND_STATUS_FAILED");
@@ -179,6 +206,9 @@ export const RECOVERY = {
   BASELINE_QUOTA_AT_OR_BELOW_USAGE: "Set CE_BASELINE_TOTAL_QLOO_CALLS to used + the approved allocation (see /ops/baselines).",
   BASELINE_LIMIT_NOT_APPLIED: "The baseline limit is applied at boot. Redeploy so the env value reaches PostgreSQL.",
   FRONTEND_BACKEND_DISCONNECTED: "Check Vercel Production BACKEND_URL / CE_INTERNAL_API_SECRET and Railway /health.",
+  PUBLIC_EVALUATION_NOT_ADMITTING: "Judges are locked out. Check CE_PUBLIC_EVALUATION, its id and expiry, then redeploy Railway.",
+  PUBLIC_EVALUATION_OPEN_WITHOUT_APPROVAL: "STOP. Run scripts/public-evaluation-close.sh; reopen only with --expect-admissions public after approval.",
+  PUBLIC_EVALUATION_PROBE_DISPATCHED: "STOP. The verification probe was accepted; run scripts/public-evaluation-close.sh and inspect the resolve route.",
   ANONYMOUS_PAID_START_ACCEPTED: "STOP. Close admissions immediately (scripts/live-test-close.sh); paid work is open to anyone.",
   ANONYMOUS_SEES_ENABLED_BRAND_SEARCH: "The frontend and backend disagree on caller authorization. Check both serve the release SHA.",
   CI_NOT_RUN: "Run `node scripts/release/preflight.mjs` on the release SHA to record equivalent local evidence.",
