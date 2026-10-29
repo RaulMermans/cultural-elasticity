@@ -24,6 +24,7 @@ import { agentDecisionSchema, agentRequestSchema, type AgentDecision, type Agent
 import { AgentInputError, RunNotFoundError, RunNotWaitingError } from "./errors.js";
 import { assessEvidenceSufficiency, type SufficiencyAssessment } from "./evidence-sufficiency.js";
 import { computeMetrics, finalize, needsInputResponse, sealSpans } from "./finalizer.js";
+import { recordFeasibility, snapshotFeasibilityBeforeAnalysis } from "./feasibility.js";
 import { gateFrontierCandidates, pruneForDiversity } from "./frontier.js";
 import { isReady, territoryReadiness } from "./readiness.js";
 import type { TerminalAction } from "./skills/contracts.js";
@@ -50,6 +51,8 @@ export type AgentRuntimeDeps = {
   registry?: ToolRegistry;
   skills?: SkillRegistry;
   store?: RunStore;
+  /** Sprint 9N: comparison-feasibility policy for new runs (default "enforce"; "observe" is the Sprint 9M control flow). */
+  feasibilityPolicy?: "enforce" | "observe";
 };
 
 /** Sprint 5B.1: a gate-approved interpretation and the run's parent-child link (both optional). */
@@ -102,6 +105,7 @@ export class AgentRuntime {
     if (check && !check.ok) throw new AgentInputError([{ path: "interpretation", message: check.reason }]);
     const state = createRunState(request, this.deps.model.info, { name: this.deps.provider.name, mode: this.deps.provider.mode, evidenceSource: this.deps.provider.evidenceSource }, limits);
     state.expectedBrandId = options.expectedBrandId ?? null;
+    state.feasibilityPolicy = this.deps.feasibilityPolicy ?? "enforce";
     if (options.link) {
       state.link = options.link;
       state.trace.investigationLink = options.link;
@@ -416,6 +420,7 @@ export class AgentRuntime {
     kept = kept.filter((k) => state.territories.some((t) => t.key === k && t.status !== "dropped"));
     if (state.interpretation?.intent === "explore_frontier") kept = pruneForDiversity(state, kept);
     if (kept.length === 0) return { ok: false, code: "NOTHING_TO_ANALYZE", reason: "every requested territory was unsupported, a duplicate, or out of scope" };
+    snapshotFeasibilityBeforeAnalysis(state, kept);
     transition(state, "ANALYZING", `analyze ${kept.join(", ")}`);
     const started = performance.now();
     const run = () => runAnalysis(state, this.deps.provider, kept, (tool, permission, args) => openToolTrace(state, tool, permission, args));
@@ -571,6 +576,7 @@ export class AgentRuntime {
       const kept = pending.filter((k) => state.territories.some((t) => t.key === k && t.status !== "dropped"));
       const started = performance.now();
       if (kept.length > 0) {
+        snapshotFeasibilityBeforeAnalysis(state, kept);
         const rec = recorderOf(state);
         const run = () => runAnalysis(state, this.deps.provider, kept, (tool, permission, args) => openToolTrace(state, tool, permission, args));
         if (rec) await rec.measure({ runId: state.runId, turnIndex: state.usage.iterations, phase: "METHODOLOGY_ANALYSIS", operation: "budget-exhausted-final" }, run);
@@ -619,6 +625,7 @@ function recordPlans(state: AgentRunState): void {
   const plans = (state.trace.representationPlans ??= []);
   const previous = plans.at(-1)?.plan;
   if (plan && (previous?.reasonCodes.join() !== plan.reasonCodes.join() || previous?.preferredCommonType !== plan.preferredCommonType || previous?.feasibility !== plan.feasibility)) plans.push({ iteration: state.usage.iterations, plan });
+  recordFeasibility(state);
   const completion = referencePlan(state).completion;
   const checks = (state.trace.completion ??= []);
   const last = checks.at(-1);

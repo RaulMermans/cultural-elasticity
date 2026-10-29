@@ -73,3 +73,19 @@ test("the PDF never draws a line over the one above it (the title once overlappe
     if (previous.page === current.page) assert.ok(current.top >= previous.top + previous.size, `line ${i} overlaps the line above it`);
   }
 });
+
+test("Sprint 9N: the report prints the same decision card the live reading shows (parity)", async () => {
+  const { territoryReading } = await import("./territory-reading.ts");
+  const { decisionCard } = await import("@cultural-elasticity/shared");
+  const territories = report.sections.find((section) => section.id === "territories")!;
+  const result = fixture.compare.view.response.investigation!.result;
+  for (const block of territories.blocks) {
+    const key = fixture.compare.view.response.territories.find((item) => item.name === block.heading)?.territoryKey ?? null;
+    const reading = territoryReading(result, key, view.brand.name);
+    const card = decisionCard(result as never, key);
+    assert.deepEqual(reading?.decision, card);
+    assert.ok(card && block.bullets?.includes(`Implication: ${card.implication.label}. ${card.implication.text}`), block.heading);
+    for (const action of card!.nextActions) assert.ok(block.bullets?.includes(`Next: ${action.text}`));
+  }
+  assert.doesNotMatch(renderReportHtml(report), /\b(THIN_TARGET_PANEL|LIKELY_REPEATS|SUPPORTED_FOR_EXPLORATION)\b/u);
+});

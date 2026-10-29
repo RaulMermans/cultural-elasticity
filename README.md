@@ -121,7 +121,8 @@ flowchart LR
 - **Qloo through typed tools.** `qloo_resolve_entity`, `qloo_find_tags`, `qloo_get_entity_tags`, `qloo_recommend`, `qloo_related_entities` and rank panels all go through one `QlooClient` (the official `@qloo/qloo-harness`, hackathon host only):
   - calls are spaced 7 seconds apart;
   - a call that fails or times out is never treated as evidence.
-- **Bounded probing.** At most 3 empty entity types per concept and 6 per territory. After that the concept is reported as unsupported.
+- **Bounded probing.** At most 3 empty entity types per concept and 6 per territory. After that the concept is reported as unsupported. A comparison's references are probed in order of observed evidence for the entity type, and after 4 empty reference probes the result is reported as the partial finding it is.
+- **Measurement-first feasibility.** Before spending the budget, the runtime states whether a comparison is feasible, uncertain or infeasible, and why. It shows that to the model and records it in the result. A question Qloo's evidence could not answer is never suggested again as if it might be.
 - **Representation quality.** A weak territory panel is never forced through to reach a fuller answer. An honest partial result beats a misleading full one.
 - **Durable controls.** Brand scans, provider-call reservations, Qloo and model ledgers, and per-visitor quotas live in PostgreSQL, so a restart cannot reset a budget.
 
@@ -179,6 +180,7 @@ The hackathon key works only on `https://hackathon.api.qloo.com`. The backend re
 pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:secrets
 pnpm eval:methodology   # offline, synthetic methodology evaluation
 pnpm eval:agent         # offline, synthetic agent world (not live-model evidence)
+pnpm eval:d2d           # offline Discovery-to-Decision suite: Sprint 9M vs 9N behaviour on identical fixtures
 pnpm test:e2e           # browser tests against a synthetic job API
 ```
 

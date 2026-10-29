@@ -170,6 +170,35 @@ The SAFETY half requires:
 
 Reported separately from the historical route mix: `semanticallyValidFullRate`, `invalidFullComparisonRate`, `meaningfulPartialRate` (a rule-based proxy, not human judgment), synthesis first-attempt / after-repair / fallback / usefulness rates, and the latency split (model, Qloo, spacing, analysis, synthesis).
 
+## Discovery-to-Decision evals (Sprint 9N)
+
+```sh
+pnpm eval:d2d                      # offline; SYNTHETIC world in two arms + recorded live artefacts as run
+pnpm eval:d2d -- --json out.json   # also write the report
+pnpm eval:d2d -- --score <dir>     # score stored agent results (*.json) with the same per-run metrics
+```
+
+`evals/discovery-decision/cases.json` (`discovery-decision-eval/v1`) holds four kinds of case:
+
+- `runtime` cases on the synthetic agent world;
+- `scenario` cases (existing agent scenarios by id);
+- `recorded` cases (live artefacts in `evals/qloo-value/artifacts`, read as run, never regenerated);
+- `live-target` cases (hosted observations with no stored trace; `NOT_RUN`).
+
+Runtime and scenario cases run in arm `observe` (the Sprint 9M control flow) and arm `enforce` (the 9N default) on identical fixtures. A case that passed or reached FULL in observe and not in enforce is a regression.
+
+Quality targets:
+
+- zero unsupported classifications;
+- zero cross-call comparisons;
+- zero decision-card violations;
+- every partial finding explained;
+- no regression;
+- Qloo calls in enforce ≤ observe;
+- empty probes in enforce ≤ observe, with ≥ 20% fewer proposed.
+
+There is no independent holdout: every runtime case was written during Sprint 9N. Never report this suite as live Qloo or model evidence.
+
 ## Query interpretation evals (Sprint 5B.1)
 
 ```sh

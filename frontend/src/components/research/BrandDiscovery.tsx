@@ -105,7 +105,14 @@ export function BrandDiscovery({ availability, resolution, busy, error, hasSessi
           </div>
         </form>
         <p className="rw-availability" role="status" data-testid="research-availability"><strong>{copy.label}</strong> {copy.detail} {live ? "Search is submitted explicitly and Qloo checks the brand identity before any scan starts." : "Your research library below still opens."}</p>
-        <p className="rw-example">Want to see a finished result first? <a href="/examples/patagonia-2026-10-29.html" target="_blank" rel="noopener">Open a previously completed research report</a> (Patagonia, run live on 29 October 2026 with real Qloo and Claude calls; opening it runs nothing new).</p>
+        <div className="rw-example" data-testid="recorded-examples">
+          <p>Want to see finished results first? Two research reports recorded from live runs on 29 October 2026, with real Qloo and Claude calls. Opening them runs nothing new.</p>
+          <ul>
+            <li><a href="/examples/crocs-2026-10-29.html" target="_blank" rel="noopener">Crocs</a>: a measured finding (fine dining, a steady credible stretch) next to a direction that could not be measured yet (fiction), and why.</li>
+            <li><a href="/examples/patagonia-2026-10-29.html" target="_blank" rel="noopener">Patagonia</a>: when the evidence does not settle (ethical consumption) and when Qloo has nothing comparable to measure against.</li>
+          </ul>
+          <p>Then research any brand yourself above: that starts new Qloo calls.</p>
+        </div>
         {hasSessionScan ? <p><button type="button" className="ghost" onClick={onOpenSession}>Return to the research you started in this tab</button></p> : null}
         {library.length ? <section className="rw-library" aria-labelledby="rw-library-title" data-testid="research-library">
           <h2 id="rw-library-title">Your research library</h2>

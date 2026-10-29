@@ -103,3 +103,13 @@ test("Sprint 9L: an unmeasured reading always gets a concrete follow-up that can
   // Nothing concrete to propose: the user names the references.
   assert.equal(measureQuestion("Crocs", "Fiction", compared, ["Fiction", "Hip Hop"]), null);
 });
+
+test("Sprint 9N: a comparison Qloo's evidence blocked is not asked again; one the budget stopped may be", () => {
+  const directions = ["Manga", "Workwear", "Minimal design"];
+  // Live Uniqlo → Manga shape: comparative run, no reference built, feasibility says the same question would repeat.
+  const blocked = { status: "COMPLETE", territories: [{ role: "target" }], comparisonFeasibility: { repeat: "LIKELY_REPEATS" } } as never;
+  assert.equal(measureQuestion("Uniqlo", "Manga", blocked, directions), "Compare Manga with Workwear and Minimal design");
+  assert.equal(measureQuestion("Uniqlo", "Manga", blocked, ["Manga"]), null);
+  const budget = { status: "COMPLETE", territories: [{ role: "target" }], comparisonFeasibility: { repeat: "MAY_CHANGE" } } as never;
+  assert.equal(measureQuestion("Uniqlo", "Manga", budget, directions), "How far can Uniqlo extend into Manga?");
+});

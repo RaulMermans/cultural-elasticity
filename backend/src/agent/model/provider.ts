@@ -23,6 +23,21 @@ export type DecisionFocus = {
   budget: { turnsLeft: number; qlooCallsLeft: number };
   /** Approaches already refused or failed in this run (do not repeat them). */
   rejectedApproaches: string[];
+  /** Sprint 9N: the deterministic comparison-feasibility assessment (comparative runs only). Read-only. */
+  feasibility?: FeasibilityView;
+};
+
+/** Sprint 9N: what the model sees of comparison-feasibility/v1 (feasibility.ts). */
+export type FeasibilityView = {
+  status: "FEASIBLE" | "UNCERTAIN" | "INFEASIBLE";
+  blocker: string | null;
+  nextAction: string | null;
+  target: string;
+  comparisonSet: string;
+  candidates: string;
+  referenceProbes: string;
+  capacity: string;
+  stopReasons: string[];
 };
 
 export type AgentDecisionContext = {
@@ -73,7 +88,7 @@ export type AgentDecisionContext = {
     frontierConcepts?: { tagId: string; label: string; support: number; canonicalKey?: string; probes?: { type: string; members: number }[] }[];
     /** Sprint 5A.1: the entity type the comparison can share, and what each territory still needs for it. */
     representationPlan?: { preferredCommonType: string | null; feasibility: string; supportedTerritoriesByType: Record<string, string[]>; missingRequirements: string[] };
-    referenceCandidates?: { tagId: string; label: string; namespace: string; namespaceYield: string; probe: { entityType: string; eligible: number } | null; usable: boolean | null; semantic: string; justification: string }[];
+    referenceCandidates?: { tagId: string; label: string; namespace: string; namespaceYield: string; probe: { entityType: string; eligible: number } | null; usable: boolean | null; semantic: string; justification: string; typeEvidence?: number }[];
     /** Sprint 5A: the deterministic reference plan (needed, feasible, rejected candidates and why). */
     referencePlan?: { entityType: string | null; required: number; valid: number; needed: number; pending: string[]; feasible: boolean; reason: string; rejectedCandidates: { label: string; status: string; reasonCode: string }[]; turnsNeeded?: number; turnsLeft?: number };
     conceptDedup?: string[];

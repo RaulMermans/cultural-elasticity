@@ -60,3 +60,4 @@ The project was built in sprints. Each folder records what was decided, measured
 | 9j | [Live validation and release report](sprint-9j/LIVE_VALIDATION_AND_RELEASE_REPORT.md) |
 | 9l | [Hosted live acceptance evidence](sprint-9l/LIVE_RELEASE_EVIDENCE.md) |
 | 9m | [Pre-registered Cultural Break attempt](sprint-9m/CULTURAL_BREAK_PROTOCOL.md) |
+| 9n | [Discovery-to-decision optimization](sprint-9n/DISCOVERY_TO_DECISION_OPTIMIZATION.md) (offline; [ADR-001](sprint-9n/ADR-001-comparison-feasibility.md)) |

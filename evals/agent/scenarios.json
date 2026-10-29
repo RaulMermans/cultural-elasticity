@@ -5054,7 +5054,7 @@
   {
    "id": "s51-reference-namespace-barren",
    "category": "S51_REFERENCE_CONSTRUCTION",
-   "description": "Live failure class (L-M1): the model probes several brand-profile genre tags as brand-type references in one turn. Two empty probes make the namespace barren for the type, so the third probe in it is refused (REFERENCE_NAMESPACE_BARREN) and its call saved; the move stays an honest PARTIAL.",
+   "description": "Live failure class (L-M1): the model probes several brand-profile genre tags as brand-type references in one turn. Two empty probes make the namespace barren for the type, so the third probe in it is refused (REFERENCE_NAMESPACE_BARREN) and its call saved; the move stays an honest PARTIAL. Sprint 9N: pinned to the observe arm so this 5A.1 rule is tested in isolation; under the default enforce policy the same probes are deferred earlier (s9n-reference-probes-deferred).",
    "policy": "scripted",
    "request": {
     "userQuery": "Could Larkspur Velo move into espresso?",
@@ -5233,6 +5233,192 @@
     "routes": {
      "espresso": "PARTIAL_CULTURAL_ANALYSIS"
     }
+   },
+   "feasibilityPolicy": "observe"
+  },
+  {
+   "id": "s9n-reference-probes-deferred",
+   "category": "S9N_FEASIBILITY",
+   "description": "Sprint 9N twin of s51-reference-namespace-barren (same steps, default enforce policy). The model probes brand-profile genre tags as references while the target's validated exemplar profiles are uncollected and turns remain: the probes are deferred (REFERENCE_DISCOVERY_PENDING, deferred not banned), so no empty reference probe is spent and the move stays an honest PARTIAL.",
+   "policy": "scripted",
+   "request": {
+    "userQuery": "Could Larkspur Velo move into espresso?",
+    "brand": "Larkspur Velo",
+    "territories": [
+     "Espresso"
+    ]
+   },
+   "steps": [
+    [
+     {
+      "action": "call_tool",
+      "tool": "interpret_request",
+      "arguments": {
+       "intent": "analyze_move",
+       "brand": "Larkspur Velo",
+       "territories": [
+        "Espresso"
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_resolve_entity",
+      "arguments": {
+       "name": "Larkspur Velo",
+       "type": "brand",
+       "role": "brand"
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_find_tags",
+      "arguments": {
+       "query": "Espresso",
+       "limit": 8
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:product_category:syn:espresso"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "anchor_territory",
+      "arguments": {
+       "territoryKey": "espresso",
+       "tagId": "urn:tag:product_category:syn:espresso"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "validate_territory_representation",
+      "arguments": {
+       "territoryKey": "espresso",
+       "entityType": "brand",
+       "exemplars": [
+        {
+         "id": "SYN-BR-3002",
+         "reason": "Qloo tag member"
+        },
+        {
+         "id": "SYN-BR-3003",
+         "reason": "Qloo tag member"
+        },
+        {
+         "id": "SYN-BR-3004",
+         "reason": "Qloo tag member"
+        }
+       ]
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "call_tool",
+      "tool": "qloo_get_entity_tags",
+      "arguments": {
+       "entityId": "SYN-BR-3001"
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:genre:syn:alt_folk"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:genre:syn:post_punk"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     },
+     {
+      "action": "call_tool",
+      "tool": "qloo_recommend",
+      "arguments": {
+       "targetType": "brand",
+       "tagIds": [
+        "urn:tag:genre:syn:shoegaze_revival"
+       ],
+       "conditionOnBrand": false,
+       "limit": 20
+      },
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "espresso"
+      ],
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "analyze",
+      "targetIds": [
+       "espresso"
+      ],
+      "reasonSummary": "scenario step"
+     }
+    ],
+    [
+     {
+      "action": "finish",
+      "resultIds": [],
+      "reasonSummary": "scenario step"
+     }
+    ]
+   ],
+   "expect": {
+    "status": "COMPLETE",
+    "routes": {
+     "espresso": "PARTIAL_CULTURAL_ANALYSIS"
+    },
+    "rejections": [
+     "REFERENCE_DISCOVERY_PENDING"
+    ],
+    "maxQlooCalls": 8
    }
   },
   {

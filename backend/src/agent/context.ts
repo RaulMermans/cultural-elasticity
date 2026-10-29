@@ -11,6 +11,7 @@
  * environment values, inactive skills, unexposed tools.
  */
 import { exemplarCandidates } from "./candidate-discovery.js";
+import { assessComparisonFeasibility, feasibilityView } from "./feasibility.js";
 import { frontierCandidatePool, frontierEvidenceBaseGap } from "./frontier.js";
 import { comparisonRepresentationPlan, preferredTypeFor } from "./representation-alignment.js";
 import { namespaceProbeEvidence, probeRecommendations, territoryQueryTags, type ProbeRecommendation } from "./probe-policy.js";
@@ -126,11 +127,13 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
   // Sprint 5A.1: the stage-A candidate pool (fixed evidence base, canonical dedup, stable order) replaces the raw list.
   if (needs.has("frontierConcepts")) evidence.frontierConcepts = frontierCandidatePool(state).slice(0, MAX_FRONTIER_CONCEPTS).map(({ tagId, label, canonicalConceptKey, support, probes }) => ({ tagId, label, canonicalKey: canonicalConceptKey, support, ...(probes.length > 0 && { probes }) }));
   if (needs.has("referenceCandidates")) {
-    evidence.referenceCandidates = referenceCandidates(state)
-      .slice(0, MAX_REFERENCE_CANDIDATES)
+    const listed = referenceCandidates(state)
       // Only meaningful candidates, and none from a namespace that already came back empty twice for this type.
-      .filter((c) => c.semantic.status === "MEANINGFUL" && c.namespaceYield !== "unproductive" && c.usable !== false)
-      .map(({ tagId, label, namespace, namespaceYield, probe, usable, justification, semantic }) => ({ tagId, label, namespace, namespaceYield, probe, usable, semantic: semantic.status, justification }));
+      .filter((c) => c.semantic.status === "MEANINGFUL" && c.namespaceYield !== "unproductive" && c.usable !== false);
+    // Sprint 9N: filter before the cut (the cut used to come first, so rejected candidates took visible slots).
+    evidence.referenceCandidates = (state.feasibilityPolicy === "enforce" ? listed : referenceCandidates(state).slice(0, MAX_REFERENCE_CANDIDATES).filter((c) => listed.some((x) => x.tagId === c.tagId)))
+      .slice(0, MAX_REFERENCE_CANDIDATES)
+      .map(({ tagId, label, namespace, namespaceYield, probe, usable, justification, semantic, typeEvidence }) => ({ tagId, label, namespace, namespaceYield, probe, usable, semantic: semantic.status, justification, ...(state.feasibilityPolicy === "enforce" && { typeEvidence }) }));
     const plan = referencePlan(state);
     evidence.referencePlan = { entityType: plan.entityType, required: plan.required, valid: plan.valid, needed: plan.needed, pending: plan.pending, feasible: plan.feasible, reason: plan.reason, rejectedCandidates: plan.rejectedCandidates.map(({ label, status, reasonCode }) => ({ label, status, reasonCode })), ...(plan.completion && { turnsNeeded: plan.completion.turnsNeeded, turnsLeft: plan.completion.remainingTurns }) };
   }
@@ -241,6 +244,9 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
     if (plan.feasible && plan.outstanding) outstanding.push(plan.outstanding);
     else if (plan.applicable && plan.reason && plan.valid < plan.required) outstanding.push(`references: ${plan.reason}`);
   }
+  // Sprint 9N: the comparison-feasibility assessment states the single most useful action first.
+  const feasibility = state.request.researchMode !== "single_hypothesis_v1" ? assessComparisonFeasibility(state) : null;
+  if (feasibility && state.feasibilityPolicy === "enforce" && feasibility.status !== "FEASIBLE" && feasibility.nextAction) outstanding.unshift(`feasibility ${feasibility.status}: ${feasibility.nextAction.action} — ${feasibility.nextAction.detail}`);
   const evidenceGap = frontierEvidenceBaseGap(state);
   if (evidenceGap) outstanding.unshift(`${evidenceGap.action} (${evidenceGap.target}): ${evidenceGap.reason}`);
   if (sufficiency.verdict === "SUFFICIENT") outstanding.push("evidence is sufficient: finish");
@@ -260,6 +266,7 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
     nextAllowed: [...exposure.tools, ...exposure.actions],
     budget: { turnsLeft: Math.max(0, state.limits.maxAgentIterations - state.usage.iterations), qlooCallsLeft: remainingQlooCalls(state) },
     rejectedApproaches: [...new Set(rejected)].slice(0, 8),
+    ...(feasibility && state.feasibilityPolicy === "enforce" && { feasibility: feasibilityView(feasibility) }),
   };
 }
 

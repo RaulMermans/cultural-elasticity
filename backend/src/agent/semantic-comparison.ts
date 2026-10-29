@@ -73,6 +73,9 @@ export function descriptorConcept(tagId: string): string | undefined {
   return hit ? `${hit.note} (namespace ${ns!.namespace}), not a territory at the target's analytical level` : undefined;
 }
 
+/** Validated target-exemplar profiles that must carry a concept for it to be a MEANINGFUL reference (see the header). */
+export const MEANINGFUL_EXEMPLAR_SUPPORT = 2;
+
 export type ReferenceTie = { strength: "STRONG" | "WEAK" | "NONE"; onBrandProfile: boolean; exemplarSupport: number; evidenceReferences: string[] };
 
 /** How Qloo itself ties a concept to the question: the brand's profile and validated target-exemplar profiles. */
@@ -92,7 +95,7 @@ export function referenceTie(state: AgentRunState, tagId: string): ReferenceTie 
       }
     }
   }
-  return { strength: onBrandProfile || exemplarSupport >= 2 ? "STRONG" : exemplarSupport === 1 ? "WEAK" : "NONE", onBrandProfile, exemplarSupport, evidenceReferences: [...new Set(evidence)] };
+  return { strength: onBrandProfile || exemplarSupport >= MEANINGFUL_EXEMPLAR_SUPPORT ? "STRONG" : exemplarSupport === 1 ? "WEAK" : "NONE", onBrandProfile, exemplarSupport, evidenceReferences: [...new Set(evidence)] };
 }
 
 export type ReferenceVerdict = { status: SemanticComparisonStatus; reasonCode: string; explanation: string; evidenceReferences: string[]; modelAssessed: boolean };
@@ -109,7 +112,7 @@ export function assessReferenceConcept(state: AgentRunState, tagId: string, judg
   const tie = referenceTie(state, tagId);
   if (descriptor) return { status: "WEAK", reasonCode: "DESCRIPTOR_CONCEPT", explanation: descriptor, evidenceReferences: tie.evidenceReferences, modelAssessed };
   if (tie.strength === "STRONG") {
-    const basis = [tie.onBrandProfile ? "on the brand's own Qloo tag profile" : null, tie.exemplarSupport >= 2 ? `carried by ${tie.exemplarSupport} validated target-exemplar profiles` : null].filter(Boolean).join("; ");
+    const basis = [tie.onBrandProfile ? "on the brand's own Qloo tag profile" : null, tie.exemplarSupport >= MEANINGFUL_EXEMPLAR_SUPPORT ? `carried by ${tie.exemplarSupport} validated target-exemplar profiles` : null].filter(Boolean).join("; ");
     return { status: "MEANINGFUL", reasonCode: "QLOO_CULTURAL_TIE", explanation: basis, evidenceReferences: tie.evidenceReferences, modelAssessed };
   }
   if (tie.strength === "WEAK") return { status: "WEAK", reasonCode: "WEAK_CULTURAL_TIE", explanation: "its only Qloo tie is one target-exemplar profile (likely an incidental attribute of that exemplar)", evidenceReferences: tie.evidenceReferences, modelAssessed };

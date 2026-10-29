@@ -153,7 +153,11 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
   // v3 (Sprint 5A.1): completion arithmetic (turns counted with the open turn; probed usable references need no probe),
   // the completion contract, refusal of reference probes in a namespace already barren for the type, and a reference
   // proposed with one accepted evidence tag is anchored at proposal (one step fewer per reference).
-  version: 3,
+  // v4 (Sprint 9N): comparison-feasibility/v1 in focus.feasibility; candidates observed on profiles of the comparison
+  // type rank first; reference probes that cannot change the outcome are refused (COMPARISON_INFEASIBLE,
+  // REFERENCE_PROBE_LIMIT) and type-less probes are deferred while better-evidenced candidates or the target exemplars'
+  // profiles are pending and turns allow it.
+  version: 4,
   purpose: "Give a single move or a two-territory comparison a semantically meaningful comparison set of ≥ 3 represented territories of one entity type, or establish that none is feasible (then the result is an honest PARTIAL).",
   intents: ["analyze_move", "compare_territories"],
   preconditions: ["a target is represented", `fewer than ${MIN_COMPARISON_SET} meaningful represented territories of its entity type`, "a meaningful reference set is still feasible within the budget, or the profiles needed to find one are missing"],
@@ -175,11 +179,11 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
   allowedRoutes: ["FULL_RELATIVE_ANALYSIS"],
   contextRequirements: ["referenceCandidates", "brandProfile", "exemplarCandidates", "conceptDedup"],
   budget: { maxTurns: 4, maxQlooCalls: 10 },
-  stoppingConditions: [`≥ ${MIN_COMPARISON_SET} meaningful represented territories of one entity type`, "referencePlan not feasible (no meaningful candidate, budget, turns or slots) → analysis stays partial", "budget spent"],
+  stoppingConditions: [`≥ ${MIN_COMPARISON_SET} meaningful represented territories of one entity type`, "referencePlan not feasible (no meaningful candidate, budget, turns or slots) → analysis stays partial", "focus.feasibility INFEASIBLE (incl. NO_REFERENCE_YIELD after the bounded empty reference probes) → analyze, partial", "budget spent"],
   failureModes: ["REFERENCE_CONSTRUCTION_FAILURE", "SEMANTIC_REFERENCE_ERROR", "QLOO_DATA_LIMIT", "CONCEPT_DUPLICATION_ERROR"],
-  evalIds: ["ex-quality-selection", "sk-quality-outlier", "sk-reference-place-type", "ir-move", "s5-meaningless-reference-refused", "s5-references-before-analysis", "s51-references-late-still-feasible", "s51-reference-namespace-barren"],
+  evalIds: ["ex-quality-selection", "sk-quality-outlier", "sk-reference-place-type", "ir-move", "s5-meaningless-reference-refused", "s5-references-before-analysis", "s51-references-late-still-feasible", "s51-reference-namespace-barren", "s9n-reference-probes-deferred"],
   procedure:
-    "focus.outstanding states how many meaningful references are still needed. Pick from referenceCandidates (only semantic MEANINGFUL ones are listed; evidence.referencePlan lists rejected ones and why). If a candidate is untested (probe null), probe its brand-independent pool with the TARGET's entity type (qloo_recommend). For a candidate with ≥ 2 eligible members: propose_territory (role reference, origin qloo_evidence, evidenceTagIds [its tag], semantic = is it a meaningful cultural alternative to the target at the same level?) — it is anchored to that tag at once — and validate_territory_representation with that same entity type, in the SAME turn (references left unvalidated at the last turn are lost). Then analyze all territories together. If no meaningful reference is feasible, analyze and accept a PARTIAL result.",
+    "Read focus.feasibility first: FEASIBLE = complete the set now; UNCERTAIN = do its nextAction (bounded discovery); INFEASIBLE = stop building references and analyze (an honest PARTIAL). focus.outstanding states how many meaningful references are still needed. Prefer candidates with typeEvidence > 0 (seen on profiles of the target's entity type). Pick from referenceCandidates (only semantic MEANINGFUL ones are listed; evidence.referencePlan lists rejected ones and why). If a candidate is untested (probe null), probe its brand-independent pool with the TARGET's entity type (qloo_recommend). For a candidate with ≥ 2 eligible members: propose_territory (role reference, origin qloo_evidence, evidenceTagIds [its tag], semantic = is it a meaningful cultural alternative to the target at the same level?) — it is anchored to that tag at once — and validate_territory_representation with that same entity type, in the SAME turn (references left unvalidated at the last turn are lost). Then analyze all territories together. If no meaningful reference is feasible, analyze and accept a PARTIAL result.",
 };
 
 export const exploreCandidatesSkill: SkillDefinition<{ viable: number; target: number }, { candidates: string[]; dropped: string[] }> = {

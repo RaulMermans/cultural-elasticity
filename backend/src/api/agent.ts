@@ -37,6 +37,14 @@ export type QueryInterpreterFactory = (model: ModelChoice) => QueryInterpreter;
 /** Reads an authorized baseline scan. PostgreSQL in production; injected in tests. */
 export type BaselineReader = Pick<BaselineRepository, "readScan">;
 
+/**
+ * Sprint 9N rollback switch: CE_FEASIBILITY_POLICY=observe restores the Sprint 9M reference-construction control flow
+ * (feasibility is still recorded). Any other value, or none, is the default "enforce".
+ */
+export function feasibilityPolicyFromEnv(env: NodeJS.ProcessEnv = process.env): "enforce" | "observe" {
+  return env.CE_FEASIBILITY_POLICY === "observe" ? "observe" : "enforce";
+}
+
 export function liveRuntimeFactory(): AgentRuntimeFactory {
   const store = new RunStore();
   const runtimes = new Map<ModelChoice, AgentRuntime>();
@@ -46,7 +54,7 @@ export function liveRuntimeFactory(): AgentRuntimeFactory {
     if (existing) return existing;
     const model = createAgentModel(choice);
     provider ??= createLiveToolProvider();
-    const runtime = new AgentRuntime({ model, provider, store });
+    const runtime = new AgentRuntime({ model, provider, store, feasibilityPolicy: feasibilityPolicyFromEnv() });
     runtimes.set(choice, runtime);
     return runtime;
   };
