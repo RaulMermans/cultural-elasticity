@@ -122,6 +122,12 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 
 Canonical record: `docs/sprint-9j/LIVE_VALIDATION_AND_RELEASE_REPORT.md`.
 
+## Public evaluation (Sprint 9M)
+
+1. **Anonymous paid research only inside an approved public evaluation.** It requires `CE_PUBLIC_EVALUATION=1`, an id, a future expiry, an explicit `CE_PROCESS_QLOO_CALL_LIMIT` and `DATABASE_URL`, and it fails closed without any of them. Open it only with `scripts/public-evaluation-open.sh` and an owner-approved Qloo and USD total.
+2. **Caps are durable and global.** The ledger is keyed by the evaluation id. Per-network quotas are keyed by an HMAC of the client address, never the address itself. A restart, a new cookie or a new visitor never grants a fresh allowance.
+3. **Verify with `--expect-admissions public`.** Its probes cannot dispatch. The kill switch is `scripts/public-evaluation-close.sh`.
+
 ## Deployment provenance (permanent, from Sprint 8F)
 
 1. **GitHub is the canonical source.** `RaulMermans/cultural-elasticity` is the only release repository. Do not deploy from copied archives as the ordinary process.

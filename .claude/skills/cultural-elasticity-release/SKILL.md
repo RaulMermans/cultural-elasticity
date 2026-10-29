@@ -104,6 +104,21 @@ E2E_LIVE_AUTHORIZED=1 E2E_OPERATOR_TOKEN="$(cat ~/.ce-operator-token)" E2E_BRAND
 Report live and mocked results separately. A run that stopped on budget, identity drift or a provider failure is a
 genuine partial result: record it, do not rerun it to get a better one.
 
+## E2. Public evaluation (Sprint 9M, judging period)
+
+Anonymous visitors may run paid research only inside an owner-approved public evaluation, with a fixed total and an expiry. Open, verify and close it like this:
+
+```sh
+CE_APPROVED_QLOO_CALLS=1000 CE_APPROVED_USD=5.00 scripts/public-evaluation-open.sh
+node scripts/release/verify-production.mjs --public-mode --expect-admissions public --max-qloo 1000 --max-usd 5.00
+scripts/public-evaluation-close.sh        # kill switch
+```
+
+- While it is open, **never** run the verifier with `--expect-admissions closed` or `open`: their anonymous probe is well formed and would be admitted.
+- The anonymous-judge hosted journey is `E2E_PUBLIC_EVALUATION=1 E2E_LIVE_AUTHORIZED=1 …`. It spends from the shared allowance and this machine's network quota.
+- `E2E_SKIP_DIRECTION=1` asks only the composer question.
+- Do not run synthetic `pnpm test:e2e` at the same time: it clears the shared `frontend/test-results/`, and a running hosted test then fails when it saves its trace.
+
 ## F. Post-test safety
 
 1. Record `/ops/status` (`spend`, `qlooDispatch`, `runLedger`, `jobs`) and `/ops/baselines`.
