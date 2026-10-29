@@ -16,7 +16,8 @@ export default defineConfig({
   retries: 0,
   reporter: "list",
   // Failure traces stay local: they can hold full page content. The specs write their own redacted evidence.
-  outputDir: "test-results/hosted",
+  // Sprint 9O: outside test-results/, which the synthetic suite clears at start (it broke a concurrent hosted run in 9M).
+  outputDir: process.env.E2E_OUTPUT_DIR ?? "test-results-hosted",
   use: {
     baseURL,
     navigationTimeout: 60_000,

@@ -4,6 +4,7 @@ dist/
 out/
 coverage/
 frontend/test-results/
+frontend/test-results-hosted/
 frontend/playwright-report/
 frontend/blob-report/
 .playwright-mcp/

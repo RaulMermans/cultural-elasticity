@@ -135,7 +135,8 @@ function readyAnalysis(state: AgentRunState): ComparisonFeasibility["nextAction"
  * Executor guard (enforce policy only): a brand-independent probe of a REFERENCE concept (not a target's own tag) with the
  * comparison type, refused when it cannot change the outcome. Never applied to target, frontier or alignment probes.
  *   COMPARISON_INFEASIBLE              the referencePlan is blocked: no reference can complete the set in this run
- *   REFERENCE_PROBE_LIMIT              REFERENCE_EMPTY_PROBE_LIMIT empty reference probes and the missing references uncovered
+ *   REFERENCE_PROBE_LIMIT              REFERENCE_EMPTY_PROBE_LIMIT empty reference probes, the missing references uncovered,
+ *                                      and the candidate has no observed evidence of the type (Sprint 9O)
  *   REFERENCE_DISCOVERY_PENDING        the candidate has no observed evidence of the type while ≥ 2 validated target exemplars'
  *                                      profiles (which carry type-evidenced candidates) are still uncollected (deferral)
  *   REFERENCE_TYPE_EVIDENCE_PENDING    the candidate has no observed evidence of the type while enough candidates that do
@@ -153,13 +154,14 @@ export function referenceProbeRefusal(state: AgentRunState, tagId: string, type:
   const proposedReference = activeTerritories(state).some((t) => t.role === "reference" && t.concept?.id === tagId);
   if (f.status === "INFEASIBLE" && !proposedReference) return { code: "COMPARISON_INFEASIBLE", reason: `a full comparison is not feasible in this run (${f.blocker?.detail ?? "blocked"}); analyze the ready territories and report the partial finding` };
   const probes = referenceProbeLedger(state, entityType);
-  if (probes.empty >= REFERENCE_EMPTY_PROBE_LIMIT && f.candidates.probedWithMembers < f.missingReferences) return { code: "REFERENCE_PROBE_LIMIT", reason: `${probes.empty} reference probes returned no eligible ${entityType} member (limit ${REFERENCE_EMPTY_PROBE_LIMIT}) and the missing references have no usable probed candidate; Qloo shows no further comparable territory in this run` };
+  const all = referenceCandidates(state);
+  const self = all.find((c) => c.tagId === tagId);
+  // Sprint 9O: past the limit a candidate observed on profiles of the type is still worth its call (the bound is not proof).
+  if (probes.empty >= REFERENCE_EMPTY_PROBE_LIMIT && f.candidates.probedWithMembers < f.missingReferences && !(self && self.typeEvidence > 0)) return { code: "REFERENCE_PROBE_LIMIT", reason: `${probes.empty} reference probes returned no eligible ${entityType} member (limit ${REFERENCE_EMPTY_PROBE_LIMIT}) and the missing references have no usable probed candidate; this candidate has no observed ${entityType} evidence in this run` };
   if (proposedReference) return null;
   // Deferrals below cost the run a turn; they apply only with turn slack (live L-C2 and s51-references-late: usable
   // references found with two turns left must be built at once, not deferred).
   if (f.capacity.turnsLeft - f.capacity.turnsNeeded < DEFERRAL_TURN_SLACK) return null;
-  const all = referenceCandidates(state);
-  const self = all.find((c) => c.tagId === tagId);
   if (self && self.typeEvidence > 0) return null;
   // Live L-M2: brand-profile genres were probed before the target exemplars' profiles (which carry type-evidenced
   // candidates) were collected. With ≥ MEANINGFUL_EXEMPLAR_SUPPORT validated exemplars, those profiles come first.

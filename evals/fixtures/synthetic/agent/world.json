@@ -481,6 +481,46 @@
    "id": "urn:tag:keyword:synplace:street_griddle",
    "name": "Street Griddle",
    "type": "urn:tag:keyword:synplace"
+  },
+  {
+   "id": "urn:tag:industry:syn:field_supply",
+   "name": "Field Supply",
+   "type": "urn:tag:industry:syn"
+  },
+  {
+   "id": "urn:tag:category:synplace:reading_rooms",
+   "name": "Reading Rooms",
+   "type": "urn:tag:category:synplace"
+  },
+  {
+   "id": "urn:tag:keyword:synplace:oak_panelling",
+   "name": "Oak Panelling",
+   "type": "urn:tag:keyword:synplace"
+  },
+  {
+   "id": "urn:tag:style:synplace:brass_lamps",
+   "name": "Brass Lamps",
+   "type": "urn:tag:style:synplace"
+  },
+  {
+   "id": "urn:tag:setting:synplace:hushed_hours",
+   "name": "Hushed Hours",
+   "type": "urn:tag:setting:synplace"
+  },
+  {
+   "id": "urn:tag:theme:synplace:map_archives",
+   "name": "Map Archives",
+   "type": "urn:tag:theme:synplace"
+  },
+  {
+   "id": "urn:tag:category:synplace:print_studios",
+   "name": "Print Studios",
+   "type": "urn:tag:category:synplace"
+  },
+  {
+   "id": "urn:tag:category:synplace:listening_bars",
+   "name": "Listening Bars",
+   "type": "urn:tag:category:synplace"
   }
  ],
  "entities": [
@@ -1979,6 +2019,115 @@
    "popularity": 0.68,
    "tags": [
     "urn:tag:keyword:synplace:street_griddle"
+   ]
+  },
+  {
+   "id": "SYN-BR-9O01",
+   "name": "Osterley Field Supply",
+   "type": "brand",
+   "popularity": 0.92,
+   "tags": [
+    "urn:tag:industry:syn:field_supply"
+   ],
+   "profileOnlyTags": [
+    "urn:tag:genre:synmusic:lofi_beats"
+   ]
+  },
+  {
+   "id": "SYN-PL-9O01",
+   "name": "Alder Reading Room",
+   "type": "place",
+   "popularity": 0.88,
+   "tags": [
+    "urn:tag:category:synplace:reading_rooms",
+    "urn:tag:keyword:synplace:oak_panelling",
+    "urn:tag:style:synplace:brass_lamps",
+    "urn:tag:setting:synplace:hushed_hours",
+    "urn:tag:theme:synplace:map_archives",
+    "urn:tag:category:synplace:print_studios"
+   ]
+  },
+  {
+   "id": "SYN-PL-9O02",
+   "name": "Birchwood Library Hall",
+   "type": "place",
+   "popularity": 0.86,
+   "tags": [
+    "urn:tag:category:synplace:reading_rooms",
+    "urn:tag:keyword:synplace:oak_panelling",
+    "urn:tag:style:synplace:brass_lamps",
+    "urn:tag:setting:synplace:hushed_hours",
+    "urn:tag:theme:synplace:map_archives",
+    "urn:tag:category:synplace:print_studios",
+    "urn:tag:category:synplace:listening_bars"
+   ]
+  },
+  {
+   "id": "SYN-PL-9O03",
+   "name": "Cedarline Study",
+   "type": "place",
+   "popularity": 0.84,
+   "tags": [
+    "urn:tag:category:synplace:reading_rooms",
+    "urn:tag:keyword:synplace:oak_panelling",
+    "urn:tag:style:synplace:brass_lamps",
+    "urn:tag:setting:synplace:hushed_hours",
+    "urn:tag:theme:synplace:map_archives",
+    "urn:tag:category:synplace:listening_bars"
+   ]
+  },
+  {
+   "id": "SYN-PL-9O11",
+   "name": "Elmstead Print Works",
+   "type": "place",
+   "popularity": 0.8,
+   "tags": [
+    "urn:tag:category:synplace:print_studios"
+   ]
+  },
+  {
+   "id": "SYN-PL-9O12",
+   "name": "Fallow Press Studio",
+   "type": "place",
+   "popularity": 0.78,
+   "tags": [
+    "urn:tag:category:synplace:print_studios"
+   ]
+  },
+  {
+   "id": "SYN-PL-9O13",
+   "name": "Gannet Letterpress",
+   "type": "place",
+   "popularity": 0.76,
+   "tags": [
+    "urn:tag:category:synplace:print_studios"
+   ]
+  },
+  {
+   "id": "SYN-PL-9O21",
+   "name": "Hollin Hi-Fi Lounge",
+   "type": "place",
+   "popularity": 0.79,
+   "tags": [
+    "urn:tag:category:synplace:listening_bars"
+   ]
+  },
+  {
+   "id": "SYN-PL-9O22",
+   "name": "Inchbrook Record Bar",
+   "type": "place",
+   "popularity": 0.77,
+   "tags": [
+    "urn:tag:category:synplace:listening_bars"
+   ]
+  },
+  {
+   "id": "SYN-PL-9O23",
+   "name": "Jessop Vinyl Parlour",
+   "type": "place",
+   "popularity": 0.75,
+   "tags": [
+    "urn:tag:category:synplace:listening_bars"
    ]
   }
  ],

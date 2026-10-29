@@ -9,7 +9,7 @@
  *   direction with Haiku, saves, reopens and exports. It never retries a paid start.
  *   E2E_HOSTED_URL=… [E2E_LIVE_AUTHORIZED=1 E2E_OPERATOR_TOKEN=… E2E_BRAND=Zara] \
  *     pnpm --filter frontend exec playwright test -c playwright.hosted.config.ts acceptance --project desktop-1440x900
- * Evidence (ids, statuses, outcomes; never tokens) goes to E2E_EVIDENCE_DIR (default: test-results/hosted-evidence).
+ * Evidence (ids, statuses, outcomes; never tokens) goes to E2E_EVIDENCE_DIR (default: test-results-hosted/evidence).
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -23,7 +23,9 @@ const BRAND = process.env.E2E_BRAND ?? "Zara";
 const SECOND_QUESTION = process.env.E2E_SECOND_QUESTION ?? "";
 /** E2E_SKIP_DIRECTION=1 asks only the composer question (one paid investigation instead of two). */
 const SKIP_DIRECTION = process.env.E2E_SKIP_DIRECTION === "1" && SECOND_QUESTION !== "";
-const EVIDENCE = process.env.E2E_EVIDENCE_DIR ?? "test-results/hosted-evidence";
+const EVIDENCE = process.env.E2E_EVIDENCE_DIR ?? "test-results-hosted/evidence";
+/** Sprint 9O: the pre-registered case this run belongs to (docs/sprint-9o/PREREGISTRATION.md). */
+const CASE_ID = process.env.E2E_CASE_ID ?? null;
 const PAID = /^\/api\/(agent\/jobs|research\/(handoff|compare)\/jobs|brands\/(resolve|baselines))$/u;
 mkdirSync(EVIDENCE, { recursive: true });
 
@@ -36,6 +38,33 @@ function observe(page: Page): Problems {
   return problems;
 }
 const redact = (text: string) => (OPERATOR ? text.split(OPERATOR).join("[operator]") : text);
+
+/**
+ * Sprint 9O permanent evidence: jobs live in one backend process and expire, so the harness keeps what the browser
+ * received. Every poll of a job overwrites jobs/<id>.json (the last state seen survives a run that never settles); the
+ * agent result inside it is also written to results/<id>.json for `pnpm eval:d2d -- --score`. The proxy already strips
+ * the job access token.
+ */
+const JOB_POLL = /^\/api\/agent\/jobs\/([A-Za-z0-9_-]+)$/u;
+const COMPARE_REPORT = /^\/api\/research\/compare\/report\/([A-Za-z0-9_-]+)$/u;
+function captureJobs(page: Page): void {
+  for (const dir of ["jobs", "results", "reports"]) mkdirSync(join(EVIDENCE, dir), { recursive: true });
+  page.on("response", async (response) => {
+    if (response.request().method() !== "GET" || !response.ok()) return;
+    const path = new URL(response.url()).pathname;
+    const job = JOB_POLL.exec(path);
+    const report = COMPARE_REPORT.exec(path);
+    if (!job && !report) return;
+    const body = (await response.json().catch(() => null)) as { response?: { investigation?: { result?: unknown } } } | null;
+    if (!body) return;
+    const id = (job ?? report)![1]!;
+    const save = (dir: string, value: unknown) => writeFileSync(join(EVIDENCE, dir, `${id}.json`), redact(JSON.stringify({ capturedAt: new Date().toISOString(), ...(value as object) }, null, 2)) + "\n");
+    if (report) return save("reports", body);
+    save("jobs", body);
+    const result = body.response?.investigation?.result;
+    if (result) writeFileSync(join(EVIDENCE, "results", `${id}.json`), redact(JSON.stringify(result, null, 2)) + "\n");
+  });
+}
 
 test.describe("anonymous visitor", () => {
   test(PUBLIC_EVALUATION ? "home renders, brand search is offered to an anonymous visitor, and nothing paid is sent on load" : "home renders, brand search is not offered as available, and nothing paid is sent", async ({ page }) => {
@@ -81,10 +110,11 @@ test.describe("LIVE authorized journey", () => {
   test(`LIVE: ${BRAND} → baseline → network → Haiku investigation → save → reopen → PDF and HTML`, async ({ page }) => {
     test.setTimeout(60 * 60_000);
     const problems = observe(page);
+    captureJobs(page);
     const ledger: { step: string; at: string; detail?: Record<string, unknown> }[] = [];
     const note = (step: string, detail?: Record<string, unknown>) => {
       ledger.push({ step, at: new Date().toISOString(), ...(detail ? { detail } : {}) });
-      writeFileSync(join(EVIDENCE, "live-ledger.json"), redact(JSON.stringify({ brand: BRAND, ledger, problems }, null, 2)) + "\n");
+      writeFileSync(join(EVIDENCE, "live-ledger.json"), redact(JSON.stringify({ caseId: CASE_ID, brand: BRAND, question: SECOND_QUESTION || null, ledger, problems }, null, 2)) + "\n");
     };
     const shot = (name: string) => page.screenshot({ path: join(EVIDENCE, `live-${name}.png`), fullPage: true });
     const paidStarts: { path: string; status: number; detail: Record<string, unknown> }[] = [];
