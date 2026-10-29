@@ -113,3 +113,12 @@ test("Sprint 9N: a comparison Qloo's evidence blocked is not asked again; one th
   const budget = { status: "COMPLETE", territories: [{ role: "target" }], comparisonFeasibility: { repeat: "MAY_CHANGE" } } as never;
   assert.equal(measureQuestion("Uniqlo", "Manga", budget, directions), "How far can Uniqlo extend into Manga?");
 });
+
+test("Sprint 10A: an exploration from the scan's signals stays on the brand and its discovered territories become findings", () => {
+  const territory = (name: string, key: string) => ({ name, investigationState: "INVESTIGATED", territoryKey: key, evidenceStatus: "PARTIAL_EVIDENCE", analysisRoute: null });
+  const explored = { status: "completed", response: response({ territories: [territory("SYNTHETIC Scene", "k1"), territory("SYNTHETIC Other", "k2")], handoff: { intent: "explore_frontier" } } as Partial<QueryResponse>) };
+  const nodes = buildNetwork("B", [direction("a")], [inquiry("job1", BRAND_NODE, { ...explored, origin: "explore" })]);
+  assert.equal(nodes.find((node) => node.id === "inq:job1")!.parentId, BRAND_NODE);
+  assert.deepEqual(nodes.filter((node) => node.kind === "finding").map((node) => [node.label, node.parentId]), [["SYNTHETIC Scene", "inq:job1"], ["SYNTHETIC Other", "inq:job1"]]);
+  assert.equal(canRetry({ ...inquiry("job2", BRAND_NODE, { origin: "explore" }), status: "failed" }), true);
+});

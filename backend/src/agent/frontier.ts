@@ -370,17 +370,24 @@ function computeFrontierCandidatePool(state: AgentRunState): { pool: FrontierPoo
       supporters: supporters.get(tagId)!,
     };
   });
-  const bySupport = (a: FrontierPoolEntry, b: FrontierPoolEntry) => b.support - a.support || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey);
-  const preferred = (e: FrontierPoolEntry) => e.facetRole !== "DESCRIPTIVE_KEYWORD" && e.support >= PREFERRED_SUPPORT;
-  const groups = new Map<string, FrontierPoolEntry[]>();
-  for (const e of entries.filter(preferred).sort(bySupport)) groups.set(e.facet ?? "", [...(groups.get(e.facet ?? "") ?? []), e]);
-  const lanes = [...groups.entries()].sort(([fa, a], [fb, b]) => bySupport(a[0]!, b[0]!) || fa.localeCompare(fb)).map(([, list]) => list);
-  const tierA: FrontierPoolEntry[] = [];
-  for (let round = 0; lanes.some((lane) => lane.length > round); round += 1) for (const lane of lanes) if (lane[round]) tierA.push(lane[round]!);
-  const tierB = entries.filter((e) => !preferred(e)).sort((a, b) => b.support - a.support || Number(a.facetRole === "DESCRIPTIVE_KEYWORD") - Number(b.facetRole === "DESCRIPTIVE_KEYWORD") || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey));
-  const ordered = [...tierA, ...tierB];
-  const deferred = ordered.slice(FRONTIER_POOL_SIZE).map((e) => ({ tagId: e.tagId, label: e.label, support: e.support, reason: `beyond the ${FRONTIER_POOL_SIZE}-concept pool (${FRONTIER_POOL_RULE}: ${preferred(e) ? "taxonomy concept, after the interleaved namespaces" : e.facetRole === "DESCRIPTIVE_KEYWORD" ? "free keyword" : `support ${e.support}`})` }));
+  const ordered = orderFrontierPool(entries);
+  const deferred = ordered.slice(FRONTIER_POOL_SIZE).map((e) => ({ tagId: e.tagId, label: e.label, support: e.support, reason: `beyond the ${FRONTIER_POOL_SIZE}-concept pool (${FRONTIER_POOL_RULE}: ${preferredPoolEntry(e) ? "taxonomy concept, after the interleaved namespaces" : e.facetRole === "DESCRIPTIVE_KEYWORD" ? "free keyword" : `support ${e.support}`})` }));
   return { pool: ordered.slice(0, FRONTIER_POOL_SIZE), deferred };
+}
+
+type Orderable = { canonicalConceptKey: string; support: number; facet: string | null; facetRole: FacetRole | null };
+const preferredPoolEntry = (e: Orderable) => e.facetRole !== "DESCRIPTIVE_KEYWORD" && e.support >= PREFERRED_SUPPORT;
+
+/** The frontier-pool/v2 order (see frontierCandidatePool); pure, so evaluation code can apply it to recorded pools. */
+export function orderFrontierPool<E extends Orderable>(entries: readonly E[]): E[] {
+  const bySupport = (a: E, b: E) => b.support - a.support || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey);
+  const groups = new Map<string, E[]>();
+  for (const e of entries.filter(preferredPoolEntry).sort(bySupport)) groups.set(e.facet ?? "", [...(groups.get(e.facet ?? "") ?? []), e]);
+  const lanes = [...groups.entries()].sort(([fa, a], [fb, b]) => bySupport(a[0]!, b[0]!) || fa.localeCompare(fb)).map(([, list]) => list);
+  const tierA: E[] = [];
+  for (let round = 0; lanes.some((lane) => lane.length > round); round += 1) for (const lane of lanes) if (lane[round]) tierA.push(lane[round]!);
+  const tierB = entries.filter((e) => !preferredPoolEntry(e)).sort((a, b) => b.support - a.support || Number(a.facetRole === "DESCRIPTIVE_KEYWORD") - Number(b.facetRole === "DESCRIPTIVE_KEYWORD") || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey));
+  return [...tierA, ...tierB];
 }
 
 /** Sprint 10A: the observed signals a territory surfaced from (pool supporters, cited seeds and tags), with their calls. */

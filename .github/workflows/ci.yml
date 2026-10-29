@@ -1,7 +1,7 @@
 # Offline verification only. Never add provider or deploy secrets.
 # If GitHub Actions is unpaid/unavailable, run the same checks locally:
 #   pnpm lint && pnpm typecheck && pnpm test && pnpm eval:methodology &&
-#   pnpm eval:live && pnpm eval:elasticity && pnpm eval:agent && pnpm eval:query &&
+#   pnpm eval:live && pnpm eval:elasticity && pnpm eval:agent && pnpm eval:d2d && pnpm eval:discovery && pnpm eval:query &&
 #   pnpm build && pnpm check:secrets && pnpm test:e2e && pnpm smoke:docker
 # Release stays blocked until this evidence exists.
 name: CI
@@ -43,6 +43,8 @@ jobs:
       - run: pnpm eval:agent
       - name: Discovery-to-decision eval (synthetic world + recorded live artefacts; no provider call)
         run: pnpm eval:d2d
+      - name: Discovery eval (recorded real Qloo pools + Loewe scan, synthetic mechanics; no provider call)
+        run: pnpm eval:discovery
       - run: pnpm eval:query
       - run: pnpm build
       - name: Deployment configuration regression guard (offline; no cloud credentials)

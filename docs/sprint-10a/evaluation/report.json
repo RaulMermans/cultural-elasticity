@@ -1,0 +1,293 @@
+{
+  "notice": "OFFLINE replay on real recorded Qloo evidence (suite R). Mechanism and safety evidence only: not a discovery-quality result, not live Qloo or live model validation.",
+  "preregistration": "docs/sprint-10a/PREREGISTRATION.md",
+  "denominators": {
+    "pools": 4,
+    "independentBrands": 2,
+    "loeweSeeds": 12
+  },
+  "criteria": {
+    "R1": {
+      "passed": 4,
+      "of": 4
+    },
+    "R2": {
+      "passed": 4,
+      "of": 4
+    },
+    "R3": {
+      "passed": 4,
+      "of": 4
+    },
+    "R4": {
+      "passed": 1,
+      "of": 1
+    }
+  },
+  "result": "PASS",
+  "pools": [
+    {
+      "id": "pool-c53d12ae",
+      "brand": "Allbirds",
+      "runs": 9,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "chosenInRecordedRuns": [
+        "Self help",
+        "Social responsibility",
+        "Soft textures",
+        "Folk music",
+        "Female-led storytelling",
+        "Self-help and personal growth",
+        "Female-led friendship stories",
+        "New York City urban culture",
+        "Self-help media",
+        "New York City culture",
+        "Self-help literature",
+        "Female-protagonist stories",
+        "Self-help books",
+        "Female-led stories",
+        "Social responsibility and conscious consumption"
+      ],
+      "v1Top": [
+        "female protagonist (keyword:media, 4)",
+        "folk (genre:music, 3)",
+        "friendship (keyword:media, 3)",
+        "new york city (keyword:media, 3)",
+        "21st century (keyword:media, 2)",
+        "Self Help (genre:media, 2)"
+      ],
+      "v2Top": [
+        "folk (genre:music, 3)",
+        "Self Help (genre:media, 2)",
+        "Social Responsibility (cultural_relevance:qloo, 2)",
+        "socially conscious consumers (customer_identity:qloo, 2)",
+        "Soft Textures (aesthetic_property:qloo, 2)",
+        "female protagonist (keyword:media, 4)"
+      ],
+      "R1": true,
+      "R2": true,
+      "R3": true,
+      "namespacesTop": {
+        "v1": 3,
+        "v2": 6
+      },
+      "keywordShareTop": {
+        "v1": 0.67,
+        "v2": 0.17
+      }
+    },
+    {
+      "id": "pool-d7254362",
+      "brand": "Allbirds",
+      "runs": 4,
+      "models": [
+        "baseline-policy-v2"
+      ],
+      "chosenInRecordedRuns": [
+        "Soft Textures",
+        "Casual Lifestyle Influencers",
+        "Coastal",
+        "Athletic Influencers"
+      ],
+      "v1Top": [
+        "Soft Textures (aesthetic_property:qloo, 2)",
+        "Athletic Influencers (influencer_appeal:qloo, 1)",
+        "Casual Lifestyle Influencers (influencer_appeal:qloo, 1)",
+        "casualness (emotional_tone:qloo, 1)",
+        "Coastal (lifestyle:qloo, 1)",
+        "Comfort Focused (aesthetic_property:qloo, 1)"
+      ],
+      "v2Top": [
+        "Soft Textures (aesthetic_property:qloo, 2)",
+        "Athletic Influencers (influencer_appeal:qloo, 1)",
+        "Casual Lifestyle Influencers (influencer_appeal:qloo, 1)",
+        "casualness (emotional_tone:qloo, 1)",
+        "Coastal (lifestyle:qloo, 1)",
+        "Comfort Focused (aesthetic_property:qloo, 1)"
+      ],
+      "R1": true,
+      "R2": true,
+      "R3": true,
+      "namespacesTop": {
+        "v1": 4,
+        "v2": 4
+      },
+      "keywordShareTop": {
+        "v1": 0,
+        "v2": 0
+      }
+    },
+    {
+      "id": "pool-bc43a31d",
+      "brand": "Oatly",
+      "runs": 4,
+      "models": [
+        "baseline-policy-v2"
+      ],
+      "chosenInRecordedRuns": [],
+      "v1Top": [
+        "british (genre:music, 2)",
+        "england (keyword:media, 2)",
+        "friendship (keyword:media, 2)",
+        "london england (keyword:media, 2)",
+        "Chance Encounter (keyword:qloo, 1)",
+        "Cooking (genre:media, 1)"
+      ],
+      "v2Top": [
+        "british (genre:music, 2)",
+        "england (keyword:media, 2)",
+        "friendship (keyword:media, 2)",
+        "london england (keyword:media, 2)",
+        "Chance Encounter (keyword:qloo, 1)",
+        "Cooking (genre:media, 1)"
+      ],
+      "R1": true,
+      "R2": true,
+      "R3": true,
+      "namespacesTop": {
+        "v1": 4,
+        "v2": 4
+      },
+      "keywordShareTop": {
+        "v1": 0.5,
+        "v2": 0.5
+      }
+    },
+    {
+      "id": "pool-ebc85f4b",
+      "brand": "Oatly",
+      "runs": 10,
+      "models": [
+        "claude-haiku-5-5"
+      ],
+      "chosenInRecordedRuns": [
+        "Cooking",
+        "Feminism",
+        "Folk music",
+        "Friendship stories",
+        "British culture",
+        "Cooking and food culture",
+        "Feminism and women-led culture",
+        "Cooking & food culture",
+        "Feminism & women's rights",
+        "London, England urban culture",
+        "Cooking and cookbooks",
+        "British and London culture",
+        "Home cooking and food culture",
+        "London and British urban culture",
+        "Feminism and women's voices",
+        "British and London urban culture",
+        "Folk and indie music",
+        "Coming-of-age and teenage girl stories",
+        "English and London culture",
+        "British and England culture"
+      ],
+      "v1Top": [
+        "friendship (keyword:media, 5)",
+        "england (keyword:media, 3)",
+        "folk (genre:music, 3)",
+        "london england (keyword:media, 3)",
+        "teenage girl (keyword:media, 3)",
+        "british (genre:music, 2)"
+      ],
+      "v2Top": [
+        "folk (genre:music, 3)",
+        "Cooking (genre:media, 2)",
+        "british (genre:music, 2)",
+        "Feminism (genre:media, 2)",
+        "friendship (keyword:media, 5)",
+        "england (keyword:media, 3)"
+      ],
+      "R1": true,
+      "R2": true,
+      "R3": true,
+      "namespacesTop": {
+        "v1": 2,
+        "v2": 3
+      },
+      "keywordShareTop": {
+        "v1": 0.67,
+        "v2": 0.33
+      }
+    }
+  ],
+  "loewe": {
+    "scanId": "b3a92759-2d28-4fdb-aeca-ca7845750f38",
+    "origin": "recorded",
+    "directions": [
+      "Model",
+      "Fashion"
+    ],
+    "seeds": [
+      {
+        "label": "Red Velvet",
+        "domain": "artist",
+        "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+      },
+      {
+        "label": "BLACKPINK",
+        "domain": "artist",
+        "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+      },
+      {
+        "label": "SUNMI",
+        "domain": "artist",
+        "correlationId": "mcp-ce00a0ca-6246-43b4-887f-663a1c64507b"
+      },
+      {
+        "label": "Les Ombres",
+        "domain": "place",
+        "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+      },
+      {
+        "label": "Café de la Paix",
+        "domain": "place",
+        "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+      },
+      {
+        "label": "Hermès",
+        "domain": "place",
+        "correlationId": "mcp-753cb7bf-c90e-4a11-80ad-a3dc2fe2b535"
+      },
+      {
+        "label": "Call Me by Your Name",
+        "domain": "movie",
+        "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+      },
+      {
+        "label": "Phantom Thread",
+        "domain": "movie",
+        "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+      },
+      {
+        "label": "Roma",
+        "domain": "movie",
+        "correlationId": "mcp-b28f8a65-69fd-4be8-8835-6df95789c588"
+      },
+      {
+        "label": "More Than Enough: Claiming Space for Who You Are (No Matter What They Say)",
+        "domain": "book",
+        "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+      },
+      {
+        "label": "The Meaning of Mariah Carey",
+        "domain": "book",
+        "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+      },
+      {
+        "label": "Big Friendship: How We Keep Each Other Close",
+        "domain": "book",
+        "correlationId": "mcp-f29089dc-e0e7-4a3d-9a7b-800fb3bb88a0"
+      }
+    ]
+  },
+  "limitations": [
+    "The recorded pools were cut to 12 entries by the v1 support order before they were stored, so concepts v2 might have kept from beyond those 12 are not observable here.",
+    "Two independent brands (Oatly, Allbirds), two pools each: far too few to establish a discovery-quality change.",
+    "R2 is satisfied by construction (v2 interleaves facets); it checks the mechanism, not quality.",
+    "Brand profiles were not stored with the pools, so domainRelation cannot be computed in this replay.",
+    "Suite H (human rating) and the frozen holdouts are NOT_RUN."
+  ]
+}

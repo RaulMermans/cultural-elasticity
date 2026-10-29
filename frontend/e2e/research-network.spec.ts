@@ -10,7 +10,7 @@ type Fixture = { baseline: { scanId: string; scanStatus: string }; parent: { cre
 const fixture = JSON.parse(readFileSync(new URL("../../backend/tests/fixtures/synthetic/comparative-e2e.json", import.meta.url), "utf8")) as Fixture;
 const json = (route: Route, value: unknown, status = 200) => route.fulfill({ status, contentType: "application/json", body: JSON.stringify(value) });
 
-async function stubLive(page: Page) {
+async function stubLive(page: Page, baseline: unknown = fixture.baseline) {
   const calls = { handoffs: [] as unknown[], questions: [] as unknown[] };
   await page.route("**/api/agent/admissions", (route) => json(route, { status: "accepting" }));
   await page.route("**/api/brands/**", (route) => {
@@ -18,7 +18,7 @@ async function stubLive(page: Page) {
     if (path === "/api/brands/status") return json(route, { enabled: true, semantics: "baseline_admission_only" });
     if (path === "/api/brands/resolve") return json(route, { resolutionId: "00000000-0000-4000-8000-000000000030", accessToken: "syn-token", status: "RESOLVED", entity: { qlooId: "SYN-BR-3001", label: "Larkspur Velo" } });
     if (path === "/api/brands/baselines" && route.request().method() === "POST") return json(route, { scanId: fixture.baseline.scanId, scanStatus: "QUEUED", reused: false, cached: false }, 202);
-    if (path === `/api/brands/baselines/${fixture.baseline.scanId}`) return json(route, { scanStatus: fixture.baseline.scanStatus, providerCallCount: 2, stages: [{ stage: "tags", status: "COMPLETE" }], result: fixture.baseline });
+    if (path === `/api/brands/baselines/${fixture.baseline.scanId}`) return json(route, { scanStatus: fixture.baseline.scanStatus, providerCallCount: 2, stages: [{ stage: "tags", status: "COMPLETE" }], result: baseline });
     return json(route, { error: "not_found" }, 404);
   });
   await page.route("**/api/research/handoff/jobs", (route) => { calls.handoffs.push(route.request().postDataJSON()); return json(route, fixture.parent.created, 202); });
@@ -343,4 +343,24 @@ test("SYNTHETIC the brand box suggests your research as you type, without callin
   await box.press("Enter");
   await expect(page.getByTestId("research-network")).toBeVisible();
   expect(resolves).toEqual([]);
+});
+
+test("SYNTHETIC Sprint 10A: the scan's cross-domain signals can be explored with the agent, only on request", async ({ page }) => {
+  // SYNTHETIC: the fixture's baseline plus one related artist observed by a recommend call of the scan.
+  const baseline = structuredClone(fixture.baseline) as unknown as { fingerprint: { signals: unknown[]; provenance: { correlationId: string; sourceId: string }[] } };
+  const source = { operation: "recommend", correlationId: "syn-10a-artists", sourceId: "SYN-AR-10A9", capturedAt: "2026-10-29T00:00:00.000Z", sourceStatus: "ok", scope: "artist" };
+  baseline.fingerprint.signals.push({ id: "SYN-AR-10A9", name: "SYNTHETIC Cellar Band", kind: "entity", domain: "artist", source, rankWithinCall: 1, grounding: { typeEvidence: "QUERY_SCOPED", providerType: null, providerSubtype: null, requestedType: "urn:entity:artist", scopeBasis: "RECORDED_PROVIDER_REQUEST" } });
+  baseline.fingerprint.provenance.push(source);
+  const calls = await stubLive(page, baseline);
+  await startLarkspur(page);
+  const explore = page.getByTestId("network-explore-signals");
+  await expect(explore).toContainText("starting points, not evidence of a fit");
+  expect(calls.handoffs).toEqual([]);
+  await explore.getByRole("button", { name: "Explore these signals with the agent" }).click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
+  expect(calls.handoffs).toHaveLength(1);
+  const body = calls.handoffs[0] as Record<string, unknown>;
+  expect(Object.keys(body).sort()).toEqual(["explore", "idempotencyKey", "scanId"]);
+  expect(body.explore).toBe(true);
+  await expect(page.getByTestId("network-dossier")).toContainText("Agent exploration");
 });

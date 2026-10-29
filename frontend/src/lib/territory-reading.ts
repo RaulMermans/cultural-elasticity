@@ -3,7 +3,7 @@
  * read from the deterministic result (class, ranks, robustness, shared signals, conditioned evidence, exemplars);
  * nothing is computed, estimated or ranked here. Sentences restate those values; none forecasts commercial outcomes.
  */
-import { decisionCard, type AgentRunResponse, type AgentTerritoryResult, type DecisionCard, type DecisionCardContext } from "@cultural-elasticity/shared";
+import { decisionCard, type AgentRunResponse, type AgentTerritoryResult, type DecisionCard, type DecisionCardContext, type OpportunityView } from "@cultural-elasticity/shared";
 
 export type FitStep = "NATURAL_ADJACENCY" | "CREDIBLE_STRETCH" | "CULTURAL_BREAK";
 
@@ -27,7 +27,46 @@ export type TerritoryReading = {
   technical: string[];
   /** Sprint 9N: the Strategic Decision Card for this territory (the same projection the report uses). */
   decision: DecisionCard | null;
+  /** Sprint 10A: for a discovered direction, why it surfaced and what its evidence status is (null otherwise). */
+  surfaced: SurfacedReading | null;
 };
+
+export type SurfacedReading = {
+  status: string;
+  statusText: string;
+  signals: string[];
+  domain: string | null;
+  /** The agent's own reading of the signals. Shown as interpretation, never as evidence. */
+  interpretation: string | null;
+  unknowns: string[];
+  next: string | null;
+};
+
+const STATUS_COPY: Record<string, { label: string; text: string }> = {
+  OBSERVED_ASSOCIATION: { label: "Observed association", text: "Qloo returned it for the brand. It has not been tested as a territory." },
+  UNVALIDATED_HYPOTHESIS: { label: "Hypothesis", text: "Proposed in this investigation. Qloo support was not tested before it ended." },
+  QLOO_SUPPORTED: { label: "Supported by Qloo, not measured", text: "Qloo returns entities for this concept on its own, so it can be investigated. How far the brand extends into it is not measured." },
+  RELATIVELY_MEASURED: { label: "Measured", text: "Placed against other territories in one Qloo comparison. The position holds only within that comparison." },
+  UNSUPPORTED: { label: "Not supported by Qloo", text: "Qloo returned no entities for the concept tried, or it was not a cultural territory." },
+  DUPLICATE: { label: "Merged with a similar direction", text: "It repeated another direction, so it was not counted twice." },
+  UNMEASURABLE: { label: "Found, but not measurable yet", text: "Qloo returns entities for it, but no sound set of examples could be built to measure it." },
+  INCONCLUSIVE: { label: "Not settled", text: "The investigation ended before this direction was tested." },
+};
+
+function surfacedReading(opportunity: OpportunityView | undefined, brand: string): SurfacedReading | null {
+  if (!opportunity) return null;
+  const copy = STATUS_COPY[opportunity.blocker ?? opportunity.status] ?? { label: "Not settled", text: "" };
+  const relation = (kind: string) => kind === "SEED_ENTITY_TAG" || kind === "BRAND_CONDITIONED_ENTITY" ? `returned for ${brand} in the brand scan` : kind === "BRAND_PROFILE_TAG" ? `on ${brand}'s own Qloo profile` : `a brand Qloo relates to ${brand}`;
+  return {
+    status: copy.label,
+    statusText: copy.text,
+    signals: opportunity.surfacedBy.map((signal) => `${signal.label} (${relation(signal.relation)})`),
+    domain: opportunity.domainRelation === "OUTSIDE_BRAND_PROFILE_FACETS" ? `A different kind of Qloo tag from any on ${brand}'s own profile.` : opportunity.domainRelation === "WITHIN_BRAND_PROFILE_FACETS" ? `The same kind of Qloo tag as some on ${brand}'s own profile.` : null,
+    interpretation: opportunity.interpretation,
+    unknowns: opportunity.unknowns,
+    next: opportunity.nextInvestigation,
+  };
+}
 
 const FIT_LABEL: Record<string, string> = {
   NATURAL_ADJACENCY: "Natural fit",
@@ -115,5 +154,6 @@ export function territoryReading(result: AgentRunResponse | null | undefined, te
     unknowns,
     technical: unique([...territory.keyEvidence, ...territory.limitations.map((limitation) => limitation.detail)]),
     decision: decisionCard(done, territory.key, context),
+    surfaced: surfacedReading(done.comparisonSetConstruction?.opportunities?.find((item) => item.territoryKey === territory.key), brand),
   };
 }
