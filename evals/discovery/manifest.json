@@ -4,40 +4,187 @@
   "fixtureType": "synthetic",
   "notice": "SYNTHETIC discovery-mechanics cases (placeholder ids), registered with docs/sprint-10a/PREREGISTRATION.md before implementation. Each case names one deterministic expectation; backend/tests/discovery-intelligence.test.ts implements them by id. Nothing in the runtime reads this file. Changes are appended as amendments; earlier entries are kept.",
   "cases": [
-    { "id": "s01", "class": "obvious identity", "expect": "a tag on the brand's own profile never enters the frontier pool" },
-    { "id": "s02", "class": "cross-domain", "expect": "a pool concept whose tag namespace is absent from the brand's profile is OUTSIDE_BRAND_PROFILE_FACETS" },
-    { "id": "s03", "class": "familiar domain", "expect": "a pool concept whose namespace the brand's profile carries is WITHIN_BRAND_PROFILE_FACETS" },
-    { "id": "s04", "class": "descriptive noise", "expect": "a free media keyword with higher support is ordered after taxonomy concepts with support >= 2" },
-    { "id": "s05", "class": "strongest evidence", "expect": "the best-supported taxonomy concept is the first pool entry" },
-    { "id": "s06", "class": "semantic diversity", "expect": "taxonomy concepts from two namespaces alternate (round-robin by namespace)" },
-    { "id": "s07", "class": "stability", "expect": "the pool is identical when the evidence-base profiles arrive in another order" },
-    { "id": "s08", "class": "auditability", "expect": "concepts cut by the pool size are recorded as deferred with a reason" },
-    { "id": "s09", "class": "weak evidence", "expect": "a support-1 taxonomy concept is not ordered above a support-2 taxonomy concept" },
-    { "id": "s10", "class": "empty evidence", "expect": "no related profiles and no seed profiles give an empty pool" },
-    { "id": "s11", "class": "lateral hypothesis", "expect": "an agent hypothesis with motivatedBy ids observed in the run is accepted and keeps them" },
-    { "id": "s12", "class": "fabricated id", "expect": "an agent hypothesis citing an id never observed in the run is refused" },
-    { "id": "s13", "class": "bounded input", "expect": "more than 6 motivatedBy ids are refused by the tool schema" },
-    { "id": "s14", "class": "unsupported lateral hypothesis", "expect": "a hypothesis whose probes returned no members ends NOT_SUPPORTED / UNSUPPORTED" },
-    { "id": "s15", "class": "supported, not measured", "expect": "a hypothesis with brand-independent members and a PARTIAL route is QLOO_SUPPORTED, never RELATIVELY_MEASURED" },
-    { "id": "s16", "class": "measured", "expect": "a FULL route with a numeric position is RELATIVELY_MEASURED" },
-    { "id": "s17", "class": "failed rank calls", "expect": "a FULL route whose position is null is QLOO_SUPPORTED" },
-    { "id": "s18", "class": "duplicate concept", "expect": "a dropped duplicate ends NOT_SUPPORTED / DUPLICATE" },
-    { "id": "s19", "class": "entity-to-territory misread", "expect": "an incidental venue attribute ends NOT_SUPPORTED / UNSUPPORTED" },
-    { "id": "s20", "class": "grounded but unmeasurable", "expect": "INSUFFICIENT_EVIDENCE after members were observed ends NOT_SUPPORTED / UNMEASURABLE" },
-    { "id": "s21", "class": "budget", "expect": "a candidate dropped for budget ends NOT_SUPPORTED / INCONCLUSIVE" },
-    { "id": "s22", "class": "signal extraction", "expect": "seeds are the scan's retained entity observations with their own correlation id; brand-profile tags are not seeds" },
-    { "id": "s23", "class": "signal extraction", "expect": "excluded or type-conflicting entities never become seeds" },
-    { "id": "s24", "class": "partial evidence", "expect": "a seed from a partial or degraded response is flagged partial" },
-    { "id": "s25", "class": "provenance", "expect": "a signal whose correlation id is not in the scan's provenance is not a seed" },
-    { "id": "s26", "class": "handoff", "expect": "the explore handoff refuses a scan that is not complete" },
-    { "id": "s27", "class": "handoff", "expect": "the explore handoff builds explore_frontier with no named territory, and no seed name or id in the query text" },
-    { "id": "s28", "class": "context", "expect": "seeds reach the model only while explore_candidate_territories is active, bounded to 12" },
-    { "id": "s29", "class": "evidence status", "expect": "a seed is never Qloo support: qlooSupport is unchanged by seeds" },
-    { "id": "s30", "class": "budget", "expect": "at most 3 seed entities are profiled; the 4th profile is refused" },
-    { "id": "s31", "class": "cross-domain grounding", "expect": "a tag from a profiled seed enters the pool with the seed named as its supporting entity" },
-    { "id": "s32", "class": "free baseline", "expect": "the deterministic baseline result is unchanged and makes no extra call" },
-    { "id": "s33", "class": "permissions", "expect": "the explore skill's tool allowlist is unchanged" },
-    { "id": "s34", "class": "provider error", "expect": "a failed seed profile is not evidence: no pool entry, the seed stays unprofiled" }
+    {
+      "id": "s01",
+      "class": "obvious identity",
+      "expect": "a tag on the brand's own profile never enters the frontier pool"
+    },
+    {
+      "id": "s02",
+      "class": "cross-domain",
+      "expect": "a pool concept whose tag namespace is absent from the brand's profile is OUTSIDE_BRAND_PROFILE_FACETS"
+    },
+    {
+      "id": "s03",
+      "class": "familiar domain",
+      "expect": "a pool concept whose namespace the brand's profile carries is WITHIN_BRAND_PROFILE_FACETS"
+    },
+    {
+      "id": "s04",
+      "class": "descriptive noise",
+      "expect": "a free media keyword with higher support is ordered after taxonomy concepts with support >= 2"
+    },
+    {
+      "id": "s05",
+      "class": "strongest evidence",
+      "expect": "the best-supported taxonomy concept is the first pool entry"
+    },
+    {
+      "id": "s06",
+      "class": "semantic diversity",
+      "expect": "taxonomy concepts from two namespaces alternate (round-robin by namespace)"
+    },
+    {
+      "id": "s07",
+      "class": "stability",
+      "expect": "the pool is identical when the evidence-base profiles arrive in another order"
+    },
+    {
+      "id": "s08",
+      "class": "auditability",
+      "expect": "concepts cut by the pool size are recorded as deferred with a reason"
+    },
+    {
+      "id": "s09",
+      "class": "weak evidence",
+      "expect": "a support-1 taxonomy concept is not ordered above a support-2 taxonomy concept"
+    },
+    {
+      "id": "s10",
+      "class": "empty evidence",
+      "expect": "no related profiles and no seed profiles give an empty pool"
+    },
+    {
+      "id": "s11",
+      "class": "lateral hypothesis",
+      "expect": "an agent hypothesis with motivatedBy ids observed in the run is accepted and keeps them"
+    },
+    {
+      "id": "s12",
+      "class": "fabricated id",
+      "expect": "an agent hypothesis citing an id never observed in the run is refused"
+    },
+    {
+      "id": "s13",
+      "class": "bounded input",
+      "expect": "more than 6 motivatedBy ids are refused by the tool schema"
+    },
+    {
+      "id": "s14",
+      "class": "unsupported lateral hypothesis",
+      "expect": "a hypothesis whose probes returned no members ends NOT_SUPPORTED / UNSUPPORTED"
+    },
+    {
+      "id": "s15",
+      "class": "supported, not measured",
+      "expect": "a hypothesis with brand-independent members and a PARTIAL route is QLOO_SUPPORTED, never RELATIVELY_MEASURED"
+    },
+    {
+      "id": "s16",
+      "class": "measured",
+      "expect": "a FULL route with a numeric position is RELATIVELY_MEASURED"
+    },
+    {
+      "id": "s17",
+      "class": "failed rank calls",
+      "expect": "a FULL route whose position is null is QLOO_SUPPORTED"
+    },
+    {
+      "id": "s18",
+      "class": "duplicate concept",
+      "expect": "a dropped duplicate ends NOT_SUPPORTED / DUPLICATE"
+    },
+    {
+      "id": "s19",
+      "class": "entity-to-territory misread",
+      "expect": "an incidental venue attribute ends NOT_SUPPORTED / UNSUPPORTED"
+    },
+    {
+      "id": "s20",
+      "class": "grounded but unmeasurable",
+      "expect": "INSUFFICIENT_EVIDENCE after members were observed ends NOT_SUPPORTED / UNMEASURABLE"
+    },
+    {
+      "id": "s21",
+      "class": "budget",
+      "expect": "a candidate dropped for budget ends NOT_SUPPORTED / INCONCLUSIVE"
+    },
+    {
+      "id": "s22",
+      "class": "signal extraction",
+      "expect": "seeds are the scan's retained entity observations with their own correlation id; brand-profile tags are not seeds"
+    },
+    {
+      "id": "s23",
+      "class": "signal extraction",
+      "expect": "excluded or type-conflicting entities never become seeds"
+    },
+    {
+      "id": "s24",
+      "class": "partial evidence",
+      "expect": "a seed from a partial or degraded response is flagged partial"
+    },
+    {
+      "id": "s25",
+      "class": "provenance",
+      "expect": "a signal whose correlation id is not in the scan's provenance is not a seed"
+    },
+    {
+      "id": "s26",
+      "class": "handoff",
+      "expect": "the explore handoff refuses a scan that is not complete"
+    },
+    {
+      "id": "s27",
+      "class": "handoff",
+      "expect": "the explore handoff builds explore_frontier with no named territory, and no seed name or id in the query text"
+    },
+    {
+      "id": "s28",
+      "class": "context",
+      "expect": "seeds reach the model only while explore_candidate_territories is active, bounded to 12"
+    },
+    {
+      "id": "s29",
+      "class": "evidence status",
+      "expect": "a seed is never Qloo support: qlooSupport is unchanged by seeds"
+    },
+    {
+      "id": "s30",
+      "class": "budget",
+      "expect": "at most 3 seed entities are profiled; the 4th profile is refused"
+    },
+    {
+      "id": "s31",
+      "class": "cross-domain grounding",
+      "expect": "a tag from a profiled seed enters the pool with the seed named as its supporting entity"
+    },
+    {
+      "id": "s32",
+      "class": "free baseline",
+      "expect": "the deterministic baseline result is unchanged and makes no extra call"
+    },
+    {
+      "id": "s33",
+      "class": "permissions",
+      "expect": "the explore skill's tool allowlist is unchanged"
+    },
+    {
+      "id": "s34",
+      "class": "provider error",
+      "expect": "a failed seed profile is not evidence: no pool entry, the seed stays unprofiled"
+    }
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-10-29",
+      "beforeAnyResult": true,
+      "change": "State 5 is named NOT_ESTABLISHED instead of NOT_SUPPORTED, so a candidate dropped as a duplicate is not called unsupported. The blocker codes (UNSUPPORTED, DUPLICATE, UNMEASURABLE, INCONCLUSIVE) and every expectation are unchanged; read NOT_SUPPORTED in s14 and s18–s21 as NOT_ESTABLISHED."
+    },
+    {
+      "date": "2026-10-29",
+      "beforeAnyResult": true,
+      "change": "s29 clarified while implementing: the unchanged candidate gate (qlooSupport) accepts any non-brand tag profile carrying a concept, so a profiled seed passes it exactly as a related brand's profile does. The opportunity status is made stricter instead: QLOO_SUPPORTED and RELATIVELY_MEASURED require brand-independent recommend members. s29 now asserts that a listed seed adds no support and that a profiled seed never makes a candidate QLOO_SUPPORTED."
+    }
+  ]
 }

@@ -19,7 +19,7 @@ import { callQloo, describedEntity, PROFILE_TAKE, recordFindTags, recordPool, re
 import { strategyExhausted } from "./readiness.js";
 import { eligibleMembers, territoryConcepts } from "./probe-policy.js";
 import { referenceCandidates } from "./reference-strategy.js";
-import { alternateAnchorRefusal, anchorOnObservedMembers, FRONTIER_EVIDENCE_BASE, FRONTIER_RELATED_TAKE, recordAnchorDecision } from "./frontier.js";
+import { alternateAnchorRefusal, anchorOnObservedMembers, FRONTIER_EVIDENCE_BASE, FRONTIER_RELATED_TAKE, observedSignal, recordAnchorDecision, seedProfileRefusal } from "./frontier.js";
 import { alignmentDeferral } from "./representation-alignment.js";
 import { validateTerritoryRepresentation } from "./representation-planner.js";
 import { applyInterpretation, resolveInterpretation } from "./router.js";
@@ -84,12 +84,12 @@ const interpretRequest: AgentTool<{ intent: (typeof AGENT_INTENTS)[number]; bran
 
 const semanticSchema = z.strictObject({ relevance: z.enum(["strong", "adequate", "weak", "mismatch"]), reason: text.max(300) });
 
-const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier_candidate"; origin: "agent_hypothesis" | "qloo_evidence"; rationale: string; evidenceTagIds?: string[] | undefined; semantic?: { relevance: "strong" | "adequate" | "weak" | "mismatch"; reason: string } | undefined }> = {
+const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier_candidate"; origin: "agent_hypothesis" | "qloo_evidence"; rationale: string; evidenceTagIds?: string[] | undefined; motivatedBy?: string[] | undefined; semantic?: { relevance: "strong" | "adequate" | "weak" | "mismatch"; reason: string } | undefined }> = {
   name: "propose_territory",
   description:
-    "Add a territory hypothesis (no Qloo call). role=reference: a comparison territory so a single move can be placed in a set of ≥3 territories of one entity type — pick it from referenceCandidates with semantic MEANINGFUL, pass its tag in evidenceTagIds, and give your semantic judgment (is it a meaningful cultural alternative to the target, at the same analytical level? strong|adequate|weak|mismatch + reason; weak/mismatch removes it). Venue amenities, decor and operational tags are refused. A reference with one evidence tag that the semantic validator accepts is anchored to it at once (validate it in the same turn). role=frontier_candidate: explore_frontier only. origin=qloo_evidence requires evidenceTagIds returned by Qloo in this run; origin=agent_hypothesis must later be found in Qloo, anchored and shown to have members, or it is dropped. Exact duplicates are refused. Next step: anchor_territory.",
+    "Add a territory hypothesis (no Qloo call). role=reference: a comparison territory so a single move can be placed in a set of ≥3 territories of one entity type — pick it from referenceCandidates with semantic MEANINGFUL, pass its tag in evidenceTagIds, and give your semantic judgment (is it a meaningful cultural alternative to the target, at the same analytical level? strong|adequate|weak|mismatch + reason; weak/mismatch removes it). Venue amenities, decor and operational tags are refused. A reference with one evidence tag that the semantic validator accepts is anchored to it at once (validate it in the same turn). role=frontier_candidate: explore_frontier only. origin=qloo_evidence requires evidenceTagIds returned by Qloo in this run; origin=agent_hypothesis must later be found in Qloo, anchored and shown to have members, or it is dropped. motivatedBy: the ids of the observed signals (tags or entities returned in this run, or seeds) that led you to it; they explain why it surfaced and are never support. Exact duplicates are refused. Next step: anchor_territory.",
   permission: "local_computation",
-  inputSchema: z.strictObject({ label: text.max(120), role: z.enum(["reference", "frontier_candidate"]), origin: z.enum(["agent_hypothesis", "qloo_evidence"]), rationale: text.max(400), evidenceTagIds: z.array(text).max(5).optional(), semantic: semanticSchema.optional() }),
+  inputSchema: z.strictObject({ label: text.max(120), role: z.enum(["reference", "frontier_candidate"]), origin: z.enum(["agent_hypothesis", "qloo_evidence"]), rationale: text.max(400), evidenceTagIds: z.array(text).max(5).optional(), motivatedBy: z.array(text).max(6).optional(), semantic: semanticSchema.optional() }),
   maxQlooCalls: 0,
   phases: AFTER_BRAND,
   precondition(state, input) {
@@ -105,12 +105,15 @@ const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier
       const incidental = input.evidenceTagIds.map((id) => [id, incidentalConcept(id)] as const).find(([, x]) => x);
       if (incidental) return `${incidental[0]} is a ${incidental[1]!.explanation}; choose a cultural concept`;
     }
+    // Sprint 10A: a cited signal must have been observed (in this run, or as a server-held seed); never an invented id.
+    const unseen = input.motivatedBy?.find((id) => !observedSignal(state, id));
+    if (unseen) return `motivatedBy ${unseen} was not observed in this run or among the seeds; cite only returned tags, entities or seeds`;
     return undefined;
   },
   async execute({ state }, input) {
     const reference = input.role === "reference" ? referenceCandidates(state).find((c) => input.evidenceTagIds?.includes(c.tagId)) : undefined;
     const evidence = input.origin === "qloo_evidence" ? `Qloo tag(s) ${(input.evidenceTagIds ?? []).join(", ")}${reference ? `; ${reference.justification}` : ""}` : `agent hypothesis: ${input.rationale}`;
-    const t = addTerritory(state, { label: input.label, role: input.role, origin: input.origin, rationale: input.rationale, source: input.role === "reference" ? "reference_strategy" : input.origin === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded", sourceEvidence: evidence.slice(0, 400), sourceTagId: input.origin === "qloo_evidence" ? (input.evidenceTagIds?.[0] ?? null) : null, evidenceTagIds: input.origin === "qloo_evidence" ? (input.evidenceTagIds ?? []) : [] });
+    const t = addTerritory(state, { label: input.label, role: input.role, origin: input.origin, rationale: input.rationale, source: input.role === "reference" ? "reference_strategy" : input.origin === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded", sourceEvidence: evidence.slice(0, 400), sourceTagId: input.origin === "qloo_evidence" ? (input.evidenceTagIds?.[0] ?? null) : null, evidenceTagIds: input.origin === "qloo_evidence" ? (input.evidenceTagIds ?? []) : [], motivatedBy: [...new Set(input.motivatedBy ?? [])] });
     if (input.semantic) t.semanticJudgment = { relevance: input.semantic.relevance.toUpperCase() as "STRONG" | "ADEQUATE" | "WEAK" | "MISMATCH", reason: input.semantic.reason.trim() };
     // Sprint 5A.1 (live L-C2: propose, anchor and validate spread over three turns, so usable references were never
     // validated): a reference proposed with exactly one Qloo evidence tag IS that concept. When the semantic validator
@@ -391,12 +394,12 @@ const findTags: AgentTool<{ query: string; limit: number }> = {
 
 const getEntityTags: AgentTool<{ entityId: string }> = {
   name: "qloo_get_entity_tags",
-  description: `1 Qloo call. Fetch an entity's Qloo tag profile (top ${PROFILE_TAKE}, fixed take). Use it for the brand profile, for candidate exemplars before validating them (the quality check compares peers), or for related entities (frontier concepts). A profile already collected is refused (it cannot grow). The entity id must have been returned by Qloo in this run.`,
+  description: `1 Qloo call. Fetch an entity's Qloo tag profile (top ${PROFILE_TAKE}, fixed take). Use it for the brand profile, for candidate exemplars before validating them (the quality check compares peers), or for related entities and seeds (frontier concepts; at most 3 seeds per run). A profile already collected is refused (it cannot grow). The entity id must have been returned by Qloo in this run.`,
   permission: "read_only_external",
   inputSchema: z.strictObject({ entityId: text }),
   maxQlooCalls: 1,
   phases: AFTER_BRAND,
-  precondition: (state, input) => (state.entities.has(input.entityId) ? undefined : `entity ${input.entityId} has not been returned by Qloo in this run`),
+  precondition: (state, input) => (state.entities.has(input.entityId) || state.discoverySeeds?.some((seed) => seed.id === input.entityId) ? seedProfileRefusal(state, input.entityId) ?? undefined : `entity ${input.entityId} has not been returned by Qloo in this run`),
   async execute({ state, provider, trace }, input) {
     if (state.profiles.has(input.entityId)) return { status: "ok", summary: "profile already collected", data: profileView(state, input.entityId) };
     const result = await callQloo(state, provider, trace, "entity_tags", { entities: [input.entityId], limit: PROFILE_TAKE });

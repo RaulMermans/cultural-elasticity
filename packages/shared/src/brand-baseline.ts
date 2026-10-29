@@ -1,3 +1,5 @@
+import type { FacetRole } from "./opportunity.js";
+
 /** A baseline describes observed Qloo associations; it is not a relative analysis or score. */
 export const BRAND_BASELINE_SCHEMA_VERSION = "ce-brand-baseline/0.2" as const;
 /** Sprint 9B results. Stored as-run artifacts keep this version and stay readable; they are never rewritten. */
@@ -22,7 +24,7 @@ export type BaselineCoverage = { domain: string; status: "OBSERVED" | "EMPTY" | 
  * How a returned tag is used. AUDIENCE_TASTE and BRAND_CLASSIFICATION come from Qloo taxonomy facets;
  * DESCRIPTIVE_KEYWORD is a free media keyword. None of them is an opportunity.
  */
-export type BaselineTagRole = "AUDIENCE_TASTE" | "BRAND_CLASSIFICATION" | "DESCRIPTIVE_KEYWORD";
+export type BaselineTagRole = FacetRole;
 /**
  * What Qloo evidence says about a returned entity's type. QUERY_SCOPED means only that the entity was returned
  * by a query restricted to that type; it is never relabelled as an entity-level confirmation.

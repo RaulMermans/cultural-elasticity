@@ -10,6 +10,7 @@
 import type { Limitation } from "./analysis.js";
 import type { CulturalElasticityResult, ElasticityClass, RobustnessLevel } from "./methodology.js";
 import type { InvestigationLink } from "./query.js";
+import type { DomainRelation, FacetRole, OpportunityView } from "./opportunity.js";
 
 /**
  * 0.3 (Sprint 5A, additive): semantic comparison assessments, grounded findings, synthesis attempt details,
@@ -18,6 +19,7 @@ import type { InvestigationLink } from "./query.js";
  * views, representation plans, completion checks, frontier candidate pool, probe metrics): a 0.3 reader keeps working.
  * Sprint 5B.1 adds two more optional trace fields (interpretation source, investigation link) under the same version.
  * Sprint 8A adds optional runtime spans and span-coverage metrics under the same version.
+ * Sprint 10A adds optional frontier-pool annotations, seeds and opportunity views to comparisonSetConstruction.
  */
 export const AGENT_RESULT_SCHEMA_VERSION = "ce-agent-result/0.3" as const;
 
@@ -424,8 +426,16 @@ export type ComparisonSetConstruction = {
    * Sprint 5A.1 (frontier): the deterministic, evidence-grounded candidate pool the agent chose from, and the related
    * entities whose profiles formed it. Two runs with equal pools that chose differently differ by model choice.
    */
-  candidatePool?: { canonicalConceptKey: string; tagId: string; label: string; support: number }[];
+  candidatePool?: { canonicalConceptKey: string; tagId: string; label: string; support: number; facet?: string | null; facetRole?: FacetRole | null; domainRelation?: DomainRelation; supportingEntities?: string[] }[];
   evidenceBase?: string[];
+  /** Sprint 10A: the rule that ordered candidatePool ("frontier-pool/v2"); absent on earlier results (support order, v1). */
+  candidatePoolRule?: string;
+  /** Sprint 10A (frontier-pool/v2): concepts the bounded pool left out, and why (auditable selection). */
+  deferredConcepts?: { tagId: string; label: string; support: number; reason: string }[];
+  /** Sprint 10A: baseline-scan entities handed to the run as starting points, and which of them were profiled. */
+  seeds?: { id: string; label: string; domain: string; correlationId: string; profiled: boolean }[];
+  /** Sprint 10A (opportunity-status/v1): every frontier candidate, explained from evidence. */
+  opportunities?: OpportunityView[];
   note: string;
 };
 

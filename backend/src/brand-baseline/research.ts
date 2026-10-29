@@ -7,7 +7,6 @@ import {
   type BaselineHypothesis,
   type BaselineScopeBasis,
   type BaselineSignal,
-  type BaselineTagRole,
   type BaselineTemplateVersion,
   type BaselineTheme,
   type BaselineTypeEvidence,
@@ -15,6 +14,7 @@ import {
 } from "@cultural-elasticity/shared";
 import type { CulturalSignal, ProvenanceRef, ResolvedConcept } from "../contracts/qloo.js";
 import { matchOperationalRule, tagNamespace } from "../methodology/operational-tags.js";
+import { facetLabel, tagRole } from "../methodology/tag-facets.js";
 import type { QlooClient, QlooOutcome, EntityTagsData, RecommendData } from "../qloo/client.js";
 import type { QlooInsightsType } from "../qloo/types.js";
 import type { StoredBaselineObservation } from "./schema.js";
@@ -87,27 +87,9 @@ const DOMAIN_WORDS: Record<string, { plural: string; singular: string }> = {
   book: { plural: "books", singular: "book" },
 };
 const domainWords = (domain: string) => DOMAIN_WORDS[domain] ?? { plural: `${domain} results`, singular: `${domain} result` };
+export { facetLabel, tagRole };
+
 const humanize = (value: string) => value.replaceAll("_", " ").replace(/^\p{L}/u, (letter) => letter.toUpperCase());
-
-/** Facet label from the URN alone (`urn:tag:<namespace>:<source>`), never from the tag's name. */
-export function facetLabel(facet: string): string {
-  const [namespace = "", source = ""] = facet.split(":");
-  if (source === "qloo") return namespace === "keyword" ? "Curated keywords" : humanize(namespace);
-  const noun = namespace === "genre" ? "genres" : namespace === "keyword" ? "keywords" : namespace.replaceAll("_", " ");
-  return `${humanize(source)} ${noun}`;
-}
-
-/**
- * Role of a non-operational tag, by URN facet. Brand classification: `genre:brand` and the curated `industry` and
- * `product_service` concepts described the brand's own category or products in every recorded live profile.
- * Free media keywords are descriptive and noisy. Everything else is a taxonomy-level taste classification.
- */
-export function tagRole(facet: string): BaselineTagRole {
-  const [namespace, source] = facet.split(":");
-  if ((namespace === "genre" && source === "brand") || (source === "qloo" && (namespace === "industry" || namespace === "product_service"))) return "BRAND_CLASSIFICATION";
-  if (namespace === "keyword" && source !== "qloo") return "DESCRIPTIVE_KEYWORD";
-  return "AUDIENCE_TASTE";
-}
 
 /** Exact equality after case, accent and punctuation folding. Used only to flag possible duplicates, never to merge. */
 export const normalizedName = (name: string) => name.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase("en").replace(/[^\p{L}\p{N}]+/gu, "");

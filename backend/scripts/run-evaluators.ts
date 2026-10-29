@@ -56,8 +56,12 @@ export type EvaluatorId =
 
 export type EvaluatorResult = { id: EvaluatorId; applicable: boolean; passed: boolean; detail: string };
 
-/** v2.1 (Sprint 5A.2, grader fix after the final live run): RECOVERY_WITHIN_BUDGET counts a re-proposal only when it is refused again. */
-export const RUN_EVALUATORS_VERSION = "run-evaluators-v2.1";
+/**
+ * v2.1 (Sprint 5A.2, grader fix after the final live run): RECOVERY_WITHIN_BUDGET counts a re-proposal only when it is refused again.
+ * v2.2 (Sprint 10A): FRONTIER_RESULT_CONSISTENCY checks the candidate pool against the rule that ordered it (v1 support
+ * order when no rule is recorded; frontier-pool/v2 re-derived independently here). Stored v1 results are checked as before.
+ */
+export const RUN_EVALUATORS_VERSION = "run-evaluators-v2.2";
 
 const ok = (id: EvaluatorId, detail = "ok"): EvaluatorResult => ({ id, applicable: true, passed: true, detail });
 const fail = (id: EvaluatorId, detail: string): EvaluatorResult => ({ id, applicable: true, passed: false, detail });
@@ -279,13 +283,41 @@ function frontierResultConsistency(r: AgentAnalysisResult): EvaluatorResult {
   const byKey = new Map(r.territories.map((t) => [t.key, t]));
   for (const f of r.comparisonSetConstruction.final) if (byKey.get(f.key)?.analysisRoute === "INSUFFICIENT_EVIDENCE") problems.push(`${f.key}: in the final set but INSUFFICIENT`);
   const pool = r.comparisonSetConstruction.candidatePool ?? [];
-  for (let i = 1; i < pool.length; i += 1) {
+  const rule = r.comparisonSetConstruction.candidatePoolRule;
+  if (rule === "frontier-pool/v2") {
+    const expected = poolV2Order(pool);
+    const at = pool.findIndex((p, i) => p.canonicalConceptKey !== expected[i]);
+    if (at >= 0) problems.push(`candidate pool not in frontier-pool/v2 order at ${pool[at]!.canonicalConceptKey}`);
+  } else if (rule !== undefined) problems.push(`unknown candidate pool rule ${rule}`);
+  else for (let i = 1; i < pool.length; i += 1) {
     const a = pool[i - 1]!;
     const b = pool[i]!;
     if (a.support < b.support || (a.support === b.support && a.canonicalConceptKey.localeCompare(b.canonicalConceptKey) > 0)) problems.push(`candidate pool not in stable order at ${b.canonicalConceptKey}`);
   }
   if (new Set(pool.map((p) => p.canonicalConceptKey)).size !== pool.length) problems.push("candidate pool repeats a canonical key");
   return problems.length === 0 ? ok("FRONTIER_RESULT_CONSISTENCY", "frontier routes, statuses, final set and pool are consistent") : fail("FRONTIER_RESULT_CONSISTENCY", problems.slice(0, 4).join("; "));
+}
+
+/**
+ * frontier-pool/v2 order, re-derived from the recorded entries (an independent implementation of the rule, not the
+ * runtime's): taxonomy concepts with support ≥ 2 interleaved by facet (facets by best support, then name), then the
+ * rest by support with a taxonomy concept before a free keyword at equal support. Canonical key breaks every tie.
+ */
+function poolV2Order(pool: NonNullable<AgentAnalysisResult["comparisonSetConstruction"]["candidatePool"]>): string[] {
+  const keyword = (p: (typeof pool)[number]) => p.facetRole === "DESCRIPTIVE_KEYWORD";
+  const strong = pool.filter((p) => !keyword(p) && p.support >= 2).sort((a, b) => b.support - a.support || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey));
+  const lanes: (typeof pool)[] = [];
+  const laneOf = new Map<string, (typeof pool)>();
+  for (const p of strong) {
+    const facet = p.facet ?? "";
+    if (!laneOf.has(facet)) { laneOf.set(facet, []); lanes.push(laneOf.get(facet)!); }
+    laneOf.get(facet)!.push(p);
+  }
+  lanes.sort((a, b) => b[0]!.support - a[0]!.support || a[0]!.canonicalConceptKey.localeCompare(b[0]!.canonicalConceptKey) || (a[0]!.facet ?? "").localeCompare(b[0]!.facet ?? ""));
+  const order: string[] = [];
+  for (let round = 0; lanes.some((l) => l.length > round); round += 1) for (const lane of lanes) if (lane[round]) order.push(lane[round]!.canonicalConceptKey);
+  const rest = pool.filter((p) => keyword(p) || p.support < 2).sort((a, b) => b.support - a.support || Number(keyword(a)) - Number(keyword(b)) || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey));
+  return [...order, ...rest.map((p) => p.canonicalConceptKey)];
 }
 
 export function evaluateRun(response: AgentRunResponse): EvaluatorResult[] {

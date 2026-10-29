@@ -16,7 +16,7 @@
  * validator's reasons (no generic self-reflection). When no material evidence gap remains and the model
  * still proposes nothing acceptable, the runtime analyzes the ready territories itself.
  */
-import type { AgentDecisionTrace, AgentRunResponse, AgentTrace, InvestigationLink } from "@cultural-elasticity/shared";
+import type { AgentDecisionTrace, AgentRunResponse, AgentTrace, DiscoverySeed, InvestigationLink } from "@cultural-elasticity/shared";
 import { runAnalysis } from "./analysis-runner.js";
 import { applyConceptDedup } from "./concept-dedup.js";
 import { buildDecisionContext, contextSize } from "./context.js";
@@ -65,6 +65,8 @@ export type RunOptions = {
   expectedBrandId?: string;
   /** Sprint 9O: server-held baseline grounding for the investigated direction. */
   territoryGrounding?: TerritoryGrounding;
+  /** Sprint 10A: server-held baseline-scan seeds for an explore run (observations, never support). */
+  discoverySeeds?: DiscoverySeed[];
   link?: InvestigationLink;
   signal?: AbortSignal;
   spend?: SpendBound;
@@ -111,6 +113,7 @@ export class AgentRuntime {
     const state = createRunState(request, this.deps.model.info, { name: this.deps.provider.name, mode: this.deps.provider.mode, evidenceSource: this.deps.provider.evidenceSource }, limits);
     state.expectedBrandId = options.expectedBrandId ?? null;
     state.territoryGrounding = options.territoryGrounding ?? null;
+    if (options.discoverySeeds?.length) state.discoverySeeds = options.discoverySeeds.map((seed) => ({ ...seed }));
     state.feasibilityPolicy = this.deps.feasibilityPolicy ?? "enforce";
     if (options.link) {
       state.link = options.link;

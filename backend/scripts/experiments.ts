@@ -20,7 +20,8 @@ export type EffortExperimentConfig = {
     toolBudgets: "frozen";
     qlooFixtures: "evals/fixtures/synthetic/agent/world.json";
     methodology: "elasticity-v0.1";
-    evaluators: "run-evaluators-v2.1";
+    /** Sprint 10A: v2.2 scores every pre-10A result exactly as v2.1 (their pools carry no rule); outputs record the version used. */
+    evaluators: "run-evaluators-v2.2";
     maxIterations: number;
   };
   measures: readonly string[];
@@ -37,7 +38,7 @@ export const EFFORT_EXPERIMENT: EffortExperimentConfig = {
     toolBudgets: "frozen",
     qlooFixtures: "evals/fixtures/synthetic/agent/world.json",
     methodology: "elasticity-v0.1",
-    evaluators: "run-evaluators-v2.1",
+    evaluators: "run-evaluators-v2.2",
     maxIterations: 12,
   },
   measures: [
