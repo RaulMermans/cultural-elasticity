@@ -180,7 +180,7 @@ The rule is therefore kept as load-bearing.
 | `pnpm check:secrets` | pass |
 | `E2E_MODE=production pnpm test:e2e` | 58/58 pass (synthetic job API; `docs/` untouched) |
 | `pnpm smoke:offline` | `OFFLINE_SMOKE_PASS` |
-| `pnpm smoke:docker` | **NOT_RUN**: no local Docker daemon. The PR's CI `docker` job is the check. |
+| `pnpm smoke:docker` | NOT_RUN locally (no Docker daemon); the CI `docker` job on PR #47 passed (run 40909549775), as did CI `verify` and `e2e` |
 
 `pnpm eval:live` checks recorded captures only; it is not a live Qloo run.
 
@@ -204,7 +204,7 @@ The rule is therefore kept as load-bearing.
 - **Same-brand comparison presentation (Workstream G)** relies on the existing ranked list in the reading, plus the card's comparison-scope sentence. No new comparison view was built.
 - **Pre-existing:** a reference exemplar may also be a member of the target's tag pool (seen in the first fixture). No rule forbids it, and it is not changed here.
 - **Older results** (no `comparisonFeasibility`) get route-based reasons and no `repeat` advice.
-- **Docker smoke** was not run locally.
+- **Docker smoke** was not run locally; it passed in CI on PR #47.
 
 ## 7. Safety and spending
 
