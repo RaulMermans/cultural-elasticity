@@ -29,7 +29,9 @@ describe("SYNTHETIC baseline handoff", () => {
   it("keeps a SYNTHETIC user proposal separate from baseline evidence", () => {
     const prepared = buildProposedInvestigationRequest(result(), "Ritual hospitality");
     expect(prepared).toMatchObject({ version: "ce-deep-investigation/0.2", brand: { qlooId: "syn-brand-1" }, territory: { name: "Ritual hospitality", canonicalConcept: "UNVERIFIED" }, evidence: [] });
-    expect(prepared.agentRequest).toMatchObject({ intent: "analyze_move", researchMode: "single_hypothesis_v1", territories: ["Ritual hospitality"] });
+    expect(prepared.agentRequest).toMatchObject({ intent: "analyze_move", territories: ["Ritual hospitality"] });
+    // Sprint 9L: comparative, so the direction can be measured rather than left inconclusive.
+    expect(prepared.agentRequest).not.toHaveProperty("researchMode");
     expect(prepared.objective).toContain("Investigate whether");
   });
 

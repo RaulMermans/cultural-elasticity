@@ -7,7 +7,7 @@ import { elasticityVerdict } from "@/lib/elasticity-verdict";
 import { evidenceTerm } from "@/lib/evidence-presentation";
 import type { JobActivity } from "@/lib/job-envelope";
 import { hypothesisOutcomeCopy } from "@/lib/research-copy";
-import { BRAND_NODE, branchDirection, bridgeId, buildNetwork, layoutWithBridges, lineageOf, territoryAncestor, type Bridge, canRetry, directionNodeId, inquiryNodeId, isPending, normName, type Inquiry, type NetworkNode } from "@/lib/research-network";
+import { BRAND_NODE, measureQuestion, branchDirection, bridgeId, buildNetwork, layoutWithBridges, lineageOf, territoryAncestor, type Bridge, canRetry, directionNodeId, inquiryNodeId, isPending, normName, type Inquiry, type NetworkNode } from "@/lib/research-network";
 import { buildResearchView, type ConnectionView, type DirectionView, type ResearchView } from "@/lib/research-view";
 import { NetworkBoard, type BoardInset } from "./NetworkBoard";
 
@@ -16,6 +16,8 @@ const BOARD_INSET: BoardInset = { top: 64, right: 430, bottom: 150, left: 70 };
 import { useResearchNetwork } from "./use-research-network";
 import { useResearchLayout } from "./use-research-layout";
 import { TerritoryReadingView } from "./TerritoryReading";
+import { AskAboutTag, TagButton, TagChip } from "./TagChip";
+import { draftQuestion, type TagKind } from "@/lib/tag-question";
 import { territoryReading } from "@/lib/territory-reading";
 import { buildNetworkReport } from "@/lib/network-report";
 import { downloadReportHtml, downloadReportPdf } from "@/lib/report-download";
@@ -43,8 +45,8 @@ function ElasticityBlock({ elasticity, brand, pending, investigated, onMeasure, 
         <p className="rn-elasticity__label">{elasticity.label} <span className="quiet">(provisional)</span></p>
         <p className="rn-verdict" data-testid="network-verdict"><strong>In short:</strong> {verdict!.headline}</p>
         {verdict!.lines.length ? <ul>{verdict!.lines.map((line) => <li key={line}>{line}</li>)}</ul> : null}
-      </> : <p className="quiet">{pending ? "Being measured by the investigation." : investigated ? "Not measured by this investigation. A degree of elasticity needs a comparison with other territories from the same Qloo evidence." : "Not measured yet. Elasticity is only measured by an investigation, from Qloo evidence compared within one set."}</p>}
-      {!elasticity && !pending && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure}>Measure it: compare with territories you name</button> : null}
+      </> : <p className="quiet">{pending ? "Being measured by the investigation." : investigated ? "Not measured by this investigation yet. A degree of elasticity needs a comparison with other territories from the same Qloo evidence; measure it below." : "Not measured yet. Elasticity is only measured by an investigation, from Qloo evidence compared within one set."}</p>}
+      {!elasticity && !pending && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure} data-testid="network-measure">Measure it with a Qloo comparison</button> : null}
     </div>
   );
 }
@@ -69,7 +71,7 @@ function SharedAcross({ links, selectedId, byId, onSelect }: { links: CrossLink[
       return <li key={other.id}>
         <button type="button" className="rn-link" onClick={() => onSelect(other.id)}>{other.label}</button>
         <button type="button" className="rn-open-tie" onClick={() => onSelect(bridgeId(link.a, link.b))}>Explore this connection</button>
-        <ul className="rr-chips">{link.shared.slice(0, 6).map((item) => <li key={item.id} data-kind={item.kind} title={KIND_WORD[item.kind]}>{item.label}</li>)}</ul>
+        <ul className="rr-chips">{link.shared.slice(0, 6).map((item) => <TagChip key={item.id} label={item.label} kind={item.kind === "example" ? "entity" : "concept"} dataKind={item.kind} title={KIND_WORD[item.kind]} />)}</ul>
       </li>;
     })}</ul>
   </section>;
@@ -91,7 +93,7 @@ function ConnectionDossier({ node, link, byId, brand, inquiries, canAsk, busy, o
       {b ? <button type="button" className="rn-end" onClick={() => onSelect(b.id)}>{b.label}</button> : null}
     </div>
     {link?.shared.length ? <div className="rr-section"><h3>What they share</h3><p className="rr-hint">The same Qloo concept, taste signal or example entity appears in both.</p>
-      <ul className="rr-chips">{link.shared.map((item) => <li key={item.id} data-kind={item.kind} title={KIND_WORD[item.kind]}>{item.label}</li>)}</ul></div> : null}
+      <ul className="rr-chips">{link.shared.map((item) => <TagChip key={item.id} label={item.label} kind={item.kind === "example" ? "entity" : "concept"} dataKind={item.kind} title={KIND_WORD[item.kind]} />)}</ul></div> : null}
     {inquiries.length ? <><h3>Explored from this connection</h3><ul className="rn-links">{inquiries.map((item) => <li key={item.jobId}><button type="button" className="rn-link" onClick={() => onSelect(inquiryNodeId(item.jobId))}>{item.question}</button></li>)}</ul></> : null}
     {suggestions.length ? <div className="rr-section" data-testid="network-connection-questions"><h3>Questions to explore it</h3>
       <ul className="rn-suggest">{suggestions.map((item) => <li key={item.question}>
@@ -132,9 +134,9 @@ function BrandDossier({ view, onSelect }: { view: ResearchView; onSelect: (id: s
     <h2>{view.brand.name}</h2>
     <p>{view.outcome.headline}</p>
     <p className="quiet">{view.outcome.detail}</p>
-    {view.core.categories.length ? <><h3>What the brand is, per Qloo</h3><p>{view.core.categories.map((item) => item.name).join(", ")}</p></> : null}
-    {view.tasteTags.length ? <><h3>Taste signals</h3><p>{view.tasteTags.slice(0, 10).map((item) => item.name).join(", ")}</p></> : null}
-    {view.collections.filter((collection) => collection.items.length).map((collection) => <div key={collection.domain}><h3>{collection.title}</h3><p>{collection.items.slice(0, 6).map((item) => item.name).join(", ")}</p></div>)}
+    {view.core.categories.length ? <><h3>What the brand is, per Qloo</h3><ul className="rr-chips">{view.core.categories.map((item) => <TagChip key={item.key} label={item.name} kind="concept" />)}</ul></> : null}
+    {view.tasteTags.length ? <><h3>Taste signals</h3><ul className="rr-chips">{view.tasteTags.slice(0, 10).map((item) => <TagChip key={item.key} label={item.name} kind="concept" />)}</ul></> : null}
+    {view.collections.filter((collection) => collection.items.length).map((collection) => <div key={collection.domain}><h3>{collection.title}</h3><ul className="rr-chips">{collection.items.slice(0, 6).map((item) => <TagChip key={item.key} label={item.name} kind={item.kind === "tag" ? "concept" : "entity"} />)}</ul></div>)}
     <h3>Directions found</h3>
     {view.directions.length ? <ul className="rn-links">{view.directions.map((direction) => <li key={direction.key}><button type="button" className="rn-link" onClick={() => onSelect(directionNodeId(direction.key))}>{direction.name}</button></li>)}</ul>
       : <p className="quiet">No direction had enough evidence. Ask a question below to explore.</p>}
@@ -274,7 +276,7 @@ function DirectionDossier({ view, direction, inquiries, canInvestigate, busy, on
     <p>{direction.why}</p>
     <h3>Its cultural fingerprint</h3>
     <p>{direction.signals.join("; ")}. {direction.strength}.</p>
-    {connections.length ? <><h3>Connections behind it</h3><ul>{connections.map((item) => <li key={item.key}><strong>{item.name}</strong> <span className="quiet">{item.contextLine}</span></li>)}</ul></> : null}
+    {connections.length ? <><h3>Connections behind it</h3><ul>{connections.map((item) => <li key={item.key}><TagButton label={item.name} kind={item.kind === "tag" ? "concept" : "entity"} /> <span className="quiet">{item.contextLine}</span></li>)}</ul></> : null}
     {latest ? <Reading result={latest.response?.investigation?.result} territoryKey={branchTerritory(latest.response, direction.name)?.territoryKey ?? null} brand={view.brand.name} pending={running} investigated />
       : <ElasticityBlock elasticity={null} brand={view.brand.name} pending={running} />}
     <h3>Still unknown</h3>
@@ -375,12 +377,14 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   }, [selectedId, byId]);
 
   /**
-   * A comparison within one Qloo call is what measures elasticity. The user names the reference territories: guessed
-   * references (baseline tags) often do not resolve as Qloo concepts, and the comparison then measures nothing.
+   * A comparison within one Qloo call is what measures elasticity. One click asks the follow-up that can measure it
+   * (`measureQuestion`); only when there is nothing concrete to propose does the user name the references.
    */
   const composerRef = useRef<HTMLInputElement>(null);
-  const measureFor = (label: string) => {
+  const measureFor = (label: string, result?: AgentRunResponse | null) => {
     if (!live) return undefined;
+    const question = measureQuestion(view.brand.name, label, result, view.directions.map((direction) => direction.name));
+    if (question) return () => void open(network.ask(question, askFrom));
     return () => {
       setQuestion(`Compare ${label} with `);
       composerRef.current?.focus();
@@ -456,10 +460,10 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
       if (byId.has(finding)) return finding;
       return ends.find((end) => normName(byId.get(end)?.label ?? "") === normName(name)) ?? null;
     };
-    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} locate={locate} onSelect={setSelectedId} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
+    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} locate={locate} onSelect={setSelectedId} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question, inquiry.response?.investigation?.result)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
   } else if (selected.kind === "finding") {
     const parentInquiry = inquiryOf(selected);
-    dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateTerritory(selected.label, selected.id)} onMeasure={measureFor(selected.label)} />;
+    dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateTerritory(selected.label, selected.id)} onMeasure={measureFor(selected.label, parentInquiry?.response?.investigation?.result)} />;
   } else {
     dossier = <BrandDossier view={view} onSelect={setSelectedId} />;
   }
@@ -480,7 +484,13 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     dossier = <>{dossier}<DeleteBranch key={selected.id} count={cards} running={running} onDelete={() => { setSelectedId(selected.parentId ?? BRAND_NODE); network.forgetMany(jobIds); }} /></>;
   }
 
+  const draftAbout = (topic: string, kind: TagKind) => {
+    setQuestion(draftQuestion(view.brand.name, topic, kind));
+    composerRef.current?.focus();
+  };
+
   return (
+    <AskAboutTag.Provider value={live ? draftAbout : null}>
     <section className="rn" aria-labelledby="rn-title" data-testid="research-network">
       <header className="rn-header">
         <div>
@@ -501,7 +511,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
         <NetworkBoard nodes={nodes} positions={positions} links={links} selectedId={selected.id} onSelect={setSelectedId}
           onMove={(id, dx, dy, origin) => layout.move(branchOf(nodes, id), origin, dx, dy)} onTidy={layout.reset} moved={layout.moved} label={`Research network for ${view.brand.name}`} inset={BOARD_INSET} />
         <ul className="rn-legend" aria-label="Legend">
-          <li data-tone="brand">Brand</li><li data-tone="hypothesis">Direction</li><li data-tone="running">Agent investigating</li><li data-tone="supported">Worth pursuing</li><li data-tone="partial">Inconclusive or partial</li><li data-tone="unsupported">Not supported or not run</li><li data-tone="cross">Shares Qloo signals across branches</li>
+          <li data-tone="brand">Brand</li><li data-tone="hypothesis">Direction</li><li data-tone="running">Agent investigating</li><li data-tone="supported">Worth pursuing</li><li data-tone="partial">Not measured yet or partial</li><li data-tone="unsupported">Not supported or not run</li><li data-tone="cross">Shares Qloo signals across branches</li>
         </ul>
         <p className="rn-note">Drag to move, scroll to zoom. Lines show what was investigated from what; distance on the board is not cultural distance.</p>
         <aside className="rn-dossier" aria-live="polite" data-testid="network-dossier">{dossier}</aside>
@@ -518,5 +528,6 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
         </form>
       </div>
     </section>
+    </AskAboutTag.Provider>
   );
 }

@@ -116,7 +116,8 @@ describe("REAL POSTGRES synthetic baseline durability", () => {
       const headers = { "x-ce-internal-auth": "synthetic-secret-for-backend-test-12345", "x-baseline-token": accessToken };
       const preview = await app.inject({ method: "POST", url: "/api/agent/handoff/preview", headers, payload });
       expect(preview.statusCode).toBe(200);
-      expect(preview.json()).toMatchObject({ version: "ce-deep-investigation/0.2", evidence: [], territory: { name: "Ritual hospitality", canonicalConcept: "UNVERIFIED" }, agentRequest: { researchMode: "single_hypothesis_v1" } });
+      expect(preview.json()).toMatchObject({ version: "ce-deep-investigation/0.2", evidence: [], territory: { name: "Ritual hospitality", canonicalConcept: "UNVERIFIED" }, agentRequest: { intent: "analyze_move" } });
+      expect(preview.json().agentRequest).not.toHaveProperty("researchMode");
       expect((await app.inject({ method: "POST", url: "/api/agent/handoff/preview", headers: { ...headers, "x-baseline-token": "wrong-token" }, payload })).statusCode).toBe(404);
       const blocked = await app.inject({ method: "POST", url: "/api/agent/handoff/jobs", headers, payload });
       expect(blocked.statusCode).toBe(503);

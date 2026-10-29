@@ -1,12 +1,13 @@
 "use client";
 
 import { FIT_STEPS, type TerritoryReading } from "@/lib/territory-reading";
+import { TagChip } from "./TagChip";
 
 function Chips({ title, hint, items }: { title: string; hint: string; items: string[] }) {
   return <div className="rr-section">
     <h3>{title}</h3>
     <p className="rr-hint">{hint}</p>
-    <ul className="rr-chips">{items.map((item) => <li key={item}>{item}</li>)}</ul>
+    <ul className="rr-chips">{items.map((item) => <TagChip key={item} label={item} kind="entity" />)}</ul>
   </div>;
 }
 
@@ -23,7 +24,7 @@ export function TerritoryReadingView({ reading, brand, onMeasure, busy }: { read
       </ol> : null}
       {fit && !fit.onScale ? <p className="rr-offscale">Not placed on the scale until the evidence settles.</p> : null}
       {reading.steadiness ? <p className="rr-steady" data-steady={reading.steadiness.steady ? "true" : "false"}>{reading.steadiness.text}</p> : null}
-      {!fit && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure}>Measure it: compare with territories you name</button> : null}
+      {!fit && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure} data-testid="network-measure">Measure it with a Qloo comparison</button> : null}
     </div>
 
     {reading.compared.length > 1 ? <div className="rr-section">

@@ -54,17 +54,30 @@ test("SYNTHETIC research opens as a network: brand, directions, a direction doss
   expect([...calls.handoffs, ...calls.questions]).toEqual([]);
 });
 
+test("SYNTHETIC tapping a tag drafts a question about it into the composer and sends nothing", async ({ page }) => {
+  const calls = await stubLive(page);
+  await startLarkspur(page);
+  await page.getByTestId("network-dossier").getByTestId("tag-chip").filter({ hasText: "Slow Touring" }).first().click();
+  await expect(page.getByLabel(/Ask a research question about/u)).toHaveValue("How far can Larkspur Velo extend into Slow Touring?");
+  await expect(page.getByLabel(/Ask a research question about/u)).toBeFocused();
+  expect([...calls.handoffs, ...calls.questions]).toEqual([]);
+});
+
 test("SYNTHETIC investigating a direction attaches the agent's validated result to it", async ({ page }) => {
   const calls = await stubLive(page);
   await startLarkspur(page);
   await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
   await page.getByTestId("network-investigate").click();
   await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
-  await expect(page.getByTestId("network-dossier")).toContainText("Inconclusive");
+  await expect(page.getByTestId("network-dossier")).toContainText("Not measured yet");
   expect(calls.handoffs).toHaveLength(1);
   const body = calls.handoffs[0] as Record<string, unknown>;
   expect(Object.keys(body).sort()).toEqual(["idempotencyKey", "scanId", "territoryId"]);
   expect(page.url()).not.toContain("syn-token");
+  // Sprint 9L: an unmeasured reading offers one click that can measure it; nothing is left inconclusive without a next step.
+  await page.getByTestId("network-measure").click();
+  await expect(page.getByTestId("network-node-inquiry")).toHaveCount(2);
+  expect((calls.questions.at(-1) as { query: string }).query).toBe("How far can Larkspur Velo extend into Slow Touring?");
 });
 
 test("SYNTHETIC a question from the composer names the brand; a follow-up carries only its run context", async ({ page }) => {
@@ -208,7 +221,7 @@ test("SYNTHETIC a branch is removed only after a second confirmation, and a kept
   await startLarkspur(page);
   await page.getByLabel(/Ask a research question about/u).fill("How far can Larkspur Velo extend into Gravel Riding?");
   await page.getByRole("button", { name: "Ask the agent" }).click();
-  await expect(page.getByTestId("network-dossier")).toContainText("Inconclusive");
+  await expect(page.getByTestId("network-dossier")).toContainText("Not measured yet");
   // The server forgets the job; the answer already kept in this browser stays.
   await page.route("**/api/agent/jobs/*", (route) => json(route, { error: "not_found" }, 404));
   await page.reload();

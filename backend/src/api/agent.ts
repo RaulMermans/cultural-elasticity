@@ -307,7 +307,11 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       } else return reply.code(400).send({ error: "invalid_job_request", message: "The question could not be accepted." });
       return enqueue(jobRequest, reply);
     });
-    /** Structured baseline handoff. The client cannot provide brand, evidence, objective, tools or budgets. */
+    /**
+     * Structured baseline handoff. The client cannot provide brand, evidence, objective, tools or budgets.
+     * Sprint 9L: a direction is investigated comparatively (the runtime builds its own Qloo-validated reference set),
+     * so it can be placed and classed; the single-hypothesis check could only ever say "inconclusive" for thin evidence.
+     */
     const handoff = async (request: FastifyRequest<{ Body: unknown }>, reply: FastifyReply, execute: boolean) => {
       if (rejectUnauthenticated(request, reply)) return;
       const parsed = handoffBody.safeParse(request.body);
@@ -329,7 +333,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         if (!prior || typeof prior !== "object" || !("jobId" in prior)) return reply.code(409).send({ error: "idempotency_unavailable" });
         return reply.code(200).send(prior);
       }
-      const body = queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "analyze_move", territories: [prepared.territory.name], researchMode: "single_hypothesis_v1" });
+      const body = queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "analyze_move", territories: [prepared.territory.name] });
       const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId }, reply));
       handoffJobs.set(key, { directionKey: prepared.territory.id, pending });
       if (handoffJobs.size > 200) handoffJobs.delete(handoffJobs.keys().next().value!);
