@@ -10,11 +10,18 @@ Cultural Elasticity
 
 ## Tagline (one sentence)
 
-Find out how far a brand can stretch into a new territory before it stops feeling like itself, measured with Qloo's cultural evidence rather than guessed by an LLM.
+Discover the unexpected. Validate with cultural intelligence: find the cultural directions a brand's audience already leans toward, then test them with Qloo evidence instead of an LLM's guess.
 
 ## Short description
 
-Cultural Elasticity is a cultural research tool for brand and insights teams. Enter a brand and Qloo maps its cultural fingerprint. Pick a territory, or ask a question such as "How far can Crocs extend into fine dining?". A Claude agent then plans a bounded investigation with Qloo tools. Deterministic code places the territory against Qloo-validated alternatives as a **Natural fit**, **Credible stretch** or **Cultural break**. When the evidence is too thin to call, it says **Not settled**. Every number traces back to the Qloo call it came from.
+Cultural Elasticity is a discovery-first research tool for brand and insights teams. Enter a brand and Qloo maps its cultural fingerprint: the artists, places, films, books and tastes its audience shares, which often point somewhere the brand team would not have looked. Pick one of those directions, or ask a question such as "How far can Crocs extend into fine dining?". A Claude agent then plans a bounded investigation with Qloo tools. Deterministic code places the territory against Qloo-validated alternatives as a **Natural fit**, **Credible stretch** or **Cultural break**. When the evidence is too thin to call, it says **Not settled**. Each reading ends in a decision card covering four things:
+
+- what was found;
+- why it matters;
+- what is still uncertain;
+- what to research next.
+
+Every number traces back to the Qloo call it came from.
 
 ## Links
 
@@ -63,6 +70,17 @@ Cultural Elasticity turns the question "can our brand credibly go there?" into a
    | Not settled | Robustness too low, or evidence too thin |
 
    Each reading also shows how steady the result is, the tastes the territory shares with the brand, Qloo's closest matches, and what evidence is missing.
+
+   A **decision card** turns this into a research decision. It has six parts:
+
+   - the finding;
+   - why the direction is interesting;
+   - the supporting Qloo evidence;
+   - the uncertainty;
+   - a cautious strategic implication;
+   - up to two next actions.
+
+   The card is computed from the result by code, and the exported report prints the same card.
 4. **Keep and share.** You can compare territories for the same brand, export a deterministic HTML or PDF report, and save the research to reopen later.
 
 ### Who it is for
@@ -102,6 +120,7 @@ Every Qloo-derived number keeps the correlation ID of its call. If Qloo cannot s
   Code owns state, budgets, retries, validation, sufficiency and stopping.
 - **No invented numbers.** Position, robustness and class are computed by deterministic, tested code. Each claim the model writes passes a claim validator, or a deterministic template replaces it.
 - **Bounded and honest probing.** At most 3 empty entity types per concept. A failed or timed-out Qloo call is never treated as evidence. A weak territory panel is never forced through: an honest partial result beats a misleading full one.
+- **Measurement-first feasibility.** Before spending calls on a comparison, the runtime checks whether that comparison can still be completed from the evidence in hand. It prefers reference territories that Qloo has already shown on entities of the right type, and it stops probing references that cannot change the outcome.
 
 ### Technical implementation
 
