@@ -54,6 +54,8 @@ export type AgentRuntimeDeps = {
   store?: RunStore;
   /** Sprint 9N: comparison-feasibility policy for new runs (default "enforce"; "observe" is the Sprint 9M control flow). */
   feasibilityPolicy?: "enforce" | "observe";
+  /** Sprint 9O: false turns the runtime reference search off (the competence evaluation's matched "before" arm). */
+  referenceDiscovery?: boolean;
 };
 
 /** Sprint 5B.1: a gate-approved interpretation and the run's parent-child link (both optional). */
@@ -192,7 +194,7 @@ export class AgentRuntime {
         }
 
         // Sprint 9O: the runtime's own reference search, once, before the model chooses references (reference-discovery.ts).
-        if (await runReferenceDiscovery(state, this.registry, this.deps.provider, this.skills)) continue;
+        if (this.deps.referenceDiscovery !== false && (await runReferenceDiscovery(state, this.registry, this.deps.provider, this.skills))) continue;
 
         state.usage.iterations += 1;
         state.turnOpen = true;
