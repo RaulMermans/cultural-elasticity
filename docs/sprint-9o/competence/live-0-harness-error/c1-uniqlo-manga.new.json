@@ -1,0 +1,1881 @@
+{
+  "schemaVersion": "ce-agent-result/0.3",
+  "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+  "status": "COMPLETE",
+  "finalSufficiency": "INSUFFICIENT",
+  "intent": "analyze_move",
+  "userQuery": "How far can Uniqlo extend into manga?",
+  "brand": null,
+  "territories": [
+    {
+      "key": "manga",
+      "label": "manga",
+      "role": "target",
+      "origin": "user",
+      "rationale": "named by the user",
+      "resolvedConcept": null,
+      "representation": {
+        "strategy": "UNSUPPORTED",
+        "entityType": null,
+        "exemplars": [],
+        "rejectedExemplars": [],
+        "diversity": "unknown",
+        "diversityDetail": "no exemplars",
+        "attempts": 0,
+        "summary": "no Qloo concept anchors this territory",
+        "failure": {
+          "code": "TERRITORY_UNRESOLVED",
+          "detail": "no Qloo concept was anchored"
+        }
+      },
+      "keyEvidence": [
+        "No measurable evidence: no Qloo concept was anchored."
+      ],
+      "analysisRoute": "INSUFFICIENT_EVIDENCE",
+      "capabilities": {
+        "representation": "UNSUPPORTED",
+        "relativePosition": "UNAVAILABLE",
+        "robustness": "UNAVAILABLE",
+        "coherence": "UNAVAILABLE",
+        "conditionedEvidence": "UNAVAILABLE",
+        "classification": "UNAVAILABLE"
+      },
+      "comparisonSet": null,
+      "relativePosition": null,
+      "robustness": null,
+      "coherence": null,
+      "conditionedEvidence": null,
+      "evidenceQuality": null,
+      "classification": null,
+      "limitations": [
+        {
+          "code": "NOT_INVESTIGATED",
+          "detail": "manga: the agent did not analyze this territory"
+        }
+      ],
+      "provenance": {
+        "correlationIds": [],
+        "sources": []
+      },
+      "candidate": {
+        "originalLabel": "manga",
+        "sourceTagId": null,
+        "resolvedId": null,
+        "canonicalConceptKey": "manga",
+        "normalizationReason": "LABEL_NORMALIZED",
+        "candidateSource": "user",
+        "anchorRelation": "NO_SOURCE_TAG",
+        "uncertainty": null
+      },
+      "evidenceStatus": "UNSUPPORTED"
+    }
+  ],
+  "methodologyRuns": [],
+  "summary": {
+    "text": "The results do not establish how far manga can be extended into, because no Qloo concept was anchored to the manga territory. No relative position, robustness, or classification was produced, and no comparison set exists. The run is insufficient for a move assessment, and it cannot say anything about cultural fit or the scope of any extension.\nmanga: The manga route is INSUFFICIENT_EVIDENCE, so no measurable cultural position is available for this territory. No Qloo concept anchors manga and representation is unsupported, so the territory cannot be placed against any comparison set.",
+    "source": "model",
+    "claimValidation": {
+      "passed": true,
+      "violations": []
+    }
+  },
+  "followUpOptions": [
+    "Which Qloo concepts could anchor the manga territory?",
+    "What comparison territories could be set against manga for this analysis?",
+    "Which other territories are associated with manga in Qloo?"
+  ],
+  "limitations": [
+    {
+      "code": "NOT_A_SUCCESS_PREDICTION",
+      "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+    },
+    {
+      "code": "NO_APPROVED_SCORE",
+      "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+    }
+  ],
+  "evidenceOrigin": "live",
+  "model": {
+    "id": "claude-haiku-5-5",
+    "kind": "llm",
+    "live": true,
+    "effort": "high"
+  },
+  "trace": {
+    "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+    "intent": "analyze_move",
+    "userQuery": "How far can Uniqlo extend into manga?",
+    "interpretedRequest": {
+      "intent": "analyze_move",
+      "brand": "Uniqlo",
+      "territories": [
+        "manga"
+      ]
+    },
+    "model": {
+      "id": "claude-haiku-5-5",
+      "kind": "llm",
+      "live": true,
+      "effort": "high"
+    },
+    "toolProvider": {
+      "name": "caching:qloo-mcp",
+      "mode": "live"
+    },
+    "limits": {
+      "maxAgentIterations": 12,
+      "maxRepresentationAttemptsPerTerritory": 3,
+      "maxCandidateTerritories": 6,
+      "maxExemplarsPerTerritory": 3,
+      "maxRetryPerToolCall": 1,
+      "maxActionsPerTurn": 12,
+      "maxInvalidTurns": 2,
+      "toolTimeoutMs": 300000,
+      "maxQlooCalls": 24
+    },
+    "statusTransitions": [
+      {
+        "iteration": 0,
+        "from": "INTAKE",
+        "to": "PLANNING",
+        "reason": "request validated"
+      },
+      {
+        "iteration": 1,
+        "from": "PLANNING",
+        "to": "RESOLVING",
+        "reason": "evidence changed the working phase"
+      },
+      {
+        "iteration": 6,
+        "from": "RESOLVING",
+        "to": "COMPLETE",
+        "reason": "evidence insufficient"
+      }
+    ],
+    "planRevisions": [
+      {
+        "iteration": 1,
+        "items": [
+          "[x] interpret the goal (intent, brand, named territories)",
+          "[ ] resolve the brand",
+          "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+          "[ ] manga: anchor to a Qloo concept",
+          "[ ] manga: discover and validate exemplars (or accept concept-only evidence)",
+          "[ ] manga: analyze",
+          "[ ] finish when deterministic sufficiency allows"
+        ],
+        "note": "no reason given"
+      }
+    ],
+    "turns": [
+      {
+        "iteration": 1,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "interpret_request",
+            "arguments": {
+              "intent": "analyze_move",
+              "brand": "Uniqlo",
+              "territories": [
+                "manga"
+              ]
+            },
+            "reasonSummary": "no reason given",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 742,
+          "outputTokens": 107,
+          "cacheReadTokens": 1815,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 1089,
+        "skills": [
+          {
+            "id": "interpret_request",
+            "version": 1
+          },
+          {
+            "id": "resolve_brand",
+            "version": 1
+          }
+        ],
+        "toolsExposed": [
+          "interpret_request",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 2355,
+        "contextTokensEstimate": 589
+      },
+      {
+        "iteration": 2,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_resolve_entity",
+            "arguments": {
+              "name": "Uniqlo",
+              "type": "brand",
+              "role": "brand"
+            },
+            "reasonSummary": "The brand must be resolved to a Qloo entity before any territory can be compared.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 1293,
+          "outputTokens": 153,
+          "cacheReadTokens": 1793,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 1201,
+        "skills": [
+          {
+            "id": "resolve_brand",
+            "version": 1
+          }
+        ],
+        "toolsExposed": [
+          "qloo_resolve_entity",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 3410,
+        "contextTokensEstimate": 853
+      },
+      {
+        "iteration": 3,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_resolve_entity",
+            "arguments": {
+              "name": "Uniqlo",
+              "type": "brand",
+              "role": "brand"
+            },
+            "reasonSummary": "The previous brand resolution failed on a transport/ledger error before any request was sent, so the brand must be resolved again.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 1315,
+          "outputTokens": 260,
+          "cacheReadTokens": 1793,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 2442,
+        "skills": [
+          {
+            "id": "resolve_brand",
+            "version": 1
+          }
+        ],
+        "toolsExposed": [
+          "qloo_resolve_entity",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 3445,
+        "contextTokensEstimate": 862
+      },
+      {
+        "iteration": 4,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_resolve_entity",
+            "arguments": {
+              "name": "Uniqlo",
+              "type": "brand",
+              "role": "brand"
+            },
+            "reasonSummary": "The previous brand resolution failed on a transport/ledger error without sending, so the brand must be resolved before any comparison.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 1315,
+          "outputTokens": 272,
+          "cacheReadTokens": 1793,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 2012,
+        "skills": [
+          {
+            "id": "resolve_brand",
+            "version": 1
+          }
+        ],
+        "toolsExposed": [
+          "qloo_resolve_entity",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 3444,
+        "contextTokensEstimate": 861
+      },
+      {
+        "iteration": 5,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_resolve_entity",
+            "arguments": {
+              "name": "Uniqlo",
+              "type": "brand",
+              "role": "brand"
+            },
+            "reasonSummary": "The previous brand resolution failed on a transport error before anything was sent, so the brand is still unresolved and must be resolved before any comparison.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 1315,
+          "outputTokens": 307,
+          "cacheReadTokens": 1793,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 2090,
+        "skills": [
+          {
+            "id": "resolve_brand",
+            "version": 1
+          }
+        ],
+        "toolsExposed": [
+          "qloo_resolve_entity",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 3444,
+        "contextTokensEstimate": 861
+      },
+      {
+        "iteration": 6,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "reasonSummary": "Retrying brand resolution, since the previous attempt failed on a transport error before any request was sent.",
+            "accepted": false,
+            "rejection": "SKILL_BUDGET_EXHAUSTED: skill resolve_brand v1 has spent its 4 Qloo calls",
+            "tool": "qloo_resolve_entity",
+            "arguments": {
+              "name": "Uniqlo",
+              "type": "brand",
+              "role": "brand"
+            }
+          }
+        ],
+        "usage": {
+          "inputTokens": 1315,
+          "outputTokens": 267,
+          "cacheReadTokens": 1793,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 3087,
+        "skills": [
+          {
+            "id": "resolve_brand",
+            "version": 1
+          }
+        ],
+        "toolsExposed": [
+          "qloo_resolve_entity",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": false,
+        "contextChars": 3444,
+        "contextTokensEstimate": 861
+      }
+    ],
+    "toolCalls": [
+      {
+        "id": "tc-1",
+        "iteration": 1,
+        "tool": "interpret_request",
+        "permission": "local_computation",
+        "arguments": {
+          "intent": "analyze_move",
+          "brand": "Uniqlo",
+          "territories": [
+            "manga"
+          ]
+        },
+        "status": "ok",
+        "summary": "intent analyze_move; brand \"Uniqlo\"; 1 named territory(ies)",
+        "qlooOperations": [],
+        "correlationIds": [],
+        "attempts": 0,
+        "latencyMs": 1,
+        "skill": {
+          "id": "interpret_request",
+          "version": 1
+        }
+      },
+      {
+        "id": "tc-2",
+        "iteration": 2,
+        "tool": "qloo_resolve_entity",
+        "permission": "read_only_external",
+        "arguments": {
+          "name": "Uniqlo",
+          "type": "brand",
+          "role": "brand"
+        },
+        "status": "failed",
+        "summary": "QLOO_TRANSPORT: Qloo transport failed for describe: RUN_LEDGER_UNAVAILABLE: the run-wide Qloo ceiling could not be recorded durably; nothing was sent",
+        "qlooOperations": [
+          "describe"
+        ],
+        "correlationIds": [],
+        "attempts": 1,
+        "latencyMs": 0,
+        "skill": {
+          "id": "resolve_brand",
+          "version": 1
+        },
+        "expectedValue": "HIGH",
+        "error": "QLOO_TRANSPORT"
+      },
+      {
+        "id": "tc-3",
+        "iteration": 3,
+        "tool": "qloo_resolve_entity",
+        "permission": "read_only_external",
+        "arguments": {
+          "name": "Uniqlo",
+          "type": "brand",
+          "role": "brand"
+        },
+        "status": "failed",
+        "summary": "QLOO_TRANSPORT: Qloo transport failed for describe: RUN_LEDGER_UNAVAILABLE: the run-wide Qloo ceiling could not be recorded durably; nothing was sent",
+        "qlooOperations": [
+          "describe"
+        ],
+        "correlationIds": [],
+        "attempts": 1,
+        "latencyMs": 4557,
+        "skill": {
+          "id": "resolve_brand",
+          "version": 1
+        },
+        "expectedValue": "HIGH",
+        "error": "QLOO_TRANSPORT"
+      },
+      {
+        "id": "tc-4",
+        "iteration": 4,
+        "tool": "qloo_resolve_entity",
+        "permission": "read_only_external",
+        "arguments": {
+          "name": "Uniqlo",
+          "type": "brand",
+          "role": "brand"
+        },
+        "status": "failed",
+        "summary": "QLOO_TRANSPORT: Qloo transport failed for describe: RUN_LEDGER_UNAVAILABLE: the run-wide Qloo ceiling could not be recorded durably; nothing was sent",
+        "qlooOperations": [
+          "describe"
+        ],
+        "correlationIds": [],
+        "attempts": 1,
+        "latencyMs": 5003,
+        "skill": {
+          "id": "resolve_brand",
+          "version": 1
+        },
+        "expectedValue": "HIGH",
+        "error": "QLOO_TRANSPORT"
+      },
+      {
+        "id": "tc-5",
+        "iteration": 5,
+        "tool": "qloo_resolve_entity",
+        "permission": "read_only_external",
+        "arguments": {
+          "name": "Uniqlo",
+          "type": "brand",
+          "role": "brand"
+        },
+        "status": "failed",
+        "summary": "QLOO_TRANSPORT: Qloo transport failed for describe: RUN_LEDGER_UNAVAILABLE: the run-wide Qloo ceiling could not be recorded durably; nothing was sent",
+        "qlooOperations": [
+          "describe"
+        ],
+        "correlationIds": [],
+        "attempts": 1,
+        "latencyMs": 4906,
+        "skill": {
+          "id": "resolve_brand",
+          "version": 1
+        },
+        "expectedValue": "HIGH",
+        "error": "QLOO_TRANSPORT"
+      },
+      {
+        "id": "tc-6",
+        "iteration": 6,
+        "tool": "qloo_resolve_entity",
+        "permission": "local_computation",
+        "arguments": {
+          "name": "Uniqlo",
+          "type": "brand",
+          "role": "brand"
+        },
+        "status": "rejected",
+        "summary": "SKILL_BUDGET_EXHAUSTED: skill resolve_brand v1 has spent its 4 Qloo calls",
+        "qlooOperations": [],
+        "correlationIds": [],
+        "attempts": 0,
+        "latencyMs": 0,
+        "error": "SKILL_BUDGET_EXHAUSTED"
+      }
+    ],
+    "resolvedEntities": [],
+    "territoryHypotheses": [
+      {
+        "key": "manga",
+        "label": "manga",
+        "role": "target",
+        "origin": "user",
+        "status": "open",
+        "rationale": "named by the user"
+      }
+    ],
+    "representations": [],
+    "sufficiency": [
+      {
+        "iteration": 0,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "interpret the request (interpret_request)"
+        ],
+        "nextActions": [
+          {
+            "action": "interpret_request",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the goal is not interpreted yet"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 1,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "resolve the brand (qloo_resolve_entity, role brand)"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_resolve_entity",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the brand is not resolved"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 2,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "resolve the brand (qloo_resolve_entity, role brand)"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_resolve_entity",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the brand is not resolved"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 3,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "resolve the brand (qloo_resolve_entity, role brand)"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_resolve_entity",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the brand is not resolved"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 4,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "resolve the brand (qloo_resolve_entity, role brand)"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_resolve_entity",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the brand is not resolved"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 5,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "resolve the brand (qloo_resolve_entity, role brand)"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_resolve_entity",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the brand is not resolved"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 6,
+        "verdict": "INSUFFICIENT",
+        "reasons": [
+          "the brand could not be resolved within the brand-resolution skill's budget"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_resolve_entity",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the brand is not resolved"
+          }
+        ],
+        "materialGap": true
+      }
+    ],
+    "representationQuality": [],
+    "conceptDedup": [],
+    "earlyStops": [
+      {
+        "iteration": 6,
+        "tool": "qloo_resolve_entity",
+        "code": "SKILL_BUDGET_EXHAUSTED",
+        "reason": "skill resolve_brand v1 has spent its 4 Qloo calls",
+        "callsAvoided": 1
+      }
+    ],
+    "skillUsage": [
+      {
+        "skill": {
+          "id": "interpret_request",
+          "version": 1
+        },
+        "turns": 1,
+        "qlooCalls": 0,
+        "toolCalls": 1
+      },
+      {
+        "skill": {
+          "id": "resolve_brand",
+          "version": 1
+        },
+        "turns": 5,
+        "qlooCalls": 4,
+        "toolCalls": 4
+      }
+    ],
+    "methodologyInvocations": [],
+    "synthesis": {
+      "source": "model",
+      "attempts": 2,
+      "violations": [],
+      "attemptDetails": [
+        {
+          "attempt": 1,
+          "accepted": false,
+          "categories": {
+            "INVALID_NAMED_ENTITY": 1
+          },
+          "violations": [
+            "followUpOptions[1]: \"Can Uniqlo\" is not a territory, concept, brand or entity in this run's state"
+          ],
+          "rejectedOutput": "{\"summary\":\"The results do not establish how far Uniqlo can extend into manga. No Qloo concept anchors the manga territory, so no comparison set, relative position, robustness reading or classification was produced. The evidence cannot say whether manga sits within or beyond Uniqlo's cultural reach, and overall sufficiency for this question is insufficient.\",\"findings\":[{\"territoryKey\":\"manga\",\"claimType\":\"representation\",\"supportingFields\":[\"representation\",\"capabilities.representation\"],\"interpretation\":\"No Qloo concept anchors manga, so its representation is unsupported and the results contain no measurable position for it.\",\"limitationCodes\":[\"NOT_INVESTIGATED\"]},{\"territoryKey\":\"manga\",\"claimType\":\"route_limitation\",\"supportingFields\":[\"route\",\"keyEvidence\"],\"interpretation\":\"The route is INSUFFICIENT_EVIDENCE, and the only key evidence records that no measurable evidence was gathered for manga.\",\"limitationCodes\":[\"NOT_INVESTIGATED\"]}],\"followUpOptions\":[\"Which manga-related concepts does Qloo associate with Uniqlo?\",\"Can Uniqlo be linked to any Qloo concept that represents manga?\",\"What manga-adjacent entities could anchor a new investigation of Uniqlo's reach?\"]}"
+        },
+        {
+          "attempt": 2,
+          "accepted": true,
+          "categories": {},
+          "violations": []
+        }
+      ]
+    },
+    "errors": [],
+    "userClarifications": [],
+    "representationPlans": [],
+    "completion": [],
+    "probeRecommendations": [],
+    "interpretationSource": "agent_turn",
+    "feasibility": [
+      {
+        "rulesVersion": "comparison-feasibility/v1",
+        "iteration": 1,
+        "target": {
+          "key": "manga",
+          "label": "manga",
+          "anchored": false,
+          "represented": false,
+          "entityType": null,
+          "validExemplars": 0
+        },
+        "compatibleEntityType": null,
+        "meaningfulTerritories": 0,
+        "requiredTerritories": 3,
+        "missingReferences": 3,
+        "pendingReferences": [],
+        "candidates": {
+          "meaningful": 0,
+          "probedWithMembers": 0,
+          "typeEvidenced": 0,
+          "unprobed": 0
+        },
+        "referenceProbes": {
+          "made": 0,
+          "empty": 0,
+          "limit": 4
+        },
+        "capacity": {
+          "turnsLeft": 11,
+          "qlooCallsLeft": 24,
+          "turnsNeeded": 0,
+          "callsNeeded": 0
+        },
+        "status": "UNCERTAIN",
+        "blocker": null,
+        "nextAction": {
+          "action": "qloo_resolve_entity",
+          "detail": "resolve the brand before anything can be compared"
+        },
+        "stopReasons": [],
+        "repeat": "MAY_CHANGE"
+      }
+    ],
+    "stopReason": {
+      "code": "EVIDENCE_INSUFFICIENT",
+      "detail": "evidence insufficient"
+    },
+    "semanticAssessments": [],
+    "spans": [
+      {
+        "spanId": "s-1-b4fd6317",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": null,
+        "phase": "RUN_START",
+        "operation": "run",
+        "startOffsetMs": 0,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-2-10347973",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 0,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 0,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-3-537fc959",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 0,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 0,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-4-b1356fcc",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 0,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-5-51a8e56d",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 0,
+        "durationMs": 1089,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-6-a6762af9",
+        "parentSpanId": "s-5-51a8e56d",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 1090,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-7-eace7a69",
+        "parentSpanId": "s-5-51a8e56d",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 1090,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-8-56c4956a",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 1090,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-11-d6d3baf9",
+        "parentSpanId": "s-10-6a77f128",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "interpret_request",
+        "startOffsetMs": 1091,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-10-6a77f128",
+        "parentSpanId": "s-9-4935ce89",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "TOOL_EXECUTION",
+        "operation": "interpret_request",
+        "startOffsetMs": 1090,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-9-4935ce89",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "TOOL_DISPATCH",
+        "operation": "interpret_request",
+        "startOffsetMs": 1090,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-12-6048c3e9",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 1091,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-13-fb67658f",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 1091,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-14-0ccfccea",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 1,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 1091,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-15-e52b5397",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 1092,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-16-d2d67397",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 1093,
+        "durationMs": 1201,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-17-c46857df",
+        "parentSpanId": "s-16-d2d67397",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 2293,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-18-15e87509",
+        "parentSpanId": "s-16-d2d67397",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 2293,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-19-d3e22054",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 2294,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-22-9a2c48b1",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "QLOO_REQUEST",
+        "operation": "describe",
+        "startOffsetMs": 2294,
+        "durationMs": 0,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-23-11d602d8",
+        "parentSpanId": "s-22-9a2c48b1",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "QLOO_RESPONSE",
+        "operation": "describe:failed",
+        "startOffsetMs": 2294,
+        "durationMs": 0,
+        "outcome": "error"
+      },
+      {
+        "spanId": "s-24-293ab208",
+        "parentSpanId": "s-21-4f993d82",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 2294,
+        "durationMs": 0,
+        "outcome": "error"
+      },
+      {
+        "spanId": "s-21-4f993d82",
+        "parentSpanId": "s-20-d22ed9ab",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 2294,
+        "durationMs": 0,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-20-d22ed9ab",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 2294,
+        "durationMs": 0,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-25-e958016c",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 2294,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-26-19139b4c",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 2295,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-27-3af11e45",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 2,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 2295,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-28-73b2e8d0",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 2295,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-29-15badd31",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 2297,
+        "durationMs": 2442,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-30-482125cb",
+        "parentSpanId": "s-29-15badd31",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 4738,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-31-a1c379c6",
+        "parentSpanId": "s-29-15badd31",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 4738,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-32-f31de7b2",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 4738,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-36-495108ea",
+        "parentSpanId": "s-35-fde9985c",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "QLOO_SPACING",
+        "operation": "describe:spacing",
+        "startOffsetMs": 4739,
+        "durationMs": 4555,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-35-fde9985c",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "QLOO_REQUEST",
+        "operation": "describe",
+        "startOffsetMs": 4739,
+        "durationMs": 4557,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-37-92de4f46",
+        "parentSpanId": "s-35-fde9985c",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "QLOO_RESPONSE",
+        "operation": "describe:failed",
+        "startOffsetMs": 9296,
+        "durationMs": 0,
+        "outcome": "error"
+      },
+      {
+        "spanId": "s-38-4674bf4c",
+        "parentSpanId": "s-34-18864617",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 9297,
+        "durationMs": 0,
+        "outcome": "error"
+      },
+      {
+        "spanId": "s-34-18864617",
+        "parentSpanId": "s-33-ebfb5fff",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 4739,
+        "durationMs": 4557,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-33-ebfb5fff",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 4739,
+        "durationMs": 4557,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-39-ef6b1e85",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 9298,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-40-1dddb30d",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 9299,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-41-394faf26",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 3,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 9299,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-42-53e03a1f",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 9300,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-43-9729979b",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 9300,
+        "durationMs": 2012,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-44-2fbe3ccf",
+        "parentSpanId": "s-43-9729979b",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 11313,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-45-4af8c0ef",
+        "parentSpanId": "s-43-9729979b",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 11313,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-46-9898dfcb",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 11313,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-50-a62da034",
+        "parentSpanId": "s-49-c022a028",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "QLOO_SPACING",
+        "operation": "describe:spacing",
+        "startOffsetMs": 11313,
+        "durationMs": 4983,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-49-c022a028",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "QLOO_REQUEST",
+        "operation": "describe",
+        "startOffsetMs": 11313,
+        "durationMs": 5003,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-51-1d2445d6",
+        "parentSpanId": "s-49-c022a028",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "QLOO_RESPONSE",
+        "operation": "describe:failed",
+        "startOffsetMs": 16316,
+        "durationMs": 0,
+        "outcome": "error"
+      },
+      {
+        "spanId": "s-52-a6b5dba7",
+        "parentSpanId": "s-48-7251cdb0",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 16316,
+        "durationMs": 0,
+        "outcome": "error"
+      },
+      {
+        "spanId": "s-48-7251cdb0",
+        "parentSpanId": "s-47-ff9b7de8",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 11313,
+        "durationMs": 5003,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-47-ff9b7de8",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 11313,
+        "durationMs": 5003,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-53-44cefdd1",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 16316,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-54-f2c6e66c",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 16317,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-55-10b62549",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 4,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 16317,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-56-d362a1b2",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 16318,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-57-1efd48ab",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 16319,
+        "durationMs": 2090,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-58-33295aac",
+        "parentSpanId": "s-57-1efd48ab",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 18409,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-59-d952f113",
+        "parentSpanId": "s-57-1efd48ab",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 18409,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-60-b27a7006",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 18409,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-64-3c45bcbd",
+        "parentSpanId": "s-63-c77ae112",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "QLOO_SPACING",
+        "operation": "describe:spacing",
+        "startOffsetMs": 18411,
+        "durationMs": 4903,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-63-c77ae112",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "QLOO_REQUEST",
+        "operation": "describe",
+        "startOffsetMs": 18411,
+        "durationMs": 4905,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-65-db581639",
+        "parentSpanId": "s-63-c77ae112",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "QLOO_RESPONSE",
+        "operation": "describe:failed",
+        "startOffsetMs": 23316,
+        "durationMs": 0,
+        "outcome": "error"
+      },
+      {
+        "spanId": "s-66-6f81dee6",
+        "parentSpanId": "s-62-f0dcf473",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 23316,
+        "durationMs": 0,
+        "outcome": "error"
+      },
+      {
+        "spanId": "s-62-f0dcf473",
+        "parentSpanId": "s-61-f2e6dc42",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 18411,
+        "durationMs": 4906,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-61-f2e6dc42",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 18411,
+        "durationMs": 4906,
+        "outcome": "error",
+        "errorCode": "QLOO_TRANSPORT"
+      },
+      {
+        "spanId": "s-67-bc8473db",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 23317,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-68-87649cc2",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 23317,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-69-8e6736b8",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 5,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 23317,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-70-886596ae",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 6,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 23318,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-71-4867dba5",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 6,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 23318,
+        "durationMs": 3087,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-72-473943dc",
+        "parentSpanId": "s-71-4867dba5",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 6,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 26406,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-73-b80d0de9",
+        "parentSpanId": "s-71-4867dba5",
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 6,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 26406,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-74-f177e4d1",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 6,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 26406,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-75-e8549a18",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 6,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 26407,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-76-e8c76e23",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 6,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 26407,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-78-b296e037",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 6,
+        "phase": "SYNTHESIS",
+        "operation": "synthesize",
+        "startOffsetMs": 26407,
+        "durationMs": 14460,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-77-58e1ff01",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": 6,
+        "phase": "FINALIZATION",
+        "operation": "finalize",
+        "startOffsetMs": 26407,
+        "durationMs": 14463,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-79-3a2784a3",
+        "parentSpanId": null,
+        "runId": "83275911-a3e1-4aba-b447-9a4e7e695caf",
+        "turnIndex": null,
+        "phase": "RUN_END",
+        "operation": "run",
+        "startOffsetMs": 40869,
+        "durationMs": 0,
+        "outcome": "ok"
+      }
+    ]
+  },
+  "metrics": {
+    "agent_iterations": 6,
+    "qloo_calls": 4,
+    "tool_calls": 6,
+    "tool_success_rate": 0.2,
+    "invalid_actions": 1,
+    "representation_attempts": 0,
+    "territories_proposed": 1,
+    "territories_resolved": 0,
+    "territories_rejected": 1,
+    "full_analysis_count": 0,
+    "partial_analysis_count": 0,
+    "descriptive_analysis_count": 0,
+    "unsupported_count": 1,
+    "methodology_calls": 0,
+    "latency_ms": 40869,
+    "model_input_tokens": 21861,
+    "model_output_tokens": 4371,
+    "retry_count": 0,
+    "budget_exhausted": false,
+    "model_turns": 6,
+    "model_attempts": 6,
+    "first_attempt_valid_turns": 5,
+    "valid_after_repair_turns": 5,
+    "repairs": 0,
+    "unknown_tool_attempts": 0,
+    "invalid_argument_attempts": 0,
+    "unsupported_state_actions": 1,
+    "synthesis_attempts": 2,
+    "calls_avoided": 1,
+    "avg_context_chars": 3257,
+    "max_context_chars": 3445,
+    "avg_context_tokens_estimate": 815,
+    "model_latency_ms": 11921,
+    "qloo_latency_ms": 14464,
+    "model_cost_usd": 0.0034,
+    "model_id": "claude-haiku-5-5",
+    "model_effort": "high",
+    "synthesis_latency_ms": 14460,
+    "analysis_latency_ms": 0,
+    "qloo_spacing_ms": 14441,
+    "unattributed_ms": 24,
+    "span_covered_ms": 40856,
+    "span_unattributed_ms": 14,
+    "span_coverage_ratio": 1,
+    "monotonic_elapsed_ms": 40870,
+    "wall_clock_skew_ms": 0,
+    "synthesis_first_attempt_valid": false,
+    "synthesis_valid_after_repair": true,
+    "synthesis_fallback": false,
+    "reference_deferrals": 0,
+    "empty_type_probes": 0,
+    "max_empty_type_probes_per_concept": 0,
+    "probe_limit_refusals": 0,
+    "type_alignment_deferrals": 0,
+    "reference_namespace_refusals": 0,
+    "successful_type_probes": 0,
+    "namespace_type_refusals": 0,
+    "alternate_anchor_refusals": 0,
+    "source_evidence_anchors": 0,
+    "frontier_completion_refusals": 0
+  },
+  "skillsUsed": [
+    {
+      "id": "interpret_request",
+      "version": 1
+    },
+    {
+      "id": "resolve_brand",
+      "version": 1
+    }
+  ],
+  "comparisonSetConstruction": {
+    "intent": "analyze_move",
+    "proposed": [
+      {
+        "key": "manga",
+        "label": "manga",
+        "role": "target",
+        "source": "user",
+        "evidence": "named by the user"
+      }
+    ],
+    "rejected": [],
+    "final": [
+      {
+        "key": "manga",
+        "label": "manga",
+        "role": "target",
+        "source": "user",
+        "route": "INSUFFICIENT_EVIDENCE"
+      }
+    ],
+    "dedupDecisions": [],
+    "semanticAssessments": [],
+    "diversity": {
+      "assessment": "unknown",
+      "similarPairs": [],
+      "detail": "fewer than two non-target territories: diversity not assessed"
+    },
+    "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+  },
+  "layers": {
+    "qlooEvidence": {
+      "brand": null,
+      "concepts": [],
+      "exemplars": [],
+      "qlooCalls": 4
+    },
+    "systemAnalysis": {
+      "routes": [
+        {
+          "territoryKey": "manga",
+          "route": "INSUFFICIENT_EVIDENCE",
+          "classification": null,
+          "position": null,
+          "robustness": null
+        }
+      ],
+      "methodologyRunIds": [],
+      "finalSufficiency": "INSUFFICIENT",
+      "representationDecisions": {
+        "valid": 0,
+        "weak": 0,
+        "rejected": 0
+      },
+      "semanticComparison": []
+    },
+    "agentInterpretation": {
+      "summary": "The results do not establish how far manga can be extended into, because no Qloo concept was anchored to the manga territory. No relative position, robustness, or classification was produced, and no comparison set exists. The run is insufficient for a move assessment, and it cannot say anything about cultural fit or the scope of any extension.\nmanga: The manga route is INSUFFICIENT_EVIDENCE, so no measurable cultural position is available for this territory. No Qloo concept anchors manga and representation is unsupported, so the territory cannot be placed against any comparison set.",
+      "source": "model",
+      "claimValidationPassed": true,
+      "semanticJudgments": [],
+      "followUpOptions": [
+        "Which Qloo concepts could anchor the manga territory?",
+        "What comparison territories could be set against manga for this analysis?",
+        "Which other territories are associated with manga in Qloo?"
+      ],
+      "findings": [
+        {
+          "territoryKey": "manga",
+          "claimType": "route_limitation",
+          "supportingFields": [
+            "route",
+            "limitations"
+          ],
+          "interpretation": "The manga route is INSUFFICIENT_EVIDENCE, so no measurable cultural position is available for this territory.",
+          "limitationCodes": [
+            "NOT_INVESTIGATED"
+          ]
+        },
+        {
+          "territoryKey": "manga",
+          "claimType": "representation",
+          "supportingFields": [
+            "representation",
+            "capabilities.representation"
+          ],
+          "interpretation": "No Qloo concept anchors manga and representation is unsupported, so the territory cannot be placed against any comparison set.",
+          "limitationCodes": [
+            "NOT_INVESTIGATED"
+          ]
+        }
+      ]
+    }
+  },
+  "failureCategory": "ENTITY_RESOLUTION_ERROR",
+  "comparisonFeasibility": {
+    "rulesVersion": "comparison-feasibility/v1",
+    "iteration": 1,
+    "target": {
+      "key": "manga",
+      "label": "manga",
+      "anchored": false,
+      "represented": false,
+      "entityType": null,
+      "validExemplars": 0
+    },
+    "compatibleEntityType": null,
+    "meaningfulTerritories": 0,
+    "requiredTerritories": 3,
+    "missingReferences": 3,
+    "pendingReferences": [],
+    "candidates": {
+      "meaningful": 0,
+      "probedWithMembers": 0,
+      "typeEvidenced": 0,
+      "unprobed": 0
+    },
+    "referenceProbes": {
+      "made": 0,
+      "empty": 0,
+      "limit": 4
+    },
+    "capacity": {
+      "turnsLeft": 11,
+      "qlooCallsLeft": 24,
+      "turnsNeeded": 0,
+      "callsNeeded": 0
+    },
+    "status": "UNCERTAIN",
+    "blocker": null,
+    "nextAction": {
+      "action": "qloo_resolve_entity",
+      "detail": "resolve the brand before anything can be compared"
+    },
+    "stopReasons": [],
+    "repeat": "MAY_CHANGE"
+  }
+}
