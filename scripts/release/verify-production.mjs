@@ -62,6 +62,8 @@ async function http(url, init = {}) {
 
 function vercelToken() {
   if (process.env.VERCEL_TOKEN) return process.env.VERCEL_TOKEN;
+  // The CLI login token expires; any authenticated CLI call refreshes it in auth.json before we read it.
+  run("vercel", ["whoami"]);
   for (const path of [join(homedir(), "Library/Application Support/com.vercel.cli/auth.json"), join(homedir(), ".local/share/com.vercel.cli/auth.json")]) {
     if (existsSync(path)) return json(readFileSync(path, "utf8"))?.token ?? null;
   }

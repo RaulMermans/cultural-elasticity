@@ -55,3 +55,21 @@ test("a territory found in two questions is read once, and an unchanged rank is 
   const consistency = twice.sections.find((section) => section.id === "patterns")!.blocks.find((block) => block.heading === "How territories hold up across comparisons")!;
   assert.ok(consistency.bullets!.includes("Alpine Hiking held the same place in every comparison it was part of (2nd of 3, 2nd of 3)."));
 });
+
+test("the PDF never draws a line over the one above it (the title once overlapped the header)", async () => {
+  const { jsPDF } = await import("jspdf");
+  const { buildReportPdf } = await import("./report-download.ts");
+  const pdf = new jsPDF({ unit: "pt", format: "a4" });
+  const drawn: { page: number; top: number; size: number }[] = [];
+  const text = pdf.text.bind(pdf);
+  (pdf as unknown as { text: (...args: unknown[]) => unknown }).text = (line: unknown, x: unknown, y: unknown, options?: { baseline?: string }) => {
+    if (options?.baseline === "top") drawn.push({ page: pdf.getCurrentPageInfo().pageNumber, top: y as number, size: pdf.getFontSize() });
+    return text(line as string, x as number, y as number, options as never);
+  };
+  buildReportPdf(report, pdf);
+  assert.ok(drawn.length > 10);
+  for (let i = 1; i < drawn.length; i += 1) {
+    const [previous, current] = [drawn[i - 1]!, drawn[i]!];
+    if (previous.page === current.page) assert.ok(current.top >= previous.top + previous.size, `line ${i} overlaps the line above it`);
+  }
+});

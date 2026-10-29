@@ -43,7 +43,8 @@ export function buildReportPdf(report: NetworkReport, pdf: Pdf): Pdf {
     const lines = pdf.splitTextToSize(plain(text), usable - (options.indent ?? 0)) as string[];
     for (const line of lines) {
       ensure(size * 1.4);
-      pdf.text(line, margin + (options.indent ?? 0), y);
+      // Drawn from the top of the line: from the baseline, a large title rose into the smaller line above it.
+      pdf.text(line, margin + (options.indent ?? 0), y, { baseline: "top" });
       y += size * 1.4;
     }
     y += options.gap ?? 4;

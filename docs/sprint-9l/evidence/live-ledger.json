@@ -1,0 +1,143 @@
+{
+  "brand": "Crocs",
+  "ledger": [
+    {
+      "step": "operator_authorized",
+      "at": "2026-10-29T05:43:12.468Z"
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T05:43:15.087Z",
+      "detail": {
+        "path": "/api/brands/resolve",
+        "status": "RESOLVED",
+        "error": null,
+        "qlooId": "454B31CB-594B-4EF3-AF9D-EDC56E89E25E",
+        "label": "Crocs",
+        "jobId": null,
+        "scanId": null
+      }
+    },
+    {
+      "step": "brand_resolved",
+      "at": "2026-10-29T05:43:15.548Z",
+      "detail": {
+        "button": "Start research on Crocs"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T05:43:15.806Z",
+      "detail": {
+        "path": "/api/brands/baselines",
+        "status": "COMPLETE",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": null,
+        "scanId": "2d986eeb-aa78-4204-906f-7fd791b2ea50"
+      }
+    },
+    {
+      "step": "baseline_network",
+      "at": "2026-10-29T05:43:16.396Z",
+      "detail": {
+        "directions": 5,
+        "url": "https://cultural-elasticity-raulmermans-projects.vercel.app/?research=session"
+      }
+    },
+    {
+      "step": "investigation_started",
+      "at": "2026-10-29T05:43:16.722Z",
+      "detail": {
+        "direction": "Direction: Fiction, Direction"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T05:43:18.878Z",
+      "detail": {
+        "path": "/api/research/handoff/jobs",
+        "status": "running",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": "5e54e7fe-fa3c-4988-8651-65649c8db8bf",
+        "scanId": null
+      }
+    },
+    {
+      "step": "investigation_settled",
+      "at": "2026-10-29T05:44:33.315Z",
+      "detail": {
+        "outcome": "Question: Investigate Fiction, Inconclusive",
+        "tone": "partial",
+        "dossier": "AGENT INVESTIGATION Investigate Fiction Inconclusive Inconclusive. A cultural research judgment, not a commercial recommendation. What Qloo showed Qloo returned 3 distinct artist entities in the brand-conditioned Fiction query. Still uncertain The observed relationship lacks a verified shared cultural signal in the available profiles. Cultural association does not establish demand, purchase intent, commercial viability, or partnership feasibility. For Crocs, the Fiction territory has only partial cultural analysis: the evidence rests on three linked exemplars and no comparison set, so no relative position, robustness or classification can be stated. Shared cultural signals across those exemplars are absent, and the brand-conditioned query returned a sparse set of entities. The results cannot say how far Crocs could extend into Fiction, only what the thin current evidence shows. Fiction: The Fiction route is partial and no comparison set was established, so the territory cannot be placed relative to others. No shared cultural signals were found across the Fiction exemplars after filtering operational tags, with no consistently shared signals identified. The brand-conditioned query for Fiction returned a sparse set of entities, led by Welcome to Night Vale, Макс Фрай and Trudi Canavan. How well does Fiction fit Crocs? Not measured yet Fiction hasn't been compared with other territories yet, so Qloo can't say how well it fits. Measure it: compare with territories you name Qloo's closest matches for Crocs here Within Fiction, what Qloo associates most with Crocs, in Qloo's order. Welcome to Night Vale Макс Фрай Trudi Canavan Examples that stand for it What the agent used to represent Fiction in the comparison. Trudi Canavan Макс Фрай Welcome to Night Vale What we don't know yet Fiction wasn't ranked against other territories, so there is no comparison yet. Technical notes This describes cultural taste from Qloo. It is not a forecast of sales or demand. How the agent worked (16 steps) Continue this path Which other Fiction creators does Qloo associate with Crocs? How does Fiction compare with other territories for Crocs once a comparison set is available? What additional cultural signals connect Crocs with Fiction exemplars such as Welcome to Night Vale? Remove this branch…",
+        "nodes": 7
+      }
+    },
+    {
+      "step": "second_question_started",
+      "at": "2026-10-29T05:44:33.524Z",
+      "detail": {
+        "question": "How far can Crocs extend into fine dining?"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T05:44:33.700Z",
+      "detail": {
+        "path": "/api/agent/jobs",
+        "status": "running",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": "3ef2633e-9aa3-4d3f-90c6-9bfcb1c6dfd6",
+        "scanId": null
+      }
+    },
+    {
+      "step": "second_question_settled",
+      "at": "2026-10-29T05:48:02.705Z",
+      "detail": {
+        "outcome": "Question: How far can Crocs extend into fine dining?, Investigated",
+        "tone": "idle",
+        "dossier": "RESEARCH QUESTION How far can Crocs extend into fine dining? Investigated Fine dining sits in the middle of its comparison set, and its placement is robust because representation robustness is high. Its reach into fine dining is provisional and holds only relative to this comparison set. Colorful and Relaxed Living sit at the top and bottom of that set, but their placements rest on low representation robustness and are not treated as stable. The results describe cultural association only and cannot establish how the brand would fare with fine dining audiences. fine dining: Within the fine dining, Relaxed Living, Colorful comparison set, fine dining holds the middle position on median panel percentile. Provisionally classed as a CREDIBLE_STRETCH relative to this comparison set only, which describes a plausible but not established reach. A brand-conditioned query for fine dining returned supported associations led by Louis Vuitton, Fiji Water, Christian Dior, Fendi and Dolce & Gabbana, and the list is truncated. Colorful: Colorful ranks first in the comparison set on median panel percentile, but its representation robustness is low, so this top placement is not presented as stable. Provisionally classed as UNCERTAIN_REPRESENTATION_SENSITIVE relative to this comparison set only, alongside low representation robustness. Relaxed Living: Relaxed Living ranks last in the comparison set on median panel percentile, and its representation robustness is low, so this placement is provisional. Provisionally classed as UNCERTAIN_REPRESENTATION_SENSITIVE relative to this comparison set only, alongside low representation robustness. How well does fine dining fit Crocs? Credible stretchPROVISIONAL Qloo finds real overlap between fine dining and Crocs's taste, but not at its centre. A step outward, not a leap. Natural fit Credible stretch Cultural break Steady: the ranking held across the example sets tested. How it ranked How strongly Qloo links each one to Crocs, strongest first. The order holds only within these 3. 1 Colorful 2 fine dining THIS ONE 3 Relaxed Living Qloo's closest matches for Crocs here Within fine dining, what Qloo associates most with Crocs, in Qloo's order. Louis Vuitton Fiji Water Christian Dior Fendi Dolce & Gabbana Examples that stand for it What the agent used to represent fine dining in the comparison. Bulgari Harrods Van Cleef & Arpels What we don't know yet Some evidence was not collected because the investigation reached its budget. Technical n"
+      }
+    },
+    {
+      "step": "report_exported",
+      "at": "2026-10-29T05:48:02.874Z",
+      "detail": {
+        "format": "HTML",
+        "file": "crocs-cultural-research_2026-10-29_0648.html",
+        "bytes": 13714
+      }
+    },
+    {
+      "step": "report_exported",
+      "at": "2026-10-29T05:48:03.233Z",
+      "detail": {
+        "format": "PDF",
+        "file": "crocs-cultural-research_2026-10-29_0648.pdf",
+        "bytes": 29628
+      }
+    },
+    {
+      "step": "reopened_from_library",
+      "at": "2026-10-29T05:48:03.762Z"
+    },
+    {
+      "step": "done",
+      "at": "2026-10-29T05:48:03.763Z",
+      "detail": {
+        "paidStarts": 4
+      }
+    }
+  ],
+  "problems": {
+    "console": [],
+    "pageErrors": [],
+    "serverErrors": []
+  }
+}
