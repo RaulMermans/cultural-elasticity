@@ -8,7 +8,7 @@ import type { QueryResponse } from "@cultural-elasticity/shared";
 import { connectionQuestions, territoryItems, type CrossLink, type EvidenceItem } from "./research-links.ts";
 import { inquiryState, normName, type Inquiry, type NetworkNode } from "./research-network.ts";
 import type { ResearchView } from "./research-view.ts";
-import { territoryReading, type TerritoryReading } from "./territory-reading.ts";
+import { readableClassCodes, territoryReading, type TerritoryReading } from "./territory-reading.ts";
 
 export type ReportBlock = { heading?: string; meta?: string; text?: string; bullets?: string[] };
 export type ReportSection = { id: string; title: string; intro?: string; blocks: ReportBlock[] };
@@ -239,7 +239,7 @@ export function buildNetworkReport(input: { view: ResearchView; nodes: readonly 
     title: "Investigation log",
     blocks: inquiries.length ? [...inquiries].sort((a, b) => a.createdAt - b.createdAt).map((inquiry) => {
       const result = inquiry.response?.investigation?.result;
-      const text = result && result.status !== "NEEDS_INPUT" && result.summary.claimValidation.passed ? result.summary.text : undefined;
+      const text = result && result.status !== "NEEDS_INPUT" && result.summary.claimValidation.passed ? readableClassCodes(result.summary.text) : undefined;
       return { heading: inquiry.question, meta: `${inquiryState(inquiry).status} · asked ${reportStamp(new Date(inquiry.createdAt)).local}`, text };
     }) : [{ text: "No question has been asked on this board yet." }],
   });

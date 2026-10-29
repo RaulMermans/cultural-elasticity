@@ -12,13 +12,13 @@ import { buildResearchView, type ConnectionView, type DirectionView, type Resear
 import { NetworkBoard, type BoardInset } from "./NetworkBoard";
 
 /** Floating legend (top), dossier (right) and composer (bottom) cover these parts of the board. */
-const BOARD_INSET: BoardInset = { top: 64, right: 430, bottom: 150, left: 70 };
+const BOARD_INSET: BoardInset = { top: 104, right: 430, bottom: 150, left: 70 };
 import { useResearchNetwork } from "./use-research-network";
 import { useResearchLayout } from "./use-research-layout";
 import { TerritoryReadingView } from "./TerritoryReading";
 import { AskAboutTag, TagButton, TagChip } from "./TagChip";
 import { draftQuestion, type TagKind } from "@/lib/tag-question";
-import { territoryReading } from "@/lib/territory-reading";
+import { readableClassCodes, territoryReading } from "@/lib/territory-reading";
 import { buildNetworkReport } from "@/lib/network-report";
 import { downloadReportHtml, downloadReportPdf } from "@/lib/report-download";
 import { connectionQuestions, crossLinks, territoryItems, type CrossLink, type EvidenceItem, type LinkSource } from "@/lib/research-links";
@@ -158,7 +158,7 @@ function InquiryResult({ response }: { response: QueryResponse }) {
       {assessment.supports.length ? <><h3>What supports it</h3><ul>{assessment.supports.map((line) => <li key={line}>{line}</li>)}</ul></> : null}
       {[...assessment.limitations, ...assessment.unknowns].length ? <><h3>Still uncertain</h3><ul>{[...assessment.limitations, ...assessment.unknowns].map((line) => <li key={line}>{line}</li>)}</ul></> : null}
     </> : null}
-    {result.summary.claimValidation.passed ? <p>{result.summary.text}</p> : null}
+    {result.summary.claimValidation.passed ? <div className="rr-section rn-writeup"><h3>The agent&apos;s write-up</h3><p>{readableClassCodes(result.summary.text)}</p></div> : null}
   </>;
 }
 
@@ -218,12 +218,13 @@ function InquiryDossier({ inquiry, node, brand, branch, locate, onSelect, onAnsw
     {inquiry.lost && node.status === "No longer available" ? <p className="quiet">The research service no longer holds this investigation (it expired or restarted) and it never sent an answer. Its question stays in your network; try it again to continue.</p> : null}
     {inquiry.lost && node.status !== "No longer available" ? <p className="quiet">Its answer is kept in this browser. The research service has let the run go, so a new question from here starts fresh on the same direction.</p> : null}
     {running ? <AgentActivity entries={inquiry.activity ?? []} live /> : null}
-    {response && !running ? <InquiryResult response={response} /> : null}
-    {!running && response && !response.investigation && onRephrase ? <button type="button" className="rw-secondary" disabled={busy} onClick={onRephrase}>Edit and ask again</button> : null}
-    {onRetry ? <button type="button" className="primary" data-testid="network-retry" disabled={busy} onClick={onRetry}>Try again</button> : null}
+    {/* Decision first: the deterministic reading, then the agent's validated write-up and the evidence. */}
     {!running && response?.investigation ? (territory || response.territories.length <= 1
       ? <Reading result={result} territoryKey={territory?.territoryKey ?? null} brand={brand} investigated onMeasure={onMeasure} busy={busy} />
       : <Placements response={response} brand={brand} locate={locate} onSelect={onSelect} />) : running ? <ElasticityBlock elasticity={null} brand={brand} pending /> : null}
+    {response && !running ? <InquiryResult response={response} /> : null}
+    {!running && response && !response.investigation && onRephrase ? <button type="button" className="rw-secondary" disabled={busy} onClick={onRephrase}>Edit and ask again</button> : null}
+    {onRetry ? <button type="button" className="primary" data-testid="network-retry" disabled={busy} onClick={onRetry}>Try again</button> : null}
     {waiting ? <form className="rn-answer" onSubmit={(event) => { event.preventDefault(); if (answer.trim()) { onAnswer(answer.trim()); setAnswer(""); } }}>
       <label htmlFor="rn-answer">Your answer</label>
       <input id="rn-answer" value={answer} maxLength={1000} onChange={(event) => setAnswer(event.target.value)} />
@@ -510,10 +511,12 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
       <div className="rn-stage">
         <NetworkBoard nodes={nodes} positions={positions} links={links} selectedId={selected.id} onSelect={setSelectedId}
           onMove={(id, dx, dy, origin) => layout.move(branchOf(nodes, id), origin, dx, dy)} onTidy={layout.reset} moved={layout.moved} label={`Research network for ${view.brand.name}`} inset={BOARD_INSET} />
+        <div className="rn-key">
         <ul className="rn-legend" aria-label="Legend">
           <li data-tone="brand">Brand</li><li data-tone="hypothesis">Direction</li><li data-tone="running">Agent investigating</li><li data-tone="supported">Worth pursuing</li><li data-tone="partial">Not measured yet or partial</li><li data-tone="unsupported">Not supported or not run</li><li data-tone="cross">Shares Qloo signals across branches</li>
         </ul>
         <p className="rn-note">Drag to move, scroll to zoom. Lines show what was investigated from what; distance on the board is not cultural distance.</p>
+        </div>
         <aside className="rn-dossier" aria-live="polite" data-testid="network-dossier">{dossier}</aside>
         <form className="rn-composer" onSubmit={submit} data-testid="network-composer">
           <label htmlFor="rn-question">

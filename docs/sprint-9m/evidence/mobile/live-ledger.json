@@ -1,0 +1,113 @@
+{
+  "brand": "Patagonia",
+  "ledger": [
+    {
+      "step": "anonymous_public_evaluation_visitor",
+      "at": "2026-10-29T07:09:43.057Z"
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T07:09:44.438Z",
+      "detail": {
+        "path": "/api/brands/resolve",
+        "status": "RESOLVED",
+        "error": null,
+        "qlooId": "DB4CE34E-3A63-4947-946F-9D52502C5762",
+        "label": "Patagonia",
+        "jobId": null,
+        "scanId": null
+      }
+    },
+    {
+      "step": "brand_resolved",
+      "at": "2026-10-29T07:09:44.526Z",
+      "detail": {
+        "button": "Start research on Patagonia"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T07:09:45.281Z",
+      "detail": {
+        "path": "/api/brands/baselines",
+        "status": "COMPLETE",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": null,
+        "scanId": "28c2e7d5-cd7f-4b60-bda9-6d00230ff0b0"
+      }
+    },
+    {
+      "step": "baseline_network",
+      "at": "2026-10-29T07:09:45.429Z",
+      "detail": {
+        "directions": 5,
+        "url": "https://cultural-elasticity-raulmermans-projects.vercel.app/?research=session"
+      }
+    },
+    {
+      "step": "second_question_started",
+      "at": "2026-10-29T07:09:45.622Z",
+      "detail": {
+        "question": "How far can Patagonia extend into nightclubs?"
+      }
+    },
+    {
+      "step": "paid_request",
+      "at": "2026-10-29T07:09:45.824Z",
+      "detail": {
+        "path": "/api/agent/jobs",
+        "status": "running",
+        "error": null,
+        "qlooId": null,
+        "label": null,
+        "jobId": "bf81182d-06bf-4afe-b867-52a8f32410fd",
+        "scanId": null
+      }
+    },
+    {
+      "step": "second_question_settled",
+      "at": "2026-10-29T07:12:04.175Z",
+      "detail": {
+        "outcome": "Question: How far can Patagonia extend into nightclubs?, Investigated",
+        "tone": "idle",
+        "dossier": "RESEARCH QUESTION How far can Patagonia extend into nightclubs? Investigated For nightclubs, the results give only a partial view of Patagonia's cultural footprint. They include place exemplars and a brand-conditioned list of venues, but no relative position, robustness, or class is available, so nightclubs cannot be ranked against a comparison set. The shared signals among the nightclub exemplars are absent and evidence quality is medium, so the results do not show how far the brand can extend into nightclubs. nightclubs: A brand-conditioned query for this concept is supported and returns venues such as 45 East, Keys On Main and Belly Up Aspen, which shows venues Qloo associates with Patagonia. The list is truncated, so it is an illustrative sample rather than a complete picture of the brand's nightclub association. No operational-filtered cultural signals are consistently shared across the nightclub exemplars, so the shared-signal band is none. This means the exemplars do not yet define a common cultural profile for the territory. The route is partial, and relative position, robustness and classification are all unavailable for nightclubs. Only representation, coherence and conditioned evidence can be described here. How well does nightclubs fit Patagonia? Not measured yet nightclubs hasn't been compared with other territories yet, so Qloo can't say how well it fits. Measure it with a Qloo comparison Qloo's closest matches for Patagonia here Within nightclubs, what Qloo associates most with Patagonia, in Qloo's order. 45 East Keys On Main Belly Up Aspen Bimbo's 365 Club Chop Suey Examples that stand for it What the agent used to represent nightclubs in the comparison. NADIM So What! What we don't know yet nightclubs wasn't ranked against other territories, so there is no comparison yet. Technical notes This describes cultural taste from Qloo. It is not a forecast of sales or demand. How the agent worked (40 steps) Continue this path Which other nightclub venues does Qloo associate with Patagonia? How do the nightclub exemplars NADIM and So What! differ from Patagonia's other place associations? How does the nightclub association for Patagonia compare with its association with other place categories? Remove this branch…"
+      }
+    },
+    {
+      "step": "report_exported",
+      "at": "2026-10-29T07:12:04.390Z",
+      "detail": {
+        "format": "HTML",
+        "file": "patagonia-cultural-research_2026-10-29_0812.html",
+        "bytes": 11381
+      }
+    },
+    {
+      "step": "report_exported",
+      "at": "2026-10-29T07:12:04.523Z",
+      "detail": {
+        "format": "PDF",
+        "file": "patagonia-cultural-research_2026-10-29_0812.pdf",
+        "bytes": 24934
+      }
+    },
+    {
+      "step": "reopened_from_library",
+      "at": "2026-10-29T07:12:04.945Z"
+    },
+    {
+      "step": "done",
+      "at": "2026-10-29T07:12:04.945Z",
+      "detail": {
+        "paidStarts": 3
+      }
+    }
+  ],
+  "problems": {
+    "console": [],
+    "pageErrors": [],
+    "serverErrors": []
+  }
+}

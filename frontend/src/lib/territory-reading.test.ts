@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { AgentRunResponse } from "@cultural-elasticity/shared";
-import { territoryReading } from "./territory-reading.ts";
+import { readableClassCodes, territoryReading } from "./territory-reading.ts";
 
 const territory = (key: string, position: number | null, extra: Record<string, unknown> = {}) => ({
   key, label: `SYN ${key}`, role: "candidate", representation: { exemplars: [{ id: "e", label: `SYN example ${key}`, type: "t", role: "primary" }] },
@@ -39,4 +39,10 @@ test("a representation-sensitive class is named but not placed on the fit scale"
   assert.equal(reading.fit!.label, "Not settled");
   assert.equal(reading.fit!.onScale, null);
   assert.equal(reading.steadiness!.steady, false);
+});
+
+test("Sprint 9M: class codes in the agent's write-up read as their plain labels, and nothing else changes", () => {
+  assert.equal(readableClassCodes("Provisionally classed as CREDIBLE_STRETCH relative to this set."), "Provisionally classed as “credible stretch” relative to this set.");
+  assert.equal(readableClassCodes("UNCERTAIN_REPRESENTATION_SENSITIVE and CULTURAL_BREAK"), "“not settled” and “cultural break”");
+  assert.equal(readableClassCodes("No code here, 3 of 4."), "No code here, 3 of 4.");
 });

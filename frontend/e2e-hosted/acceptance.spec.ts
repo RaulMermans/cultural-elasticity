@@ -21,6 +21,8 @@ const PUBLIC_EVALUATION = process.env.E2E_PUBLIC_EVALUATION === "1";
 const BRAND = process.env.E2E_BRAND ?? "Zara";
 /** Optional second question, e.g. a direction expected to be inelastic for the brand. One more paid start. */
 const SECOND_QUESTION = process.env.E2E_SECOND_QUESTION ?? "";
+/** E2E_SKIP_DIRECTION=1 asks only the composer question (one paid investigation instead of two). */
+const SKIP_DIRECTION = process.env.E2E_SKIP_DIRECTION === "1" && SECOND_QUESTION !== "";
 const EVIDENCE = process.env.E2E_EVIDENCE_DIR ?? "test-results/hosted-evidence";
 const PAID = /^\/api\/(agent\/jobs|research\/(handoff|compare)\/jobs|brands\/(resolve|baselines))$/u;
 mkdirSync(EVIDENCE, { recursive: true });
@@ -139,34 +141,37 @@ test.describe("LIVE authorized journey", () => {
     }
 
     // 4. Select a direction and investigate it with Haiku (one paid start, never retried).
-    const first = directions.first();
-    const label = (await first.getAttribute("aria-label")) ?? "";
-    await first.click();
-    await expect(page.getByTestId("network-dossier").getByRole("heading", { name: "Why it is here" })).toBeVisible();
-    await shot("04-direction-selected");
-    await page.getByTestId("network-investigate").click();
-    note("investigation_started", { direction: label });
-    await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1, { timeout: 60_000 });
-    await page.waitForTimeout(20_000);
-    await shot("05-investigation-running");
-    const inquiry = page.getByTestId("network-node-inquiry").first();
-    await expect(inquiry).not.toHaveAttribute("data-tone", "running", { timeout: 40 * 60_000 });
-    const outcome = (await inquiry.getAttribute("aria-label")) ?? "";
-    await inquiry.click();
-    const dossier = (await page.getByTestId("network-dossier").innerText()).replace(/\s+/gu, " ");
-    note("investigation_settled", { outcome, tone: await inquiry.getAttribute("data-tone"), dossier: dossier.slice(0, 2500), nodes: await page.locator("[data-testid^='network-node-']").count() });
-    await shot("06-investigation-result");
+    let inquiries = 0;
+    if (!SKIP_DIRECTION) {
+      const first = directions.first();
+      const label = (await first.getAttribute("aria-label")) ?? "";
+      await first.click();
+      await expect(page.getByTestId("network-dossier").getByRole("heading", { name: "Why it is here" })).toBeVisible();
+      await shot("04-direction-selected");
+      await page.getByTestId("network-investigate").click();
+      note("investigation_started", { direction: label });
+      await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1, { timeout: 60_000 });
+      await page.waitForTimeout(20_000);
+      await shot("05-investigation-running");
+      const inquiry = page.getByTestId("network-node-inquiry").first();
+      await expect(inquiry).not.toHaveAttribute("data-tone", "running", { timeout: 40 * 60_000 });
+      const outcome = (await inquiry.getAttribute("aria-label")) ?? "";
+      await inquiry.click();
+      const dossier = (await page.getByTestId("network-dossier").innerText()).replace(/\s+/gu, " ");
+      note("investigation_settled", { outcome, tone: await inquiry.getAttribute("data-tone"), dossier: dossier.slice(0, 2500), nodes: await page.locator("[data-testid^='network-node-']").count() });
+      await shot("06-investigation-result");
+      inquiries = 1;
+    }
 
     // 4b. A second, contrasting question from the composer (expected to be inelastic). Never retried.
-    let inquiries = 1;
     if (SECOND_QUESTION) {
       await page.getByTestId("network-node-brand").click();
       await page.getByLabel(/Ask a research question about/u).fill(SECOND_QUESTION);
       await page.getByRole("button", { name: "Ask the agent" }).click();
       note("second_question_started", { question: SECOND_QUESTION });
-      await expect(page.getByTestId("network-node-inquiry")).toHaveCount(2, { timeout: 60_000 });
-      inquiries = 2;
-      const second = page.getByTestId("network-node-inquiry").nth(1);
+      await expect(page.getByTestId("network-node-inquiry")).toHaveCount(inquiries + 1, { timeout: 60_000 });
+      const second = page.getByTestId("network-node-inquiry").nth(inquiries);
+      inquiries += 1;
       await expect(second).not.toHaveAttribute("data-tone", "running", { timeout: 40 * 60_000 });
       await second.click();
       const reading = (await page.getByTestId("network-dossier").innerText()).replace(/\s+/gu, " ");
