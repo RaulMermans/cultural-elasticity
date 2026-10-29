@@ -1,5 +1,5 @@
-import { paidOperatorToken, publicRuntime } from "../config/production.js";
-import { runLedger, type RunLedger } from "../ops/run-ledger.js";
+import { publicRuntime } from "../config/production.js";
+import { runCredential, runLedger, type RunLedger } from "../ops/run-ledger.js";
 import { QlooTransportError } from "./errors.js";
 import type { QlooOperation } from "./types.js";
 import type { QlooTransport, TransportResult } from "./transport.js";
@@ -33,7 +33,7 @@ let shared: QlooDispatchCounter | null | undefined;
 export function processDispatchCounter(env: NodeJS.ProcessEnv = process.env): QlooDispatchCounter | null {
   if (shared !== undefined) return shared;
   const raw = env.CE_PROCESS_QLOO_CALL_LIMIT?.trim();
-  if (!raw) return (shared = publicRuntime(env) && paidOperatorToken(env) ? new QlooDispatchCounter(0) : null);
+  if (!raw) return (shared = publicRuntime(env) && runCredential(env) ? new QlooDispatchCounter(0) : null);
   const limit = Number(raw);
   shared = new QlooDispatchCounter(Number.isInteger(limit) && limit >= 0 ? limit : 0);
   return shared;

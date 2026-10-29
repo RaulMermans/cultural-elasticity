@@ -240,3 +240,45 @@ test("a closed window keeps the last applied baseline limit without a false degr
   e.ops.baselineBudget = { limitCalls: 21, usedCalls: 7 };
   assert.equal(verdict(e).verdict, "RELEASE_VERIFIED");
 });
+
+/** Sprint 9M: an approved public evaluation. Anonymous visitors are admitted; caps and expiry are bounded. */
+function publicEvaluation() {
+  const e = healthy({ expectAdmissions: "public", approvedMaxQloo: 1000, approvedMaxUsd: 5 });
+  Object.assign(e.railway.env.flags, {
+    acceptInvestigations: "1", baselineEnabled: "1", baselineLiveEnabled: "1", baselineTotal: 408, processQlooLimit: 1000, spendBudgetUsd: 5, reserveUsd: 0.5,
+    publicEvaluation: "1", publicEvaluationId: "syn-eval", publicEvaluationExpiresAt: new Date(NOW + 7 * 24 * 3600_000).toISOString(),
+  });
+  e.ops.runLedger = { qloo_calls: null, model_usd_cents: null };
+  e.ops.baselineBudget = { limitCalls: 408, usedCalls: 8 };
+  e.http.ready = { status: 200, body: { acceptingInvestigations: true, reasons: [], dependencies: { paidOperatorRequired: false } } };
+  e.http.admissions.body.status = "accepting";
+  e.http.brandStatus.body = { enabled: true, admissionsOpen: true };
+  e.http.anonymousResolve = { status: 400 };
+  return e;
+}
+
+test("an approved public evaluation is VERIFIED: anonymous research enabled, caps within approval, probe never dispatched", () => {
+  assert.deepEqual(verdict(publicEvaluation()).failures, []);
+  assert.equal(verdict(publicEvaluation()).verdict, "RELEASE_VERIFIED");
+});
+
+test("a public evaluation fails when judges are locked out, caps exceed approval, it is expired or open without approval", () => {
+  const locked = publicEvaluation();
+  locked.http.anonymousResolve = { status: 403 };
+  assert.ok(verdict(locked).failures.includes("PUBLIC_EVALUATION_NOT_ADMITTING"));
+  const dispatched = publicEvaluation();
+  dispatched.http.anonymousResolve = { status: 200 };
+  assert.ok(verdict(dispatched).failures.includes("PUBLIC_EVALUATION_PROBE_DISPATCHED"));
+  const over = publicEvaluation();
+  over.railway.env.flags.processQlooLimit = 5000;
+  assert.ok(verdict(over).failures.includes("QLOO_RUN_CEILING_NOT_WITHIN_APPROVAL"));
+  const expired = publicEvaluation();
+  expired.railway.env.flags.publicEvaluationExpiresAt = new Date(NOW - 1000).toISOString();
+  assert.ok(verdict(expired).failures.includes("PUBLIC_EVALUATION_EXPIRED"));
+  const forever = publicEvaluation();
+  forever.railway.env.flags.publicEvaluationExpiresAt = "2027-06-01T00:00:00Z";
+  assert.ok(verdict(forever).failures.includes("PUBLIC_EVALUATION_WINDOW_TOO_LONG"));
+  const unapproved = publicEvaluation();
+  unapproved.expectAdmissions = "open";
+  assert.ok(verdict(unapproved).failures.includes("PUBLIC_EVALUATION_OPEN_WITHOUT_APPROVAL"));
+});

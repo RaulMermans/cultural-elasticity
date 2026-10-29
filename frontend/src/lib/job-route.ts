@@ -1,5 +1,9 @@
 import { readOperatorCredential } from "./operator";
+import { networkKeyOf } from "./network-key";
 import { visitorFromRequest } from "./visitor";
+
+/** Who is asking: the visitor cookie, plus the network key Railway uses for public-evaluation quotas. */
+export type Caller = { id: string; network: string | null };
 
 export function withVisitor(request: Request, response: Response): Response {
   const visitor = visitorFromRequest(request);
@@ -9,8 +13,8 @@ export function withVisitor(request: Request, response: Response): Response {
   return new Response(response.body, { status: response.status, headers });
 }
 
-export function visitorIdOf(request: Request): string {
-  return visitorFromRequest(request).id;
+export function callerOf(request: Request): Caller {
+  return { id: visitorFromRequest(request).id, network: networkKeyOf(request) };
 }
 
 /** The paid-research operator credential from the HttpOnly cookie, or null. Forwarded only on paid starts. */

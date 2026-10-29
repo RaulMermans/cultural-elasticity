@@ -3,6 +3,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 import { verifyInternalAuth, admitVisitor, verifyOperator, verifyPaidOperator } from "../ops/identity.js";
 import { operatorToken } from "../config/production.js";
+import { takePublicQuota, type PublicQuotaKind } from "../ops/public-quota.js";
 import { createBaselinePool, databaseReady } from "./db.js";
 import { BaselineRepository, BaselineRepositoryError, payloadHash } from "./repository.js";
 import { resolveBrand } from "./research.js";
@@ -67,6 +68,13 @@ export async function brandBaselineRoutes(app: FastifyInstance): Promise<void> {
     }
     return true;
   };
+  /** Sprint 9M: a paid start by a public-evaluation visitor also spends that visitor network's durable quota. */
+  const quota = async (request: FastifyRequest, reply: FastifyReply, kind: PublicQuotaKind): Promise<boolean> => {
+    const decision = await takePublicQuota(request.headers as Record<string, unknown>, kind);
+    if (decision.ok) return true;
+    void reply.code(decision.status).send({ error: decision.error, message: decision.message });
+    return false;
+  };
   const scopeOf = (request: FastifyRequest) => admitVisitor(request.headers as Record<string, unknown>, true).visitorId;
   const tokenOf = (request: FastifyRequest) => typeof request.headers[tokenHeader] === "string" ? request.headers[tokenHeader] : "";
   const errorResponse = (error: unknown, reply: FastifyReply) => {
@@ -107,6 +115,7 @@ export async function brandBaselineRoutes(app: FastifyInstance): Promise<void> {
     if (!admit(request, reply, true)) return;
     const parsed = resolveBrandBody.safeParse(request.body);
     if (!parsed.success) return reply.code(400).send({ error: "invalid_brand_request" });
+    if (!(await quota(request, reply, "resolve"))) return;
     const accessToken = randomBytes(32).toString("base64url");
     try {
       const id = await repository!.createResolution(scopeOf(request), accessToken, parsed.data.name, parsed.data.selectedQlooId);
@@ -120,6 +129,7 @@ export async function brandBaselineRoutes(app: FastifyInstance): Promise<void> {
     if (!admit(request, reply, true)) return;
     const parsed = createBaselineBody.safeParse(request.body);
     if (!parsed.success || !tokenOf(request)) return reply.code(400).send({ error: "invalid_baseline_request" });
+    if (!(await quota(request, reply, "scan"))) return;
     try {
       const created = await repository!.createScan({ resolutionId: parsed.data.resolutionId, scope: scopeOf(request), accessToken: tokenOf(request), idempotencyKey: parsed.data.idempotencyKey, requestHash: payloadHash({ resolutionId: parsed.data.resolutionId }) });
       void worker?.tick();

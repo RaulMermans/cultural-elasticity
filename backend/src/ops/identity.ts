@@ -11,6 +11,7 @@ import {
   paidOperatorExpiry,
   paidOperatorRequired,
   paidOperatorToken,
+  publicEvaluationActive,
   publicRuntime,
   VISITOR_HEADER,
 } from "../config/production.js";
@@ -46,19 +47,33 @@ export function verifyOperator(headers: Record<string, unknown>, env: NodeJS.Pro
   return secretEquals(expected, headerValue(headers, OPERATOR_HEADER));
 }
 
-export type PaidOperatorDecision = { ok: true } | { ok: false; code: "operator_required" | "operator_expired" };
+export type PaidOperatorDecision =
+  | { ok: true; via: "open" | "operator" | "public_evaluation" }
+  | { ok: false; code: "operator_required" | "operator_expired" };
 
 /**
  * Fails closed. On a public runtime the authorization needs a configured token and an expiry still in the
- * future; a missing expiry is refused, so a forgotten token cannot authorize paid work indefinitely.
+ * future; a missing expiry is refused, so a forgotten token cannot authorize paid work indefinitely. Sprint 9M:
+ * while a public evaluation is active, a caller without the credential is admitted as `public_evaluation`, and
+ * the routes then apply that evaluation's durable per-network quotas. A valid operator credential still wins.
  */
 export function verifyPaidOperator(headers: Record<string, unknown>, env: NodeJS.ProcessEnv = process.env, now = Date.now()): PaidOperatorDecision {
-  if (!paidOperatorRequired(env)) return { ok: true };
+  if (!paidOperatorRequired(env)) return { ok: true, via: "open" };
   const expected = paidOperatorToken(env);
-  if (!expected) return { ok: false, code: "operator_required" };
   const expiry = paidOperatorExpiry(env);
-  if (expiry !== null ? expiry <= now : publicRuntime(env)) return { ok: false, code: "operator_expired" };
-  return secretEquals(expected, headerValue(headers, PAID_OPERATOR_HEADER)) ? { ok: true } : { ok: false, code: "operator_required" };
+  const operatorLive = Boolean(expected) && (expiry !== null ? expiry > now : !publicRuntime(env));
+  if (operatorLive && secretEquals(expected!, headerValue(headers, PAID_OPERATOR_HEADER))) return { ok: true, via: "operator" };
+  if (publicEvaluationActive(env, now)) return { ok: true, via: "public_evaluation" };
+  if (!expected) return { ok: false, code: "operator_required" };
+  return operatorLive ? { ok: false, code: "operator_required" } : { ok: false, code: "operator_expired" };
+}
+
+/** Sprint 9M: the visitor's network key, an HMAC of the client address computed by the Next.js server. */
+export const NETWORK_HEADER = "x-ce-network";
+
+export function networkKeyOf(headers: Record<string, unknown>): string | null {
+  const value = headerValue(headers, NETWORK_HEADER);
+  return /^[a-f0-9]{32}$/u.test(value) ? value : null;
 }
 
 export function visitorIdLooksValid(value: string): boolean {

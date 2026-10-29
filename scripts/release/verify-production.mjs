@@ -6,7 +6,7 @@
 // 403 operator_required) before any Qloo dispatch. Secret values are held in memory only to compute lengths and to
 // call operator diagnostics; the report is scanned for them before it is printed or written.
 //
-// Usage: node scripts/release/verify-production.mjs [--release <sha>] [--expect-admissions closed|open]
+// Usage: node scripts/release/verify-production.mjs [--release <sha>] [--expect-admissions closed|open|public]
 //          [--public-mode] [--max-qloo 75] [--max-usd 2.00] [--out <report.json>]
 // Needs: the Railway CLI linked to the project, Vercel CLI login (or VERCEL_TOKEN), gh (optional, for CI status).
 import { execFileSync } from "node:child_process";
@@ -136,6 +136,9 @@ function collectRailway(secrets) {
         spendBudgetUsd: number(vars.CE_SPEND_BUDGET_USD),
         reserveUsd: number(vars.CE_INVESTIGATION_RESERVE_USD),
         paidOperatorExpiresAt: vars.CE_PAID_OPERATOR_EXPIRES_AT ?? null,
+        publicEvaluation: vars.CE_PUBLIC_EVALUATION ?? null,
+        publicEvaluationId: vars.CE_PUBLIC_EVALUATION_ID ?? null,
+        publicEvaluationExpiresAt: vars.CE_PUBLIC_EVALUATION_EXPIRES_AT ?? null,
       },
     },
   };
@@ -167,7 +170,9 @@ async function collectHttp() {
     admissions: await http(`${TARGET.frontend}/api/agent/admissions`),
     brandStatus: await http(`${TARGET.frontend}/api/brands/status`),
     // Anonymous: no cookie, no operator. Railway must refuse before any Qloo call.
-    anonymousResolve: await http(`${TARGET.frontend}/api/brands/resolve`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: "Release verification probe" }) }),
+    // In a public evaluation an anonymous resolution is admitted, so the probe is malformed (a one-letter name):
+    // Railway refuses it with 400 after admission and before any quota or Qloo call.
+    anonymousResolve: await http(`${TARGET.frontend}/api/brands/resolve`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(arg("--expect-admissions", "closed") === "public" ? { name: "x" } : { name: "Release verification probe" }) }),
   };
 }
 

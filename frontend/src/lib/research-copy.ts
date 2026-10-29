@@ -152,11 +152,16 @@ const API_ERRORS: Record<string, string> = {
   request_too_large: "That request is too long.",
   operator_required: "Live research is restricted to an authorized research operator. No paid call was started.",
   operator_expired: "The research operator's authorization has expired. No paid call was started.",
+  visitor_quota_reached: "You have used this evaluation's free research allowance. No paid call was started. Your saved research and the recorded example are still available.",
+  visitor_unattributed: "This request could not be matched to a visitor, so no paid call was started. Please reload the page and try again.",
+  quota_unavailable: "New research cannot start because the usage record is unavailable. No paid call was started.",
+  budget_exhausted: "The public research budget for this evaluation has been used. No paid call was started. Saved research and the recorded example are still available.",
 };
 
 /** API error bodies carry a code; this turns it into a sentence. Limits share one message. */
 export function apiErrorCopy(code: unknown): string {
   if (typeof code !== "string") return "Something went wrong. Please try again later.";
+  if (API_ERRORS[code]) return API_ERRORS[code]!;
   if (code.includes("limit")) return "The research allowance for now has been used. Please try again later.";
   return API_ERRORS[code] ?? "Something went wrong. Please try again later.";
 }

@@ -1,6 +1,6 @@
 import { createJob } from "@/lib/backend";
 import { parseJobEnvelope } from "@/lib/job-envelope";
-import { operatorOf, visitorIdOf, withVisitor } from "@/lib/job-route";
+import { operatorOf, callerOf, withVisitor } from "@/lib/job-route";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,7 @@ export async function POST(request: Request): Promise<Response> {
   } catch {
     return Response.json({ error: "invalid_job_request", message: "That question could not be accepted." }, { status: 400 });
   }
-  const upstream = await createJob(body, visitorIdOf(request), operatorOf(request));
+  const upstream = await createJob(body, callerOf(request), operatorOf(request));
   if (!upstream) return withVisitor(request, Response.json({ error: "unavailable", message: "The investigation service is not available right now." }, { status: 503 }));
   if (upstream.status >= 400) {
     const message = messageOf(upstream.body) ?? "That question could not be accepted.";

@@ -16,6 +16,8 @@ import { join } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 
 const OPERATOR = process.env.E2E_OPERATOR_TOKEN ?? "";
+/** Sprint 9M: the deployment runs an approved public evaluation, so anonymous visitors may start research. */
+const PUBLIC_EVALUATION = process.env.E2E_PUBLIC_EVALUATION === "1";
 const BRAND = process.env.E2E_BRAND ?? "Zara";
 /** Optional second question, e.g. a direction expected to be inelastic for the brand. One more paid start. */
 const SECOND_QUESTION = process.env.E2E_SECOND_QUESTION ?? "";
@@ -34,15 +36,19 @@ function observe(page: Page): Problems {
 const redact = (text: string) => (OPERATOR ? text.split(OPERATOR).join("[operator]") : text);
 
 test.describe("anonymous visitor", () => {
-  test("home renders, brand search is not offered as available, and nothing paid is sent", async ({ page }) => {
+  test(PUBLIC_EVALUATION ? "home renders, brand search is offered to an anonymous visitor, and nothing paid is sent on load" : "home renders, brand search is not offered as available, and nothing paid is sent", async ({ page }) => {
     const problems = observe(page);
     const paid: string[] = [];
     page.on("request", (request) => { if (request.method() === "POST" && PAID.test(new URL(request.url()).pathname)) paid.push(request.url()); });
     await page.goto("/");
     const availability = page.getByTestId("research-availability");
     await expect(availability).not.toContainText("Checking", { timeout: 30_000 });
-    await expect(availability).not.toContainText("New brand research available.");
-    await expect(page.getByRole("button", { name: "Find brand" })).toBeDisabled();
+    if (PUBLIC_EVALUATION) {
+      await expect(availability).toContainText("New brand research available.");
+    } else {
+      await expect(availability).not.toContainText("New brand research available.");
+      await expect(page.getByRole("button", { name: "Find brand" })).toBeDisabled();
+    }
     await page.screenshot({ path: join(EVIDENCE, `anonymous-home-${test.info().project.name}.png`), fullPage: true });
     expect(paid).toEqual([]);
     expect(problems.pageErrors).toEqual([]);
@@ -50,6 +56,13 @@ test.describe("anonymous visitor", () => {
   });
 
   test("DIAGNOSTIC (not a user journey): anonymous paid requests are refused before any provider call", async ({ request }) => {
+    if (PUBLIC_EVALUATION) {
+      // Admitted, then refused for the malformed body before any quota, model or Qloo call.
+      expect((await request.post("/api/brands/resolve", { data: { name: "x" } })).status()).toBe(400);
+      expect((await request.post("/api/agent/jobs", { data: {} })).status()).toBe(400);
+      expect((await (await request.get("/api/brands/status")).json()).enabled).toBe(true);
+      return;
+    }
     const resolve = await request.post("/api/brands/resolve", { data: { name: "Release verification probe" } });
     expect([403, 503]).toContain(resolve.status());
     const job = await request.post("/api/agent/jobs", { data: { query: "probe" } });
@@ -61,7 +74,7 @@ test.describe("anonymous visitor", () => {
 });
 
 test.describe("LIVE authorized journey", () => {
-  test.skip(process.env.E2E_LIVE_AUTHORIZED !== "1" || OPERATOR.length < 32, "Live run not authorized for this invocation.");
+  test.skip(process.env.E2E_LIVE_AUTHORIZED !== "1" || (OPERATOR.length < 32 && !PUBLIC_EVALUATION), "Live run not authorized for this invocation.");
 
   test(`LIVE: ${BRAND} → baseline → network → Haiku investigation → save → reopen → PDF and HTML`, async ({ page }) => {
     test.setTimeout(60 * 60_000);
@@ -84,11 +97,17 @@ test.describe("LIVE authorized journey", () => {
     });
 
     // 1. One-time private authorization; the fragment never reaches a server and leaves the URL at once.
-    await page.goto(`/operator#token=${OPERATOR}`);
-    await page.waitForURL((url) => url.pathname === "/", { timeout: 20_000 });
-    expect(page.url()).not.toContain(OPERATOR);
+    //    In a public evaluation the visitor is anonymous, exactly like a judge.
+    if (PUBLIC_EVALUATION) {
+      await page.goto("/");
+      note("anonymous_public_evaluation_visitor");
+    } else {
+      await page.goto(`/operator#token=${OPERATOR}`);
+      await page.waitForURL((url) => url.pathname === "/", { timeout: 20_000 });
+      expect(page.url()).not.toContain(OPERATOR);
+      note("operator_authorized");
+    }
     await expect(page.getByTestId("research-availability")).toContainText("New brand research available.", { timeout: 30_000 });
-    note("operator_authorized");
 
     // 2. Brand search and real Qloo resolution.
     await page.getByRole("combobox", { name: "Brand name" }).fill(BRAND);

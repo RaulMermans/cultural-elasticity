@@ -1,6 +1,6 @@
 import { comparativeHandoff } from "@/lib/backend";
 import { parseJobEnvelope } from "@/lib/job-envelope";
-import { operatorOf, visitorIdOf, withVisitor } from "@/lib/job-route";
+import { operatorOf, callerOf, withVisitor } from "@/lib/job-route";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +13,7 @@ export async function POST(request: Request, context: { params: Promise<{ mode: 
   if (!scanToken || !jobToken) return Response.json({ error: "investigation_not_found" }, { status: 404 });
   let body: unknown;
   try { body = await request.json(); } catch { return Response.json({ error: "invalid_comparison_request" }, { status: 400 }); }
-  const upstream = await comparativeHandoff(mode, body, scanToken, jobToken, visitorIdOf(request), operatorOf(request));
+  const upstream = await comparativeHandoff(mode, body, scanToken, jobToken, callerOf(request), operatorOf(request));
   if (!upstream) return withVisitor(request, Response.json({ error: "unavailable" }, { status: 503 }));
   if (upstream.status >= 400 || mode !== "jobs") return withVisitor(request, Response.json(upstream.body, { status: upstream.status }));
   const parsed = parseJobEnvelope(upstream.body);

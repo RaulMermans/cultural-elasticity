@@ -1,6 +1,6 @@
 import { API_SERVICE_NAME, type HealthResponse } from "@cultural-elasticity/shared";
 import type { FastifyInstance } from "fastify";
-import { paidOperatorRequired, publicRuntime } from "../config/production.js";
+import { paidOperatorRequired, publicEvaluationActive, publicRuntime } from "../config/production.js";
 import { canAcceptInvestigations, lifecycle } from "../ops/lifecycle.js";
 import { spendLedger } from "../ops/spend.js";
 
@@ -72,7 +72,7 @@ export function readiness(env: NodeJS.ProcessEnv = process.env): ReadyResponse {
       internalAuth,
       spendConfigured,
       qlooTransportInitialized: false,
-      paidOperatorRequired: paidOperatorRequired(env),
+      paidOperatorRequired: paidOperatorRequired(env) && !publicEvaluationActive(env),
     },
   };
 }

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { createBaselinePool, type Database } from "../brand-baseline/db.js";
-import { paidOperatorToken, publicRuntime } from "../config/production.js";
+import { paidOperatorToken, publicEvaluationId, publicRuntime } from "../config/production.js";
 
 /**
  * Sprint 9J: durable accounting for one bounded operator run. Counters live in the existing
@@ -14,6 +14,13 @@ export type RunTake = { ok: true; used: number; limit: number } | { ok: false; c
 
 export interface RunLedger {
   take(counter: RunCounter, units: number, limit: number): Promise<RunTake>;
+  /**
+   * Sprint 9M: returns units that were provably not spent (a settled model reservation's unused part). Only
+   * called once per reservation, after the provider reported its usage; doubt keeps the units consumed.
+   */
+  release(counter: RunCounter, units: number): Promise<void>;
+  /** Sprint 9M: a durable quota under this run (e.g. one visitor network's scans). Same semantics as `take`. */
+  takeQuota(scope: string, units: number, limit: number): Promise<RunTake>;
   snapshot(): Promise<Record<RunCounter, { limit: number; used: number } | null> | null>;
 }
 
@@ -29,8 +36,25 @@ export class PostgresRunLedger implements RunLedger {
   }
 
   async take(counter: RunCounter, units: number, limit: number): Promise<RunTake> {
+    return this.takeKey(this.prefix + counter, units, limit);
+  }
+
+  async takeQuota(scope: string, units: number, limit: number): Promise<RunTake> {
+    if (!/^[a-z]+:[a-f0-9]{32}$/u.test(scope)) return { ok: false, code: "limit_reached" };
+    return this.takeKey(`${this.prefix}quota:${scope}`, units, limit);
+  }
+
+  async release(counter: RunCounter, units: number): Promise<void> {
+    if (!Number.isInteger(units) || units <= 0) return;
+    try {
+      await this.pool.query("UPDATE baseline_budget_accounts SET used_calls=GREATEST(used_calls-$2,0),updated_at=now() WHERE budget_key=$1", [this.prefix + counter, units]);
+    } catch {
+      // A failed release keeps the units consumed: the safe direction.
+    }
+  }
+
+  private async takeKey(key: string, units: number, limit: number): Promise<RunTake> {
     if (!Number.isInteger(units) || units <= 0 || !Number.isInteger(limit) || limit < 0) return { ok: false, code: "limit_reached" };
-    const key = this.prefix + counter;
     try {
       await this.pool.query("INSERT INTO baseline_budget_accounts (budget_key, limit_calls) VALUES ($1,$2) ON CONFLICT (budget_key) DO NOTHING", [key, limit]);
       const result = await this.pool.query<{ used_calls: number; limit_calls: number }>(
@@ -59,11 +83,24 @@ export class PostgresRunLedger implements RunLedger {
   }
 }
 
+/**
+ * Sprint 9M: the durable cents a settled reservation may return. Only a settlement with provider-reported usage
+ * returns anything; unknown usage keeps the whole reservation, and an overage returns nothing.
+ */
+export function unusedReservationCents(durableCents: number, settled: { uncertainty: string; consumedUsd: number } | null): number {
+  if (!settled || settled.uncertainty !== "none" || !Number.isFinite(settled.consumedUsd) || durableCents <= 0) return 0;
+  return Math.max(0, durableCents - Math.ceil(settled.consumedUsd * 100));
+}
+
 /** A ledger that refuses every unit: a public runtime that needs durable accounting but cannot have it. */
 export const refusingRunLedger: RunLedger = {
   async take() {
     return { ok: false, code: "ledger_unavailable" };
   },
+  async takeQuota() {
+    return { ok: false, code: "ledger_unavailable" };
+  },
+  async release() {},
   async snapshot() {
     return null;
   },
@@ -72,13 +109,22 @@ export const refusingRunLedger: RunLedger = {
 let shared: RunLedger | null | undefined;
 
 /**
- * The process run ledger. A public runtime with a paid operator credential always gets one: a durable ledger
- * when `DATABASE_URL` is set, otherwise one that refuses everything. A private runtime without a credential
- * keeps the process-local behaviour (null).
+ * The durable key of this process's run: a public evaluation's identifier when one is configured (every visitor
+ * and the operator then share one global cap), otherwise the paid operator credential.
+ */
+export function runCredential(env: NodeJS.ProcessEnv = process.env): string | undefined {
+  const evaluation = publicEvaluationId(env);
+  return evaluation ? `public-evaluation:${evaluation}` : paidOperatorToken(env);
+}
+
+/**
+ * The process run ledger. A public runtime with a run credential always gets one: a durable ledger when
+ * `DATABASE_URL` is set, otherwise one that refuses everything. A private runtime without a credential keeps
+ * the process-local behaviour (null).
  */
 export function runLedger(env: NodeJS.ProcessEnv = process.env): RunLedger | null {
   if (shared !== undefined) return shared;
-  const credential = paidOperatorToken(env);
+  const credential = runCredential(env);
   if (!credential) return (shared = publicRuntime(env) ? refusingRunLedger : null);
   if (!env.DATABASE_URL) return (shared = publicRuntime(env) ? refusingRunLedger : null);
   try {
