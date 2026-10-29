@@ -1,0 +1,125 @@
+{
+  "schema": "ce-evidence-manifest/1",
+  "environment": "production (live Qloo hackathon host + Claude Haiku)",
+  "deployedRevision": "657a2b4",
+  "ledger": {
+    "before": {
+      "qlooCalls": 142,
+      "modelCents": 13
+    },
+    "after": {
+      "qlooCalls": 155,
+      "modelCents": 14
+    },
+    "source": "/ops/status runLedger"
+  },
+  "generatedAt": "2026-10-29T17:04:27.307Z",
+  "cases": [
+    {
+      "directory": "9o-c4-holdout-discovery",
+      "caseId": "9o-c4-holdout-discovery",
+      "brand": "Carhartt",
+      "question": null,
+      "started": "2026-10-29T16:58:41.817Z",
+      "ended": "2026-10-29T17:00:19.694Z",
+      "completed": true,
+      "results": [
+        {
+          "file": "9o-c4-holdout-discovery/results/442f24bb-eb7e-45e4-8fba-eac0ab376dad.json",
+          "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+          "status": "COMPLETE",
+          "evidenceOrigin": "live",
+          "model": {
+            "id": "claude-haiku-5-5",
+            "kind": "llm",
+            "live": true,
+            "effort": "high"
+          },
+          "feasibility": {
+            "rulesVersion": "comparison-feasibility/v1",
+            "status": "INFEASIBLE",
+            "blocker": "TARGET_UNSUPPORTED"
+          },
+          "qlooCalls": 7,
+          "iterations": 7,
+          "latencyMs": 52074,
+          "territories": [
+            {
+              "key": "blue_collar",
+              "role": "target",
+              "route": "INSUFFICIENT_EVIDENCE",
+              "classification": null
+            }
+          ]
+        }
+      ],
+      "artefacts": [
+        {
+          "path": "9o-c4-holdout-discovery/jobs/442f24bb-eb7e-45e4-8fba-eac0ab376dad.json",
+          "bytes": 102146,
+          "sha256": "c33796fd30349d89e9aaf2eeedc0fbf4bf380dda5a608f8c340cb7ea276b34a3"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-01-brand-search.png",
+          "bytes": 203463,
+          "sha256": "54454a582160ddecf81a42e839e8cf6ac01eeb3285d06ab91087ee932580e4b3"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-02-brand-resolved.png",
+          "bytes": 218342,
+          "sha256": "94f2539f65f22e44125dc97d029a196a2e82dda006f1ee80e903f87e820e7f5f"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-03-network-fingerprint.png",
+          "bytes": 281602,
+          "sha256": "f960d70faa291b8abf0b548e9807d875bfaa5b57c2d70bd02beb0291cd788709"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-04-direction-selected.png",
+          "bytes": 235696,
+          "sha256": "9bc3fba743cabc24a4323c028dd7b764d4bdeab4fea9d7773ec0120d45c5fc77"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-05-investigation-running.png",
+          "bytes": 310816,
+          "sha256": "afe16d92c373ac5a94abfdd37ce2417bae4bc2d474925558637776db06676fff"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-06-investigation-result.png",
+          "bytes": 314992,
+          "sha256": "ec3650fe795e0cbfa85d6bd2f07c38dce6be724b655f0fe3dbb7f2cdd705d85b"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-07-library.png",
+          "bytes": 217450,
+          "sha256": "fd4a3dffc85b443ffaa4a163af343283a1c4c76f761e78138eefdc0d9fb47695"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-08-reopened.png",
+          "bytes": 265131,
+          "sha256": "1551401028aaa6a614861f4def0ccad8c9d9a79eed484899d0ad07002e940f30"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-ledger.json",
+          "bytes": 5040,
+          "sha256": "041157e754ac059478f6b2ed8e46c8e1bc466c3a53871f596ffde208f07c849f"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-report.html",
+          "bytes": 11101,
+          "sha256": "1c2a9144e93f65b3721ca8021e8baa186b28c0afbd44f211d480d5de52a464d3"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/live-report.pdf",
+          "bytes": 24233,
+          "sha256": "a327d9b8479eb4ff73941f5b6d8109a78bab39900644c73dfbd71a03ab926add"
+        },
+        {
+          "path": "9o-c4-holdout-discovery/results/442f24bb-eb7e-45e4-8fba-eac0ab376dad.json",
+          "bytes": 79493,
+          "sha256": "29a15fce1004d4baf7f1c431f5a83f1644123c3e5a104cf1cc35c4ba433dbfff"
+        }
+      ]
+    }
+  ]
+}

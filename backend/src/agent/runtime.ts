@@ -37,7 +37,8 @@ import { comparisonRepresentationPlan, preferredTypeFor } from "./representation
 import { applyInterpretation, resolveInterpretation } from "./router.js";
 import { RunStore } from "./run-store.js";
 import { clearDerivedCache } from "./derived-cache.js";
-import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState } from "./state.js";
+import { runReferenceDiscovery } from "./reference-discovery.js";
+import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState, type TerritoryGrounding } from "./state.js";
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
 import type { SpendBound } from "../ops/spend.js";
 import { decisionCeilingUsd, priceUsd, roundUsd, synthesisCeilingUsd } from "../ops/pricing.js";
@@ -53,6 +54,8 @@ export type AgentRuntimeDeps = {
   store?: RunStore;
   /** Sprint 9N: comparison-feasibility policy for new runs (default "enforce"; "observe" is the Sprint 9M control flow). */
   feasibilityPolicy?: "enforce" | "observe";
+  /** Sprint 9O: false turns the runtime reference search off (the competence evaluation's matched "before" arm). */
+  referenceDiscovery?: boolean;
 };
 
 /** Sprint 5B.1: a gate-approved interpretation and the run's parent-child link (both optional). */
@@ -60,6 +63,8 @@ export type AgentRuntimeDeps = {
 export type RunOptions = {
   interpretation?: Interpretation;
   expectedBrandId?: string;
+  /** Sprint 9O: server-held baseline grounding for the investigated direction. */
+  territoryGrounding?: TerritoryGrounding;
   link?: InvestigationLink;
   signal?: AbortSignal;
   spend?: SpendBound;
@@ -105,6 +110,7 @@ export class AgentRuntime {
     if (check && !check.ok) throw new AgentInputError([{ path: "interpretation", message: check.reason }]);
     const state = createRunState(request, this.deps.model.info, { name: this.deps.provider.name, mode: this.deps.provider.mode, evidenceSource: this.deps.provider.evidenceSource }, limits);
     state.expectedBrandId = options.expectedBrandId ?? null;
+    state.territoryGrounding = options.territoryGrounding ?? null;
     state.feasibilityPolicy = this.deps.feasibilityPolicy ?? "enforce";
     if (options.link) {
       state.link = options.link;
@@ -186,6 +192,9 @@ export class AgentRuntime {
         if (this.spendRefused(state, "decision")) {
           return await this.exhausted(state, "the authorized model spend cannot cover another decision; findings already supported were kept");
         }
+
+        // Sprint 9O: the runtime's own reference search, once, before the model chooses references (reference-discovery.ts).
+        if (this.deps.referenceDiscovery !== false && (await runReferenceDiscovery(state, this.registry, this.deps.provider, this.skills))) continue;
 
         state.usage.iterations += 1;
         state.turnOpen = true;

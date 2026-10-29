@@ -8,6 +8,7 @@
  * The work itself is QueryService / AgentRuntime. A job only detaches that work from the HTTP connection, bounds how
  * many run at once, and carries an opaque access token. Qloo calls stay serialized by the shared tool provider.
  */
+import type { TerritoryGrounding } from "../state.js";
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import type { AgentTrace, QueryResponse } from "@cultural-elasticity/shared";
 import { jobActivity, type JobActivity } from "./activity.js";
@@ -35,7 +36,7 @@ export type JobView = {
 export type JobCreated = JobView & { accessToken: string };
 
 export type JobRequest =
-  | { kind: "execute"; body: QueryBody; model: string; expectedBrandId?: string }
+  | { kind: "execute"; body: QueryBody; model: string; expectedBrandId?: string; territoryGrounding?: TerritoryGrounding }
   | { kind: "confirm"; queryId: string; model: string }
   | { kind: "continue"; runId: string; clarification: string; model: string };
 
@@ -389,7 +390,7 @@ export class JobManager {
 async function runRequest(runner: InvestigationRunner, request: JobRequest, hooks: QueryHooks): Promise<QueryResponse> {
   if (request.kind === "confirm") return runner.confirm(request.queryId, hooks);
   if (request.kind === "continue") return runner.continueRun(request.runId, request.clarification, hooks);
-  return runner.execute(request.body, { ...hooks, expectedBrandId: request.expectedBrandId });
+  return runner.execute(request.body, { ...hooks, expectedBrandId: request.expectedBrandId, territoryGrounding: request.territoryGrounding });
 }
 
 function publicError(error: unknown): { code: string; message: string } {

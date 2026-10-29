@@ -68,7 +68,7 @@ const IMPLICATION: Record<DecisionImplication, { label: string; text: (t: string
 /** Plain-language versions of the comparison-feasibility blockers. */
 const BLOCKER: Record<string, (t: string, f: ComparisonFeasibility) => string> = {
   TARGET_NOT_ANCHORED: (t) => `Qloo could not yet match ${t} to one of its concepts.`,
-  TARGET_UNSUPPORTED: (t) => `Qloo does not support ${t} as a concept, so nothing could be compared with it.`,
+  TARGET_UNSUPPORTED: (t) => `No Qloo tag tried for ${t} in this run returned entities that could stand for it, so nothing could be compared with it.`,
   TARGET_NOT_REPRESENTED: (t) => `No validated set of examples could stand for ${t} in this run.`,
   TARGET_CONCEPT_ONLY: (t) => `Qloo knows ${t} as a concept, but returned no examples that could stand for it in a comparison.`,
   THIN_TARGET_PANEL: (t, f) => `Only ${f.target.validExemplars} example passed validation for ${t}. A comparison needs other territories tied to the question, and with one example only the brand's own Qloo tags could supply them.`,
@@ -86,7 +86,7 @@ const BLOCKER: Record<string, (t: string, f: ComparisonFeasibility) => string> =
 const LIMITATION: Record<string, (t: string) => string> = {
   NO_RELATIVE_POSITION: (t) => `${t} was not ranked against other territories.`,
   NO_VALID_REPRESENTATION: (t) => `No solid set of examples could be found to stand for ${t}.`,
-  TERRITORY_UNRESOLVED: (t) => `Qloo could not match ${t} to one of its concepts.`,
+  TERRITORY_UNRESOLVED: (t) => `This run found no Qloo tag for ${t} that returns entities.`,
   NOT_COLLECTED_BUDGET: () => "Some evidence was not collected because the investigation reached its budget.",
   PANEL_CALL_FAILED: () => "One of Qloo's lookups failed, so part of the comparison is missing.",
   SEMANTIC_COMPARISON_INVALID: () => "The territories available were not similar enough in kind for a fair ranking.",

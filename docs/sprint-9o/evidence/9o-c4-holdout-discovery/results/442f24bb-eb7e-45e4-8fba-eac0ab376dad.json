@@ -1,0 +1,2639 @@
+{
+  "schemaVersion": "ce-agent-result/0.3",
+  "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+  "status": "COMPLETE",
+  "finalSufficiency": "INSUFFICIENT",
+  "intent": "analyze_move",
+  "userQuery": "How far can Carhartt extend into Blue Collar?",
+  "brand": {
+    "id": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+    "label": "Carhartt",
+    "type": "urn:entity:brand",
+    "resolution": "confirmed"
+  },
+  "territories": [
+    {
+      "key": "blue_collar",
+      "label": "Blue Collar",
+      "role": "target",
+      "origin": "user",
+      "rationale": "named by the user",
+      "resolvedConcept": null,
+      "representation": {
+        "strategy": "UNSUPPORTED",
+        "entityType": null,
+        "exemplars": [],
+        "rejectedExemplars": [],
+        "diversity": "unknown",
+        "diversityDetail": "no exemplars",
+        "attempts": 0,
+        "summary": "no Qloo concept anchors this territory",
+        "failure": {
+          "code": "TERRITORY_UNRESOLVED",
+          "detail": "Blue Collar did not resolve to a Qloo concept within the resolution budget; the one probe (urn:tag:character:qloo:blue_collar, place type) returned no place entities, and no recovery option remains."
+        }
+      },
+      "keyEvidence": [
+        "No measurable evidence: Blue Collar did not resolve to a Qloo concept within the resolution budget; the one probe (urn:tag:character:qloo:blue_collar, place type) returned no place entities, and no recovery option remains.."
+      ],
+      "analysisRoute": "INSUFFICIENT_EVIDENCE",
+      "capabilities": {
+        "representation": "UNSUPPORTED",
+        "relativePosition": "UNAVAILABLE",
+        "robustness": "UNAVAILABLE",
+        "coherence": "UNAVAILABLE",
+        "conditionedEvidence": "UNAVAILABLE",
+        "classification": "UNAVAILABLE"
+      },
+      "comparisonSet": null,
+      "relativePosition": null,
+      "robustness": null,
+      "coherence": null,
+      "conditionedEvidence": null,
+      "evidenceQuality": null,
+      "classification": null,
+      "limitations": [
+        {
+          "code": "TERRITORY_UNRESOLVED",
+          "detail": "Blue Collar: Blue Collar did not resolve to a Qloo concept within the resolution budget; the one probe (urn:tag:character:qloo:blue_collar, place type) returned no place entities, and no recovery option remains."
+        }
+      ],
+      "provenance": {
+        "correlationIds": [],
+        "sources": []
+      },
+      "candidate": {
+        "originalLabel": "Blue Collar",
+        "sourceTagId": null,
+        "resolvedId": null,
+        "canonicalConceptKey": "blue_collar",
+        "normalizationReason": "LABEL_NORMALIZED",
+        "candidateSource": "user",
+        "anchorRelation": "NO_SOURCE_TAG",
+        "uncertainty": null
+      },
+      "evidenceStatus": "UNSUPPORTED",
+      "probes": [
+        {
+          "conceptKey": "urn:tag:characteristic:qloo:blue_collar",
+          "label": "Blue Collar",
+          "namespace": "characteristic:qloo",
+          "attemptedTypes": [
+            "place",
+            "brand",
+            "artist"
+          ],
+          "emptyTypes": [
+            "place",
+            "brand",
+            "artist"
+          ],
+          "successfulTypes": [],
+          "unreliableTypes": [],
+          "totalEmptyTypeProbes": 3,
+          "probingExhausted": true,
+          "exhaustionReason": "Blue Collar: 3 entity types (place, brand, artist) returned no members; probing it with further types has no expected value"
+        },
+        {
+          "conceptKey": "urn:tag:character:qloo:blue_collar",
+          "label": "Blue Collar",
+          "namespace": "character:qloo",
+          "attemptedTypes": [
+            "place"
+          ],
+          "emptyTypes": [
+            "place"
+          ],
+          "successfulTypes": [],
+          "unreliableTypes": [],
+          "totalEmptyTypeProbes": 1,
+          "probingExhausted": false,
+          "exhaustionReason": null
+        },
+        {
+          "conceptKey": "urn:tag:style:qloo:blue_collar",
+          "label": "Blue Collar",
+          "namespace": "style:qloo",
+          "attemptedTypes": [
+            "brand"
+          ],
+          "emptyTypes": [
+            "brand"
+          ],
+          "successfulTypes": [],
+          "unreliableTypes": [],
+          "totalEmptyTypeProbes": 1,
+          "probingExhausted": false,
+          "exhaustionReason": null
+        }
+      ]
+    }
+  ],
+  "methodologyRuns": [],
+  "summary": {
+    "text": "The results cannot show how far Carhartt can extend into Blue Collar. Blue Collar did not resolve to a Qloo concept, so no comparison set, relative position, robustness or classification was produced for it. The evidence therefore says nothing about the extent of Carhartt's affinity with this territory.\nBlue Collar: The territory's route is INSUFFICIENT_EVIDENCE and it carries the TERRITORY_UNRESOLVED limitation, so no territory-level reading of Carhartt's association with Blue Collar is available. No Qloo concept anchors Blue Collar, and its representation capability is unsupported, so the territory cannot be mapped onto Qloo's cultural graph for this brand.",
+    "source": "model",
+    "claimValidation": {
+      "passed": true,
+      "violations": []
+    }
+  },
+  "followUpOptions": [
+    "Which Qloo concepts could represent Blue Collar as a territory for Carhartt?",
+    "Which other territories could be compared with Blue Collar for Carhartt?",
+    "What cultural signals does Carhartt show in territories that do resolve in Qloo?"
+  ],
+  "limitations": [
+    {
+      "code": "NOT_A_SUCCESS_PREDICTION",
+      "detail": "nothing here predicts commercial success, purchase intent or any individual's preference"
+    },
+    {
+      "code": "NO_APPROVED_SCORE",
+      "detail": "no 0–100 score exists (Relative Elasticity Index REJECTED_FOR_NOW); results are positions, robustness, coherence, quality and provisional classes"
+    }
+  ],
+  "evidenceOrigin": "live",
+  "model": {
+    "id": "claude-haiku-5-5",
+    "kind": "llm",
+    "live": true,
+    "effort": "high"
+  },
+  "trace": {
+    "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+    "intent": "analyze_move",
+    "userQuery": "How far can Carhartt extend into Blue Collar?",
+    "interpretedRequest": {
+      "intent": "analyze_move",
+      "brand": "Carhartt",
+      "territories": [
+        "Blue Collar"
+      ]
+    },
+    "model": {
+      "id": "claude-haiku-5-5",
+      "kind": "llm",
+      "live": true,
+      "effort": "high"
+    },
+    "toolProvider": {
+      "name": "qloo-mcp",
+      "mode": "live"
+    },
+    "limits": {
+      "maxAgentIterations": 12,
+      "maxRepresentationAttemptsPerTerritory": 3,
+      "maxCandidateTerritories": 6,
+      "maxExemplarsPerTerritory": 3,
+      "maxRetryPerToolCall": 1,
+      "maxActionsPerTurn": 12,
+      "maxInvalidTurns": 2,
+      "toolTimeoutMs": 300000,
+      "maxQlooCalls": 24
+    },
+    "statusTransitions": [
+      {
+        "iteration": 0,
+        "from": "INTAKE",
+        "to": "PLANNING",
+        "reason": "request validated"
+      },
+      {
+        "iteration": 0,
+        "from": "PLANNING",
+        "to": "RESOLVING",
+        "reason": "evidence changed the working phase"
+      },
+      {
+        "iteration": 1,
+        "from": "RESOLVING",
+        "to": "INVESTIGATING",
+        "reason": "evidence changed the working phase"
+      },
+      {
+        "iteration": 7,
+        "from": "INVESTIGATING",
+        "to": "COMPLETE",
+        "reason": "agent finished"
+      }
+    ],
+    "planRevisions": [
+      {
+        "iteration": 1,
+        "items": [
+          "[x] interpret the goal (intent, brand, named territories)",
+          "[x] resolve the brand",
+          "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+          "[ ] Blue Collar: anchor to a Qloo concept",
+          "[ ] Blue Collar: discover and validate exemplars (or accept concept-only evidence)",
+          "[ ] Blue Collar: analyze",
+          "[ ] finish when deterministic sufficiency allows"
+        ],
+        "note": "The brand must be resolved to a Qloo entity before any territory can be compared."
+      },
+      {
+        "iteration": 7,
+        "items": [
+          "[x] interpret the goal (intent, brand, named territories)",
+          "[x] resolve the brand",
+          "[ ] optional: reach ≥ 3 represented territories of one entity type (add references) so a relative position is possible; otherwise analysis is partial",
+          "[-] Blue Collar: dropped (TERRITORY_UNRESOLVED)",
+          "[x] finish when deterministic sufficiency allows"
+        ],
+        "note": "Blue Collar has no Qloo concept and the resolution budget is spent, so it is out of scope."
+      }
+    ],
+    "turns": [
+      {
+        "iteration": 1,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_resolve_entity",
+            "arguments": {
+              "name": "Carhartt",
+              "type": "brand",
+              "role": "brand"
+            },
+            "reasonSummary": "The brand must be resolved to a Qloo entity before any territory can be compared.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 1224,
+          "outputTokens": 152,
+          "cacheReadTokens": 0,
+          "cacheCreationTokens": 1793
+        },
+        "latencyMs": 826,
+        "skills": [
+          {
+            "id": "resolve_brand",
+            "version": 1
+          },
+          {
+            "id": "resolve_territory",
+            "version": 5
+          }
+        ],
+        "toolsExposed": [
+          "qloo_resolve_entity",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 3261,
+        "contextTokensEstimate": 816
+      },
+      {
+        "iteration": 2,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_find_tags",
+            "arguments": {
+              "query": "blue collar"
+            },
+            "reasonSummary": "Blue Collar is the target territory and has no Qloo concept yet, so I'm searching the tag vocabulary for it.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 2014,
+          "outputTokens": 211,
+          "cacheReadTokens": 0,
+          "cacheCreationTokens": 2886
+        },
+        "latencyMs": 1574,
+        "skills": [
+          {
+            "id": "resolve_territory",
+            "version": 5
+          }
+        ],
+        "toolsExposed": [
+          "qloo_find_tags",
+          "qloo_recommend",
+          "anchor_territory",
+          "drop_territory",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 7553,
+        "contextTokensEstimate": 1889
+      },
+      {
+        "iteration": 3,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_recommend",
+            "arguments": {
+              "targetType": "place",
+              "tagIds": [
+                "urn:tag:characteristic:qloo:blue_collar"
+              ],
+              "conditionOnBrand": false
+            },
+            "reasonSummary": "Following the focus's next probe to test whether the Blue Collar characteristic tag carries place members before anchoring.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 3290,
+          "outputTokens": 410,
+          "cacheReadTokens": 2886,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 2879,
+        "skills": [
+          {
+            "id": "resolve_territory",
+            "version": 5
+          }
+        ],
+        "toolsExposed": [
+          "qloo_find_tags",
+          "qloo_recommend",
+          "anchor_territory",
+          "drop_territory",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 10190,
+        "contextTokensEstimate": 2548
+      },
+      {
+        "iteration": 4,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_recommend",
+            "arguments": {
+              "targetType": "brand",
+              "tagIds": [
+                "urn:tag:characteristic:qloo:blue_collar"
+              ],
+              "conditionOnBrand": false
+            },
+            "reasonSummary": "Testing brand-independent brand members for the Blue Collar characteristic tag, the recommended next probe before anchoring.",
+            "accepted": true
+          },
+          {
+            "action": "call_tool",
+            "tool": "qloo_recommend",
+            "arguments": {
+              "targetType": "brand",
+              "tagIds": [
+                "urn:tag:style:qloo:blue_collar"
+              ],
+              "conditionOnBrand": false
+            },
+            "reasonSummary": "Testing whether the style-namespace Blue Collar tag carries brand members, as an alternate concept for the same territory.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 2980,
+          "outputTokens": 778,
+          "cacheReadTokens": 2886,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 3220,
+        "skills": [
+          {
+            "id": "resolve_territory",
+            "version": 5
+          }
+        ],
+        "toolsExposed": [
+          "qloo_find_tags",
+          "qloo_recommend",
+          "anchor_territory",
+          "drop_territory",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 9609,
+        "contextTokensEstimate": 2403
+      },
+      {
+        "iteration": 5,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_recommend",
+            "arguments": {
+              "targetType": "artist",
+              "tagIds": [
+                "urn:tag:characteristic:qloo:blue_collar"
+              ],
+              "conditionOnBrand": false
+            },
+            "reasonSummary": "Follow the focus nextProbe: test the untried artist type on the Blue Collar characteristic concept before anchoring.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 3217,
+          "outputTokens": 446,
+          "cacheReadTokens": 2886,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 2617,
+        "skills": [
+          {
+            "id": "resolve_territory",
+            "version": 5
+          }
+        ],
+        "toolsExposed": [
+          "qloo_find_tags",
+          "qloo_recommend",
+          "anchor_territory",
+          "drop_territory",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 10158,
+        "contextTokensEstimate": 2540
+      },
+      {
+        "iteration": 6,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "qloo_recommend",
+            "arguments": {
+              "targetType": "place",
+              "tagIds": [
+                "urn:tag:character:qloo:blue_collar"
+              ],
+              "conditionOnBrand": false
+            },
+            "reasonSummary": "Blue Collar has no anchored concept yet, and the character:qloo tag is the next untested concept with a place probe.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 3076,
+          "outputTokens": 437,
+          "cacheReadTokens": 2886,
+          "cacheCreationTokens": 0
+        },
+        "latencyMs": 2031,
+        "skills": [
+          {
+            "id": "resolve_territory",
+            "version": 5
+          }
+        ],
+        "toolsExposed": [
+          "qloo_find_tags",
+          "qloo_recommend",
+          "anchor_territory",
+          "drop_territory",
+          "ask_user"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 9922,
+        "contextTokensEstimate": 2481
+      },
+      {
+        "iteration": 7,
+        "decisions": [
+          {
+            "action": "call_tool",
+            "tool": "drop_territory",
+            "arguments": {
+              "territoryKey": "blue_collar",
+              "code": "TERRITORY_UNRESOLVED",
+              "reason": "Blue Collar did not resolve to a Qloo concept within the resolution budget; the one probe (urn:tag:character:qloo:blue_collar, place type) returned no place entities, and no recovery option remains."
+            },
+            "reasonSummary": "Blue Collar has no Qloo concept and the resolution budget is spent, so it is out of scope.",
+            "accepted": true
+          },
+          {
+            "action": "finish",
+            "reasonSummary": "No territory is analyzable: Blue Collar is unsupported by Qloo, so no relative position can be placed.",
+            "accepted": true
+          }
+        ],
+        "usage": {
+          "inputTokens": 1622,
+          "outputTokens": 655,
+          "cacheReadTokens": 0,
+          "cacheCreationTokens": 2184
+        },
+        "latencyMs": 3103,
+        "skills": [
+          {
+            "id": "analyze_territories",
+            "version": 3
+          }
+        ],
+        "toolsExposed": [
+          "drop_territory",
+          "assess_evidence_sufficiency",
+          "analyze",
+          "finish"
+        ],
+        "modelAttempts": 1,
+        "repairReason": null,
+        "firstAttemptValid": true,
+        "contextChars": 4610,
+        "contextTokensEstimate": 1153
+      }
+    ],
+    "toolCalls": [
+      {
+        "id": "tc-1",
+        "iteration": 1,
+        "tool": "qloo_resolve_entity",
+        "permission": "read_only_external",
+        "arguments": {
+          "name": "Carhartt",
+          "type": "brand",
+          "role": "brand"
+        },
+        "status": "ok",
+        "summary": "Carhartt (2D69DB33-B4DF-4879-B3DC-308E3402A1FD, urn:entity:brand, match exact)",
+        "qlooOperations": [
+          "describe"
+        ],
+        "correlationIds": [
+          "mcp-93d1dea5-6e73-492c-b8b8-3b3e35a9c7de"
+        ],
+        "attempts": 1,
+        "latencyMs": 2167,
+        "skill": {
+          "id": "resolve_brand",
+          "version": 1
+        },
+        "expectedValue": "HIGH"
+      },
+      {
+        "id": "tc-2",
+        "iteration": 2,
+        "tool": "qloo_find_tags",
+        "permission": "read_only_external",
+        "arguments": {
+          "query": "blue collar",
+          "limit": 8
+        },
+        "status": "ok",
+        "summary": "8 tag(s)",
+        "qlooOperations": [
+          "find_tags"
+        ],
+        "correlationIds": [
+          "mcp-00c976c0-4f71-4000-864e-bc4f8f92bb5f"
+        ],
+        "attempts": 1,
+        "latencyMs": 4493,
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "expectedValue": "HIGH"
+      },
+      {
+        "id": "tc-3",
+        "iteration": 3,
+        "tool": "qloo_recommend",
+        "permission": "read_only_external",
+        "arguments": {
+          "targetType": "place",
+          "tagIds": [
+            "urn:tag:characteristic:qloo:blue_collar"
+          ],
+          "conditionOnBrand": false,
+          "limit": 20
+        },
+        "status": "empty",
+        "summary": "Qloo returned no place entities for urn:tag:characteristic:qloo:blue_collar",
+        "qlooOperations": [
+          "recommend"
+        ],
+        "correlationIds": [
+          "mcp-647091ad-21d6-422e-a83c-bb79091fb151"
+        ],
+        "attempts": 1,
+        "latencyMs": 2934,
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-4",
+        "iteration": 4,
+        "tool": "qloo_recommend",
+        "permission": "read_only_external",
+        "arguments": {
+          "targetType": "brand",
+          "tagIds": [
+            "urn:tag:characteristic:qloo:blue_collar"
+          ],
+          "conditionOnBrand": false,
+          "limit": 20
+        },
+        "status": "empty",
+        "summary": "Qloo returned no brand entities for urn:tag:characteristic:qloo:blue_collar",
+        "qlooOperations": [
+          "recommend"
+        ],
+        "correlationIds": [
+          "mcp-b91fa0b3-14f9-4d17-b48e-dfd8c03fe8f4"
+        ],
+        "attempts": 1,
+        "latencyMs": 3744,
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-5",
+        "iteration": 4,
+        "tool": "qloo_recommend",
+        "permission": "read_only_external",
+        "arguments": {
+          "targetType": "brand",
+          "tagIds": [
+            "urn:tag:style:qloo:blue_collar"
+          ],
+          "conditionOnBrand": false,
+          "limit": 20
+        },
+        "status": "empty",
+        "summary": "Qloo returned no brand entities for urn:tag:style:qloo:blue_collar",
+        "qlooOperations": [
+          "recommend"
+        ],
+        "correlationIds": [
+          "mcp-a7c8c399-f72b-4c47-bfec-bce6bc57905b"
+        ],
+        "attempts": 1,
+        "latencyMs": 6985,
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-6",
+        "iteration": 5,
+        "tool": "qloo_recommend",
+        "permission": "read_only_external",
+        "arguments": {
+          "targetType": "artist",
+          "tagIds": [
+            "urn:tag:characteristic:qloo:blue_collar"
+          ],
+          "conditionOnBrand": false,
+          "limit": 20
+        },
+        "status": "empty",
+        "summary": "Qloo returned no artist entities for urn:tag:characteristic:qloo:blue_collar",
+        "qlooOperations": [
+          "recommend"
+        ],
+        "correlationIds": [
+          "mcp-9f88be87-675e-401e-8452-5fa6f3f953aa"
+        ],
+        "attempts": 1,
+        "latencyMs": 4367,
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-7",
+        "iteration": 6,
+        "tool": "qloo_recommend",
+        "permission": "read_only_external",
+        "arguments": {
+          "targetType": "place",
+          "tagIds": [
+            "urn:tag:character:qloo:blue_collar"
+          ],
+          "conditionOnBrand": false,
+          "limit": 20
+        },
+        "status": "empty",
+        "summary": "Qloo returned no place entities for urn:tag:character:qloo:blue_collar",
+        "qlooOperations": [
+          "recommend"
+        ],
+        "correlationIds": [
+          "mcp-1fc1596f-84d8-4176-8f1a-1bdb8ce6ec8a"
+        ],
+        "attempts": 1,
+        "latencyMs": 4946,
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "expectedValue": "MEDIUM"
+      },
+      {
+        "id": "tc-8",
+        "iteration": 7,
+        "tool": "drop_territory",
+        "permission": "local_computation",
+        "arguments": {
+          "territoryKey": "blue_collar",
+          "code": "TERRITORY_UNRESOLVED",
+          "reason": "Blue Collar did not resolve to a Qloo concept within the resolution budget; the one probe (urn:tag:character:qloo:blue_collar, place type) returned no place entities, and no recovery option remains."
+        },
+        "status": "ok",
+        "summary": "blue_collar dropped (TERRITORY_UNRESOLVED)",
+        "qlooOperations": [],
+        "correlationIds": [],
+        "attempts": 0,
+        "latencyMs": 0,
+        "skill": {
+          "id": "analyze_territories",
+          "version": 3
+        }
+      }
+    ],
+    "resolvedEntities": [
+      {
+        "role": "brand",
+        "id": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+        "label": "Carhartt",
+        "type": "urn:entity:brand",
+        "match": "exact",
+        "resolution": "confirmed"
+      }
+    ],
+    "territoryHypotheses": [
+      {
+        "key": "blue_collar",
+        "label": "Blue Collar",
+        "role": "target",
+        "origin": "user",
+        "status": "dropped (TERRITORY_UNRESOLVED)",
+        "rationale": "named by the user"
+      }
+    ],
+    "representations": [],
+    "sufficiency": [
+      {
+        "iteration": 0,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "resolve the brand (qloo_resolve_entity, role brand)"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_resolve_entity",
+            "target": null,
+            "value": "HIGH",
+            "reason": "the brand is not resolved"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 1,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "blue_collar: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+            "value": "MEDIUM",
+            "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+          },
+          {
+            "action": "qloo_find_tags",
+            "target": "blue_collar",
+            "value": "HIGH",
+            "reason": "search Qloo's tag vocabulary for a concept"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 2,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "blue_collar: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+            "value": "MEDIUM",
+            "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+          },
+          {
+            "action": "anchor_territory",
+            "target": "blue_collar",
+            "value": "HIGH",
+            "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 3,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "blue_collar: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+            "value": "MEDIUM",
+            "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+          },
+          {
+            "action": "anchor_territory",
+            "target": "blue_collar",
+            "value": "HIGH",
+            "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 4,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "blue_collar: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+            "value": "MEDIUM",
+            "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+          },
+          {
+            "action": "anchor_territory",
+            "target": "blue_collar",
+            "value": "HIGH",
+            "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 5,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "blue_collar: find and anchor a Qloo concept (qloo_find_tags → anchor_territory), or drop it"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+            "value": "MEDIUM",
+            "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+          },
+          {
+            "action": "anchor_territory",
+            "target": "blue_collar",
+            "value": "HIGH",
+            "reason": "Qloo returned candidate concepts; anchor one or drop the territory"
+          }
+        ],
+        "materialGap": true
+      },
+      {
+        "iteration": 6,
+        "verdict": "MORE_EVIDENCE_USEFUL",
+        "reasons": [
+          "1 in-scope territory(ies) not yet analyzed",
+          "blue_collar: ready to analyze (territory resolution budget spent without a Qloo concept)"
+        ],
+        "nextActions": [
+          {
+            "action": "qloo_get_entity_tags",
+            "target": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+            "value": "MEDIUM",
+            "reason": "the brand profile is needed for analysis and reference/frontier discovery"
+          },
+          {
+            "action": "investigate",
+            "target": "blue_collar",
+            "value": "NONE",
+            "reason": "territory resolution budget spent without a Qloo concept; report it as unsupported"
+          },
+          {
+            "action": "analyze",
+            "target": "blue_collar",
+            "value": "MEDIUM",
+            "reason": "these territories are ready; other gaps remain"
+          }
+        ],
+        "materialGap": true
+      }
+    ],
+    "representationQuality": [],
+    "conceptDedup": [],
+    "earlyStops": [],
+    "skillUsage": [
+      {
+        "skill": {
+          "id": "resolve_brand",
+          "version": 1
+        },
+        "turns": 1,
+        "qlooCalls": 1,
+        "toolCalls": 1
+      },
+      {
+        "skill": {
+          "id": "resolve_territory",
+          "version": 5
+        },
+        "turns": 5,
+        "qlooCalls": 6,
+        "toolCalls": 6
+      },
+      {
+        "skill": {
+          "id": "analyze_territories",
+          "version": 3
+        },
+        "turns": 1,
+        "qlooCalls": 0,
+        "toolCalls": 1
+      }
+    ],
+    "methodologyInvocations": [],
+    "synthesis": {
+      "source": "model",
+      "attempts": 1,
+      "violations": [],
+      "attemptDetails": [
+        {
+          "attempt": 1,
+          "accepted": true,
+          "categories": {},
+          "violations": []
+        }
+      ]
+    },
+    "errors": [],
+    "userClarifications": [],
+    "investigationLink": {
+      "operation": "NEW_INVESTIGATION",
+      "parentRunId": null,
+      "selectedTerritoryKey": null,
+      "inheritedBrand": null,
+      "constraints": [],
+      "reason": "analyze_move",
+      "queryId": "ce5f5b4d-c2ce-45fd-9343-ee706a4ec84a"
+    },
+    "interpretationSource": "query_layer",
+    "representationPlans": [],
+    "feasibility": [
+      {
+        "rulesVersion": "comparison-feasibility/v1",
+        "iteration": 0,
+        "target": {
+          "key": "blue_collar",
+          "label": "Blue Collar",
+          "anchored": false,
+          "represented": false,
+          "entityType": null,
+          "validExemplars": 0
+        },
+        "compatibleEntityType": null,
+        "meaningfulTerritories": 0,
+        "requiredTerritories": 3,
+        "missingReferences": 3,
+        "pendingReferences": [],
+        "candidates": {
+          "meaningful": 0,
+          "probedWithMembers": 0,
+          "typeEvidenced": 0,
+          "unprobed": 0
+        },
+        "referenceProbes": {
+          "made": 0,
+          "empty": 0,
+          "limit": 4
+        },
+        "capacity": {
+          "turnsLeft": 12,
+          "qlooCallsLeft": 24,
+          "turnsNeeded": 0,
+          "callsNeeded": 0
+        },
+        "status": "UNCERTAIN",
+        "blocker": null,
+        "nextAction": {
+          "action": "qloo_resolve_entity",
+          "detail": "resolve the brand before anything can be compared"
+        },
+        "stopReasons": [],
+        "repeat": "MAY_CHANGE"
+      },
+      {
+        "rulesVersion": "comparison-feasibility/v1",
+        "iteration": 1,
+        "target": {
+          "key": "blue_collar",
+          "label": "Blue Collar",
+          "anchored": false,
+          "represented": false,
+          "entityType": null,
+          "validExemplars": 0
+        },
+        "compatibleEntityType": null,
+        "meaningfulTerritories": 0,
+        "requiredTerritories": 3,
+        "missingReferences": 3,
+        "pendingReferences": [],
+        "candidates": {
+          "meaningful": 0,
+          "probedWithMembers": 0,
+          "typeEvidenced": 0,
+          "unprobed": 0
+        },
+        "referenceProbes": {
+          "made": 0,
+          "empty": 0,
+          "limit": 4
+        },
+        "capacity": {
+          "turnsLeft": 11,
+          "qlooCallsLeft": 23,
+          "turnsNeeded": 0,
+          "callsNeeded": 0
+        },
+        "status": "UNCERTAIN",
+        "blocker": {
+          "code": "TARGET_NOT_ANCHORED",
+          "detail": "Blue Collar is not anchored to a Qloo concept yet"
+        },
+        "nextAction": {
+          "action": "anchor_territory",
+          "detail": "anchor Blue Collar to a Qloo concept that returned members"
+        },
+        "stopReasons": [],
+        "repeat": "MAY_CHANGE"
+      },
+      {
+        "rulesVersion": "comparison-feasibility/v1",
+        "iteration": 6,
+        "target": {
+          "key": "blue_collar",
+          "label": "Blue Collar",
+          "anchored": false,
+          "represented": false,
+          "entityType": null,
+          "validExemplars": 0
+        },
+        "compatibleEntityType": null,
+        "meaningfulTerritories": 0,
+        "requiredTerritories": 3,
+        "missingReferences": 3,
+        "pendingReferences": [],
+        "candidates": {
+          "meaningful": 0,
+          "probedWithMembers": 0,
+          "typeEvidenced": 0,
+          "unprobed": 0
+        },
+        "referenceProbes": {
+          "made": 0,
+          "empty": 0,
+          "limit": 4
+        },
+        "capacity": {
+          "turnsLeft": 6,
+          "qlooCallsLeft": 17,
+          "turnsNeeded": 0,
+          "callsNeeded": 0
+        },
+        "status": "INFEASIBLE",
+        "blocker": {
+          "code": "TARGET_UNSUPPORTED",
+          "detail": "Blue Collar: territory resolution budget spent without a Qloo concept"
+        },
+        "nextAction": null,
+        "stopReasons": [
+          "Qloo does not support Blue Collar as a concept in this run; nothing can be placed relative to it"
+        ],
+        "repeat": "LIKELY_REPEATS"
+      }
+    ],
+    "completion": [],
+    "probeRecommendations": [
+      {
+        "iteration": 2,
+        "territoryKey": "blue_collar",
+        "conceptKey": "urn:tag:characteristic:qloo:blue_collar",
+        "namespace": "characteristic:qloo",
+        "type": "place",
+        "priority": "EXPLORATION",
+        "reason": "untested in characteristic:qloo"
+      },
+      {
+        "iteration": 3,
+        "territoryKey": "blue_collar",
+        "conceptKey": "urn:tag:characteristic:qloo:blue_collar",
+        "namespace": "characteristic:qloo",
+        "type": "brand",
+        "priority": "EXPLORATION",
+        "reason": "untested in characteristic:qloo"
+      },
+      {
+        "iteration": 4,
+        "territoryKey": "blue_collar",
+        "conceptKey": "urn:tag:characteristic:qloo:blue_collar",
+        "namespace": "characteristic:qloo",
+        "type": "artist",
+        "priority": "EXPLORATION",
+        "reason": "untested in characteristic:qloo"
+      },
+      {
+        "iteration": 5,
+        "territoryKey": "blue_collar",
+        "conceptKey": "urn:tag:character:qloo:blue_collar",
+        "namespace": "character:qloo",
+        "type": "place",
+        "priority": "EXPLORATION",
+        "reason": "untested in character:qloo"
+      },
+      {
+        "iteration": 6,
+        "territoryKey": "blue_collar",
+        "conceptKey": "urn:tag:character:qloo:blue_collar",
+        "namespace": "character:qloo",
+        "type": "brand",
+        "priority": "EXPLORATION",
+        "reason": "untested in character:qloo"
+      }
+    ],
+    "stopReason": {
+      "code": "AGENT_FINISHED",
+      "detail": "agent finished"
+    },
+    "semanticAssessments": [],
+    "spans": [
+      {
+        "spanId": "s-1-dd266ce3",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": null,
+        "phase": "RUN_START",
+        "operation": "run",
+        "startOffsetMs": 0,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-2-55a44dd7",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": null,
+        "phase": "QUEUE_ADMISSION",
+        "operation": "job_queue",
+        "startOffsetMs": 0,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-3-500001e1",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": null,
+        "phase": "QUERY_INTERPRETATION",
+        "operation": "interpret",
+        "startOffsetMs": 0,
+        "durationMs": 1965,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-4-6cf6eeb0",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 0,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 1,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-5-da1ff532",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 0,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 1,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-6-843187ba",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 3,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-7-c64918a5",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 6,
+        "durationMs": 826,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-8-046e050a",
+        "parentSpanId": "s-7-c64918a5",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 832,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-9-23f06e55",
+        "parentSpanId": "s-7-c64918a5",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 832,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-10-88276fc7",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 832,
+        "durationMs": 1,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-13-e45d4fe7",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "QLOO_REQUEST",
+        "operation": "describe",
+        "startOffsetMs": 835,
+        "durationMs": 2167,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-14-63e896d2",
+        "parentSpanId": "s-13-e45d4fe7",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "QLOO_RESPONSE",
+        "operation": "describe:ok",
+        "startOffsetMs": 3001,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-15-86e605c5",
+        "parentSpanId": "s-12-246ccad0",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 3001,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-12-246ccad0",
+        "parentSpanId": "s-11-44015c6a",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 834,
+        "durationMs": 2167,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-11-44015c6a",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_resolve_entity",
+        "startOffsetMs": 834,
+        "durationMs": 2167,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-16-6aab9814",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 3002,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-17-39a33be0",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 3002,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-18-e9594dcf",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 1,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 3002,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-19-66cabe79",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 3002,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-20-b08f4677",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 3004,
+        "durationMs": 1574,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-21-0eb0d969",
+        "parentSpanId": "s-20-b08f4677",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 4578,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-22-34f82cc2",
+        "parentSpanId": "s-20-b08f4677",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 4578,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-23-1c191d9f",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 4578,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-27-3d88c0e7",
+        "parentSpanId": "s-26-bfa9851b",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "QLOO_SPACING",
+        "operation": "find_tags:spacing",
+        "startOffsetMs": 4578,
+        "durationMs": 3256,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-26-bfa9851b",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "QLOO_REQUEST",
+        "operation": "find_tags",
+        "startOffsetMs": 4579,
+        "durationMs": 4493,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-28-74db4609",
+        "parentSpanId": "s-26-bfa9851b",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "QLOO_RESPONSE",
+        "operation": "find_tags:ok",
+        "startOffsetMs": 9071,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-29-4962bba6",
+        "parentSpanId": "s-25-148b560c",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_find_tags",
+        "startOffsetMs": 9072,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-25-148b560c",
+        "parentSpanId": "s-24-93d75e81",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_find_tags",
+        "startOffsetMs": 4579,
+        "durationMs": 4493,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-24-93d75e81",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_find_tags",
+        "startOffsetMs": 4579,
+        "durationMs": 4493,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-30-b360582a",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 9072,
+        "durationMs": 4,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-31-7f424c5c",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 9076,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-32-73af93f9",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 2,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 9079,
+        "durationMs": 4,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-33-0552616a",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 9085,
+        "durationMs": 8,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-34-f628cd02",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 9093,
+        "durationMs": 2879,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-35-98fc65bf",
+        "parentSpanId": "s-34-f628cd02",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 11971,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-36-435c1a6a",
+        "parentSpanId": "s-34-f628cd02",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 11971,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-37-e68ea973",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 11971,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-41-6e44437f",
+        "parentSpanId": "s-40-517125cd",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "QLOO_SPACING",
+        "operation": "recommend:spacing",
+        "startOffsetMs": 11977,
+        "durationMs": 2858,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-40-517125cd",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "QLOO_REQUEST",
+        "operation": "recommend",
+        "startOffsetMs": 11977,
+        "durationMs": 2933,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-42-715dba7c",
+        "parentSpanId": "s-40-517125cd",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "QLOO_RESPONSE",
+        "operation": "recommend:empty",
+        "startOffsetMs": 14910,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-43-df2c6ca5",
+        "parentSpanId": "s-39-905131a2",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 14910,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-39-905131a2",
+        "parentSpanId": "s-38-ac5c3d60",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 11977,
+        "durationMs": 2934,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-38-ac5c3d60",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 11977,
+        "durationMs": 2934,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-44-b5074aef",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 14911,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-45-6f467428",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 14913,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-46-49ab5cd6",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 3,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 14915,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-47-c6afe7dc",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 14920,
+        "durationMs": 6,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-48-ebe7593b",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 14926,
+        "durationMs": 3220,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-49-cf87a786",
+        "parentSpanId": "s-48-ebe7593b",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:2",
+        "startOffsetMs": 18147,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-50-40a102f6",
+        "parentSpanId": "s-48-ebe7593b",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 18147,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-51-35795bfc",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 18147,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-55-a5d97eae",
+        "parentSpanId": "s-54-6529c63d",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "QLOO_SPACING",
+        "operation": "recommend:spacing",
+        "startOffsetMs": 18152,
+        "durationMs": 3684,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-54-6529c63d",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "QLOO_REQUEST",
+        "operation": "recommend",
+        "startOffsetMs": 18152,
+        "durationMs": 3744,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-56-af3f069c",
+        "parentSpanId": "s-54-6529c63d",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "QLOO_RESPONSE",
+        "operation": "recommend:empty",
+        "startOffsetMs": 21896,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-57-0de80b93",
+        "parentSpanId": "s-53-104922a4",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 21896,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-53-104922a4",
+        "parentSpanId": "s-52-8bd57168",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 18152,
+        "durationMs": 3744,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-52-8bd57168",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 18151,
+        "durationMs": 3744,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-58-4ac78ff7",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 21896,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-59-10efae15",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 21898,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-63-2b9bf845",
+        "parentSpanId": "s-62-135a64a6",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "QLOO_SPACING",
+        "operation": "recommend:spacing",
+        "startOffsetMs": 21903,
+        "durationMs": 6934,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-62-135a64a6",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "QLOO_REQUEST",
+        "operation": "recommend",
+        "startOffsetMs": 21902,
+        "durationMs": 6985,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-64-d9ecbc9b",
+        "parentSpanId": "s-62-135a64a6",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "QLOO_RESPONSE",
+        "operation": "recommend:empty",
+        "startOffsetMs": 28888,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-65-f9a20794",
+        "parentSpanId": "s-61-c6487970",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 28888,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-61-c6487970",
+        "parentSpanId": "s-60-77a8f392",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 21902,
+        "durationMs": 6985,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-60-77a8f392",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 21902,
+        "durationMs": 6985,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-66-4f4da720",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 28888,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-67-1cc383a3",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 28890,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-68-c6265d39",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 4,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 28892,
+        "durationMs": 3,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-69-95a25966",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 28896,
+        "durationMs": 6,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-70-f889f983",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 28903,
+        "durationMs": 2617,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-71-7b98145e",
+        "parentSpanId": "s-70-f889f983",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 31520,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-72-f0fc616c",
+        "parentSpanId": "s-70-f889f983",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 31520,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-73-a1f80b01",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 31520,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-77-ccea9eb5",
+        "parentSpanId": "s-76-e7b398c7",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "QLOO_SPACING",
+        "operation": "recommend:spacing",
+        "startOffsetMs": 31524,
+        "durationMs": 4312,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-76-e7b398c7",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "QLOO_REQUEST",
+        "operation": "recommend",
+        "startOffsetMs": 31524,
+        "durationMs": 4367,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-78-7655a190",
+        "parentSpanId": "s-76-e7b398c7",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "QLOO_RESPONSE",
+        "operation": "recommend:empty",
+        "startOffsetMs": 35891,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-79-a4191b38",
+        "parentSpanId": "s-75-b93a3b99",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 35891,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-75-b93a3b99",
+        "parentSpanId": "s-74-522bec7e",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 31524,
+        "durationMs": 4367,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-74-522bec7e",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 31524,
+        "durationMs": 4367,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-80-dc7d1a6a",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 35891,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-81-392262e7",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 35894,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-82-ce6dab4a",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 5,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 35896,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-83-517a9af6",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 35900,
+        "durationMs": 6,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-84-c2cbfc1f",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 35906,
+        "durationMs": 2031,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-85-622e70b6",
+        "parentSpanId": "s-84-c2cbfc1f",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:1",
+        "startOffsetMs": 37937,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-86-24ce608a",
+        "parentSpanId": "s-84-c2cbfc1f",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 37937,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-87-5cf20d37",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 37937,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-91-861ff754",
+        "parentSpanId": "s-90-5419b9ff",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "QLOO_SPACING",
+        "operation": "recommend:spacing",
+        "startOffsetMs": 37940,
+        "durationMs": 4896,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-90-5419b9ff",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "QLOO_REQUEST",
+        "operation": "recommend",
+        "startOffsetMs": 37941,
+        "durationMs": 4946,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-92-4e8a0c0f",
+        "parentSpanId": "s-90-5419b9ff",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "QLOO_RESPONSE",
+        "operation": "recommend:empty",
+        "startOffsetMs": 42886,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-93-151e7080",
+        "parentSpanId": "s-89-22eb9a3c",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 42887,
+        "durationMs": 0,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-89-22eb9a3c",
+        "parentSpanId": "s-88-23ae5b6b",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "TOOL_EXECUTION",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 37941,
+        "durationMs": 4946,
+        "outcome": "empty"
+      },
+      {
+        "spanId": "s-88-23ae5b6b",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "TOOL_DISPATCH",
+        "operation": "qloo_recommend",
+        "startOffsetMs": 37941,
+        "durationMs": 4946,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-94-19a29252",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 42887,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-95-7a706a8b",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "EVIDENCE_SUFFICIENCY",
+        "operation": "assess",
+        "startOffsetMs": 42889,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-96-09726750",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 6,
+        "phase": "REPRESENTATION_SELECTION",
+        "operation": "recordPlans",
+        "startOffsetMs": 42889,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-97-25e64bb3",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "CONTEXT_ASSEMBLY",
+        "operation": "attempt-1",
+        "startOffsetMs": 42891,
+        "durationMs": 2,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-98-0a4cf29b",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "MODEL_REQUEST",
+        "operation": "decide",
+        "startOffsetMs": 42893,
+        "durationMs": 3103,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-99-ed7a4a45",
+        "parentSpanId": "s-98-0a4cf29b",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "MODEL_RESPONSE",
+        "operation": "decisions:2",
+        "startOffsetMs": 45996,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-100-459d4451",
+        "parentSpanId": "s-98-0a4cf29b",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "OUTPUT_VALIDATION",
+        "operation": "decisions",
+        "startOffsetMs": 45996,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-101-3468f248",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "TOOL_ROUTING",
+        "operation": "call_tool",
+        "startOffsetMs": 45996,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-104-8d673440",
+        "parentSpanId": "s-103-42550811",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "RESULT_NORMALIZATION",
+        "operation": "drop_territory",
+        "startOffsetMs": 45997,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-103-42550811",
+        "parentSpanId": "s-102-24a55ee7",
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "TOOL_EXECUTION",
+        "operation": "drop_territory",
+        "startOffsetMs": 45997,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-102-24a55ee7",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "TOOL_DISPATCH",
+        "operation": "drop_territory",
+        "startOffsetMs": 45997,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-105-a3fd6be1",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 45997,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-106-de5f658c",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "TOOL_ROUTING",
+        "operation": "finish",
+        "startOffsetMs": 45997,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-107-3b512858",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "STATE_UPDATE",
+        "operation": "refreshGate",
+        "startOffsetMs": 45997,
+        "durationMs": 0,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-109-29ff0b83",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "SYNTHESIS",
+        "operation": "synthesize",
+        "startOffsetMs": 45999,
+        "durationMs": 6067,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-108-128a45e5",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": 7,
+        "phase": "FINALIZATION",
+        "operation": "finalize",
+        "startOffsetMs": 45998,
+        "durationMs": 6076,
+        "outcome": "ok"
+      },
+      {
+        "spanId": "s-110-e50f183d",
+        "parentSpanId": null,
+        "runId": "cf3124a2-8ada-4d23-a454-0ab904bbf197",
+        "turnIndex": null,
+        "phase": "RUN_END",
+        "operation": "run",
+        "startOffsetMs": 52074,
+        "durationMs": 0,
+        "outcome": "ok"
+      }
+    ]
+  },
+  "metrics": {
+    "agent_iterations": 7,
+    "qloo_calls": 7,
+    "tool_calls": 8,
+    "tool_success_rate": 1,
+    "invalid_actions": 0,
+    "representation_attempts": 0,
+    "territories_proposed": 1,
+    "territories_resolved": 0,
+    "territories_rejected": 1,
+    "full_analysis_count": 0,
+    "partial_analysis_count": 0,
+    "descriptive_analysis_count": 0,
+    "unsupported_count": 1,
+    "methodology_calls": 0,
+    "latency_ms": 52074,
+    "model_input_tokens": 37803,
+    "model_output_tokens": 4425,
+    "retry_count": 0,
+    "budget_exhausted": false,
+    "model_turns": 7,
+    "model_attempts": 7,
+    "first_attempt_valid_turns": 7,
+    "valid_after_repair_turns": 7,
+    "repairs": 0,
+    "unknown_tool_attempts": 0,
+    "invalid_argument_attempts": 0,
+    "unsupported_state_actions": 0,
+    "synthesis_attempts": 1,
+    "calls_avoided": 0,
+    "avg_context_chars": 7900,
+    "max_context_chars": 10190,
+    "avg_context_tokens_estimate": 1976,
+    "model_latency_ms": 16250,
+    "qloo_latency_ms": 29634,
+    "model_cost_usd": 0.0051,
+    "model_id": "claude-haiku-5-5",
+    "model_effort": "high",
+    "synthesis_latency_ms": 6067,
+    "analysis_latency_ms": 0,
+    "qloo_spacing_ms": 25940,
+    "unattributed_ms": 123,
+    "span_covered_ms": 52039,
+    "span_unattributed_ms": 35,
+    "span_coverage_ratio": 0.999,
+    "monotonic_elapsed_ms": 52074,
+    "wall_clock_skew_ms": 0,
+    "synthesis_first_attempt_valid": true,
+    "synthesis_valid_after_repair": true,
+    "synthesis_fallback": false,
+    "reference_deferrals": 0,
+    "empty_type_probes": 5,
+    "max_empty_type_probes_per_concept": 3,
+    "probe_limit_refusals": 0,
+    "type_alignment_deferrals": 0,
+    "reference_namespace_refusals": 0,
+    "successful_type_probes": 0,
+    "namespace_type_refusals": 0,
+    "alternate_anchor_refusals": 0,
+    "source_evidence_anchors": 0,
+    "frontier_completion_refusals": 0
+  },
+  "skillsUsed": [
+    {
+      "id": "resolve_brand",
+      "version": 1
+    },
+    {
+      "id": "resolve_territory",
+      "version": 5
+    },
+    {
+      "id": "analyze_territories",
+      "version": 3
+    }
+  ],
+  "comparisonSetConstruction": {
+    "intent": "analyze_move",
+    "proposed": [
+      {
+        "key": "blue_collar",
+        "label": "Blue Collar",
+        "role": "target",
+        "source": "user",
+        "evidence": "named by the user"
+      }
+    ],
+    "rejected": [
+      {
+        "key": "blue_collar",
+        "label": "Blue Collar",
+        "stage": "resolution",
+        "code": "TERRITORY_UNRESOLVED",
+        "reason": "Blue Collar did not resolve to a Qloo concept within the resolution budget; the one probe (urn:tag:character:qloo:blue_collar, place type) returned no place entities, and no recovery option remains."
+      }
+    ],
+    "final": [],
+    "dedupDecisions": [],
+    "semanticAssessments": [],
+    "diversity": {
+      "assessment": "unknown",
+      "similarPairs": [],
+      "detail": "fewer than two non-target territories: diversity not assessed"
+    },
+    "note": "Relative positions and provisional classes hold only for this comparison set: a different set of territories can change every position. The set was assembled from the candidates listed here; rejected candidates and the reason for each rejection are shown."
+  },
+  "layers": {
+    "qlooEvidence": {
+      "brand": {
+        "id": "2D69DB33-B4DF-4879-B3DC-308E3402A1FD",
+        "label": "Carhartt",
+        "correlationId": "mcp-93d1dea5-6e73-492c-b8b8-3b3e35a9c7de"
+      },
+      "concepts": [],
+      "exemplars": [],
+      "qlooCalls": 7
+    },
+    "systemAnalysis": {
+      "routes": [
+        {
+          "territoryKey": "blue_collar",
+          "route": "INSUFFICIENT_EVIDENCE",
+          "classification": null,
+          "position": null,
+          "robustness": null
+        }
+      ],
+      "methodologyRunIds": [],
+      "finalSufficiency": "INSUFFICIENT",
+      "representationDecisions": {
+        "valid": 0,
+        "weak": 0,
+        "rejected": 0
+      },
+      "semanticComparison": []
+    },
+    "agentInterpretation": {
+      "summary": "The results cannot show how far Carhartt can extend into Blue Collar. Blue Collar did not resolve to a Qloo concept, so no comparison set, relative position, robustness or classification was produced for it. The evidence therefore says nothing about the extent of Carhartt's affinity with this territory.\nBlue Collar: The territory's route is INSUFFICIENT_EVIDENCE and it carries the TERRITORY_UNRESOLVED limitation, so no territory-level reading of Carhartt's association with Blue Collar is available. No Qloo concept anchors Blue Collar, and its representation capability is unsupported, so the territory cannot be mapped onto Qloo's cultural graph for this brand.",
+      "source": "model",
+      "claimValidationPassed": true,
+      "semanticJudgments": [],
+      "followUpOptions": [
+        "Which Qloo concepts could represent Blue Collar as a territory for Carhartt?",
+        "Which other territories could be compared with Blue Collar for Carhartt?",
+        "What cultural signals does Carhartt show in territories that do resolve in Qloo?"
+      ],
+      "findings": [
+        {
+          "territoryKey": "blue_collar",
+          "claimType": "route_limitation",
+          "supportingFields": [
+            "route",
+            "limitations"
+          ],
+          "interpretation": "The territory's route is INSUFFICIENT_EVIDENCE and it carries the TERRITORY_UNRESOLVED limitation, so no territory-level reading of Carhartt's association with Blue Collar is available.",
+          "limitationCodes": [
+            "TERRITORY_UNRESOLVED"
+          ]
+        },
+        {
+          "territoryKey": "blue_collar",
+          "claimType": "representation",
+          "supportingFields": [
+            "representation",
+            "capabilities.representation"
+          ],
+          "interpretation": "No Qloo concept anchors Blue Collar, and its representation capability is unsupported, so the territory cannot be mapped onto Qloo's cultural graph for this brand.",
+          "limitationCodes": [
+            "TERRITORY_UNRESOLVED"
+          ]
+        }
+      ]
+    }
+  },
+  "failureCategory": "TERRITORY_RESOLUTION_ERROR",
+  "comparisonFeasibility": {
+    "rulesVersion": "comparison-feasibility/v1",
+    "iteration": 6,
+    "target": {
+      "key": "blue_collar",
+      "label": "Blue Collar",
+      "anchored": false,
+      "represented": false,
+      "entityType": null,
+      "validExemplars": 0
+    },
+    "compatibleEntityType": null,
+    "meaningfulTerritories": 0,
+    "requiredTerritories": 3,
+    "missingReferences": 3,
+    "pendingReferences": [],
+    "candidates": {
+      "meaningful": 0,
+      "probedWithMembers": 0,
+      "typeEvidenced": 0,
+      "unprobed": 0
+    },
+    "referenceProbes": {
+      "made": 0,
+      "empty": 0,
+      "limit": 4
+    },
+    "capacity": {
+      "turnsLeft": 6,
+      "qlooCallsLeft": 17,
+      "turnsNeeded": 0,
+      "callsNeeded": 0
+    },
+    "status": "INFEASIBLE",
+    "blocker": {
+      "code": "TARGET_UNSUPPORTED",
+      "detail": "Blue Collar: territory resolution budget spent without a Qloo concept"
+    },
+    "nextAction": null,
+    "stopReasons": [
+      "Qloo does not support Blue Collar as a concept in this run; nothing can be placed relative to it"
+    ],
+    "repeat": "LIKELY_REPEATS"
+  }
+}

@@ -57,7 +57,7 @@ const MEANING: Record<string, (name: string, brand: string) => string> = {
 const UNKNOWN: Record<string, (name: string, brand: string) => string> = {
   NO_RELATIVE_POSITION: (name) => `${name} wasn't ranked against other territories, so there is no comparison yet.`,
   NO_VALID_REPRESENTATION: (name) => `No solid set of examples could be found to stand for ${name}.`,
-  TERRITORY_UNRESOLVED: (name) => `Qloo could not match ${name} to one of its concepts.`,
+  TERRITORY_UNRESOLVED: (name) => `This run found no Qloo tag for ${name} that returns entities.`,
   QLOO_EMPTY: (name) => `One of Qloo's lookups for ${name} came back empty.`,
   NOT_COLLECTED_BUDGET: () => "Some evidence was not collected because the investigation reached its budget.",
   PANEL_CALL_FAILED: () => "One of Qloo's lookups failed, so part of the comparison is missing.",

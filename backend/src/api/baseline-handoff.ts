@@ -1,5 +1,6 @@
 import type { AnyBrandBaselineResult, BaselineEvidenceRef } from "@cultural-elasticity/shared";
 import { agentRequestSchema, type AgentRequest } from "../agent/contracts.js";
+import type { TerritoryGrounding } from "../agent/state.js";
 
 /** Server-only adapter. The caller supplies identifiers; evidence is read from the authorized scan. */
 export type DeepInvestigationRequest = {
@@ -64,4 +65,15 @@ export function buildProposedInvestigationRequest(result: AnyBrandBaselineResult
     authorization: "BASELINE_TOKEN_AND_AGENT_ADMISSION",
     agentRequest: agentRequestSchema.parse({ userQuery: agentQuery(result.brand.name, name), intent: "analyze_move", brand: result.brand.name, territories: [name] }),
   };
+}
+
+/**
+ * Sprint 9O: the Qloo tag the authorized scan observed for a direction, for the agent to probe first. Only a tag read
+ * from the brand's own tag profile (an ok entity_tags call) qualifies; anything else hands over the name alone.
+ */
+export function directionGrounding(result: AnyBrandBaselineResult, territoryId: string): TerritoryGrounding | null {
+  const territory = result.territories.find((item) => item.id === territoryId);
+  const ref = territory?.supportingReferences.find((item) => item.operation === "entity_tags" && item.sourceStatus === "ok");
+  if (!territory || !ref || !territory.canonicalConcept.startsWith("urn:tag:")) return null;
+  return { territory: territory.name, tagId: territory.canonicalConcept, label: territory.name, type: territory.canonicalConcept.split(":").slice(0, 4).join(":"), subjectId: result.brand.qlooId, correlationId: ref.correlationId };
 }

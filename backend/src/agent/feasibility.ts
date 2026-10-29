@@ -84,7 +84,7 @@ function compute(state: AgentRunState): ComparisonFeasibility {
 
   if (!target.concept) {
     const r = territoryReadiness(state, target);
-    if (r.state === "unsupported") return out("INFEASIBLE", { code: "TARGET_UNSUPPORTED", detail: `${target.label}: ${r.reason}` }, null, [`Qloo does not support ${target.label} as a concept in this run; nothing can be placed relative to it`]);
+    if (r.state === "unsupported") return out("INFEASIBLE", { code: "TARGET_UNSUPPORTED", detail: `${target.label}: ${r.reason}` }, null, [`no Qloo tag tried for ${target.label} in this run returned entities; nothing can be placed relative to it`]);
     return out("UNCERTAIN", { code: "TARGET_NOT_ANCHORED", detail: `${target.label} is not anchored to a Qloo concept yet` }, { action: "anchor_territory", detail: `anchor ${target.label} to a Qloo concept that returned members` });
   }
   if (!target.representation) {

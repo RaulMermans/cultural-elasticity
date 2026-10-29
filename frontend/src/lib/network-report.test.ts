@@ -89,3 +89,25 @@ test("Sprint 9N: the report prints the same decision card the live reading shows
   }
   assert.doesNotMatch(renderReportHtml(report), /\b(THIN_TARGET_PANEL|LIKELY_REPEATS|SUPPORTED_FOR_EXPLORATION)\b/u);
 });
+
+test("Sprint 9O: each exported card is the card its live dossier shows, with the same baseline context (live Carhartt export)", async () => {
+  const { decisionCard } = await import("@cultural-elasticity/shared");
+  const { directionNodeId } = await import("./research-network.ts");
+  // SYNTHETIC: one baseline direction investigated and left unmeasured (as live Carhartt → Blue Collar on 2026-10-29).
+  const base = view.directions[0]!;
+  const wide = { ...view, directions: [base, { ...base, key: "syn-9o-a", id: "syn-9o-a", name: "Harbour Walks" }, { ...base, key: "syn-9o-b", id: "syn-9o-b", name: "Night Ferries" }] };
+  const direction = base;
+  const response = structuredClone(fixture.compare.view.response);
+  const result = response.investigation!.result as unknown as { territories: Record<string, unknown>[] };
+  const territory = { ...result.territories[0]!, label: direction.name, analysisRoute: "INSUFFICIENT_EVIDENCE", classification: null, relativePosition: null, comparisonSet: null };
+  result.territories = [territory];
+  response.territories = [{ ...response.territories[0]!, name: direction.name, territoryKey: territory.key as string }];
+  const asked: Inquiry = { ...inquiry, jobId: "syn-9o", parentId: directionNodeId(direction.key), origin: "direction", question: `Investigate ${direction.name}`, response };
+  const unmeasured = buildNetworkReport({ view: wide, nodes: buildNetwork(wide.brand.name, wide.directions, [asked]), inquiries: [asked], links: [], now });
+  const block = unmeasured.sections.find((section) => section.id === "territories")!.blocks.find((item) => item.heading === direction.name)!;
+  // ResearchNetwork's direction dossier passes the direction's own "why" and the brand's other directions.
+  const live = decisionCard(result as never, territory.key as string, { directionWhy: direction.why, otherDirections: wide.directions.map((item) => item.name) })!;
+  assert.notDeepEqual(live, decisionCard(result as never, territory.key as string), "the live context must change this card");
+  assert.equal(live.nextActions[0]?.kind, "COMPARE_WITH_NAMED");
+  for (const action of live.nextActions) assert.ok(block.bullets?.includes(`Next: ${action.text}`), action.text);
+});

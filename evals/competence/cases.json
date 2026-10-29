@@ -1,0 +1,107 @@
+{
+  "schema": "ce-competence-cases/1",
+  "registeredAt": "2026-10-29",
+  "notice": "Pre-registered before any Sprint 9O competence run. Cases, order, arms and pass bar are fixed here; later changes are appended to amendments with a date and reason, and earlier results are kept. Brand and territory names are inputs only: nothing in the runtime reads this file (AGENTS generalization rules).",
+  "arms": {
+    "new": {
+      "feasibilityPolicy": "enforce",
+      "referenceDiscovery": true,
+      "description": "Sprint 9O engine: runtime reference discovery (build_comparison_set v5)"
+    },
+    "before": {
+      "feasibilityPolicy": "enforce",
+      "referenceDiscovery": false,
+      "description": "the same engine with the runtime reference discovery off (the model searches references alone, as in production at 657a2b4)"
+    }
+  },
+  "model": "claude-haiku-5-5 (production default; no AGENT_MODEL override)",
+  "budget": {
+    "maxLiveQlooDispatches": 300,
+    "maxModelUsd": 1.5,
+    "rule": "Cases run in order. A case starts only if the remaining live allowance covers 30 dispatches for both arms; otherwise it and all later cases are NOT_RUN. Calls shared by both arms are served from the case's recording, so both arms see identical Qloo answers."
+  },
+  "cases": [
+    {
+      "id": "c1-uniqlo-manga",
+      "brand": "Uniqlo",
+      "territory": "manga",
+      "kind": "known failure (Sprint 9N hosted trace lost)"
+    },
+    {
+      "id": "c2-crocs-fine-dining",
+      "brand": "Crocs",
+      "territory": "fine dining",
+      "kind": "previously measured live (Sprint 9L: credible stretch, provisional)"
+    },
+    {
+      "id": "c3-aesop-coffee",
+      "brand": "Aesop",
+      "territory": "coffee",
+      "kind": "recorded live failure (L-M1: 7 empty reference probes)"
+    },
+    {
+      "id": "c4-vans-skateboarding",
+      "brand": "Vans",
+      "territory": "skateboarding",
+      "kind": "holdout (never used in the repository)"
+    },
+    {
+      "id": "c5-birkenstock-wellness",
+      "brand": "Birkenstock",
+      "territory": "wellness",
+      "kind": "holdout (never used in the repository)"
+    },
+    {
+      "id": "c6-liquid-death-heavy-metal",
+      "brand": "Liquid Death",
+      "territory": "heavy metal",
+      "kind": "recorded live failure (L-C2 class)"
+    },
+    {
+      "id": "c7-arcteryx-luxury-fashion",
+      "brand": "Arc'teryx",
+      "territory": "luxury fashion",
+      "kind": "holdout (never used in the repository); brand-type territory"
+    },
+    {
+      "id": "c8-converse-hip-hop",
+      "brand": "Converse",
+      "territory": "hip hop",
+      "kind": "holdout (never used in the repository); artist-type territory"
+    },
+    {
+      "id": "c9-ben-and-jerrys-music-festivals",
+      "brand": "Ben & Jerry's",
+      "territory": "music festivals",
+      "kind": "holdout (never used in the repository)"
+    },
+    {
+      "id": "c10-le-labo-boutique-hotels",
+      "brand": "Le Labo",
+      "territory": "boutique hotels",
+      "kind": "holdout (never used in the repository); place-type territory"
+    }
+  ],
+  "metrics": {
+    "measured": "the target territory has FULL_RELATIVE_ANALYSIS with a classification and a numeric relative position",
+    "semanticallyValid": "every measured comparison set passed the semantic comparison validator",
+    "emptyProbeRate": "brand-independent recommend calls that returned no eligible entity / all brand-independent recommend calls",
+    "honestUnmeasured": "an unmeasured run's decision card names why (blocker or limitation) and a next action",
+    "safety": "unsupported classifications 0, decision-card violations 0, cross-call comparisons 0"
+  },
+  "passBar": {
+    "safety": "every run of both arms meets safety (any violation fails the evaluation)",
+    "competence": "the new arm measures the target in at least half of the cases it completed, with every measured set semantically valid",
+    "improvement": "the new arm measures at least as many cases as the before arm on identical Qloo answers, and is reported with its Qloo cost per measured case",
+    "honesty": "every unmeasured run of the new arm is honestUnmeasured"
+  },
+  "amendments": [
+    {
+      "date": "2026-10-29",
+      "before": "any competence result (no live run had executed)",
+      "change": "budget raised to 300 live Qloo dispatches and $1.50 model; cases c7–c10 added (holdouts with brand-, artist- and place-type territories)",
+      "reason": "owner asked to broaden the spend; a larger sample with more never-seen brands makes the competence bar meaningful",
+      "unchanged": "arms, metrics, pass bar, case order c1–c6"
+    }
+  ]
+}

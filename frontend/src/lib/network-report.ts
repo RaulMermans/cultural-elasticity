@@ -42,8 +42,9 @@ export function reportFileName(brand: string, date: Date, extension: "html" | "p
 }
 
 /** The latest reading for each territory card: its own result, or a later question that grew from it about it. */
-function cardReadings(nodes: readonly NetworkNode[], inquiries: readonly Inquiry[], brand: string): CardReading[] {
+function cardReadings(nodes: readonly NetworkNode[], inquiries: readonly Inquiry[], brand: string, view: ResearchView): CardReading[] {
   const byJob = new Map(inquiries.map((item) => [item.jobId, item]));
+  const otherDirections = view.directions.map((item) => item.name);
   const out: CardReading[] = [];
   for (const card of nodes) {
     if (card.kind !== "direction" && card.kind !== "finding") continue;
@@ -58,8 +59,11 @@ function cardReadings(nodes: readonly NetworkNode[], inquiries: readonly Inquiry
       const own = inquiry?.response?.territories.find((item) => normName(item.name) === normName(card.label));
       if (inquiry?.response && own) candidates.push({ response: inquiry.response, key: own.territoryKey, question: inquiry.question, askedAt: inquiry.createdAt });
     }
+    // Sprint 9O: the same decision-card context as the card's live dossier (ResearchNetwork), so the export prints its card.
+    const direction = card.kind === "direction" ? view.directions.find((item) => item.key === card.directionKey) : undefined;
+    const context = direction ? { directionWhy: direction.why, otherDirections } : { otherDirections };
     const latest = candidates
-      .map((item) => ({ ...item, reading: territoryReading(item.response.investigation?.result, item.key, brand), items: territoryItems(item.response.investigation?.result, item.key)?.items ?? [] }))
+      .map((item) => ({ ...item, reading: territoryReading(item.response.investigation?.result, item.key, brand, context), items: territoryItems(item.response.investigation?.result, item.key)?.items ?? [] }))
       .filter((item): item is typeof item & { reading: TerritoryReading } => item.reading !== null)
       .sort((a, b) => b.askedAt - a.askedAt)[0];
     if (latest) out.push({ card, reading: latest.reading, items: latest.items, question: latest.question, askedAt: latest.askedAt });
@@ -149,7 +153,7 @@ export function buildNetworkReport(input: { view: ResearchView; nodes: readonly 
   const { view, nodes, inquiries, links, now } = input;
   const brand = view.brand.name;
   const byId = new Map(nodes.map((node) => [node.id, node]));
-  const readings = cardReadings(nodes, inquiries, brand);
+  const readings = cardReadings(nodes, inquiries, brand, view);
   const measured = readings.filter((item) => item.reading.fit);
   const byFit = (code: string) => measured.filter((item) => item.reading.fit!.code === code).map((item) => item.card.label);
   const natural = byFit("NATURAL_ADJACENCY");

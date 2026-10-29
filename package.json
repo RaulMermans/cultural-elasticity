@@ -31,6 +31,7 @@
     "eval:agent:budget": "pnpm --filter backend eval:agent:budget",
     "eval:agent:replay": "pnpm --filter backend eval:agent:replay",
     "eval:d2d": "pnpm --filter backend eval:d2d",
+    "eval:competence": "pnpm --filter backend eval:competence",
     "eval:query": "pnpm --filter backend eval:query",
     "test:e2e": "pnpm --filter frontend test:e2e",
     "db:migrate": "pnpm --filter backend db:migrate",

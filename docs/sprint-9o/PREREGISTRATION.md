@@ -136,3 +136,16 @@ Each item is scored 0, 1 or 2 by a named reviewer. An assistant's provisional sc
 - The live cases are new observations on the deployed engine. Comparisons with Sprint 9L, Sprint 9M and the recorded L-* artefacts are **unmatched**, because the provider data, date and engine differ. They show no causal improvement.
 - The Sprint 9N offline numbers (52 → 38 empty probes, FULL 36 → 36) are matched synthetic results, and they stay labelled that way.
 - Agent-model readiness (`eval:agent:live`, 7 cases, about $28 reserved) is outside this budget. `AGENT_MODEL_NOT_READY` stands unless that gate runs.
+
+## Amendment 1 (2026-10-29, before any live result)
+
+The owner asked for one live test through the deployment with Playwright, in a visible browser. No operator credential was written, so the run uses the anonymous public-evaluation path. This machine's durable network quota leaves about one investigation. With that single investigation, the run executes **Case 4 (`9o-c4-holdout-discovery`, Carhartt)** first, because it covers the most pre-registered criteria:
+
+- discovery;
+- the desktop journey;
+- export parity;
+- save and reopen.
+
+The other cases stay `NOT_RUN` until a further approval. Criteria are unchanged.
+
+One known harness limit: if Carhartt is ambiguous, the spec chooses the first candidate rather than falling back to Birkenstock. If that happens, it is recorded as observed.

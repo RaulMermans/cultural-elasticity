@@ -103,10 +103,18 @@ export function referenceMembers(state: AgentRunState, tagId: string, entityType
 /** Per tag namespace: did brand-independent probes of this type return eligible members in this run? */
 export function namespaceYield(state: AgentRunState, entityType: RankableType): Map<string, { productive: number; barren: number }> {
   const out = new Map<string, { productive: number; barren: number }>();
+  const own = targetTags(state);
   for (const pool of state.pools) {
     if (pool.conditionedOn !== null || pool.tagIds.length !== 1 || pool.targetType !== entityType) continue;
     const key = namespaceKey(pool.tagIds[0]!);
     const entry = out.get(key) ?? { productive: 0, barren: 0 };
+    // Sprint 9O: a target's own pool is not a reference probe. Its members became the target's exemplars, so counting
+    // them as unusable made the target's namespace look barren and demoted every same-namespace reference.
+    if (own.has(pool.tagIds[0]!)) {
+      if (pool.memberIds.filter((id) => id !== state.brand.entity?.id).length >= MIN_REFERENCE_POOL) entry.productive += 1;
+      out.set(key, entry);
+      continue;
+    }
     const eligible = referenceMembers(state, pool.tagIds[0]!, entityType);
     if (eligible >= MIN_REFERENCE_POOL) entry.productive += 1;
     else entry.barren += 1;

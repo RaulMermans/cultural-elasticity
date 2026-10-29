@@ -157,7 +157,11 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
   // type rank first; reference probes that cannot change the outcome are refused (COMPARISON_INFEASIBLE,
   // REFERENCE_PROBE_LIMIT) and type-less probes are deferred while better-evidenced candidates or the target exemplars'
   // profiles are pending and turns allow it.
-  version: 4,
+  // v5 (Sprint 9O): the runtime runs one reference search before the model chooses references (reference-discovery.ts):
+  // it collects the validated target exemplars' profiles and probes the best type-evidenced MEANINGFUL candidates, so
+  // the model chooses among references whose Qloo yield is known. A candidate with type evidence stays probeable past
+  // REFERENCE_EMPTY_PROBE_LIMIT.
+  version: 5,
   purpose: "Give a single move or a two-territory comparison a semantically meaningful comparison set of ≥ 3 represented territories of one entity type, or establish that none is feasible (then the result is an honest PARTIAL).",
   intents: ["analyze_move", "compare_territories"],
   preconditions: ["a target is represented", `fewer than ${MIN_COMPARISON_SET} meaningful represented territories of its entity type`, "a meaningful reference set is still feasible within the budget, or the profiles needed to find one are missing"],

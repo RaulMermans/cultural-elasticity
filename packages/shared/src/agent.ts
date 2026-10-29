@@ -599,6 +599,8 @@ export type AgentTrace = {
   completion?: ({ iteration: number } & CompletionFeasibility)[];
   /** Sprint 9N: comparison-feasibility assessments, recorded whenever the status, blocker or next action changes. */
   feasibility?: ComparisonFeasibility[];
+  /** Sprint 9O: the runtime's own reference search (profiles collected, candidates probed and what Qloo returned). */
+  referenceDiscovery?: { iteration: number; entityType: string; profiles: string[]; probes: { tagId: string; label: string; typeEvidence: number; eligible: number | null }[]; skipped: string | null }[];
   /** Sprint 5A.2: every anchoring of a generated candidate (who anchored it, to what, on which Qloo evidence) and refusals. */
   anchorDecisions?: AnchorDecision[];
   /** Sprint 5A.2: the evidence-ranked probe recommended per unresolved territory, recorded whenever it changes. */
