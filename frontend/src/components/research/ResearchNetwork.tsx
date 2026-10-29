@@ -128,7 +128,8 @@ function connectionsFor(view: ResearchView, direction: DirectionView): Connectio
   return [...new Map(linked.map((item) => [item.key, item])).values()].slice(0, 8);
 }
 
-function BrandDossier({ view, onSelect }: { view: ResearchView; onSelect: (id: string) => void }) {
+function BrandDossier({ view, onSelect, onExplore, busy }: { view: ResearchView; onSelect: (id: string) => void; onExplore?: () => void; busy?: boolean }) {
+  const signals = view.collections.filter((collection) => collection.items.length);
   return <>
     <p className="kicker">Cultural fingerprint</p>
     <h2>{view.brand.name}</h2>
@@ -140,6 +141,11 @@ function BrandDossier({ view, onSelect }: { view: ResearchView; onSelect: (id: s
     <h3>Directions found</h3>
     {view.directions.length ? <ul className="rn-links">{view.directions.map((direction) => <li key={direction.key}><button type="button" className="rn-link" onClick={() => onSelect(directionNodeId(direction.key))}>{direction.name}</button></li>)}</ul>
       : <p className="quiet">No direction had enough evidence. Ask a question below to explore.</p>}
+    {signals.length && onExplore ? <div className="rr-section" data-testid="network-explore-signals">
+      <h3>Signals worth exploring</h3>
+      <p className="quiet">The directions above come from {view.brand.name}&apos;s own tags. The {signals.map((collection) => collection.title.split(" ")[0]!.toLowerCase()).join(", ")} Qloo returned may point somewhere less familiar. The agent can look for what links them and test each idea with Qloo. They are starting points, not evidence of a fit.</p>
+      <button type="button" className="rw-secondary" disabled={busy} onClick={onExplore}>Explore these signals with the agent</button>
+    </div> : null}
   </>;
 }
 
@@ -212,7 +218,7 @@ function InquiryDossier({ inquiry, node, brand, branch, locate, onSelect, onAnsw
   const followUps = result && result.status !== "NEEDS_INPUT" ? result.followUpOptions : [];
   const territory = branchTerritory(response, branch);
   return <>
-    <p className="kicker">{inquiry.origin === "direction" ? "Agent investigation" : "Research question"}</p>
+    <p className="kicker">{inquiry.origin === "direction" ? "Agent investigation" : inquiry.origin === "explore" ? "Agent exploration" : "Research question"}</p>
     <h2>{inquiry.question}</h2>
     <p className="rn-status" data-tone={node.tone} role="status">{running ? `The agent is working: ${inquiry.stageLabel || "investigating"}` : node.status}</p>
     {inquiry.lost && node.status === "No longer available" ? <p className="quiet">The research service no longer holds this investigation (it expired or restarted) and it never sent an answer. Its question stays in your network; try it again to continue.</p> : null}
@@ -406,7 +412,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     if (!live || !canRetry(inquiry)) return undefined;
     const parent = byId.get(inquiry.parentId) ?? null;
     const direction = inquiry.origin === "direction" ? view.directions.find((item) => directionNodeId(item.key) === inquiry.parentId) : undefined;
-    if (inquiry.origin === "direction" && (!direction || !canInvestigate || !scanToken)) return undefined;
+    if ((inquiry.origin === "direction" && !direction) || (inquiry.origin !== "question" && (!canInvestigate || !scanToken))) return undefined;
     return () => {
       void network.retry(inquiry, direction ? { directionId: direction.id } : { from: parent?.runId ? parent : null })
         .then((jobId) => { if (jobId) setSelectedId(inquiryNodeId(jobId)); });
@@ -476,7 +482,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
     const parentInquiry = inquiryOf(selected);
     dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateTerritory(selected.label, selected.id)} onMeasure={measureFor(selected.label, parentInquiry?.response?.investigation?.result)} directions={view.directions.map((direction) => direction.name)} />;
   } else {
-    dossier = <BrandDossier view={view} onSelect={setSelectedId} />;
+    dossier = <BrandDossier view={view} onSelect={setSelectedId} busy={network.starting} {...(canInvestigate && scanToken && { onExplore: () => void open(network.exploreSignals()) })} />;
   }
 
   // A question, or a direction your questions opened, can be removed with everything that grew from it.

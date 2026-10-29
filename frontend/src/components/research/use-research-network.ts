@@ -120,6 +120,15 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
   }, [begin, scanId, scanToken]);
 
   /**
+   * Sprint 10A: open discovery from the scan's own signals (related artists, places, films, books). The server rereads the
+   * scan and hands its observations to the agent as starting points; the browser sends identifiers only.
+   */
+  const exploreSignals = useCallback(() => {
+    if (!scanToken) { setNotice("Live investigation needs the research session that found these signals."); return Promise.resolve(null); }
+    return begin("/api/research/handoff/jobs", { scanId, explore: true, idempotencyKey: crypto.randomUUID() }, { "x-baseline-token": scanToken }, { parentId: "brand", origin: "explore", question: `Explore ${brand}'s cross-domain signals` });
+  }, [begin, brand, scanId, scanToken]);
+
+  /**
    * A question from the composer. From an investigation or territory it is a follow-up of that run. From a direction
    * it is a new question on that direction's branch; when the text does not name the direction, the direction is
    * sent as the caller's explicit territory. Otherwise it is a new question about the brand.
@@ -161,6 +170,11 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
       if (!scanToken) { setNotice("Live investigation needs the research session that found this direction."); return Promise.resolve(null); }
       return begin("/api/research/handoff/jobs", { scanId, territoryId: target.directionId, idempotencyKey: crypto.randomUUID() }, { "x-baseline-token": scanToken }, spec, inquiry);
     }
+    // An exploration is started again through the same handoff, so it keeps the scan's signals.
+    if (inquiry.origin === "explore") {
+      if (!scanToken) { setNotice("Live investigation needs the research session that found these signals."); return Promise.resolve(null); }
+      return begin("/api/research/handoff/jobs", { scanId, explore: true, idempotencyKey: crypto.randomUUID() }, { "x-baseline-token": scanToken }, spec, inquiry);
+    }
     const context = followUpContext(target.from);
     const body = context ? { query: inquiry.question, context } : { query: inquiry.question, brand };
     return begin("/api/agent/jobs", body, {}, { ...spec, parentId: context && target.from ? target.from.id : "brand" }, inquiry);
@@ -175,5 +189,5 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
 
   const saveNow = useCallback(() => { if (loadedFor === scanId) save(scanId, latest.current); }, [loadedFor, scanId]);
 
-  return { inquiries, notice, starting, investigateDirection, ask, answer, retry, forget, forgetMany, saveNow, clearNotice: () => setNotice(null) };
+  return { inquiries, notice, starting, investigateDirection, exploreSignals, ask, answer, retry, forget, forgetMany, saveNow, clearNotice: () => setNotice(null) };
 }

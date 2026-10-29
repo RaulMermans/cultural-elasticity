@@ -226,6 +226,7 @@ export function buildNetworkReport(input: { view: ResearchView; nodes: readonly 
           ...(item.reading.closestMatches.length ? [`Qloo's closest matches for ${brand} here: ${item.reading.closestMatches.slice(0, 6).join(", ")}`] : []),
           ...(item.reading.examples.length ? [`Examples standing for it: ${item.reading.examples.slice(0, 6).join(", ")}`] : []),
           ...item.reading.unknowns.slice(0, 3).map((line) => `Unknown: ${line}`),
+          ...(item.reading.surfaced ? [`Evidence status: ${item.reading.surfaced.status}. ${item.reading.surfaced.statusText}`, ...(item.reading.surfaced.signals.length ? [`Surfaced from: ${item.reading.surfaced.signals.slice(0, 4).join("; ")}`] : []), ...(item.reading.surfaced.interpretation ? [`Agent's interpretation (not Qloo evidence): ${item.reading.surfaced.interpretation}`] : [])] : []),
           `From: “${item.question}”`,
         ],
       })),

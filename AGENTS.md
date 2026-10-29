@@ -137,6 +137,14 @@ Canonical record: `docs/sprint-9j/LIVE_VALIDATION_AND_RELEASE_REPORT.md`.
 5. **One decision card for every surface** (`packages/shared/src/decision-card.ts`). The live reading, the report and the evals use the same projection. It shows recorded values only, interprets evidence without forecasting outcomes, and never suggests asking a question again that Qloo's evidence blocked (`repeat: LIKELY_REPEATS`).
 6. **Report the arms honestly.** `pnpm eval:d2d` compares `observe` (the Sprint 9M flow) with `enforce` on identical synthetic fixtures, and reads recorded live artefacts as run. It is never live evidence and has no independent holdout. `CE_FEASIBILITY_POLICY=observe` is the rollback. Canonical record: `docs/sprint-9n/DISCOVERY_TO_DECISION_OPTIMIZATION.md`.
 
+## Opportunity discovery (permanent, from Sprint 10A)
+
+1. **Signal, interpretation, territory and status stay separate** (`packages/shared/src/opportunity.ts`). An agent hypothesis never inherits the evidentiary status of the signals that motivated it. `opportunity-status/v1` is computed by code; `QLOO_SUPPORTED` and `RELATIVELY_MEASURED` need brand-independent recommend members in the run (a profile carrying the tag is not a member).
+2. **Seeds are observations, never support.** The explore handoff (`explore: true`) passes the authorized scan's brand-conditioned entities, re-read and provenance-checked on the server, never from client text or in the query text. At most 3 are profiled per run. The free baseline stays model-free and never starts an agent run.
+3. **Motivation must be observed.** `motivatedBy` cites only tags or entities returned in the run, or seeds; an unobserved id is refused.
+4. **Pool order is a recorded rule** (`frontier-pool/v2`, `candidatePoolRule`). Facets come from the tag URN, never from names. `domainRelation` is a structural fact about the brand's profile facets, not novelty and not core versus adjacent. Do not add a novelty score. Concepts the bounded pool cuts are recorded with a reason.
+5. **Discovery quality needs human and live evidence.** `pnpm eval:discovery` replays real recorded pools and checks mechanism and safety only. A quality claim needs the blinded rating (`docs/sprint-10a/evaluation/rating-sheet.md`) and the frozen holdouts (`docs/sprint-10a/PREREGISTRATION.md`), which are never tuned on.
+
 ## Deployment provenance (permanent, from Sprint 8F)
 
 1. **GitHub is the canonical source.** `RaulMermans/cultural-elasticity` is the only release repository. Do not deploy from copied archives as the ordinary process.
@@ -203,6 +211,7 @@ pnpm eval:agent:replay -- <dir>
 pnpm eval:d2d           # offline Discovery-to-Decision suite: observe vs enforce arms (synthetic) + recorded live artefacts as run
 pnpm eval:d2d -- --score <dir> [<dir>]
                         # score stored agent results with the same metrics (offline half of a model comparison)
+pnpm eval:discovery     # offline; real recorded frontier pools + Loewe scan seeds (mechanism/safety), never discovery-quality or live evidence
 pnpm eval:query         # offline gate/handoff replay over the query manifest (synthetic); never NLU evidence
 pnpm eval:query -- --live
 pnpm test:e2e           # browser tests against a SYNTHETIC job API; never live Qloo or Haiku

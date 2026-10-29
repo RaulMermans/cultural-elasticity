@@ -46,3 +46,23 @@ test("Sprint 9M: class codes in the agent's write-up read as their plain labels,
   assert.equal(readableClassCodes("UNCERTAIN_REPRESENTATION_SENSITIVE and CULTURAL_BREAK"), "“not settled” and “cultural break”");
   assert.equal(readableClassCodes("No code here, 3 of 4."), "No code here, 3 of 4.");
 });
+
+test("Sprint 10A: a discovered direction says why it surfaced, labels the agent's interpretation, and shows no raw codes", () => {
+  const opportunity = {
+    territoryKey: "a", direction: "SYN a", source: "agent_hypothesis", status: "QLOO_SUPPORTED", blocker: null,
+    surfacedBy: [{ id: "SYN-AR-1", label: "SYN artist", relation: "SEED_ENTITY_TAG", correlationIds: ["syn-1"] }, { id: "SYN-BR-1", label: "SYN brand", relation: "RELATED_ENTITY_TAG", correlationIds: ["syn-2"] }],
+    facet: "genre:music", domainRelation: "OUTSIDE_BRAND_PROFILE_FACETS", interpretation: "SYN the artists may share a scene",
+    unknowns: ["SYN unknown"], nextInvestigation: "SYN next step",
+  };
+  const done = { status: "COMPLETE", territories: [territory("a", null)], layers: undefined, comparisonSetConstruction: { opportunities: [opportunity] } } as unknown as AgentRunResponse;
+  const surfaced = territoryReading(done, "a", "SYN BRAND")!.surfaced!;
+  assert.equal(surfaced.status, "Supported by Qloo, not measured");
+  assert.deepEqual(surfaced.signals, ["SYN artist (returned for SYN BRAND in the brand scan)", "SYN brand (a brand Qloo relates to SYN BRAND)"]);
+  assert.match(surfaced.domain!, /different kind of Qloo tag/u);
+  assert.equal(surfaced.interpretation, "SYN the artists may share a scene");
+  assert.equal(surfaced.next, "SYN next step");
+  assert.doesNotMatch(JSON.stringify({ ...surfaced, interpretation: null }), /QLOO_SUPPORTED|SEED_ENTITY_TAG|OUTSIDE_BRAND/u);
+  const blocked = territoryReading({ ...done, comparisonSetConstruction: { opportunities: [{ ...opportunity, status: "NOT_ESTABLISHED", blocker: "INCONCLUSIVE" }] } } as unknown as AgentRunResponse, "a", "B")!.surfaced!;
+  assert.equal(blocked.status, "Not settled");
+  assert.equal(territoryReading(result([territory("a", null)]), "a", "B")!.surfaced, null);
+});

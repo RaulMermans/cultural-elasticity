@@ -30,6 +30,7 @@
     "eval:agent:replay": "tsx scripts/replay-evaluators.ts",
     "eval:d2d": "tsx scripts/eval-d2d.ts",
     "eval:competence": "tsx scripts/eval-competence.ts",
+    "eval:discovery": "tsx scripts/eval-discovery.ts",
     "eval:query": "tsx scripts/eval-query.ts",
     "living-atlas:live": "tsx scripts/living-atlas-live.ts",
     "perf:agent": "tsx scripts/perf-agent.ts",

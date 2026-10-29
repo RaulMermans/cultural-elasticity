@@ -1,2150 +1,2257 @@
 {
- "fixtureType": "synthetic",
- "notice": "SYNTHETIC agent-runtime world. Fictional names, placeholder SYN- ids, hand-written tag sets. Not Qloo evidence; never cite it as such. Used by the ScriptedToolProvider in backend tests and pnpm eval:agent.",
- "tags": [
-  {
-   "id": "urn:tag:industry:syn:boutique_stays",
-   "name": "Boutique Stays",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:design_stays",
-   "name": "Design Stays",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:tableware",
-   "name": "Tableware",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:furniture",
-   "name": "Furniture",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:trail_gear",
-   "name": "Trail Gear",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:gaming_peripherals",
-   "name": "Gaming Peripherals",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:skincare",
-   "name": "Skincare",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:interests:syn:esports",
-   "name": "Esports",
-   "type": "urn:tag:interests:syn"
-  },
-  {
-   "id": "urn:tag:interests:syn:slow_travel",
-   "name": "Slow Travel",
-   "type": "urn:tag:interests:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:moonlight_rituals",
-   "name": "Moonlight Rituals",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:fashion",
-   "name": "Fashion",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:outdoor_apparel",
-   "name": "Outdoor Apparel",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:video_games",
-   "name": "Video Games",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:specialty_food",
-   "name": "Specialty Food",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:interests:syn:sailing",
-   "name": "Sailing",
-   "type": "urn:tag:interests:syn"
-  },
-  {
-   "id": "urn:tag:interests:syn:cabin_culture",
-   "name": "Cabin Culture",
-   "type": "urn:tag:interests:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:minimalism",
-   "name": "Minimalism",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:mediterranean",
-   "name": "Mediterranean Living",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:design_culture",
-   "name": "Design Culture",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:luxury",
-   "name": "Luxury",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:coastal",
-   "name": "Coastal",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:craft",
-   "name": "Craft",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:outdoors",
-   "name": "Outdoors",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:sustainability",
-   "name": "Sustainability",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:heritage",
-   "name": "Heritage",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:tech",
-   "name": "Technology",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:gaming_culture",
-   "name": "Gaming Culture",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:wellness_ritual",
-   "name": "Wellness Rituals",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:streetwear",
-   "name": "Streetwear",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:slow_living",
-   "name": "Slow Living",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:family_play",
-   "name": "Family Play",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:credit_card:syn:card_accepted",
-   "name": "Card Accepted",
-   "type": "urn:tag:credit_card:syn"
-  },
-  {
-   "id": "urn:tag:product_category:syn:cafe_culture",
-   "name": "Cafe Culture",
-   "type": "urn:tag:product_category:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:espresso_ritual",
-   "name": "Espresso Ritual",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:extreme_energy",
-   "name": "Extreme Energy",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:genre:syn:indie_film",
-   "name": "Indie Film",
-   "type": "urn:tag:genre:syn"
-  },
-  {
-   "id": "urn:tag:genre:syn:dream_pop",
-   "name": "Dream Pop",
-   "type": "urn:tag:genre:syn"
-  },
-  {
-   "id": "urn:tag:genre:syn:coming_of_age",
-   "name": "Coming Of Age",
-   "type": "urn:tag:genre:syn"
-  },
-  {
-   "id": "urn:tag:interests:syn:bouldering",
-   "name": "Bouldering",
-   "type": "urn:tag:interests:syn"
-  },
-  {
-   "id": "urn:tag:lifestyle:syn:boulderers",
-   "name": "Boulderers",
-   "type": "urn:tag:lifestyle:syn"
-  },
-  {
-   "id": "urn:tag:interests:syn:hot_springs",
-   "name": "Hot Springs",
-   "type": "urn:tag:interests:syn"
-  },
-  {
-   "id": "urn:tag:activity_type:syn:stream_angling",
-   "name": "Stream Angling",
-   "type": "urn:tag:activity_type:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:stream_angling",
-   "name": "Stream Angling",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:lifestyle:syn:stream_angling",
-   "name": "Stream Angling",
-   "type": "urn:tag:lifestyle:syn"
-  },
-  {
-   "id": "urn:tag:amenity:syn:breakfast_buffet",
-   "name": "Breakfast Buffet",
-   "type": "urn:tag:amenity:syn"
-  },
-  {
-   "id": "urn:tag:dining_option:syn:breakfast_available",
-   "name": "Breakfast Available",
-   "type": "urn:tag:dining_option:syn"
-  },
-  {
-   "id": "urn:tag:decor:syn:rustic_charm",
-   "name": "Rustic Charm",
-   "type": "urn:tag:decor:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:river_lodge",
-   "name": "River Lodge",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:insulated_coolers",
-   "name": "Insulated Coolers",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:overbuilt_hardware",
-   "name": "Overbuilt Hardware",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:backwoods",
-   "name": "Backwoods",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:ridge_walking",
-   "name": "Ridge Walking",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:activity_type:syn:gravel_riding",
-   "name": "Gravel Riding",
-   "type": "urn:tag:activity_type:syn"
-  },
-  {
-   "id": "urn:tag:activity_type:syn:alpine_hiking",
-   "name": "Alpine Hiking",
-   "type": "urn:tag:activity_type:syn"
-  },
-  {
-   "id": "urn:tag:product_category:syn:espresso",
-   "name": "Espresso",
-   "type": "urn:tag:product_category:syn"
-  },
-  {
-   "id": "urn:tag:cuisine:syn:espresso",
-   "name": "Espresso",
-   "type": "urn:tag:cuisine:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:mountain_town",
-   "name": "Mountain Town",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:coastal_road",
-   "name": "Coastal Road",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:performance_apparel",
-   "name": "Performance Apparel",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:genre:syn:alt_folk",
-   "name": "Alt Folk",
-   "type": "urn:tag:genre:syn"
-  },
-  {
-   "id": "urn:tag:genre:syn:post_punk",
-   "name": "Post Punk",
-   "type": "urn:tag:genre:syn"
-  },
-  {
-   "id": "urn:tag:genre:syn:shoegaze_revival",
-   "name": "Shoegaze Revival",
-   "type": "urn:tag:genre:syn"
-  },
-  {
-   "id": "urn:tag:genre:syn:thrash_revival",
-   "name": "Thrash Revival",
-   "type": "urn:tag:genre:syn"
-  },
-  {
-   "id": "urn:tag:culinary_experience:syn:lantern_feasting",
-   "name": "Lantern Feasting",
-   "type": "urn:tag:culinary_experience:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:lantern_supper",
-   "name": "Lantern Supper",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:riff_culture",
-   "name": "Riff Culture",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:product_category:syn:oat_drink",
-   "name": "Oat Drink",
-   "type": "urn:tag:product_category:syn"
-  },
-  {
-   "id": "urn:tag:lifestyle:syn:plant_forward",
-   "name": "Plant Forward",
-   "type": "urn:tag:lifestyle:syn"
-  },
-  {
-   "id": "urn:tag:keyword:syn:barista_culture",
-   "name": "Barista Culture",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:genre:synmedia:hearth_cooking",
-   "name": "Hearth Cooking",
-   "type": "urn:tag:genre:synmedia"
-  },
-  {
-   "id": "urn:tag:genre:synmedia:quiet_activism",
-   "name": "Quiet Activism",
-   "type": "urn:tag:genre:synmedia"
-  },
-  {
-   "id": "urn:tag:genre:synmedia:slow_mornings",
-   "name": "Slow Mornings",
-   "type": "urn:tag:genre:synmedia"
-  },
-  {
-   "id": "urn:tag:keyword:synmedia:found_family",
-   "name": "Found Family",
-   "type": "urn:tag:keyword:synmedia"
-  },
-  {
-   "id": "urn:tag:genre:synmusic:porch_folk",
-   "name": "Porch Folk",
-   "type": "urn:tag:genre:synmusic"
-  },
-  {
-   "id": "urn:tag:music:syn:porch_folk",
-   "name": "Porch Folk",
-   "type": "urn:tag:music:syn"
-  },
-  {
-   "id": "urn:tag:subgenre:syn:thrash_revival",
-   "name": "Thrash Revival Scene",
-   "type": "urn:tag:subgenre:syn"
-  },
-  {
-   "id": "urn:tag:cuisine:syn:coffee_houses",
-   "name": "Coffee Houses",
-   "type": "urn:tag:cuisine:syn"
-  },
-  {
-   "id": "urn:tag:category:synplace:bakery_culture",
-   "name": "Bakery Culture",
-   "type": "urn:tag:category:synplace"
-  },
-  {
-   "id": "urn:tag:category:synplace:tea_salons",
-   "name": "Tea Salons",
-   "type": "urn:tag:category:synplace"
-  },
-  {
-   "id": "urn:tag:keyword:syn:botanical_ritual",
-   "name": "Botanical Ritual",
-   "type": "urn:tag:keyword:syn"
-  },
-  {
-   "id": "urn:tag:industry:syn:apothecary_care",
-   "name": "Apothecary Care",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:genre:synmedia:kitchen_tv",
-   "name": "Kitchen Television",
-   "type": "urn:tag:genre:synmedia"
-  },
-  {
-   "id": "urn:tag:genre:synmedia:cookbook_shelf",
-   "name": "Cookbook Shelf",
-   "type": "urn:tag:genre:synmedia"
-  },
-  {
-   "id": "urn:tag:genre:synmusic:bedroom_indie",
-   "name": "Bedroom Indie",
-   "type": "urn:tag:genre:synmusic"
-  },
-  {
-   "id": "urn:tag:genre:synmusic:night_electronic",
-   "name": "Night Electronic",
-   "type": "urn:tag:genre:synmusic"
-  },
-  {
-   "id": "urn:tag:keyword:synmedia:slow_drama",
-   "name": "Slow Drama",
-   "type": "urn:tag:keyword:synmedia"
-  },
-  {
-   "id": "urn:tag:keyword:synmedia:novel_adaptation",
-   "name": "Novel Adaptation",
-   "type": "urn:tag:keyword:synmedia"
-  },
-  {
-   "id": "urn:tag:genre:synbrand:apothecary_fashion",
-   "name": "Apothecary Fashion",
-   "type": "urn:tag:genre:synbrand"
-  },
-  {
-   "id": "urn:tag:industry:syn:everyday_basics",
-   "name": "Everyday Basics",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:genre:synbrand:capsule_wardrobe",
-   "name": "Capsule Wardrobe",
-   "type": "urn:tag:genre:synbrand"
-  },
-  {
-   "id": "urn:tag:genre:synmusic:lofi_beats",
-   "name": "Lofi Beats",
-   "type": "urn:tag:genre:synmusic"
-  },
-  {
-   "id": "urn:tag:keyword:synmedia:city_life",
-   "name": "City Life",
-   "type": "urn:tag:keyword:synmedia"
-  },
-  {
-   "id": "urn:tag:genre:synmedia:street_photo",
-   "name": "Street Photo",
-   "type": "urn:tag:genre:synmedia"
-  },
-  {
-   "id": "urn:tag:genre:synfilm:design_docs",
-   "name": "Design Documentaries",
-   "type": "urn:tag:genre:synfilm"
-  },
-  {
-   "id": "urn:tag:category:synplace:lantern_markets",
-   "name": "Lantern Markets",
-   "type": "urn:tag:category:synplace"
-  },
-  {
-   "id": "urn:tag:keyword:synplace:street_griddle",
-   "name": "Street Griddle",
-   "type": "urn:tag:keyword:synplace"
-  },
-  {
-   "id": "urn:tag:industry:syn:field_supply",
-   "name": "Field Supply",
-   "type": "urn:tag:industry:syn"
-  },
-  {
-   "id": "urn:tag:category:synplace:reading_rooms",
-   "name": "Reading Rooms",
-   "type": "urn:tag:category:synplace"
-  },
-  {
-   "id": "urn:tag:keyword:synplace:oak_panelling",
-   "name": "Oak Panelling",
-   "type": "urn:tag:keyword:synplace"
-  },
-  {
-   "id": "urn:tag:style:synplace:brass_lamps",
-   "name": "Brass Lamps",
-   "type": "urn:tag:style:synplace"
-  },
-  {
-   "id": "urn:tag:setting:synplace:hushed_hours",
-   "name": "Hushed Hours",
-   "type": "urn:tag:setting:synplace"
-  },
-  {
-   "id": "urn:tag:theme:synplace:map_archives",
-   "name": "Map Archives",
-   "type": "urn:tag:theme:synplace"
-  },
-  {
-   "id": "urn:tag:category:synplace:print_studios",
-   "name": "Print Studios",
-   "type": "urn:tag:category:synplace"
-  },
-  {
-   "id": "urn:tag:category:synplace:listening_bars",
-   "name": "Listening Bars",
-   "type": "urn:tag:category:synplace"
-  }
- ],
- "entities": [
-  {
-   "id": "SYN-BR-0001",
-   "name": "Northwind Atelier",
-   "type": "brand",
-   "popularity": 0.97,
-   "tags": [
-    "urn:tag:industry:syn:fashion",
-    "urn:tag:keyword:syn:minimalism",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:luxury",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:streetwear"
-   ]
-  },
-  {
-   "id": "SYN-BR-0002",
-   "name": "Kestrel Outfitters",
-   "type": "brand",
-   "popularity": 0.95,
-   "tags": [
-    "urn:tag:industry:syn:outdoor_apparel",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:sustainability",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:heritage",
-    "urn:tag:keyword:syn:craft"
-   ]
-  },
-  {
-   "id": "SYN-BR-0003",
-   "name": "Lumen Play",
-   "type": "brand",
-   "popularity": 0.96,
-   "tags": [
-    "urn:tag:industry:syn:video_games",
-    "urn:tag:keyword:syn:tech",
-    "urn:tag:keyword:syn:gaming_culture",
-    "urn:tag:keyword:syn:family_play",
-    "urn:tag:keyword:syn:design_culture"
-   ]
-  },
-  {
-   "id": "SYN-BR-0004",
-   "name": "Saffron & Salt",
-   "type": "brand",
-   "popularity": 0.88,
-   "tags": [
-    "urn:tag:industry:syn:specialty_food",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:wellness_ritual",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:sustainability"
-   ]
-  },
-  {
-   "id": "SYN-BR-0005",
-   "name": "Meridian Audio Works",
-   "type": "brand",
-   "popularity": 0.62,
-   "tags": [
-    "urn:tag:keyword:syn:tech",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:heritage"
-   ]
-  },
-  {
-   "id": "SYN-BR-0006",
-   "name": "Meridian Lending",
-   "type": "brand",
-   "popularity": 0.48,
-   "tags": [
-    "urn:tag:keyword:syn:heritage",
-    "urn:tag:keyword:syn:sustainability"
-   ]
-  },
-  {
-   "id": "SYN-BR-0007",
-   "name": "Harbor Goods",
-   "type": "brand",
-   "popularity": 0.71,
-   "tags": [
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:slow_living"
-   ]
-  },
-  {
-   "id": "SYN-BR-0101",
-   "name": "Larkspur Hotels",
-   "type": "brand",
-   "popularity": 0.93,
-   "tags": [
-    "urn:tag:industry:syn:boutique_stays",
-    "urn:tag:industry:syn:design_stays",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:luxury",
-    "urn:tag:keyword:syn:coastal"
-   ]
-  },
-  {
-   "id": "SYN-BR-0102",
-   "name": "Tidewell Inns",
-   "type": "brand",
-   "popularity": 0.86,
-   "tags": [
-    "urn:tag:industry:syn:boutique_stays",
-    "urn:tag:industry:syn:design_stays",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:mediterranean"
-   ]
-  },
-  {
-   "id": "SYN-BR-0103",
-   "name": "Quillon House",
-   "type": "brand",
-   "popularity": 0.9,
-   "tags": [
-    "urn:tag:industry:syn:boutique_stays",
-    "urn:tag:industry:syn:design_stays",
-    "urn:tag:keyword:syn:luxury",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:minimalism"
-   ]
-  },
-  {
-   "id": "SYN-BR-0104",
-   "name": "Marrow & Vine Hotels",
-   "type": "brand",
-   "popularity": 0.78,
-   "tags": [
-    "urn:tag:industry:syn:boutique_stays",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:keyword:syn:wellness_ritual",
-    "urn:tag:keyword:syn:slow_living"
-   ]
-  },
-  {
-   "id": "SYN-BR-0105",
-   "name": "Larkspur Hotels Collection",
-   "type": "brand",
-   "popularity": 0.91,
-   "tags": [
-    "urn:tag:industry:syn:boutique_stays",
-    "urn:tag:industry:syn:design_stays",
-    "urn:tag:keyword:syn:luxury",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:coastal"
-   ]
-  },
-  {
-   "id": "SYN-BR-0106",
-   "name": "Verve Lodge",
-   "type": "brand",
-   "popularity": 0.66,
-   "tags": [
-    "urn:tag:industry:syn:design_stays",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:tech"
-   ]
-  },
-  {
-   "id": "SYN-BR-0201",
-   "name": "Ashgrove Ceramics",
-   "type": "brand",
-   "popularity": 0.84,
-   "tags": [
-    "urn:tag:industry:syn:tableware",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:minimalism",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:heritage"
-   ]
-  },
-  {
-   "id": "SYN-BR-0202",
-   "name": "Kilnhouse",
-   "type": "brand",
-   "popularity": 0.8,
-   "tags": [
-    "urn:tag:industry:syn:tableware",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:minimalism"
-   ]
-  },
-  {
-   "id": "SYN-BR-0203",
-   "name": "Pale Clay Co",
-   "type": "brand",
-   "popularity": 0.74,
-   "tags": [
-    "urn:tag:industry:syn:tableware",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:slow_living"
-   ]
-  },
-  {
-   "id": "SYN-BR-0204",
-   "name": "Ferrow Porcelain",
-   "type": "brand",
-   "popularity": 0.89,
-   "tags": [
-    "urn:tag:industry:syn:tableware",
-    "urn:tag:keyword:syn:heritage",
-    "urn:tag:keyword:syn:luxury"
-   ]
-  },
-  {
-   "id": "SYN-BR-0301",
-   "name": "Oakline Studio",
-   "type": "brand",
-   "popularity": 0.83,
-   "tags": [
-    "urn:tag:industry:syn:furniture",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:minimalism",
-    "urn:tag:keyword:syn:craft"
-   ]
-  },
-  {
-   "id": "SYN-BR-0302",
-   "name": "Strand Furniture",
-   "type": "brand",
-   "popularity": 0.79,
-   "tags": [
-    "urn:tag:industry:syn:furniture",
-    "urn:tag:keyword:syn:heritage",
-    "urn:tag:keyword:syn:design_culture"
-   ]
-  },
-  {
-   "id": "SYN-BR-0303",
-   "name": "Norrow Design",
-   "type": "brand",
-   "popularity": 0.87,
-   "tags": [
-    "urn:tag:industry:syn:furniture",
-    "urn:tag:keyword:syn:minimalism",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:tech"
-   ]
-  },
-  {
-   "id": "SYN-BR-0401",
-   "name": "Ridgeback Supply",
-   "type": "brand",
-   "popularity": 0.82,
-   "tags": [
-    "urn:tag:industry:syn:trail_gear",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:sustainability",
-    "urn:tag:keyword:syn:heritage",
-    "urn:tag:interests:syn:sailing"
-   ]
-  },
-  {
-   "id": "SYN-BR-0402",
-   "name": "Cairnfield",
-   "type": "brand",
-   "popularity": 0.77,
-   "tags": [
-    "urn:tag:industry:syn:trail_gear",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:coastal"
-   ]
-  },
-  {
-   "id": "SYN-BR-0403",
-   "name": "Summitry",
-   "type": "brand",
-   "popularity": 0.85,
-   "tags": [
-    "urn:tag:industry:syn:trail_gear",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:tech",
-    "urn:tag:keyword:syn:sustainability"
-   ]
-  },
-  {
-   "id": "SYN-BR-0501",
-   "name": "Voltclaw",
-   "type": "brand",
-   "popularity": 0.92,
-   "tags": [
-    "urn:tag:industry:syn:gaming_peripherals",
-    "urn:tag:keyword:syn:tech",
-    "urn:tag:keyword:syn:gaming_culture",
-    "urn:tag:keyword:syn:streetwear"
-   ]
-  },
-  {
-   "id": "SYN-BR-0502",
-   "name": "Pixelforge Gear",
-   "type": "brand",
-   "popularity": 0.86,
-   "tags": [
-    "urn:tag:industry:syn:gaming_peripherals",
-    "urn:tag:keyword:syn:tech",
-    "urn:tag:keyword:syn:gaming_culture"
-   ]
-  },
-  {
-   "id": "SYN-BR-0503",
-   "name": "Hexbyte",
-   "type": "brand",
-   "popularity": 0.81,
-   "tags": [
-    "urn:tag:industry:syn:gaming_peripherals",
-    "urn:tag:keyword:syn:tech",
-    "urn:tag:keyword:syn:gaming_culture",
-    "urn:tag:keyword:syn:design_culture"
-   ]
-  },
-  {
-   "id": "SYN-BR-0601",
-   "name": "Dewpoint Skin",
-   "type": "brand",
-   "popularity": 0.88,
-   "tags": [
-    "urn:tag:industry:syn:skincare",
-    "urn:tag:keyword:syn:wellness_ritual",
-    "urn:tag:keyword:syn:minimalism",
-    "urn:tag:keyword:syn:sustainability"
-   ]
-  },
-  {
-   "id": "SYN-BR-0602",
-   "name": "Mossbloom",
-   "type": "brand",
-   "popularity": 0.76,
-   "tags": [
-    "urn:tag:industry:syn:skincare",
-    "urn:tag:keyword:syn:wellness_ritual",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:craft"
-   ]
-  },
-  {
-   "id": "SYN-BR-0603",
-   "name": "Saltair Botanics",
-   "type": "brand",
-   "popularity": 0.83,
-   "tags": [
-    "urn:tag:industry:syn:skincare",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:wellness_ritual",
-    "urn:tag:keyword:syn:mediterranean"
-   ]
-  },
-  {
-   "id": "SYN-BR-0701",
-   "name": "Arena Nine",
-   "type": "brand",
-   "popularity": 0.73,
-   "tags": [
-    "urn:tag:interests:syn:esports",
-    "urn:tag:keyword:syn:gaming_culture",
-    "urn:tag:keyword:syn:tech",
-    "urn:tag:keyword:syn:streetwear"
-   ]
-  },
-  {
-   "id": "SYN-BR-0801",
-   "name": "Calder & Finch",
-   "type": "brand",
-   "popularity": 0.9,
-   "tags": [
-    "urn:tag:industry:syn:fashion",
-    "urn:tag:keyword:syn:minimalism",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:luxury"
-   ]
-  },
-  {
-   "id": "SYN-BR-0802",
-   "name": "Rue Solenne",
-   "type": "brand",
-   "popularity": 0.87,
-   "tags": [
-    "urn:tag:industry:syn:fashion",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:keyword:syn:luxury",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:streetwear"
-   ]
-  },
-  {
-   "id": "SYN-BR-0803",
-   "name": "Ostra Label",
-   "type": "brand",
-   "popularity": 0.8,
-   "tags": [
-    "urn:tag:industry:syn:fashion",
-    "urn:tag:keyword:syn:streetwear",
-    "urn:tag:keyword:syn:design_culture",
-    "urn:tag:keyword:syn:minimalism"
-   ]
-  },
-  {
-   "id": "SYN-BR-0901",
-   "name": "Fernline",
-   "type": "brand",
-   "popularity": 0.84,
-   "tags": [
-    "urn:tag:industry:syn:outdoor_apparel",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:sustainability",
-    "urn:tag:industry:syn:trail_gear",
-    "urn:tag:interests:syn:cabin_culture"
-   ]
-  },
-  {
-   "id": "SYN-BR-0902",
-   "name": "Bluff & Bracken",
-   "type": "brand",
-   "popularity": 0.88,
-   "tags": [
-    "urn:tag:industry:syn:outdoor_apparel",
-    "urn:tag:keyword:syn:heritage",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:interests:syn:sailing",
-    "urn:tag:interests:syn:cabin_culture"
-   ]
-  },
-  {
-   "id": "SYN-BR-1001",
-   "name": "Starfold Studios",
-   "type": "brand",
-   "popularity": 0.91,
-   "tags": [
-    "urn:tag:industry:syn:video_games",
-    "urn:tag:keyword:syn:gaming_culture",
-    "urn:tag:keyword:syn:tech",
-    "urn:tag:keyword:syn:family_play"
-   ]
-  },
-  {
-   "id": "SYN-BR-1002",
-   "name": "Tinbox Games",
-   "type": "brand",
-   "popularity": 0.79,
-   "tags": [
-    "urn:tag:industry:syn:video_games",
-    "urn:tag:keyword:syn:family_play",
-    "urn:tag:keyword:syn:design_culture"
-   ]
-  },
-  {
-   "id": "SYN-BR-1101",
-   "name": "Brine & Bloom",
-   "type": "brand",
-   "popularity": 0.72,
-   "tags": [
-    "urn:tag:industry:syn:specialty_food",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:coastal"
-   ]
-  },
-  {
-   "id": "SYN-BR-1102",
-   "name": "Olea Pantry",
-   "type": "brand",
-   "popularity": 0.75,
-   "tags": [
-    "urn:tag:industry:syn:specialty_food",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:sustainability"
-   ]
-  },
-  {
-   "id": "SYN-BR-1201",
-   "name": "Gullwing Marine",
-   "type": "brand",
-   "popularity": 0.8,
-   "tags": [
-    "urn:tag:interests:syn:sailing",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:outdoors"
-   ]
-  },
-  {
-   "id": "SYN-BR-1301",
-   "name": "Hearthstead",
-   "type": "brand",
-   "popularity": 0.77,
-   "tags": [
-    "urn:tag:interests:syn:cabin_culture",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:slow_living"
-   ]
-  },
-  {
-   "id": "SYN-BR-1302",
-   "name": "Pinecraft Co",
-   "type": "brand",
-   "popularity": 0.74,
-   "tags": [
-    "urn:tag:interests:syn:cabin_culture",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:outdoors"
-   ]
-  },
-  {
-   "id": "SYN-PL-0001",
-   "name": "Harbor Lantern Guesthouse",
-   "type": "place",
-   "popularity": 0.69,
-   "tags": [
-    "urn:tag:interests:syn:slow_travel",
-    "urn:tag:keyword:syn:coastal",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:credit_card:syn:card_accepted"
-   ]
-  },
-  {
-   "id": "SYN-PL-0002",
-   "name": "Olive Terrace Retreat",
-   "type": "place",
-   "popularity": 0.81,
-   "tags": [
-    "urn:tag:interests:syn:slow_travel",
-    "urn:tag:keyword:syn:mediterranean",
-    "urn:tag:keyword:syn:wellness_ritual",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:credit_card:syn:card_accepted"
-   ]
-  },
-  {
-   "id": "SYN-PL-0003",
-   "name": "Fjordside Cabins",
-   "type": "place",
-   "popularity": 0.77,
-   "tags": [
-    "urn:tag:interests:syn:slow_travel",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:coastal"
-   ]
-  },
-  {
-   "id": "SYN-BR-0008",
-   "name": "Velvet Tide",
-   "type": "brand",
-   "popularity": 0.83,
-   "tags": [
-    "urn:tag:genre:syn:indie_film",
-    "urn:tag:genre:syn:dream_pop",
-    "urn:tag:genre:syn:coming_of_age",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:minimalism"
-   ]
-  },
-  {
-   "id": "SYN-BR-1401",
-   "name": "Kettle & Crema",
-   "type": "brand",
-   "popularity": 0.84,
-   "tags": [
-    "urn:tag:product_category:syn:cafe_culture",
-    "urn:tag:keyword:syn:espresso_ritual",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:craft"
-   ]
-  },
-  {
-   "id": "SYN-BR-1402",
-   "name": "Bramble Roasters",
-   "type": "brand",
-   "popularity": 0.79,
-   "tags": [
-    "urn:tag:product_category:syn:cafe_culture",
-    "urn:tag:keyword:syn:espresso_ritual",
-    "urn:tag:keyword:syn:craft",
-    "urn:tag:keyword:syn:sustainability"
-   ]
-  },
-  {
-   "id": "SYN-BR-1403",
-   "name": "Morrow Coffee House",
-   "type": "brand",
-   "popularity": 0.76,
-   "tags": [
-    "urn:tag:product_category:syn:cafe_culture",
-    "urn:tag:keyword:syn:espresso_ritual",
-    "urn:tag:keyword:syn:slow_living",
-    "urn:tag:keyword:syn:minimalism"
-   ]
-  },
-  {
-   "id": "SYN-BR-1404",
-   "name": "Voltrush Energy",
-   "type": "brand",
-   "popularity": 0.95,
-   "tags": [
-    "urn:tag:product_category:syn:cafe_culture",
-    "urn:tag:keyword:syn:extreme_energy",
-    "urn:tag:keyword:syn:gaming_culture",
-    "urn:tag:keyword:syn:streetwear"
-   ]
-  },
-  {
-   "id": "SYN-BR-1501",
-   "name": "Chalkline",
-   "type": "brand",
-   "popularity": 0.81,
-   "tags": [
-    "urn:tag:interests:syn:bouldering",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:streetwear"
-   ]
-  },
-  {
-   "id": "SYN-BR-1502",
-   "name": "Crimp Theory",
-   "type": "brand",
-   "popularity": 0.78,
-   "tags": [
-    "urn:tag:interests:syn:bouldering",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:tech"
-   ]
-  },
-  {
-   "id": "SYN-BR-1503",
-   "name": "Overhang Social",
-   "type": "brand",
-   "popularity": 0.74,
-   "tags": [
-    "urn:tag:lifestyle:syn:boulderers",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:streetwear"
-   ]
-  },
-  {
-   "id": "SYN-BR-1504",
-   "name": "Ledgemark",
-   "type": "brand",
-   "popularity": 0.7,
-   "tags": [
-    "urn:tag:lifestyle:syn:boulderers",
-    "urn:tag:keyword:syn:outdoors",
-    "urn:tag:keyword:syn:heritage"
-   ]
-  },
-  {
-   "id": "SYN-PL-0101",
-   "name": "Cinder Valley Baths",
-   "type": "place",
-   "popularity": 0.86,
-   "tags": [
-    "urn:tag:interests:syn:hot_springs",
-    "urn:tag:keyword:syn:wellness_ritual",
-    "urn:tag:keyword:syn:slow_living"
-   ]
-  },
-  {
-   "id": "SYN-PL-0102",
-   "name": "Steamhollow Onsen",
-   "type": "place",
-   "popularity": 0.8,
-   "tags": [
-    "urn:tag:interests:syn:hot_springs",
-    "urn:tag:keyword:syn:wellness_ritual",
-    "urn:tag:keyword:syn:outdoors"
-   ]
-  },
-  {
-   "id": "SYN-PL-0103",
-   "name": "Mineral Row Spa",
-   "type": "place",
-   "popularity": 0.74,
-   "tags": [
-    "urn:tag:interests:syn:hot_springs",
-    "urn:tag:keyword:syn:wellness_ritual",
-    "urn:tag:keyword:syn:mediterranean"
-   ]
-  },
-  {
-   "id": "SYN-PL-0201",
-   "name": "Crema Corner",
-   "type": "place",
-   "popularity": 0.7,
-   "tags": [
-    "urn:tag:product_category:syn:cafe_culture",
-    "urn:tag:keyword:syn:espresso_ritual",
-    "urn:tag:keyword:syn:slow_living"
-   ]
-  },
-  {
-   "id": "SYN-PL-0202",
-   "name": "Copperpot Cafe",
-   "type": "place",
-   "popularity": 0.66,
-   "tags": [
-    "urn:tag:product_category:syn:cafe_culture",
-    "urn:tag:keyword:syn:espresso_ritual",
-    "urn:tag:keyword:syn:craft"
-   ]
-  },
-  {
-   "id": "SYN-BR-2001",
-   "name": "Granite Hollow",
-   "type": "brand",
-   "popularity": 0.93,
-   "tags": [
-    "urn:tag:industry:syn:insulated_coolers",
-    "urn:tag:keyword:syn:overbuilt_hardware"
-   ]
-  },
-  {
-   "id": "SYN-BR-2002",
-   "name": "Pine Hollow Supply",
-   "type": "brand",
-   "popularity": 0.92,
-   "tags": [
-    "urn:tag:industry:syn:insulated_coolers",
-    "urn:tag:keyword:syn:backwoods",
-    "urn:tag:keyword:syn:ridge_walking"
-   ]
-  },
-  {
-   "id": "SYN-BR-2003",
-   "name": "Basalt Coolerworks",
-   "type": "brand",
-   "popularity": 0.71,
-   "tags": [
-    "urn:tag:industry:syn:insulated_coolers",
-    "urn:tag:keyword:syn:overbuilt_hardware",
-    "urn:tag:amenity:syn:breakfast_buffet",
-    "urn:tag:keyword:syn:ridge_walking"
-   ]
-  },
-  {
-   "id": "SYN-BR-2004",
-   "name": "Ironbark Provisions",
-   "type": "brand",
-   "popularity": 0.69,
-   "tags": [
-    "urn:tag:industry:syn:insulated_coolers",
-    "urn:tag:keyword:syn:overbuilt_hardware",
-    "urn:tag:amenity:syn:breakfast_buffet",
-    "urn:tag:keyword:syn:ridge_walking"
-   ]
-  },
-  {
-   "id": "SYN-PL-2001",
-   "name": "Alder Bend Lodge",
-   "type": "place",
-   "popularity": 0.81,
-   "tags": [
-    "urn:tag:activity_type:syn:stream_angling",
-    "urn:tag:amenity:syn:breakfast_buffet",
-    "urn:tag:keyword:syn:river_lodge"
-   ]
-  },
-  {
-   "id": "SYN-PL-2002",
-   "name": "Cutbank Cabins",
-   "type": "place",
-   "popularity": 0.79,
-   "tags": [
-    "urn:tag:activity_type:syn:stream_angling",
-    "urn:tag:dining_option:syn:breakfast_available",
-    "urn:tag:decor:syn:rustic_charm"
-   ]
-  },
-  {
-   "id": "SYN-PL-2003",
-   "name": "Tailwater Camp",
-   "type": "place",
-   "popularity": 0.77,
-   "tags": [
-    "urn:tag:activity_type:syn:stream_angling"
-   ]
-  },
-  {
-   "id": "SYN-PL-2004",
-   "name": "Junction Inn",
-   "type": "place",
-   "popularity": 0.74,
-   "tags": [
-    "urn:tag:amenity:syn:breakfast_buffet",
-    "urn:tag:dining_option:syn:breakfast_available",
-    "urn:tag:decor:syn:rustic_charm"
-   ]
-  },
-  {
-   "id": "SYN-PL-2005",
-   "name": "Depot Suites",
-   "type": "place",
-   "popularity": 0.73,
-   "tags": [
-    "urn:tag:amenity:syn:breakfast_buffet",
-    "urn:tag:dining_option:syn:breakfast_available",
-    "urn:tag:decor:syn:rustic_charm"
-   ]
-  },
-  {
-   "id": "SYN-PL-2006",
-   "name": "Mill Street Hotel",
-   "type": "place",
-   "popularity": 0.72,
-   "tags": [
-    "urn:tag:amenity:syn:breakfast_buffet",
-    "urn:tag:dining_option:syn:breakfast_available",
-    "urn:tag:decor:syn:rustic_charm",
-    "urn:tag:keyword:syn:river_lodge"
-   ]
-  },
-  {
-   "id": "SYN-PL-2007",
-   "name": "Ferry Road Motel",
-   "type": "place",
-   "popularity": 0.7,
-   "tags": [
-    "urn:tag:amenity:syn:breakfast_buffet",
-    "urn:tag:dining_option:syn:breakfast_available",
-    "urn:tag:decor:syn:rustic_charm",
-    "urn:tag:keyword:syn:river_lodge"
-   ]
-  },
-  {
-   "id": "SYN-PL-2008",
-   "name": "Hemlock Hollow Camp",
-   "type": "place",
-   "popularity": 0.68,
-   "tags": [
-    "urn:tag:keyword:syn:backwoods"
-   ]
-  },
-  {
-   "id": "SYN-PL-2009",
-   "name": "Sawtooth Hut",
-   "type": "place",
-   "popularity": 0.67,
-   "tags": [
-    "urn:tag:keyword:syn:backwoods"
-   ]
-  },
-  {
-   "id": "SYN-PL-2010",
-   "name": "Crestline Refuge",
-   "type": "place",
-   "popularity": 0.66,
-   "tags": [
-    "urn:tag:keyword:syn:ridge_walking"
-   ]
-  },
-  {
-   "id": "SYN-PL-2011",
-   "name": "Saddle Pass Hut",
-   "type": "place",
-   "popularity": 0.65,
-   "tags": [
-    "urn:tag:keyword:syn:ridge_walking"
-   ]
-  },
-  {
-   "id": "SYN-PL-2012",
-   "name": "Highline Bothy",
-   "type": "place",
-   "popularity": 0.64,
-   "tags": [
-    "urn:tag:keyword:syn:ridge_walking"
-   ]
-  },
-  {
-   "id": "SYN-BR-3001",
-   "name": "Larkspur Velo",
-   "type": "brand",
-   "popularity": 0.83,
-   "tags": [
-    "urn:tag:industry:syn:performance_apparel",
-    "urn:tag:keyword:syn:mountain_town",
-    "urn:tag:keyword:syn:coastal_road",
-    "urn:tag:genre:syn:alt_folk",
-    "urn:tag:genre:syn:post_punk",
-    "urn:tag:genre:syn:shoegaze_revival"
-   ]
-  },
-  {
-   "id": "SYN-BR-3002",
-   "name": "Crema Works",
-   "type": "brand",
-   "popularity": 0.74,
-   "tags": [
-    "urn:tag:product_category:syn:espresso"
-   ]
-  },
-  {
-   "id": "SYN-BR-3003",
-   "name": "Portafilter Supply",
-   "type": "brand",
-   "popularity": 0.72,
-   "tags": [
-    "urn:tag:product_category:syn:espresso"
-   ]
-  },
-  {
-   "id": "SYN-BR-3004",
-   "name": "Ristretto House",
-   "type": "brand",
-   "popularity": 0.7,
-   "tags": [
-    "urn:tag:product_category:syn:espresso"
-   ]
-  },
-  {
-   "id": "SYN-BR-3010",
-   "name": "Gravemoss Water",
-   "type": "brand",
-   "popularity": 0.8,
-   "tags": [
-    "urn:tag:keyword:syn:riff_culture",
-    "urn:tag:genre:syn:thrash_revival"
-   ]
-  },
-  {
-   "id": "SYN-PL-3001",
-   "name": "Chalk Fork Bunkhouse",
-   "type": "place",
-   "popularity": 0.78,
-   "tags": [
-    "urn:tag:activity_type:syn:gravel_riding"
-   ]
-  },
-  {
-   "id": "SYN-PL-3002",
-   "name": "Loamline Station",
-   "type": "place",
-   "popularity": 0.76,
-   "tags": [
-    "urn:tag:activity_type:syn:gravel_riding"
-   ]
-  },
-  {
-   "id": "SYN-PL-3003",
-   "name": "Washboard Depot",
-   "type": "place",
-   "popularity": 0.74,
-   "tags": [
-    "urn:tag:activity_type:syn:gravel_riding"
-   ]
-  },
-  {
-   "id": "SYN-PL-3004",
-   "name": "Tarn Gate Hut",
-   "type": "place",
-   "popularity": 0.77,
-   "tags": [
-    "urn:tag:activity_type:syn:alpine_hiking"
-   ]
-  },
-  {
-   "id": "SYN-PL-3005",
-   "name": "Scree Saddle Refuge",
-   "type": "place",
-   "popularity": 0.75,
-   "tags": [
-    "urn:tag:activity_type:syn:alpine_hiking"
-   ]
-  },
-  {
-   "id": "SYN-PL-3006",
-   "name": "Cirque Hollow Hut",
-   "type": "place",
-   "popularity": 0.73,
-   "tags": [
-    "urn:tag:activity_type:syn:alpine_hiking"
-   ]
-  },
-  {
-   "id": "SYN-PL-3007",
-   "name": "Tamper and Crema",
-   "type": "place",
-   "popularity": 0.79,
-   "tags": [
-    "urn:tag:cuisine:syn:espresso"
-   ]
-  },
-  {
-   "id": "SYN-PL-3008",
-   "name": "Doppio Corner",
-   "type": "place",
-   "popularity": 0.77,
-   "tags": [
-    "urn:tag:cuisine:syn:espresso"
-   ]
-  },
-  {
-   "id": "SYN-PL-3009",
-   "name": "Bar Lungo",
-   "type": "place",
-   "popularity": 0.75,
-   "tags": [
-    "urn:tag:cuisine:syn:espresso"
-   ]
-  },
-  {
-   "id": "SYN-PL-3010",
-   "name": "Switchback Inn",
-   "type": "place",
-   "popularity": 0.72,
-   "tags": [
-    "urn:tag:keyword:syn:mountain_town"
-   ]
-  },
-  {
-   "id": "SYN-PL-3011",
-   "name": "Pinegrade Lodge",
-   "type": "place",
-   "popularity": 0.71,
-   "tags": [
-    "urn:tag:keyword:syn:mountain_town"
-   ]
-  },
-  {
-   "id": "SYN-PL-3012",
-   "name": "Upper Ferry House",
-   "type": "place",
-   "popularity": 0.7,
-   "tags": [
-    "urn:tag:keyword:syn:mountain_town"
-   ]
-  },
-  {
-   "id": "SYN-PL-3013",
-   "name": "Seawall Rooms",
-   "type": "place",
-   "popularity": 0.69,
-   "tags": [
-    "urn:tag:keyword:syn:coastal_road"
-   ]
-  },
-  {
-   "id": "SYN-PL-3014",
-   "name": "Headland Stop",
-   "type": "place",
-   "popularity": 0.68,
-   "tags": [
-    "urn:tag:keyword:syn:coastal_road"
-   ]
-  },
-  {
-   "id": "SYN-PL-3015",
-   "name": "Breakwater Rest",
-   "type": "place",
-   "popularity": 0.67,
-   "tags": [
-    "urn:tag:keyword:syn:coastal_road"
-   ]
-  },
-  {
-   "id": "SYN-AR-3001",
-   "name": "Ironvein",
-   "type": "artist",
-   "popularity": 0.8,
-   "tags": [
-    "urn:tag:genre:syn:thrash_revival",
-    "urn:tag:keyword:syn:riff_culture"
-   ]
-  },
-  {
-   "id": "SYN-AR-3002",
-   "name": "Blastgrave",
-   "type": "artist",
-   "popularity": 0.78,
-   "tags": [
-    "urn:tag:genre:syn:thrash_revival"
-   ]
-  },
-  {
-   "id": "SYN-AR-3003",
-   "name": "Torque Hymn",
-   "type": "artist",
-   "popularity": 0.76,
-   "tags": [
-    "urn:tag:genre:syn:thrash_revival"
-   ]
-  },
-  {
-   "id": "SYN-BR-5201",
-   "name": "Brindlewood Oat",
-   "type": "brand",
-   "popularity": 0.71,
-   "tags": [
-    "urn:tag:product_category:syn:oat_drink",
-    "urn:tag:lifestyle:syn:plant_forward",
-    "urn:tag:keyword:syn:barista_culture"
-   ]
-  },
-  {
-   "id": "SYN-BR-5202",
-   "name": "Fallowmere Dairy-Free",
-   "type": "brand",
-   "popularity": 0.6,
-   "tags": [
-    "urn:tag:product_category:syn:oat_drink",
-    "urn:tag:lifestyle:syn:plant_forward"
-   ],
-   "profileOnlyTags": [
-    "urn:tag:genre:synmedia:hearth_cooking",
-    "urn:tag:genre:synmedia:quiet_activism",
-    "urn:tag:genre:synmusic:porch_folk",
-    "urn:tag:keyword:synmedia:found_family"
-   ]
-  },
-  {
-   "id": "SYN-BR-5203",
-   "name": "Copperleaf Pantry",
-   "type": "brand",
-   "popularity": 0.6,
-   "tags": [
-    "urn:tag:product_category:syn:oat_drink",
-    "urn:tag:lifestyle:syn:plant_forward"
-   ],
-   "profileOnlyTags": [
-    "urn:tag:genre:synmedia:hearth_cooking",
-    "urn:tag:genre:synmedia:quiet_activism",
-    "urn:tag:genre:synmedia:slow_mornings",
-    "urn:tag:keyword:synmedia:found_family"
-   ]
-  },
-  {
-   "id": "SYN-BR-5204",
-   "name": "Wrenfield Grains",
-   "type": "brand",
-   "popularity": 0.6,
-   "tags": [
-    "urn:tag:lifestyle:syn:plant_forward",
-    "urn:tag:keyword:syn:barista_culture"
-   ],
-   "profileOnlyTags": [
-    "urn:tag:genre:synmedia:hearth_cooking",
-    "urn:tag:genre:synmedia:quiet_activism",
-    "urn:tag:genre:synmedia:slow_mornings",
-    "urn:tag:genre:synmusic:porch_folk"
-   ]
-  },
-  {
-   "id": "SYN-BR-5205",
-   "name": "Marrowdown Foods",
-   "type": "brand",
-   "popularity": 0.6,
-   "tags": [
-    "urn:tag:product_category:syn:oat_drink",
-    "urn:tag:keyword:syn:barista_culture"
-   ],
-   "profileOnlyTags": [
-    "urn:tag:genre:synmedia:slow_mornings",
-    "urn:tag:keyword:synmedia:found_family",
-    "urn:tag:genre:synmusic:porch_folk"
-   ]
-  },
-  {
-   "id": "SYN-BR-5206",
-   "name": "Thistlecombe Kitchen",
-   "type": "brand",
-   "popularity": 0.6,
-   "tags": [
-    "urn:tag:lifestyle:syn:plant_forward",
-    "urn:tag:keyword:syn:barista_culture"
-   ],
-   "profileOnlyTags": [
-    "urn:tag:genre:synmedia:hearth_cooking",
-    "urn:tag:genre:synmedia:quiet_activism",
-    "urn:tag:genre:synmedia:slow_mornings",
-    "urn:tag:keyword:synmedia:found_family"
-   ]
-  },
-  {
-   "id": "SYN-BR-5207",
-   "name": "Larchwick Larder",
-   "type": "brand",
-   "popularity": 0.6,
-   "tags": [
-    "urn:tag:product_category:syn:oat_drink",
-    "urn:tag:lifestyle:syn:plant_forward"
-   ],
-   "profileOnlyTags": [
-    "urn:tag:genre:synmedia:hearth_cooking",
-    "urn:tag:genre:synmedia:quiet_activism",
-    "urn:tag:genre:synmedia:slow_mornings",
-    "urn:tag:genre:synmusic:porch_folk"
-   ]
-  },
-  {
-   "id": "SYN-BK-5201",
-   "name": "Embers and Bread",
-   "type": "book",
-   "popularity": 0.52,
-   "tags": [
-    "urn:tag:genre:synmedia:hearth_cooking"
-   ]
-  },
-  {
-   "id": "SYN-BK-5202",
-   "name": "The Long Supper",
-   "type": "book",
-   "popularity": null,
-   "tags": [
-    "urn:tag:genre:synmedia:hearth_cooking"
-   ]
-  },
-  {
-   "id": "SYN-BK-5203",
-   "name": "Coals at Dusk",
-   "type": "book",
-   "popularity": 0.47,
-   "tags": [
-    "urn:tag:genre:synmedia:hearth_cooking"
-   ]
-  },
-  {
-   "id": "SYN-BK-5204",
-   "name": "Small Hands, Loud Hearts",
-   "type": "book",
-   "popularity": 0.55,
-   "tags": [
-    "urn:tag:genre:synmedia:quiet_activism"
-   ]
-  },
-  {
-   "id": "SYN-BK-5205",
-   "name": "The Patient Placard",
-   "type": "book",
-   "popularity": 0.41,
-   "tags": [
-    "urn:tag:genre:synmedia:quiet_activism"
-   ]
-  },
-  {
-   "id": "SYN-BK-5206",
-   "name": "Kettle Petitions",
-   "type": "book",
-   "popularity": null,
-   "tags": [
-    "urn:tag:genre:synmedia:quiet_activism"
-   ]
-  },
-  {
-   "id": "SYN-BK-5207",
-   "name": "Before the Kettle",
-   "type": "book",
-   "popularity": 0.5,
-   "tags": [
-    "urn:tag:genre:synmedia:slow_mornings"
-   ]
-  },
-  {
-   "id": "SYN-BK-5208",
-   "name": "Dew Hour",
-   "type": "book",
-   "popularity": 0.44,
-   "tags": [
-    "urn:tag:genre:synmedia:slow_mornings"
-   ]
-  },
-  {
-   "id": "SYN-BK-5209",
-   "name": "The Unhurried Window",
-   "type": "book",
-   "popularity": 0.39,
-   "tags": [
-    "urn:tag:genre:synmedia:slow_mornings"
-   ]
-  },
-  {
-   "id": "SYN-MV-5201",
-   "name": "The Borrowed Table",
-   "type": "movie",
-   "popularity": 0.62,
-   "tags": [
-    "urn:tag:keyword:synmedia:found_family"
-   ]
-  },
-  {
-   "id": "SYN-MV-5202",
-   "name": "Neighbours of Larch Lane",
-   "type": "movie",
-   "popularity": null,
-   "tags": [
-    "urn:tag:keyword:synmedia:found_family"
-   ]
-  },
-  {
-   "id": "SYN-MV-5203",
-   "name": "Lantern Kin",
-   "type": "movie",
-   "popularity": 0.58,
-   "tags": [
-    "urn:tag:keyword:synmedia:found_family"
-   ]
-  },
-  {
-   "id": "SYN-AR-5201",
-   "name": "The Screen Door Choir",
-   "type": "artist",
-   "popularity": 0.46,
-   "tags": [
-    "urn:tag:music:syn:porch_folk"
-   ]
-  },
-  {
-   "id": "SYN-AR-5202",
-   "name": "Rocking Chair Republic",
-   "type": "artist",
-   "popularity": null,
-   "tags": [
-    "urn:tag:music:syn:porch_folk"
-   ]
-  },
-  {
-   "id": "SYN-AR-5203",
-   "name": "Hollis & the Lanterns",
-   "type": "artist",
-   "popularity": 0.4,
-   "tags": [
-    "urn:tag:music:syn:porch_folk"
-   ]
-  },
-  {
-   "id": "SYN-BR-9N01",
-   "name": "Halden Apothecary",
-   "type": "brand",
-   "popularity": 0.93,
-   "tags": [
-    "urn:tag:industry:syn:apothecary_care",
-    "urn:tag:keyword:syn:botanical_ritual"
-   ],
-   "profileOnlyTags": [
-    "urn:tag:genre:synbrand:apothecary_fashion",
-    "urn:tag:genre:synmedia:kitchen_tv",
-    "urn:tag:genre:synmedia:cookbook_shelf",
-    "urn:tag:genre:synmusic:bedroom_indie",
-    "urn:tag:genre:synmusic:night_electronic",
-    "urn:tag:keyword:synmedia:slow_drama",
-    "urn:tag:keyword:synmedia:novel_adaptation"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N01",
-   "name": "Ashgrove Roasting Room",
-   "type": "place",
-   "popularity": 0.88,
-   "tags": [
-    "urn:tag:cuisine:syn:coffee_houses",
-    "urn:tag:category:synplace:bakery_culture",
-    "urn:tag:keyword:syn:botanical_ritual"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N02",
-   "name": "Brindle Coffee Parlour",
-   "type": "place",
-   "popularity": 0.86,
-   "tags": [
-    "urn:tag:cuisine:syn:coffee_houses",
-    "urn:tag:category:synplace:bakery_culture",
-    "urn:tag:category:synplace:tea_salons"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N03",
-   "name": "Copperline Coffee Hall",
-   "type": "place",
-   "popularity": 0.84,
-   "tags": [
-    "urn:tag:cuisine:syn:coffee_houses",
-    "urn:tag:category:synplace:bakery_culture",
-    "urn:tag:category:synplace:tea_salons"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N04",
-   "name": "Dunmore Roastery",
-   "type": "place",
-   "popularity": 0.82,
-   "tags": [
-    "urn:tag:cuisine:syn:coffee_houses"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N11",
-   "name": "Eastfield Bread Loft",
-   "type": "place",
-   "popularity": 0.8,
-   "tags": [
-    "urn:tag:category:synplace:bakery_culture",
-    "urn:tag:keyword:syn:botanical_ritual"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N12",
-   "name": "Fernhill Bakehouse",
-   "type": "place",
-   "popularity": 0.78,
-   "tags": [
-    "urn:tag:category:synplace:bakery_culture"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N13",
-   "name": "Gorse Lane Bakery",
-   "type": "place",
-   "popularity": 0.76,
-   "tags": [
-    "urn:tag:category:synplace:bakery_culture"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N21",
-   "name": "Heathmoor Salon",
-   "type": "place",
-   "popularity": 0.79,
-   "tags": [
-    "urn:tag:category:synplace:tea_salons",
-    "urn:tag:keyword:syn:botanical_ritual"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N22",
-   "name": "Ivybridge Parlour",
-   "type": "place",
-   "popularity": 0.77,
-   "tags": [
-    "urn:tag:category:synplace:tea_salons",
-    "urn:tag:keyword:syn:botanical_ritual"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N23",
-   "name": "Juniper Pavilion",
-   "type": "place",
-   "popularity": 0.75,
-   "tags": [
-    "urn:tag:category:synplace:tea_salons"
-   ]
-  },
-  {
-   "id": "SYN-BR-9N02",
-   "name": "Corvid Basics",
-   "type": "brand",
-   "popularity": 0.94,
-   "tags": [
-    "urn:tag:industry:syn:everyday_basics"
-   ],
-   "profileOnlyTags": [
-    "urn:tag:genre:synbrand:capsule_wardrobe",
-    "urn:tag:genre:synmusic:lofi_beats",
-    "urn:tag:keyword:synmedia:city_life",
-    "urn:tag:genre:synmedia:street_photo",
-    "urn:tag:genre:synfilm:design_docs"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N31",
-   "name": "Kestle Night Market",
-   "type": "place",
-   "popularity": 0.9,
-   "tags": [
-    "urn:tag:category:synplace:lantern_markets",
-    "urn:tag:keyword:synplace:street_griddle"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N32",
-   "name": "Larch Street Stalls",
-   "type": "place",
-   "popularity": 0.7,
-   "tags": [
-    "urn:tag:keyword:synplace:street_griddle"
-   ]
-  },
-  {
-   "id": "SYN-PL-9N33",
-   "name": "Millbrook Food Court",
-   "type": "place",
-   "popularity": 0.68,
-   "tags": [
-    "urn:tag:keyword:synplace:street_griddle"
-   ]
-  },
-  {
-   "id": "SYN-BR-9O01",
-   "name": "Osterley Field Supply",
-   "type": "brand",
-   "popularity": 0.92,
-   "tags": [
-    "urn:tag:industry:syn:field_supply"
-   ],
-   "profileOnlyTags": [
-    "urn:tag:genre:synmusic:lofi_beats"
-   ]
-  },
-  {
-   "id": "SYN-PL-9O01",
-   "name": "Alder Reading Room",
-   "type": "place",
-   "popularity": 0.88,
-   "tags": [
-    "urn:tag:category:synplace:reading_rooms",
-    "urn:tag:keyword:synplace:oak_panelling",
-    "urn:tag:style:synplace:brass_lamps",
-    "urn:tag:setting:synplace:hushed_hours",
-    "urn:tag:theme:synplace:map_archives",
-    "urn:tag:category:synplace:print_studios"
-   ]
-  },
-  {
-   "id": "SYN-PL-9O02",
-   "name": "Birchwood Library Hall",
-   "type": "place",
-   "popularity": 0.86,
-   "tags": [
-    "urn:tag:category:synplace:reading_rooms",
-    "urn:tag:keyword:synplace:oak_panelling",
-    "urn:tag:style:synplace:brass_lamps",
-    "urn:tag:setting:synplace:hushed_hours",
-    "urn:tag:theme:synplace:map_archives",
-    "urn:tag:category:synplace:print_studios",
-    "urn:tag:category:synplace:listening_bars"
-   ]
-  },
-  {
-   "id": "SYN-PL-9O03",
-   "name": "Cedarline Study",
-   "type": "place",
-   "popularity": 0.84,
-   "tags": [
-    "urn:tag:category:synplace:reading_rooms",
-    "urn:tag:keyword:synplace:oak_panelling",
-    "urn:tag:style:synplace:brass_lamps",
-    "urn:tag:setting:synplace:hushed_hours",
-    "urn:tag:theme:synplace:map_archives",
-    "urn:tag:category:synplace:listening_bars"
-   ]
-  },
-  {
-   "id": "SYN-PL-9O11",
-   "name": "Elmstead Print Works",
-   "type": "place",
-   "popularity": 0.8,
-   "tags": [
-    "urn:tag:category:synplace:print_studios"
-   ]
-  },
-  {
-   "id": "SYN-PL-9O12",
-   "name": "Fallow Press Studio",
-   "type": "place",
-   "popularity": 0.78,
-   "tags": [
-    "urn:tag:category:synplace:print_studios"
-   ]
-  },
-  {
-   "id": "SYN-PL-9O13",
-   "name": "Gannet Letterpress",
-   "type": "place",
-   "popularity": 0.76,
-   "tags": [
-    "urn:tag:category:synplace:print_studios"
-   ]
-  },
-  {
-   "id": "SYN-PL-9O21",
-   "name": "Hollin Hi-Fi Lounge",
-   "type": "place",
-   "popularity": 0.79,
-   "tags": [
-    "urn:tag:category:synplace:listening_bars"
-   ]
-  },
-  {
-   "id": "SYN-PL-9O22",
-   "name": "Inchbrook Record Bar",
-   "type": "place",
-   "popularity": 0.77,
-   "tags": [
-    "urn:tag:category:synplace:listening_bars"
-   ]
-  },
-  {
-   "id": "SYN-PL-9O23",
-   "name": "Jessop Vinyl Parlour",
-   "type": "place",
-   "popularity": 0.75,
-   "tags": [
-    "urn:tag:category:synplace:listening_bars"
-   ]
-  }
- ],
- "ambiguousNames": [
-  {
-   "name": "Meridian",
-   "candidates": [
-    "SYN-BR-0005",
-    "SYN-BR-0006"
-   ]
-  },
-  {
-   "name": "Harbor",
-   "candidates": [
-    "SYN-BR-0007",
-    "SYN-PL-0001"
-   ]
-  }
- ]
+  "fixtureType": "synthetic",
+  "notice": "SYNTHETIC agent-runtime world. Fictional names, placeholder SYN- ids, hand-written tag sets. Not Qloo evidence; never cite it as such. Used by the ScriptedToolProvider in backend tests and pnpm eval:agent.",
+  "tags": [
+    {
+      "id": "urn:tag:industry:syn:boutique_stays",
+      "name": "Boutique Stays",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:design_stays",
+      "name": "Design Stays",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:tableware",
+      "name": "Tableware",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:furniture",
+      "name": "Furniture",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:trail_gear",
+      "name": "Trail Gear",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:gaming_peripherals",
+      "name": "Gaming Peripherals",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:skincare",
+      "name": "Skincare",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:interests:syn:esports",
+      "name": "Esports",
+      "type": "urn:tag:interests:syn"
+    },
+    {
+      "id": "urn:tag:interests:syn:slow_travel",
+      "name": "Slow Travel",
+      "type": "urn:tag:interests:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:moonlight_rituals",
+      "name": "Moonlight Rituals",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:fashion",
+      "name": "Fashion",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:outdoor_apparel",
+      "name": "Outdoor Apparel",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:video_games",
+      "name": "Video Games",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:specialty_food",
+      "name": "Specialty Food",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:interests:syn:sailing",
+      "name": "Sailing",
+      "type": "urn:tag:interests:syn"
+    },
+    {
+      "id": "urn:tag:interests:syn:cabin_culture",
+      "name": "Cabin Culture",
+      "type": "urn:tag:interests:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:minimalism",
+      "name": "Minimalism",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:mediterranean",
+      "name": "Mediterranean Living",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:design_culture",
+      "name": "Design Culture",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:luxury",
+      "name": "Luxury",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:coastal",
+      "name": "Coastal",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:craft",
+      "name": "Craft",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:outdoors",
+      "name": "Outdoors",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:sustainability",
+      "name": "Sustainability",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:heritage",
+      "name": "Heritage",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:tech",
+      "name": "Technology",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:gaming_culture",
+      "name": "Gaming Culture",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:wellness_ritual",
+      "name": "Wellness Rituals",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:streetwear",
+      "name": "Streetwear",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:slow_living",
+      "name": "Slow Living",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:family_play",
+      "name": "Family Play",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:credit_card:syn:card_accepted",
+      "name": "Card Accepted",
+      "type": "urn:tag:credit_card:syn"
+    },
+    {
+      "id": "urn:tag:product_category:syn:cafe_culture",
+      "name": "Cafe Culture",
+      "type": "urn:tag:product_category:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:espresso_ritual",
+      "name": "Espresso Ritual",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:extreme_energy",
+      "name": "Extreme Energy",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:genre:syn:indie_film",
+      "name": "Indie Film",
+      "type": "urn:tag:genre:syn"
+    },
+    {
+      "id": "urn:tag:genre:syn:dream_pop",
+      "name": "Dream Pop",
+      "type": "urn:tag:genre:syn"
+    },
+    {
+      "id": "urn:tag:genre:syn:coming_of_age",
+      "name": "Coming Of Age",
+      "type": "urn:tag:genre:syn"
+    },
+    {
+      "id": "urn:tag:interests:syn:bouldering",
+      "name": "Bouldering",
+      "type": "urn:tag:interests:syn"
+    },
+    {
+      "id": "urn:tag:lifestyle:syn:boulderers",
+      "name": "Boulderers",
+      "type": "urn:tag:lifestyle:syn"
+    },
+    {
+      "id": "urn:tag:interests:syn:hot_springs",
+      "name": "Hot Springs",
+      "type": "urn:tag:interests:syn"
+    },
+    {
+      "id": "urn:tag:activity_type:syn:stream_angling",
+      "name": "Stream Angling",
+      "type": "urn:tag:activity_type:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:stream_angling",
+      "name": "Stream Angling",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:lifestyle:syn:stream_angling",
+      "name": "Stream Angling",
+      "type": "urn:tag:lifestyle:syn"
+    },
+    {
+      "id": "urn:tag:amenity:syn:breakfast_buffet",
+      "name": "Breakfast Buffet",
+      "type": "urn:tag:amenity:syn"
+    },
+    {
+      "id": "urn:tag:dining_option:syn:breakfast_available",
+      "name": "Breakfast Available",
+      "type": "urn:tag:dining_option:syn"
+    },
+    {
+      "id": "urn:tag:decor:syn:rustic_charm",
+      "name": "Rustic Charm",
+      "type": "urn:tag:decor:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:river_lodge",
+      "name": "River Lodge",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:insulated_coolers",
+      "name": "Insulated Coolers",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:overbuilt_hardware",
+      "name": "Overbuilt Hardware",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:backwoods",
+      "name": "Backwoods",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:ridge_walking",
+      "name": "Ridge Walking",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:activity_type:syn:gravel_riding",
+      "name": "Gravel Riding",
+      "type": "urn:tag:activity_type:syn"
+    },
+    {
+      "id": "urn:tag:activity_type:syn:alpine_hiking",
+      "name": "Alpine Hiking",
+      "type": "urn:tag:activity_type:syn"
+    },
+    {
+      "id": "urn:tag:product_category:syn:espresso",
+      "name": "Espresso",
+      "type": "urn:tag:product_category:syn"
+    },
+    {
+      "id": "urn:tag:cuisine:syn:espresso",
+      "name": "Espresso",
+      "type": "urn:tag:cuisine:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:mountain_town",
+      "name": "Mountain Town",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:coastal_road",
+      "name": "Coastal Road",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:performance_apparel",
+      "name": "Performance Apparel",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:genre:syn:alt_folk",
+      "name": "Alt Folk",
+      "type": "urn:tag:genre:syn"
+    },
+    {
+      "id": "urn:tag:genre:syn:post_punk",
+      "name": "Post Punk",
+      "type": "urn:tag:genre:syn"
+    },
+    {
+      "id": "urn:tag:genre:syn:shoegaze_revival",
+      "name": "Shoegaze Revival",
+      "type": "urn:tag:genre:syn"
+    },
+    {
+      "id": "urn:tag:genre:syn:thrash_revival",
+      "name": "Thrash Revival",
+      "type": "urn:tag:genre:syn"
+    },
+    {
+      "id": "urn:tag:culinary_experience:syn:lantern_feasting",
+      "name": "Lantern Feasting",
+      "type": "urn:tag:culinary_experience:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:lantern_supper",
+      "name": "Lantern Supper",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:riff_culture",
+      "name": "Riff Culture",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:product_category:syn:oat_drink",
+      "name": "Oat Drink",
+      "type": "urn:tag:product_category:syn"
+    },
+    {
+      "id": "urn:tag:lifestyle:syn:plant_forward",
+      "name": "Plant Forward",
+      "type": "urn:tag:lifestyle:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:barista_culture",
+      "name": "Barista Culture",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:genre:synmedia:hearth_cooking",
+      "name": "Hearth Cooking",
+      "type": "urn:tag:genre:synmedia"
+    },
+    {
+      "id": "urn:tag:genre:synmedia:quiet_activism",
+      "name": "Quiet Activism",
+      "type": "urn:tag:genre:synmedia"
+    },
+    {
+      "id": "urn:tag:genre:synmedia:slow_mornings",
+      "name": "Slow Mornings",
+      "type": "urn:tag:genre:synmedia"
+    },
+    {
+      "id": "urn:tag:keyword:synmedia:found_family",
+      "name": "Found Family",
+      "type": "urn:tag:keyword:synmedia"
+    },
+    {
+      "id": "urn:tag:genre:synmusic:porch_folk",
+      "name": "Porch Folk",
+      "type": "urn:tag:genre:synmusic"
+    },
+    {
+      "id": "urn:tag:music:syn:porch_folk",
+      "name": "Porch Folk",
+      "type": "urn:tag:music:syn"
+    },
+    {
+      "id": "urn:tag:subgenre:syn:thrash_revival",
+      "name": "Thrash Revival Scene",
+      "type": "urn:tag:subgenre:syn"
+    },
+    {
+      "id": "urn:tag:cuisine:syn:coffee_houses",
+      "name": "Coffee Houses",
+      "type": "urn:tag:cuisine:syn"
+    },
+    {
+      "id": "urn:tag:category:synplace:bakery_culture",
+      "name": "Bakery Culture",
+      "type": "urn:tag:category:synplace"
+    },
+    {
+      "id": "urn:tag:category:synplace:tea_salons",
+      "name": "Tea Salons",
+      "type": "urn:tag:category:synplace"
+    },
+    {
+      "id": "urn:tag:keyword:syn:botanical_ritual",
+      "name": "Botanical Ritual",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:apothecary_care",
+      "name": "Apothecary Care",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:genre:synmedia:kitchen_tv",
+      "name": "Kitchen Television",
+      "type": "urn:tag:genre:synmedia"
+    },
+    {
+      "id": "urn:tag:genre:synmedia:cookbook_shelf",
+      "name": "Cookbook Shelf",
+      "type": "urn:tag:genre:synmedia"
+    },
+    {
+      "id": "urn:tag:genre:synmusic:bedroom_indie",
+      "name": "Bedroom Indie",
+      "type": "urn:tag:genre:synmusic"
+    },
+    {
+      "id": "urn:tag:genre:synmusic:night_electronic",
+      "name": "Night Electronic",
+      "type": "urn:tag:genre:synmusic"
+    },
+    {
+      "id": "urn:tag:keyword:synmedia:slow_drama",
+      "name": "Slow Drama",
+      "type": "urn:tag:keyword:synmedia"
+    },
+    {
+      "id": "urn:tag:keyword:synmedia:novel_adaptation",
+      "name": "Novel Adaptation",
+      "type": "urn:tag:keyword:synmedia"
+    },
+    {
+      "id": "urn:tag:genre:synbrand:apothecary_fashion",
+      "name": "Apothecary Fashion",
+      "type": "urn:tag:genre:synbrand"
+    },
+    {
+      "id": "urn:tag:industry:syn:everyday_basics",
+      "name": "Everyday Basics",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:genre:synbrand:capsule_wardrobe",
+      "name": "Capsule Wardrobe",
+      "type": "urn:tag:genre:synbrand"
+    },
+    {
+      "id": "urn:tag:genre:synmusic:lofi_beats",
+      "name": "Lofi Beats",
+      "type": "urn:tag:genre:synmusic"
+    },
+    {
+      "id": "urn:tag:keyword:synmedia:city_life",
+      "name": "City Life",
+      "type": "urn:tag:keyword:synmedia"
+    },
+    {
+      "id": "urn:tag:genre:synmedia:street_photo",
+      "name": "Street Photo",
+      "type": "urn:tag:genre:synmedia"
+    },
+    {
+      "id": "urn:tag:genre:synfilm:design_docs",
+      "name": "Design Documentaries",
+      "type": "urn:tag:genre:synfilm"
+    },
+    {
+      "id": "urn:tag:category:synplace:lantern_markets",
+      "name": "Lantern Markets",
+      "type": "urn:tag:category:synplace"
+    },
+    {
+      "id": "urn:tag:keyword:synplace:street_griddle",
+      "name": "Street Griddle",
+      "type": "urn:tag:keyword:synplace"
+    },
+    {
+      "id": "urn:tag:industry:syn:field_supply",
+      "name": "Field Supply",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:category:synplace:reading_rooms",
+      "name": "Reading Rooms",
+      "type": "urn:tag:category:synplace"
+    },
+    {
+      "id": "urn:tag:keyword:synplace:oak_panelling",
+      "name": "Oak Panelling",
+      "type": "urn:tag:keyword:synplace"
+    },
+    {
+      "id": "urn:tag:style:synplace:brass_lamps",
+      "name": "Brass Lamps",
+      "type": "urn:tag:style:synplace"
+    },
+    {
+      "id": "urn:tag:setting:synplace:hushed_hours",
+      "name": "Hushed Hours",
+      "type": "urn:tag:setting:synplace"
+    },
+    {
+      "id": "urn:tag:theme:synplace:map_archives",
+      "name": "Map Archives",
+      "type": "urn:tag:theme:synplace"
+    },
+    {
+      "id": "urn:tag:category:synplace:print_studios",
+      "name": "Print Studios",
+      "type": "urn:tag:category:synplace"
+    },
+    {
+      "id": "urn:tag:category:synplace:listening_bars",
+      "name": "Listening Bars",
+      "type": "urn:tag:category:synplace"
+    },
+    {
+      "id": "urn:tag:keyword:syn:durable_workwear",
+      "name": "Durable Workwear",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:industry:syn:workwear_retail",
+      "name": "Workwear Retail",
+      "type": "urn:tag:industry:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:trade_heritage",
+      "name": "Trade Heritage",
+      "type": "urn:tag:keyword:syn"
+    },
+    {
+      "id": "urn:tag:genre:syn:basement_punk",
+      "name": "Basement Punk",
+      "type": "urn:tag:genre:syn"
+    },
+    {
+      "id": "urn:tag:keyword:syn:loud_rooms",
+      "name": "Loud Rooms",
+      "type": "urn:tag:keyword:syn"
+    }
+  ],
+  "entities": [
+    {
+      "id": "SYN-BR-0001",
+      "name": "Northwind Atelier",
+      "type": "brand",
+      "popularity": 0.97,
+      "tags": [
+        "urn:tag:industry:syn:fashion",
+        "urn:tag:keyword:syn:minimalism",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:luxury",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:streetwear"
+      ]
+    },
+    {
+      "id": "SYN-BR-0002",
+      "name": "Kestrel Outfitters",
+      "type": "brand",
+      "popularity": 0.95,
+      "tags": [
+        "urn:tag:industry:syn:outdoor_apparel",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:sustainability",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:heritage",
+        "urn:tag:keyword:syn:craft"
+      ]
+    },
+    {
+      "id": "SYN-BR-0003",
+      "name": "Lumen Play",
+      "type": "brand",
+      "popularity": 0.96,
+      "tags": [
+        "urn:tag:industry:syn:video_games",
+        "urn:tag:keyword:syn:tech",
+        "urn:tag:keyword:syn:gaming_culture",
+        "urn:tag:keyword:syn:family_play",
+        "urn:tag:keyword:syn:design_culture"
+      ]
+    },
+    {
+      "id": "SYN-BR-0004",
+      "name": "Saffron & Salt",
+      "type": "brand",
+      "popularity": 0.88,
+      "tags": [
+        "urn:tag:industry:syn:specialty_food",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:wellness_ritual",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:sustainability"
+      ]
+    },
+    {
+      "id": "SYN-BR-0005",
+      "name": "Meridian Audio Works",
+      "type": "brand",
+      "popularity": 0.62,
+      "tags": [
+        "urn:tag:keyword:syn:tech",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:heritage"
+      ]
+    },
+    {
+      "id": "SYN-BR-0006",
+      "name": "Meridian Lending",
+      "type": "brand",
+      "popularity": 0.48,
+      "tags": [
+        "urn:tag:keyword:syn:heritage",
+        "urn:tag:keyword:syn:sustainability"
+      ]
+    },
+    {
+      "id": "SYN-BR-0007",
+      "name": "Harbor Goods",
+      "type": "brand",
+      "popularity": 0.71,
+      "tags": [
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:slow_living"
+      ]
+    },
+    {
+      "id": "SYN-BR-0101",
+      "name": "Larkspur Hotels",
+      "type": "brand",
+      "popularity": 0.93,
+      "tags": [
+        "urn:tag:industry:syn:boutique_stays",
+        "urn:tag:industry:syn:design_stays",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:luxury",
+        "urn:tag:keyword:syn:coastal"
+      ]
+    },
+    {
+      "id": "SYN-BR-0102",
+      "name": "Tidewell Inns",
+      "type": "brand",
+      "popularity": 0.86,
+      "tags": [
+        "urn:tag:industry:syn:boutique_stays",
+        "urn:tag:industry:syn:design_stays",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:mediterranean"
+      ]
+    },
+    {
+      "id": "SYN-BR-0103",
+      "name": "Quillon House",
+      "type": "brand",
+      "popularity": 0.9,
+      "tags": [
+        "urn:tag:industry:syn:boutique_stays",
+        "urn:tag:industry:syn:design_stays",
+        "urn:tag:keyword:syn:luxury",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:minimalism"
+      ]
+    },
+    {
+      "id": "SYN-BR-0104",
+      "name": "Marrow & Vine Hotels",
+      "type": "brand",
+      "popularity": 0.78,
+      "tags": [
+        "urn:tag:industry:syn:boutique_stays",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:keyword:syn:wellness_ritual",
+        "urn:tag:keyword:syn:slow_living"
+      ]
+    },
+    {
+      "id": "SYN-BR-0105",
+      "name": "Larkspur Hotels Collection",
+      "type": "brand",
+      "popularity": 0.91,
+      "tags": [
+        "urn:tag:industry:syn:boutique_stays",
+        "urn:tag:industry:syn:design_stays",
+        "urn:tag:keyword:syn:luxury",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:coastal"
+      ]
+    },
+    {
+      "id": "SYN-BR-0106",
+      "name": "Verve Lodge",
+      "type": "brand",
+      "popularity": 0.66,
+      "tags": [
+        "urn:tag:industry:syn:design_stays",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:tech"
+      ]
+    },
+    {
+      "id": "SYN-BR-0201",
+      "name": "Ashgrove Ceramics",
+      "type": "brand",
+      "popularity": 0.84,
+      "tags": [
+        "urn:tag:industry:syn:tableware",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:minimalism",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:heritage"
+      ]
+    },
+    {
+      "id": "SYN-BR-0202",
+      "name": "Kilnhouse",
+      "type": "brand",
+      "popularity": 0.8,
+      "tags": [
+        "urn:tag:industry:syn:tableware",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:minimalism"
+      ]
+    },
+    {
+      "id": "SYN-BR-0203",
+      "name": "Pale Clay Co",
+      "type": "brand",
+      "popularity": 0.74,
+      "tags": [
+        "urn:tag:industry:syn:tableware",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:slow_living"
+      ]
+    },
+    {
+      "id": "SYN-BR-0204",
+      "name": "Ferrow Porcelain",
+      "type": "brand",
+      "popularity": 0.89,
+      "tags": [
+        "urn:tag:industry:syn:tableware",
+        "urn:tag:keyword:syn:heritage",
+        "urn:tag:keyword:syn:luxury"
+      ]
+    },
+    {
+      "id": "SYN-BR-0301",
+      "name": "Oakline Studio",
+      "type": "brand",
+      "popularity": 0.83,
+      "tags": [
+        "urn:tag:industry:syn:furniture",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:minimalism",
+        "urn:tag:keyword:syn:craft"
+      ]
+    },
+    {
+      "id": "SYN-BR-0302",
+      "name": "Strand Furniture",
+      "type": "brand",
+      "popularity": 0.79,
+      "tags": [
+        "urn:tag:industry:syn:furniture",
+        "urn:tag:keyword:syn:heritage",
+        "urn:tag:keyword:syn:design_culture"
+      ]
+    },
+    {
+      "id": "SYN-BR-0303",
+      "name": "Norrow Design",
+      "type": "brand",
+      "popularity": 0.87,
+      "tags": [
+        "urn:tag:industry:syn:furniture",
+        "urn:tag:keyword:syn:minimalism",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:tech"
+      ]
+    },
+    {
+      "id": "SYN-BR-0401",
+      "name": "Ridgeback Supply",
+      "type": "brand",
+      "popularity": 0.82,
+      "tags": [
+        "urn:tag:industry:syn:trail_gear",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:sustainability",
+        "urn:tag:keyword:syn:heritage",
+        "urn:tag:interests:syn:sailing"
+      ]
+    },
+    {
+      "id": "SYN-BR-0402",
+      "name": "Cairnfield",
+      "type": "brand",
+      "popularity": 0.77,
+      "tags": [
+        "urn:tag:industry:syn:trail_gear",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:coastal"
+      ]
+    },
+    {
+      "id": "SYN-BR-0403",
+      "name": "Summitry",
+      "type": "brand",
+      "popularity": 0.85,
+      "tags": [
+        "urn:tag:industry:syn:trail_gear",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:tech",
+        "urn:tag:keyword:syn:sustainability"
+      ]
+    },
+    {
+      "id": "SYN-BR-0501",
+      "name": "Voltclaw",
+      "type": "brand",
+      "popularity": 0.92,
+      "tags": [
+        "urn:tag:industry:syn:gaming_peripherals",
+        "urn:tag:keyword:syn:tech",
+        "urn:tag:keyword:syn:gaming_culture",
+        "urn:tag:keyword:syn:streetwear"
+      ]
+    },
+    {
+      "id": "SYN-BR-0502",
+      "name": "Pixelforge Gear",
+      "type": "brand",
+      "popularity": 0.86,
+      "tags": [
+        "urn:tag:industry:syn:gaming_peripherals",
+        "urn:tag:keyword:syn:tech",
+        "urn:tag:keyword:syn:gaming_culture"
+      ]
+    },
+    {
+      "id": "SYN-BR-0503",
+      "name": "Hexbyte",
+      "type": "brand",
+      "popularity": 0.81,
+      "tags": [
+        "urn:tag:industry:syn:gaming_peripherals",
+        "urn:tag:keyword:syn:tech",
+        "urn:tag:keyword:syn:gaming_culture",
+        "urn:tag:keyword:syn:design_culture"
+      ]
+    },
+    {
+      "id": "SYN-BR-0601",
+      "name": "Dewpoint Skin",
+      "type": "brand",
+      "popularity": 0.88,
+      "tags": [
+        "urn:tag:industry:syn:skincare",
+        "urn:tag:keyword:syn:wellness_ritual",
+        "urn:tag:keyword:syn:minimalism",
+        "urn:tag:keyword:syn:sustainability"
+      ]
+    },
+    {
+      "id": "SYN-BR-0602",
+      "name": "Mossbloom",
+      "type": "brand",
+      "popularity": 0.76,
+      "tags": [
+        "urn:tag:industry:syn:skincare",
+        "urn:tag:keyword:syn:wellness_ritual",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:craft"
+      ]
+    },
+    {
+      "id": "SYN-BR-0603",
+      "name": "Saltair Botanics",
+      "type": "brand",
+      "popularity": 0.83,
+      "tags": [
+        "urn:tag:industry:syn:skincare",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:wellness_ritual",
+        "urn:tag:keyword:syn:mediterranean"
+      ]
+    },
+    {
+      "id": "SYN-BR-0701",
+      "name": "Arena Nine",
+      "type": "brand",
+      "popularity": 0.73,
+      "tags": [
+        "urn:tag:interests:syn:esports",
+        "urn:tag:keyword:syn:gaming_culture",
+        "urn:tag:keyword:syn:tech",
+        "urn:tag:keyword:syn:streetwear"
+      ]
+    },
+    {
+      "id": "SYN-BR-0801",
+      "name": "Calder & Finch",
+      "type": "brand",
+      "popularity": 0.9,
+      "tags": [
+        "urn:tag:industry:syn:fashion",
+        "urn:tag:keyword:syn:minimalism",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:luxury"
+      ]
+    },
+    {
+      "id": "SYN-BR-0802",
+      "name": "Rue Solenne",
+      "type": "brand",
+      "popularity": 0.87,
+      "tags": [
+        "urn:tag:industry:syn:fashion",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:keyword:syn:luxury",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:streetwear"
+      ]
+    },
+    {
+      "id": "SYN-BR-0803",
+      "name": "Ostra Label",
+      "type": "brand",
+      "popularity": 0.8,
+      "tags": [
+        "urn:tag:industry:syn:fashion",
+        "urn:tag:keyword:syn:streetwear",
+        "urn:tag:keyword:syn:design_culture",
+        "urn:tag:keyword:syn:minimalism"
+      ]
+    },
+    {
+      "id": "SYN-BR-0901",
+      "name": "Fernline",
+      "type": "brand",
+      "popularity": 0.84,
+      "tags": [
+        "urn:tag:industry:syn:outdoor_apparel",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:sustainability",
+        "urn:tag:industry:syn:trail_gear",
+        "urn:tag:interests:syn:cabin_culture"
+      ]
+    },
+    {
+      "id": "SYN-BR-0902",
+      "name": "Bluff & Bracken",
+      "type": "brand",
+      "popularity": 0.88,
+      "tags": [
+        "urn:tag:industry:syn:outdoor_apparel",
+        "urn:tag:keyword:syn:heritage",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:interests:syn:sailing",
+        "urn:tag:interests:syn:cabin_culture"
+      ]
+    },
+    {
+      "id": "SYN-BR-1001",
+      "name": "Starfold Studios",
+      "type": "brand",
+      "popularity": 0.91,
+      "tags": [
+        "urn:tag:industry:syn:video_games",
+        "urn:tag:keyword:syn:gaming_culture",
+        "urn:tag:keyword:syn:tech",
+        "urn:tag:keyword:syn:family_play"
+      ]
+    },
+    {
+      "id": "SYN-BR-1002",
+      "name": "Tinbox Games",
+      "type": "brand",
+      "popularity": 0.79,
+      "tags": [
+        "urn:tag:industry:syn:video_games",
+        "urn:tag:keyword:syn:family_play",
+        "urn:tag:keyword:syn:design_culture"
+      ]
+    },
+    {
+      "id": "SYN-BR-1101",
+      "name": "Brine & Bloom",
+      "type": "brand",
+      "popularity": 0.72,
+      "tags": [
+        "urn:tag:industry:syn:specialty_food",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:coastal"
+      ]
+    },
+    {
+      "id": "SYN-BR-1102",
+      "name": "Olea Pantry",
+      "type": "brand",
+      "popularity": 0.75,
+      "tags": [
+        "urn:tag:industry:syn:specialty_food",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:sustainability"
+      ]
+    },
+    {
+      "id": "SYN-BR-1201",
+      "name": "Gullwing Marine",
+      "type": "brand",
+      "popularity": 0.8,
+      "tags": [
+        "urn:tag:interests:syn:sailing",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:outdoors"
+      ]
+    },
+    {
+      "id": "SYN-BR-1301",
+      "name": "Hearthstead",
+      "type": "brand",
+      "popularity": 0.77,
+      "tags": [
+        "urn:tag:interests:syn:cabin_culture",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:slow_living"
+      ]
+    },
+    {
+      "id": "SYN-BR-1302",
+      "name": "Pinecraft Co",
+      "type": "brand",
+      "popularity": 0.74,
+      "tags": [
+        "urn:tag:interests:syn:cabin_culture",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:outdoors"
+      ]
+    },
+    {
+      "id": "SYN-PL-0001",
+      "name": "Harbor Lantern Guesthouse",
+      "type": "place",
+      "popularity": 0.69,
+      "tags": [
+        "urn:tag:interests:syn:slow_travel",
+        "urn:tag:keyword:syn:coastal",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:credit_card:syn:card_accepted"
+      ]
+    },
+    {
+      "id": "SYN-PL-0002",
+      "name": "Olive Terrace Retreat",
+      "type": "place",
+      "popularity": 0.81,
+      "tags": [
+        "urn:tag:interests:syn:slow_travel",
+        "urn:tag:keyword:syn:mediterranean",
+        "urn:tag:keyword:syn:wellness_ritual",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:credit_card:syn:card_accepted"
+      ]
+    },
+    {
+      "id": "SYN-PL-0003",
+      "name": "Fjordside Cabins",
+      "type": "place",
+      "popularity": 0.77,
+      "tags": [
+        "urn:tag:interests:syn:slow_travel",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:coastal"
+      ]
+    },
+    {
+      "id": "SYN-BR-0008",
+      "name": "Velvet Tide",
+      "type": "brand",
+      "popularity": 0.83,
+      "tags": [
+        "urn:tag:genre:syn:indie_film",
+        "urn:tag:genre:syn:dream_pop",
+        "urn:tag:genre:syn:coming_of_age",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:minimalism"
+      ]
+    },
+    {
+      "id": "SYN-BR-1401",
+      "name": "Kettle & Crema",
+      "type": "brand",
+      "popularity": 0.84,
+      "tags": [
+        "urn:tag:product_category:syn:cafe_culture",
+        "urn:tag:keyword:syn:espresso_ritual",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:craft"
+      ]
+    },
+    {
+      "id": "SYN-BR-1402",
+      "name": "Bramble Roasters",
+      "type": "brand",
+      "popularity": 0.79,
+      "tags": [
+        "urn:tag:product_category:syn:cafe_culture",
+        "urn:tag:keyword:syn:espresso_ritual",
+        "urn:tag:keyword:syn:craft",
+        "urn:tag:keyword:syn:sustainability"
+      ]
+    },
+    {
+      "id": "SYN-BR-1403",
+      "name": "Morrow Coffee House",
+      "type": "brand",
+      "popularity": 0.76,
+      "tags": [
+        "urn:tag:product_category:syn:cafe_culture",
+        "urn:tag:keyword:syn:espresso_ritual",
+        "urn:tag:keyword:syn:slow_living",
+        "urn:tag:keyword:syn:minimalism"
+      ]
+    },
+    {
+      "id": "SYN-BR-1404",
+      "name": "Voltrush Energy",
+      "type": "brand",
+      "popularity": 0.95,
+      "tags": [
+        "urn:tag:product_category:syn:cafe_culture",
+        "urn:tag:keyword:syn:extreme_energy",
+        "urn:tag:keyword:syn:gaming_culture",
+        "urn:tag:keyword:syn:streetwear"
+      ]
+    },
+    {
+      "id": "SYN-BR-1501",
+      "name": "Chalkline",
+      "type": "brand",
+      "popularity": 0.81,
+      "tags": [
+        "urn:tag:interests:syn:bouldering",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:streetwear"
+      ]
+    },
+    {
+      "id": "SYN-BR-1502",
+      "name": "Crimp Theory",
+      "type": "brand",
+      "popularity": 0.78,
+      "tags": [
+        "urn:tag:interests:syn:bouldering",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:tech"
+      ]
+    },
+    {
+      "id": "SYN-BR-1503",
+      "name": "Overhang Social",
+      "type": "brand",
+      "popularity": 0.74,
+      "tags": [
+        "urn:tag:lifestyle:syn:boulderers",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:streetwear"
+      ]
+    },
+    {
+      "id": "SYN-BR-1504",
+      "name": "Ledgemark",
+      "type": "brand",
+      "popularity": 0.7,
+      "tags": [
+        "urn:tag:lifestyle:syn:boulderers",
+        "urn:tag:keyword:syn:outdoors",
+        "urn:tag:keyword:syn:heritage"
+      ]
+    },
+    {
+      "id": "SYN-PL-0101",
+      "name": "Cinder Valley Baths",
+      "type": "place",
+      "popularity": 0.86,
+      "tags": [
+        "urn:tag:interests:syn:hot_springs",
+        "urn:tag:keyword:syn:wellness_ritual",
+        "urn:tag:keyword:syn:slow_living"
+      ]
+    },
+    {
+      "id": "SYN-PL-0102",
+      "name": "Steamhollow Onsen",
+      "type": "place",
+      "popularity": 0.8,
+      "tags": [
+        "urn:tag:interests:syn:hot_springs",
+        "urn:tag:keyword:syn:wellness_ritual",
+        "urn:tag:keyword:syn:outdoors"
+      ]
+    },
+    {
+      "id": "SYN-PL-0103",
+      "name": "Mineral Row Spa",
+      "type": "place",
+      "popularity": 0.74,
+      "tags": [
+        "urn:tag:interests:syn:hot_springs",
+        "urn:tag:keyword:syn:wellness_ritual",
+        "urn:tag:keyword:syn:mediterranean"
+      ]
+    },
+    {
+      "id": "SYN-PL-0201",
+      "name": "Crema Corner",
+      "type": "place",
+      "popularity": 0.7,
+      "tags": [
+        "urn:tag:product_category:syn:cafe_culture",
+        "urn:tag:keyword:syn:espresso_ritual",
+        "urn:tag:keyword:syn:slow_living"
+      ]
+    },
+    {
+      "id": "SYN-PL-0202",
+      "name": "Copperpot Cafe",
+      "type": "place",
+      "popularity": 0.66,
+      "tags": [
+        "urn:tag:product_category:syn:cafe_culture",
+        "urn:tag:keyword:syn:espresso_ritual",
+        "urn:tag:keyword:syn:craft"
+      ]
+    },
+    {
+      "id": "SYN-BR-2001",
+      "name": "Granite Hollow",
+      "type": "brand",
+      "popularity": 0.93,
+      "tags": [
+        "urn:tag:industry:syn:insulated_coolers",
+        "urn:tag:keyword:syn:overbuilt_hardware"
+      ]
+    },
+    {
+      "id": "SYN-BR-2002",
+      "name": "Pine Hollow Supply",
+      "type": "brand",
+      "popularity": 0.92,
+      "tags": [
+        "urn:tag:industry:syn:insulated_coolers",
+        "urn:tag:keyword:syn:backwoods",
+        "urn:tag:keyword:syn:ridge_walking"
+      ]
+    },
+    {
+      "id": "SYN-BR-2003",
+      "name": "Basalt Coolerworks",
+      "type": "brand",
+      "popularity": 0.71,
+      "tags": [
+        "urn:tag:industry:syn:insulated_coolers",
+        "urn:tag:keyword:syn:overbuilt_hardware",
+        "urn:tag:amenity:syn:breakfast_buffet",
+        "urn:tag:keyword:syn:ridge_walking"
+      ]
+    },
+    {
+      "id": "SYN-BR-2004",
+      "name": "Ironbark Provisions",
+      "type": "brand",
+      "popularity": 0.69,
+      "tags": [
+        "urn:tag:industry:syn:insulated_coolers",
+        "urn:tag:keyword:syn:overbuilt_hardware",
+        "urn:tag:amenity:syn:breakfast_buffet",
+        "urn:tag:keyword:syn:ridge_walking"
+      ]
+    },
+    {
+      "id": "SYN-PL-2001",
+      "name": "Alder Bend Lodge",
+      "type": "place",
+      "popularity": 0.81,
+      "tags": [
+        "urn:tag:activity_type:syn:stream_angling",
+        "urn:tag:amenity:syn:breakfast_buffet",
+        "urn:tag:keyword:syn:river_lodge"
+      ]
+    },
+    {
+      "id": "SYN-PL-2002",
+      "name": "Cutbank Cabins",
+      "type": "place",
+      "popularity": 0.79,
+      "tags": [
+        "urn:tag:activity_type:syn:stream_angling",
+        "urn:tag:dining_option:syn:breakfast_available",
+        "urn:tag:decor:syn:rustic_charm"
+      ]
+    },
+    {
+      "id": "SYN-PL-2003",
+      "name": "Tailwater Camp",
+      "type": "place",
+      "popularity": 0.77,
+      "tags": [
+        "urn:tag:activity_type:syn:stream_angling"
+      ]
+    },
+    {
+      "id": "SYN-PL-2004",
+      "name": "Junction Inn",
+      "type": "place",
+      "popularity": 0.74,
+      "tags": [
+        "urn:tag:amenity:syn:breakfast_buffet",
+        "urn:tag:dining_option:syn:breakfast_available",
+        "urn:tag:decor:syn:rustic_charm"
+      ]
+    },
+    {
+      "id": "SYN-PL-2005",
+      "name": "Depot Suites",
+      "type": "place",
+      "popularity": 0.73,
+      "tags": [
+        "urn:tag:amenity:syn:breakfast_buffet",
+        "urn:tag:dining_option:syn:breakfast_available",
+        "urn:tag:decor:syn:rustic_charm"
+      ]
+    },
+    {
+      "id": "SYN-PL-2006",
+      "name": "Mill Street Hotel",
+      "type": "place",
+      "popularity": 0.72,
+      "tags": [
+        "urn:tag:amenity:syn:breakfast_buffet",
+        "urn:tag:dining_option:syn:breakfast_available",
+        "urn:tag:decor:syn:rustic_charm",
+        "urn:tag:keyword:syn:river_lodge"
+      ]
+    },
+    {
+      "id": "SYN-PL-2007",
+      "name": "Ferry Road Motel",
+      "type": "place",
+      "popularity": 0.7,
+      "tags": [
+        "urn:tag:amenity:syn:breakfast_buffet",
+        "urn:tag:dining_option:syn:breakfast_available",
+        "urn:tag:decor:syn:rustic_charm",
+        "urn:tag:keyword:syn:river_lodge"
+      ]
+    },
+    {
+      "id": "SYN-PL-2008",
+      "name": "Hemlock Hollow Camp",
+      "type": "place",
+      "popularity": 0.68,
+      "tags": [
+        "urn:tag:keyword:syn:backwoods"
+      ]
+    },
+    {
+      "id": "SYN-PL-2009",
+      "name": "Sawtooth Hut",
+      "type": "place",
+      "popularity": 0.67,
+      "tags": [
+        "urn:tag:keyword:syn:backwoods"
+      ]
+    },
+    {
+      "id": "SYN-PL-2010",
+      "name": "Crestline Refuge",
+      "type": "place",
+      "popularity": 0.66,
+      "tags": [
+        "urn:tag:keyword:syn:ridge_walking"
+      ]
+    },
+    {
+      "id": "SYN-PL-2011",
+      "name": "Saddle Pass Hut",
+      "type": "place",
+      "popularity": 0.65,
+      "tags": [
+        "urn:tag:keyword:syn:ridge_walking"
+      ]
+    },
+    {
+      "id": "SYN-PL-2012",
+      "name": "Highline Bothy",
+      "type": "place",
+      "popularity": 0.64,
+      "tags": [
+        "urn:tag:keyword:syn:ridge_walking"
+      ]
+    },
+    {
+      "id": "SYN-BR-3001",
+      "name": "Larkspur Velo",
+      "type": "brand",
+      "popularity": 0.83,
+      "tags": [
+        "urn:tag:industry:syn:performance_apparel",
+        "urn:tag:keyword:syn:mountain_town",
+        "urn:tag:keyword:syn:coastal_road",
+        "urn:tag:genre:syn:alt_folk",
+        "urn:tag:genre:syn:post_punk",
+        "urn:tag:genre:syn:shoegaze_revival"
+      ]
+    },
+    {
+      "id": "SYN-BR-3002",
+      "name": "Crema Works",
+      "type": "brand",
+      "popularity": 0.74,
+      "tags": [
+        "urn:tag:product_category:syn:espresso"
+      ]
+    },
+    {
+      "id": "SYN-BR-3003",
+      "name": "Portafilter Supply",
+      "type": "brand",
+      "popularity": 0.72,
+      "tags": [
+        "urn:tag:product_category:syn:espresso"
+      ]
+    },
+    {
+      "id": "SYN-BR-3004",
+      "name": "Ristretto House",
+      "type": "brand",
+      "popularity": 0.7,
+      "tags": [
+        "urn:tag:product_category:syn:espresso"
+      ]
+    },
+    {
+      "id": "SYN-BR-3010",
+      "name": "Gravemoss Water",
+      "type": "brand",
+      "popularity": 0.8,
+      "tags": [
+        "urn:tag:keyword:syn:riff_culture",
+        "urn:tag:genre:syn:thrash_revival"
+      ]
+    },
+    {
+      "id": "SYN-PL-3001",
+      "name": "Chalk Fork Bunkhouse",
+      "type": "place",
+      "popularity": 0.78,
+      "tags": [
+        "urn:tag:activity_type:syn:gravel_riding"
+      ]
+    },
+    {
+      "id": "SYN-PL-3002",
+      "name": "Loamline Station",
+      "type": "place",
+      "popularity": 0.76,
+      "tags": [
+        "urn:tag:activity_type:syn:gravel_riding"
+      ]
+    },
+    {
+      "id": "SYN-PL-3003",
+      "name": "Washboard Depot",
+      "type": "place",
+      "popularity": 0.74,
+      "tags": [
+        "urn:tag:activity_type:syn:gravel_riding"
+      ]
+    },
+    {
+      "id": "SYN-PL-3004",
+      "name": "Tarn Gate Hut",
+      "type": "place",
+      "popularity": 0.77,
+      "tags": [
+        "urn:tag:activity_type:syn:alpine_hiking"
+      ]
+    },
+    {
+      "id": "SYN-PL-3005",
+      "name": "Scree Saddle Refuge",
+      "type": "place",
+      "popularity": 0.75,
+      "tags": [
+        "urn:tag:activity_type:syn:alpine_hiking"
+      ]
+    },
+    {
+      "id": "SYN-PL-3006",
+      "name": "Cirque Hollow Hut",
+      "type": "place",
+      "popularity": 0.73,
+      "tags": [
+        "urn:tag:activity_type:syn:alpine_hiking"
+      ]
+    },
+    {
+      "id": "SYN-PL-3007",
+      "name": "Tamper and Crema",
+      "type": "place",
+      "popularity": 0.79,
+      "tags": [
+        "urn:tag:cuisine:syn:espresso"
+      ]
+    },
+    {
+      "id": "SYN-PL-3008",
+      "name": "Doppio Corner",
+      "type": "place",
+      "popularity": 0.77,
+      "tags": [
+        "urn:tag:cuisine:syn:espresso"
+      ]
+    },
+    {
+      "id": "SYN-PL-3009",
+      "name": "Bar Lungo",
+      "type": "place",
+      "popularity": 0.75,
+      "tags": [
+        "urn:tag:cuisine:syn:espresso"
+      ]
+    },
+    {
+      "id": "SYN-PL-3010",
+      "name": "Switchback Inn",
+      "type": "place",
+      "popularity": 0.72,
+      "tags": [
+        "urn:tag:keyword:syn:mountain_town"
+      ]
+    },
+    {
+      "id": "SYN-PL-3011",
+      "name": "Pinegrade Lodge",
+      "type": "place",
+      "popularity": 0.71,
+      "tags": [
+        "urn:tag:keyword:syn:mountain_town"
+      ]
+    },
+    {
+      "id": "SYN-PL-3012",
+      "name": "Upper Ferry House",
+      "type": "place",
+      "popularity": 0.7,
+      "tags": [
+        "urn:tag:keyword:syn:mountain_town"
+      ]
+    },
+    {
+      "id": "SYN-PL-3013",
+      "name": "Seawall Rooms",
+      "type": "place",
+      "popularity": 0.69,
+      "tags": [
+        "urn:tag:keyword:syn:coastal_road"
+      ]
+    },
+    {
+      "id": "SYN-PL-3014",
+      "name": "Headland Stop",
+      "type": "place",
+      "popularity": 0.68,
+      "tags": [
+        "urn:tag:keyword:syn:coastal_road"
+      ]
+    },
+    {
+      "id": "SYN-PL-3015",
+      "name": "Breakwater Rest",
+      "type": "place",
+      "popularity": 0.67,
+      "tags": [
+        "urn:tag:keyword:syn:coastal_road"
+      ]
+    },
+    {
+      "id": "SYN-AR-3001",
+      "name": "Ironvein",
+      "type": "artist",
+      "popularity": 0.8,
+      "tags": [
+        "urn:tag:genre:syn:thrash_revival",
+        "urn:tag:keyword:syn:riff_culture"
+      ]
+    },
+    {
+      "id": "SYN-AR-3002",
+      "name": "Blastgrave",
+      "type": "artist",
+      "popularity": 0.78,
+      "tags": [
+        "urn:tag:genre:syn:thrash_revival"
+      ]
+    },
+    {
+      "id": "SYN-AR-3003",
+      "name": "Torque Hymn",
+      "type": "artist",
+      "popularity": 0.76,
+      "tags": [
+        "urn:tag:genre:syn:thrash_revival"
+      ]
+    },
+    {
+      "id": "SYN-BR-5201",
+      "name": "Brindlewood Oat",
+      "type": "brand",
+      "popularity": 0.71,
+      "tags": [
+        "urn:tag:product_category:syn:oat_drink",
+        "urn:tag:lifestyle:syn:plant_forward",
+        "urn:tag:keyword:syn:barista_culture"
+      ]
+    },
+    {
+      "id": "SYN-BR-5202",
+      "name": "Fallowmere Dairy-Free",
+      "type": "brand",
+      "popularity": 0.6,
+      "tags": [
+        "urn:tag:product_category:syn:oat_drink",
+        "urn:tag:lifestyle:syn:plant_forward"
+      ],
+      "profileOnlyTags": [
+        "urn:tag:genre:synmedia:hearth_cooking",
+        "urn:tag:genre:synmedia:quiet_activism",
+        "urn:tag:genre:synmusic:porch_folk",
+        "urn:tag:keyword:synmedia:found_family"
+      ]
+    },
+    {
+      "id": "SYN-BR-5203",
+      "name": "Copperleaf Pantry",
+      "type": "brand",
+      "popularity": 0.6,
+      "tags": [
+        "urn:tag:product_category:syn:oat_drink",
+        "urn:tag:lifestyle:syn:plant_forward"
+      ],
+      "profileOnlyTags": [
+        "urn:tag:genre:synmedia:hearth_cooking",
+        "urn:tag:genre:synmedia:quiet_activism",
+        "urn:tag:genre:synmedia:slow_mornings",
+        "urn:tag:keyword:synmedia:found_family"
+      ]
+    },
+    {
+      "id": "SYN-BR-5204",
+      "name": "Wrenfield Grains",
+      "type": "brand",
+      "popularity": 0.6,
+      "tags": [
+        "urn:tag:lifestyle:syn:plant_forward",
+        "urn:tag:keyword:syn:barista_culture"
+      ],
+      "profileOnlyTags": [
+        "urn:tag:genre:synmedia:hearth_cooking",
+        "urn:tag:genre:synmedia:quiet_activism",
+        "urn:tag:genre:synmedia:slow_mornings",
+        "urn:tag:genre:synmusic:porch_folk"
+      ]
+    },
+    {
+      "id": "SYN-BR-5205",
+      "name": "Marrowdown Foods",
+      "type": "brand",
+      "popularity": 0.6,
+      "tags": [
+        "urn:tag:product_category:syn:oat_drink",
+        "urn:tag:keyword:syn:barista_culture"
+      ],
+      "profileOnlyTags": [
+        "urn:tag:genre:synmedia:slow_mornings",
+        "urn:tag:keyword:synmedia:found_family",
+        "urn:tag:genre:synmusic:porch_folk"
+      ]
+    },
+    {
+      "id": "SYN-BR-5206",
+      "name": "Thistlecombe Kitchen",
+      "type": "brand",
+      "popularity": 0.6,
+      "tags": [
+        "urn:tag:lifestyle:syn:plant_forward",
+        "urn:tag:keyword:syn:barista_culture"
+      ],
+      "profileOnlyTags": [
+        "urn:tag:genre:synmedia:hearth_cooking",
+        "urn:tag:genre:synmedia:quiet_activism",
+        "urn:tag:genre:synmedia:slow_mornings",
+        "urn:tag:keyword:synmedia:found_family"
+      ]
+    },
+    {
+      "id": "SYN-BR-5207",
+      "name": "Larchwick Larder",
+      "type": "brand",
+      "popularity": 0.6,
+      "tags": [
+        "urn:tag:product_category:syn:oat_drink",
+        "urn:tag:lifestyle:syn:plant_forward"
+      ],
+      "profileOnlyTags": [
+        "urn:tag:genre:synmedia:hearth_cooking",
+        "urn:tag:genre:synmedia:quiet_activism",
+        "urn:tag:genre:synmedia:slow_mornings",
+        "urn:tag:genre:synmusic:porch_folk"
+      ]
+    },
+    {
+      "id": "SYN-BK-5201",
+      "name": "Embers and Bread",
+      "type": "book",
+      "popularity": 0.52,
+      "tags": [
+        "urn:tag:genre:synmedia:hearth_cooking"
+      ]
+    },
+    {
+      "id": "SYN-BK-5202",
+      "name": "The Long Supper",
+      "type": "book",
+      "popularity": null,
+      "tags": [
+        "urn:tag:genre:synmedia:hearth_cooking"
+      ]
+    },
+    {
+      "id": "SYN-BK-5203",
+      "name": "Coals at Dusk",
+      "type": "book",
+      "popularity": 0.47,
+      "tags": [
+        "urn:tag:genre:synmedia:hearth_cooking"
+      ]
+    },
+    {
+      "id": "SYN-BK-5204",
+      "name": "Small Hands, Loud Hearts",
+      "type": "book",
+      "popularity": 0.55,
+      "tags": [
+        "urn:tag:genre:synmedia:quiet_activism"
+      ]
+    },
+    {
+      "id": "SYN-BK-5205",
+      "name": "The Patient Placard",
+      "type": "book",
+      "popularity": 0.41,
+      "tags": [
+        "urn:tag:genre:synmedia:quiet_activism"
+      ]
+    },
+    {
+      "id": "SYN-BK-5206",
+      "name": "Kettle Petitions",
+      "type": "book",
+      "popularity": null,
+      "tags": [
+        "urn:tag:genre:synmedia:quiet_activism"
+      ]
+    },
+    {
+      "id": "SYN-BK-5207",
+      "name": "Before the Kettle",
+      "type": "book",
+      "popularity": 0.5,
+      "tags": [
+        "urn:tag:genre:synmedia:slow_mornings"
+      ]
+    },
+    {
+      "id": "SYN-BK-5208",
+      "name": "Dew Hour",
+      "type": "book",
+      "popularity": 0.44,
+      "tags": [
+        "urn:tag:genre:synmedia:slow_mornings"
+      ]
+    },
+    {
+      "id": "SYN-BK-5209",
+      "name": "The Unhurried Window",
+      "type": "book",
+      "popularity": 0.39,
+      "tags": [
+        "urn:tag:genre:synmedia:slow_mornings"
+      ]
+    },
+    {
+      "id": "SYN-MV-5201",
+      "name": "The Borrowed Table",
+      "type": "movie",
+      "popularity": 0.62,
+      "tags": [
+        "urn:tag:keyword:synmedia:found_family"
+      ]
+    },
+    {
+      "id": "SYN-MV-5202",
+      "name": "Neighbours of Larch Lane",
+      "type": "movie",
+      "popularity": null,
+      "tags": [
+        "urn:tag:keyword:synmedia:found_family"
+      ]
+    },
+    {
+      "id": "SYN-MV-5203",
+      "name": "Lantern Kin",
+      "type": "movie",
+      "popularity": 0.58,
+      "tags": [
+        "urn:tag:keyword:synmedia:found_family"
+      ]
+    },
+    {
+      "id": "SYN-AR-5201",
+      "name": "The Screen Door Choir",
+      "type": "artist",
+      "popularity": 0.46,
+      "tags": [
+        "urn:tag:music:syn:porch_folk"
+      ]
+    },
+    {
+      "id": "SYN-AR-5202",
+      "name": "Rocking Chair Republic",
+      "type": "artist",
+      "popularity": null,
+      "tags": [
+        "urn:tag:music:syn:porch_folk"
+      ]
+    },
+    {
+      "id": "SYN-AR-5203",
+      "name": "Hollis & the Lanterns",
+      "type": "artist",
+      "popularity": 0.4,
+      "tags": [
+        "urn:tag:music:syn:porch_folk"
+      ]
+    },
+    {
+      "id": "SYN-BR-9N01",
+      "name": "Halden Apothecary",
+      "type": "brand",
+      "popularity": 0.93,
+      "tags": [
+        "urn:tag:industry:syn:apothecary_care",
+        "urn:tag:keyword:syn:botanical_ritual"
+      ],
+      "profileOnlyTags": [
+        "urn:tag:genre:synbrand:apothecary_fashion",
+        "urn:tag:genre:synmedia:kitchen_tv",
+        "urn:tag:genre:synmedia:cookbook_shelf",
+        "urn:tag:genre:synmusic:bedroom_indie",
+        "urn:tag:genre:synmusic:night_electronic",
+        "urn:tag:keyword:synmedia:slow_drama",
+        "urn:tag:keyword:synmedia:novel_adaptation"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N01",
+      "name": "Ashgrove Roasting Room",
+      "type": "place",
+      "popularity": 0.88,
+      "tags": [
+        "urn:tag:cuisine:syn:coffee_houses",
+        "urn:tag:category:synplace:bakery_culture",
+        "urn:tag:keyword:syn:botanical_ritual"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N02",
+      "name": "Brindle Coffee Parlour",
+      "type": "place",
+      "popularity": 0.86,
+      "tags": [
+        "urn:tag:cuisine:syn:coffee_houses",
+        "urn:tag:category:synplace:bakery_culture",
+        "urn:tag:category:synplace:tea_salons"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N03",
+      "name": "Copperline Coffee Hall",
+      "type": "place",
+      "popularity": 0.84,
+      "tags": [
+        "urn:tag:cuisine:syn:coffee_houses",
+        "urn:tag:category:synplace:bakery_culture",
+        "urn:tag:category:synplace:tea_salons"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N04",
+      "name": "Dunmore Roastery",
+      "type": "place",
+      "popularity": 0.82,
+      "tags": [
+        "urn:tag:cuisine:syn:coffee_houses"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N11",
+      "name": "Eastfield Bread Loft",
+      "type": "place",
+      "popularity": 0.8,
+      "tags": [
+        "urn:tag:category:synplace:bakery_culture",
+        "urn:tag:keyword:syn:botanical_ritual"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N12",
+      "name": "Fernhill Bakehouse",
+      "type": "place",
+      "popularity": 0.78,
+      "tags": [
+        "urn:tag:category:synplace:bakery_culture"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N13",
+      "name": "Gorse Lane Bakery",
+      "type": "place",
+      "popularity": 0.76,
+      "tags": [
+        "urn:tag:category:synplace:bakery_culture"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N21",
+      "name": "Heathmoor Salon",
+      "type": "place",
+      "popularity": 0.79,
+      "tags": [
+        "urn:tag:category:synplace:tea_salons",
+        "urn:tag:keyword:syn:botanical_ritual"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N22",
+      "name": "Ivybridge Parlour",
+      "type": "place",
+      "popularity": 0.77,
+      "tags": [
+        "urn:tag:category:synplace:tea_salons",
+        "urn:tag:keyword:syn:botanical_ritual"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N23",
+      "name": "Juniper Pavilion",
+      "type": "place",
+      "popularity": 0.75,
+      "tags": [
+        "urn:tag:category:synplace:tea_salons"
+      ]
+    },
+    {
+      "id": "SYN-BR-9N02",
+      "name": "Corvid Basics",
+      "type": "brand",
+      "popularity": 0.94,
+      "tags": [
+        "urn:tag:industry:syn:everyday_basics"
+      ],
+      "profileOnlyTags": [
+        "urn:tag:genre:synbrand:capsule_wardrobe",
+        "urn:tag:genre:synmusic:lofi_beats",
+        "urn:tag:keyword:synmedia:city_life",
+        "urn:tag:genre:synmedia:street_photo",
+        "urn:tag:genre:synfilm:design_docs"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N31",
+      "name": "Kestle Night Market",
+      "type": "place",
+      "popularity": 0.9,
+      "tags": [
+        "urn:tag:category:synplace:lantern_markets",
+        "urn:tag:keyword:synplace:street_griddle"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N32",
+      "name": "Larch Street Stalls",
+      "type": "place",
+      "popularity": 0.7,
+      "tags": [
+        "urn:tag:keyword:synplace:street_griddle"
+      ]
+    },
+    {
+      "id": "SYN-PL-9N33",
+      "name": "Millbrook Food Court",
+      "type": "place",
+      "popularity": 0.68,
+      "tags": [
+        "urn:tag:keyword:synplace:street_griddle"
+      ]
+    },
+    {
+      "id": "SYN-BR-9O01",
+      "name": "Osterley Field Supply",
+      "type": "brand",
+      "popularity": 0.92,
+      "tags": [
+        "urn:tag:industry:syn:field_supply"
+      ],
+      "profileOnlyTags": [
+        "urn:tag:genre:synmusic:lofi_beats"
+      ]
+    },
+    {
+      "id": "SYN-PL-9O01",
+      "name": "Alder Reading Room",
+      "type": "place",
+      "popularity": 0.88,
+      "tags": [
+        "urn:tag:category:synplace:reading_rooms",
+        "urn:tag:keyword:synplace:oak_panelling",
+        "urn:tag:style:synplace:brass_lamps",
+        "urn:tag:setting:synplace:hushed_hours",
+        "urn:tag:theme:synplace:map_archives",
+        "urn:tag:category:synplace:print_studios"
+      ]
+    },
+    {
+      "id": "SYN-PL-9O02",
+      "name": "Birchwood Library Hall",
+      "type": "place",
+      "popularity": 0.86,
+      "tags": [
+        "urn:tag:category:synplace:reading_rooms",
+        "urn:tag:keyword:synplace:oak_panelling",
+        "urn:tag:style:synplace:brass_lamps",
+        "urn:tag:setting:synplace:hushed_hours",
+        "urn:tag:theme:synplace:map_archives",
+        "urn:tag:category:synplace:print_studios",
+        "urn:tag:category:synplace:listening_bars"
+      ]
+    },
+    {
+      "id": "SYN-PL-9O03",
+      "name": "Cedarline Study",
+      "type": "place",
+      "popularity": 0.84,
+      "tags": [
+        "urn:tag:category:synplace:reading_rooms",
+        "urn:tag:keyword:synplace:oak_panelling",
+        "urn:tag:style:synplace:brass_lamps",
+        "urn:tag:setting:synplace:hushed_hours",
+        "urn:tag:theme:synplace:map_archives",
+        "urn:tag:category:synplace:listening_bars"
+      ]
+    },
+    {
+      "id": "SYN-PL-9O11",
+      "name": "Elmstead Print Works",
+      "type": "place",
+      "popularity": 0.8,
+      "tags": [
+        "urn:tag:category:synplace:print_studios"
+      ]
+    },
+    {
+      "id": "SYN-PL-9O12",
+      "name": "Fallow Press Studio",
+      "type": "place",
+      "popularity": 0.78,
+      "tags": [
+        "urn:tag:category:synplace:print_studios"
+      ]
+    },
+    {
+      "id": "SYN-PL-9O13",
+      "name": "Gannet Letterpress",
+      "type": "place",
+      "popularity": 0.76,
+      "tags": [
+        "urn:tag:category:synplace:print_studios"
+      ]
+    },
+    {
+      "id": "SYN-PL-9O21",
+      "name": "Hollin Hi-Fi Lounge",
+      "type": "place",
+      "popularity": 0.79,
+      "tags": [
+        "urn:tag:category:synplace:listening_bars"
+      ]
+    },
+    {
+      "id": "SYN-PL-9O22",
+      "name": "Inchbrook Record Bar",
+      "type": "place",
+      "popularity": 0.77,
+      "tags": [
+        "urn:tag:category:synplace:listening_bars"
+      ]
+    },
+    {
+      "id": "SYN-PL-9O23",
+      "name": "Jessop Vinyl Parlour",
+      "type": "place",
+      "popularity": 0.75,
+      "tags": [
+        "urn:tag:category:synplace:listening_bars"
+      ]
+    },
+    {
+      "id": "SYN-BR-10A0",
+      "name": "Ashgrove Workwear",
+      "type": "brand",
+      "popularity": 0.7,
+      "tags": [
+        "urn:tag:keyword:syn:durable_workwear",
+        "urn:tag:industry:syn:workwear_retail"
+      ]
+    },
+    {
+      "id": "SYN-BR-10A1",
+      "name": "Ashgrove Rival One",
+      "type": "brand",
+      "popularity": 0.6,
+      "tags": [
+        "urn:tag:keyword:syn:durable_workwear",
+        "urn:tag:industry:syn:workwear_retail",
+        "urn:tag:keyword:syn:trade_heritage"
+      ]
+    },
+    {
+      "id": "SYN-BR-10A2",
+      "name": "Ashgrove Rival Two",
+      "type": "brand",
+      "popularity": 0.5,
+      "tags": [
+        "urn:tag:keyword:syn:durable_workwear",
+        "urn:tag:industry:syn:workwear_retail",
+        "urn:tag:keyword:syn:trade_heritage"
+      ]
+    },
+    {
+      "id": "SYN-AR-10A1",
+      "name": "Cinder Choir",
+      "type": "artist",
+      "popularity": 0.5,
+      "tags": [
+        "urn:tag:genre:syn:basement_punk",
+        "urn:tag:keyword:syn:loud_rooms"
+      ]
+    },
+    {
+      "id": "SYN-AR-10A2",
+      "name": "Low Ceiling",
+      "type": "artist",
+      "popularity": 0.5,
+      "tags": [
+        "urn:tag:genre:syn:basement_punk",
+        "urn:tag:keyword:syn:loud_rooms"
+      ]
+    },
+    {
+      "id": "SYN-AR-10A3",
+      "name": "Rivet Static",
+      "type": "artist",
+      "popularity": 0.5,
+      "tags": [
+        "urn:tag:genre:syn:basement_punk",
+        "urn:tag:keyword:syn:loud_rooms"
+      ]
+    },
+    {
+      "id": "SYN-AR-10A4",
+      "name": "Fourth Seed Band",
+      "type": "artist",
+      "popularity": 0.5,
+      "tags": [
+        "urn:tag:genre:syn:basement_punk",
+        "urn:tag:keyword:syn:loud_rooms"
+      ]
+    },
+    {
+      "id": "SYN-AR-10A5",
+      "name": "Basement Elder",
+      "type": "artist",
+      "popularity": 0.5,
+      "tags": [
+        "urn:tag:genre:syn:basement_punk",
+        "urn:tag:keyword:syn:loud_rooms"
+      ]
+    }
+  ],
+  "ambiguousNames": [
+    {
+      "name": "Meridian",
+      "candidates": [
+        "SYN-BR-0005",
+        "SYN-BR-0006"
+      ]
+    },
+    {
+      "name": "Harbor",
+      "candidates": [
+        "SYN-BR-0007",
+        "SYN-PL-0001"
+      ]
+    }
+  ]
 }

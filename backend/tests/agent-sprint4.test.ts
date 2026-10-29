@@ -77,7 +77,7 @@ describe("runtime skills", () => {
       resolve_territory: 5,
       build_territory_representation: 4,
       build_comparison_set: 5,
-      explore_candidate_territories: 5,
+      explore_candidate_territories: 6,
       analyze_territories: 3,
     });
   });

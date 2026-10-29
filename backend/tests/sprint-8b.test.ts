@@ -172,9 +172,10 @@ describe("late Qloo accounting: reserve at dispatch", () => {
 });
 
 describe("C9 evaluator is unchanged and still fails a timed-out probe recorded as empty", () => {
-  it("preserves run-evaluators-v2.1", () => {
-    expect(RUN_EVALUATORS_VERSION).toBe("run-evaluators-v2.1");
-    expect(EFFORT_EXPERIMENT.identical.evaluators).toBe("run-evaluators-v2.1");
+  // Sprint 10A bumped to v2.2 (rule-aware candidate-pool order); every pre-10A result is scored exactly as by v2.1.
+  it("preserves run-evaluators-v2.2", () => {
+    expect(RUN_EVALUATORS_VERSION).toBe("run-evaluators-v2.2");
+    expect(EFFORT_EXPERIMENT.identical.evaluators).toBe("run-evaluators-v2.2");
   });
 
   it("TAG_TYPE_EVIDENCE_VALID still catches an empty type with no empty recommend", () => {

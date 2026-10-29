@@ -6,7 +6,7 @@
  * allowed-transition table and records every change in the trace.
  */
 import { randomUUID } from "node:crypto";
-import type { AgentAnalysisResult, AgentIntent, AgentModelInfo, InvestigationLink, AgentRunStatus, AgentTerritoryResult, AgentTrace, CandidateSource, ConceptDedupVerdict, RepresentationFailureCode, SemanticRelevance, SkillRef, TerritoryOrigin, TerritoryRole } from "@cultural-elasticity/shared";
+import type { AgentAnalysisResult, AgentIntent, DiscoverySeed, AgentModelInfo, InvestigationLink, AgentRunStatus, AgentTerritoryResult, AgentTrace, CandidateSource, ConceptDedupVerdict, RepresentationFailureCode, SemanticRelevance, SkillRef, TerritoryOrigin, TerritoryRole } from "@cultural-elasticity/shared";
 import type { Limitation } from "../evidence/schema.js";
 import type { LiveCall } from "../qloo/live-adapter.js";
 import type { ConceptRef } from "../contracts/qloo.js";
@@ -86,6 +86,11 @@ export type TerritoryState = {
   sourceTagId: string | null;
   /** Sprint 5A.2: every Qloo evidence tag given at proposal (sourceTagId is the first); anchoring any of them keeps provenance. */
   evidenceTagIds: string[];
+  /**
+   * Sprint 10A: ids of observed signals (tags or entities seen in this run, or seeds from the authorized scan) that the
+   * proposer cited as motivation. Explains why a candidate surfaced; never support.
+   */
+  motivatedBy: string[];
 };
 
 export type BrandState = {
@@ -104,6 +109,11 @@ export type AgentRunState = {
   expectedBrandId?: string | null;
   /** Sprint 9O: the Qloo tag the authorized baseline observed for the investigated direction (server-held, never from text). */
   territoryGrounding?: TerritoryGrounding | null;
+  /**
+   * Sprint 10A: entities the authorized baseline scan observed in brand-conditioned lists, for an explore run to start
+   * from (server-held, never from text). They motivate hypotheses and may be profiled; they are never support.
+   */
+  discoverySeeds?: DiscoverySeed[];
   status: AgentRunStatus;
   request: AgentRequest;
   limits: InvestigationLimits;
@@ -365,7 +375,7 @@ export function territoryKey(state: AgentRunState, label: string): string {
   return key;
 }
 
-export function addTerritory(state: AgentRunState, input: { label: string; role: TerritoryRole; origin: TerritoryOrigin; rationale: string; source?: CandidateSource; sourceEvidence?: string; sourceTagId?: string | null; evidenceTagIds?: string[] }): TerritoryState {
+export function addTerritory(state: AgentRunState, input: { label: string; role: TerritoryRole; origin: TerritoryOrigin; rationale: string; source?: CandidateSource; sourceEvidence?: string; sourceTagId?: string | null; evidenceTagIds?: string[]; motivatedBy?: string[] }): TerritoryState {
   const territory: TerritoryState = {
     key: territoryKey(state, input.label),
     label: input.label.trim(),
@@ -385,6 +395,7 @@ export function addTerritory(state: AgentRunState, input: { label: string; role:
     semanticJudgment: null,
     sourceTagId: input.sourceTagId ?? null,
     evidenceTagIds: input.evidenceTagIds ?? (input.sourceTagId ? [input.sourceTagId] : []),
+    motivatedBy: input.motivatedBy ?? [],
   };
   state.territories.push(territory);
   return territory;

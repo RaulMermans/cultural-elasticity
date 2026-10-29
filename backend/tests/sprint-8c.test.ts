@@ -54,6 +54,7 @@ function territory(partial: Partial<TerritoryState> & Pick<TerritoryState, "key"
     semanticJudgment: null,
     sourceTagId: "tag-a",
     evidenceTagIds: ["tag-a"],
+    motivatedBy: [],
     ...partial,
   };
 }
@@ -387,8 +388,9 @@ describe("late Qloo answers cannot become evidence after timeout or finalization
 });
 
 describe("C9 grader remains frozen", () => {
-  it("keeps run-evaluators-v2.1 and still fails a timed-out probe recorded as empty", () => {
-    expect(RUN_EVALUATORS_VERSION).toBe("run-evaluators-v2.1");
+  // Sprint 10A bumped to v2.2 (rule-aware candidate-pool order only); the C9 probe rules are unchanged.
+  it("keeps run-evaluators-v2.2 and still fails a timed-out probe recorded as empty", () => {
+    expect(RUN_EVALUATORS_VERSION).toBe("run-evaluators-v2.2");
     const result = {
       status: "COMPLETE",
       territories: [{ key: "folk", probes: [{ conceptKey: "genre:music:folk", successfulTypes: [], emptyTypes: ["brand"], namespace: "genre:music" }] }],

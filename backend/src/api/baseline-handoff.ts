@@ -1,4 +1,4 @@
-import type { AnyBrandBaselineResult, BaselineEvidenceRef } from "@cultural-elasticity/shared";
+import type { AnyBrandBaselineResult, BaselineEvidenceRef, DiscoverySeed } from "@cultural-elasticity/shared";
 import { agentRequestSchema, type AgentRequest } from "../agent/contracts.js";
 import type { TerritoryGrounding } from "../agent/state.js";
 
@@ -76,4 +76,66 @@ export function directionGrounding(result: AnyBrandBaselineResult, territoryId: 
   const ref = territory?.supportingReferences.find((item) => item.operation === "entity_tags" && item.sourceStatus === "ok");
   if (!territory || !ref || !territory.canonicalConcept.startsWith("urn:tag:")) return null;
   return { territory: territory.name, tagId: territory.canonicalConcept, label: territory.name, type: territory.canonicalConcept.split(":").slice(0, 4).join(":"), subjectId: result.brand.qlooId, correlationId: ref.correlationId };
+}
+
+/** Sprint 10A: seeds per baseline domain (artists, places, films, books), at most 12 in all. */
+export const SEEDS_PER_DOMAIN = 3;
+
+/**
+ * Sprint 10A: the entities the authorized scan observed in brand-conditioned lists (related artists, places, films,
+ * books), as starting points for an explore run. Only signals whose call is in the scan's provenance qualify; set-aside
+ * (excluded or type-conflicting) results are not signals and never seeds. Brand-profile tags are not seeds: they are the
+ * scan's own directions. Seeds motivate hypotheses; they are never support.
+ */
+export function discoverySeeds(result: AnyBrandBaselineResult): DiscoverySeed[] {
+  const known = new Set(result.fingerprint.provenance.map((ref) => `${ref.correlationId}\0${ref.sourceId}`));
+  const perDomain = new Map<string, number>();
+  const seeds: DiscoverySeed[] = [];
+  for (const signal of result.fingerprint.signals) {
+    if (signal.kind !== "entity" || signal.source.operation !== "recommend" || !known.has(`${signal.source.correlationId}\0${signal.source.sourceId}`)) continue;
+    const typeEvidence = "grounding" in signal && signal.grounding ? signal.grounding.typeEvidence : "UNRECORDED";
+    if (typeEvidence === "CONFLICTING_TYPE") continue;
+    const n = perDomain.get(signal.domain) ?? 0;
+    if (n >= SEEDS_PER_DOMAIN) continue;
+    perDomain.set(signal.domain, n + 1);
+    seeds.push({ id: signal.id, label: signal.name, domain: signal.domain, relation: "BRAND_CONDITIONED_ENTITY", scanId: result.scanId, correlationId: signal.source.correlationId, rankWithinCall: signal.rankWithinCall, typeEvidence, partial: signal.source.sourceStatus !== "ok" });
+  }
+  return seeds;
+}
+
+export type ExploreInvestigationRequest = {
+  version: "ce-explore-investigation/0.1";
+  baselineScanId: string;
+  brand: { name: string; qlooId: string };
+  objective: string;
+  seeds: DiscoverySeed[];
+  limitations: string[];
+  authorization: "BASELINE_TOKEN_AND_AGENT_ADMISSION";
+  agentRequest: AgentRequest;
+};
+
+/**
+ * Sprint 10A: open discovery from a completed scan. The agent starts from the scan's cross-domain observations (seeds)
+ * and must still find, anchor and support every territory with Qloo in its own run. No seed name or id enters the query
+ * text the interpreter reads (seeds travel as server-held structured state).
+ */
+export function buildExploreInvestigationRequest(result: AnyBrandBaselineResult): ExploreInvestigationRequest {
+  if (!["COMPLETE", "PARTIAL", "INSUFFICIENT_EVIDENCE"].includes(result.scanStatus)) throw new HandoffError("SCAN_NOT_COMPLETE");
+  if (!result.brand.qlooId) throw new HandoffError("TERRITORY_UNSUPPORTED");
+  const seeds = discoverySeeds(result);
+  const limitations = [
+    "Open discovery: every territory must be found, anchored and supported with Qloo in the new run. Nothing from the scan counts as support.",
+    ...(seeds.length ? ["The starting points are entities Qloo returned in brand-related lists. They suggest where to look; they do not show that the brand has affinity with any territory."] : ["The scan has no related artists, places, films or books to start from, so discovery uses the brand's related brands only."]),
+    ...(seeds.some((seed) => seed.partial) ? ["Some starting points come from a partial or degraded Qloo response."] : []),
+  ];
+  return {
+    version: "ce-explore-investigation/0.1",
+    baselineScanId: result.scanId,
+    brand: { name: result.brand.name, qlooId: result.brand.qlooId },
+    objective: `Find distinct cultural territories Qloo supports for ${result.brand.name}, starting from the signals its scan observed.`,
+    seeds,
+    limitations,
+    authorization: "BASELINE_TOKEN_AND_AGENT_ADMISSION",
+    agentRequest: agentRequestSchema.parse({ userQuery: `What cultural territories could ${result.brand.name} stretch into?`, intent: "explore_frontier", brand: result.brand.name, territories: [] }),
+  };
 }

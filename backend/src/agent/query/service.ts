@@ -11,7 +11,7 @@
  */
 import type { TerritoryGrounding } from "../state.js";
 import { createHash, randomUUID } from "node:crypto";
-import { QUERY_SCHEMA_VERSION, type AgentRunResponse, type AgentTrace, type InvestigationLink, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type QueryResponse, type QueryState, type QueryTelemetry, type QueryTerritoryNode } from "@cultural-elasticity/shared";
+import { QUERY_SCHEMA_VERSION, type AgentRunResponse, type AgentTrace, type DiscoverySeed, type InvestigationLink, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type QueryResponse, type QueryState, type QueryTelemetry, type QueryTerritoryNode } from "@cultural-elasticity/shared";
 import { priceUsd } from "../finalizer.js";
 import { interpretCeilingUsd } from "../../ops/pricing.js";
 import type { SpendBound } from "../../ops/spend.js";
@@ -53,6 +53,8 @@ export type QueryHooks = {
   expectedBrandId?: string;
   /** Sprint 9O: server-held baseline grounding of the direction; never supplied by a query proposal. */
   territoryGrounding?: TerritoryGrounding;
+  /** Sprint 10A: server-held seeds from the authorized baseline scan (explore handoff); never supplied by a proposal. */
+  discoverySeeds?: DiscoverySeed[];
   onProgress?: (event: QueryProgress) => void;
   /** The agent run's live trace, for a readable activity view. */
   onTrace?: (trace: AgentTrace) => void;
@@ -217,6 +219,7 @@ export class QueryService {
       spend: hooks?.spend,
       expectedBrandId: hooks?.expectedBrandId,
       territoryGrounding: hooks?.territoryGrounding,
+      discoverySeeds: hooks?.discoverySeeds,
       onTrace: hooks?.onTrace,
       admission: { queueWaitMs: hooks?.queueWaitMs, interpretationMs: telemetry.interpretationLatencyMs },
     });

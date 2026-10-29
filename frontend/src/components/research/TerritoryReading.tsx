@@ -49,6 +49,16 @@ export function TerritoryReadingView({ reading, brand, onMeasure, busy }: { read
       <ul className="rr-unknowns">{reading.unknowns.map((line) => <li key={line}>{line}</li>)}</ul>
     </div> : null}
 
+    {reading.surfaced ? <div className="rr-section" data-testid="network-surfaced">
+      <h3>Why this direction surfaced</h3>
+      <p className="rr-hint"><strong>{reading.surfaced.status}.</strong> {reading.surfaced.statusText}</p>
+      {reading.surfaced.signals.length ? <ul className="rr-unknowns">{reading.surfaced.signals.map((line) => <li key={line}>{line}</li>)}</ul> : null}
+      {reading.surfaced.domain ? <p className="rr-hint">{reading.surfaced.domain}</p> : null}
+      {reading.surfaced.interpretation ? <p className="rr-hint">The agent&apos;s interpretation, not Qloo evidence: “{reading.surfaced.interpretation}”</p> : null}
+      {reading.surfaced.unknowns.length ? <ul className="rr-unknowns">{reading.surfaced.unknowns.map((line) => <li key={line}>{line}</li>)}</ul> : null}
+      {reading.surfaced.next ? <p className="rr-hint">Next: {reading.surfaced.next}</p> : null}
+    </div> : null}
+
     {reading.technical.length || reading.concept ? <details className="rr-tech">
       <summary>Technical notes</summary>
       <ul>

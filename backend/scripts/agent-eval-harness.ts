@@ -11,7 +11,7 @@ import { evaluatorFailures, RUN_EVALUATORS_VERSION } from "./run-evaluators.js";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AgentAnalysisResult, AgentFailureCategory, AgentNeedsInputResponse, AgentRunResponse } from "@cultural-elasticity/shared";
+import type { AgentAnalysisResult, AgentFailureCategory, AgentNeedsInputResponse, AgentRunResponse, DiscoverySeed } from "@cultural-elasticity/shared";
 import type { SkillEvalOutcome } from "../src/agent/skills/contracts.js";
 import { skillOutcomes } from "../src/agent/skills/outcomes.js";
 import { SkillRegistry } from "../src/agent/skills/registry.js";
@@ -88,6 +88,10 @@ type Expect = {
   sourceEvidenceAnchors?: number;
   /** Sprint 5A.2: no territory was dropped as a duplicate. */
   noDuplicateDrops?: boolean;
+  /** Sprint 10A: opportunity status per frontier candidate ("STATUS" or "STATUS/BLOCKER"). */
+  opportunities?: Record<string, string>;
+  /** Sprint 10A: ids that must be among a candidate's surfacedBy signals. */
+  surfacedBy?: Record<string, string[]>;
 };
 
 export type Scenario = {
@@ -107,6 +111,8 @@ export type Scenario = {
   wrap?: "eager_analyze" | "brand_tags_first";
   /** Sprint 9N: the runtime arm. Omitted = the production default ("enforce"); "observe" tests a pre-9N rule in isolation. */
   feasibilityPolicy?: "enforce" | "observe";
+  /** Sprint 10A: server-held baseline-scan seeds the explore run starts from (synthetic). */
+  seeds?: DiscoverySeed[];
   expect: Expect;
 };
 
@@ -252,6 +258,15 @@ function check(s: Scenario, response: AgentRunResponse): string[] {
   }
   if (e.sourceEvidenceAnchors !== undefined) eq("source-evidence anchors", r.metrics.source_evidence_anchors ?? 0, e.sourceEvidenceAnchors);
   if (e.noDuplicateDrops) for (const d of trace.conceptDedup.filter((x) => x.dropped)) f.push(`${d.dropped} dropped as ${d.verdict} of ${d.a.key === d.dropped ? d.b.key : d.a.key} (${d.layer}: ${d.basis})`);
+  const opportunities = r.comparisonSetConstruction.opportunities ?? [];
+  for (const [key, want] of Object.entries(e.opportunities ?? {})) {
+    const o = opportunities.find((x) => x.territoryKey === key);
+    eq(`opportunity ${key}`, o ? (want.includes("/") ? `${o.status}/${o.blocker}` : o.status) : null, want);
+  }
+  for (const [key, ids] of Object.entries(e.surfacedBy ?? {})) {
+    const got = opportunities.find((x) => x.territoryKey === key)?.surfacedBy.map((x) => x.id) ?? [];
+    for (const id of ids) if (!got.includes(id)) f.push(`opportunity ${key}: ${id} not among surfacedBy (${got.join(",")})`);
+  }
   if (e.allCandidatesCanonical) {
     const generated = r.territories.filter((x) => x.role === "frontier_candidate" && x.resolvedConcept);
     if (generated.length === 0) f.push("no anchored frontier candidate to check canonicalization");
@@ -285,7 +300,7 @@ export async function runScenario(s: Scenario, options: { feasibilityPolicy?: "e
   const model = new Recording(inner);
   const policyArm = options.feasibilityPolicy ?? s.feasibilityPolicy;
   const runtime = new AgentRuntime({ model, provider: createScriptedToolProvider(world, s.faults ?? []), ...(policyArm && { feasibilityPolicy: policyArm }) });
-  let response = await runtime.run(s.request);
+  let response = await runtime.run(s.request, undefined, s.seeds ? { discoverySeeds: s.seeds } : {});
   if (response.status === "NEEDS_INPUT" && s.answer) response = await runtime.continue(response.runId, s.answer);
   const failures = [...check(s, response), ...checkContexts(s, model.contexts)];
   return { id: s.id, category: s.category, passed: failures.length === 0, failures, response, contexts: model.contexts };

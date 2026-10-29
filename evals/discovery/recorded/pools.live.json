@@ -1,0 +1,639 @@
+{
+  "fixtureType": "live-recorded",
+  "notice": "Real Qloo frontier candidate pools copied verbatim from stored live explore_frontier results (Sprints 5A.1–8B; comparisonSetConstruction.candidatePool, which was cut to 12 by the v1 support order). Each pool lists the runs that recorded it and the candidates those runs chose. Used only by evaluation code (pnpm eval:discovery); nothing in the runtime reads this file.",
+  "pools": [
+    {
+      "id": "pool-c53d12ae",
+      "brand": "Allbirds",
+      "brandQlooId": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "candidatePool": [
+        {
+          "canonicalConceptKey": "female_protagonist",
+          "tagId": "urn:tag:keyword:media:female_protagonist",
+          "label": "female protagonist",
+          "support": 4
+        },
+        {
+          "canonicalConceptKey": "folk",
+          "tagId": "urn:tag:genre:music:folk",
+          "label": "folk",
+          "support": 3
+        },
+        {
+          "canonicalConceptKey": "friendship",
+          "tagId": "urn:tag:keyword:media:friendship",
+          "label": "friendship",
+          "support": 3
+        },
+        {
+          "canonicalConceptKey": "new_york_city",
+          "tagId": "urn:tag:keyword:media:new_york_city",
+          "label": "new york city",
+          "support": 3
+        },
+        {
+          "canonicalConceptKey": "21st_century",
+          "tagId": "urn:tag:keyword:media:21st_century",
+          "label": "21st century",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "self_help",
+          "tagId": "urn:tag:genre:media:self_help",
+          "label": "Self Help",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "social_responsibility",
+          "tagId": "urn:tag:cultural_relevance:qloo:social_responsibility",
+          "label": "Social Responsibility",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "socially_conscious_consumer",
+          "tagId": "urn:tag:customer_identity:qloo:socially_conscious_consumers",
+          "label": "socially conscious consumers",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "soft_texture",
+          "tagId": "urn:tag:aesthetic_property:qloo:soft_textures",
+          "label": "Soft Textures",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "accessible_fashion",
+          "tagId": "urn:tag:cultural_relevance:qloo:accessible_fashion",
+          "label": "Accessible Fashion",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "alternative_rock",
+          "tagId": "urn:tag:genre:music:alternative_rock",
+          "label": "Alternative Rock",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "asian_american",
+          "tagId": "urn:tag:keyword:media:asian_american",
+          "label": "asian american",
+          "support": 1
+        }
+      ],
+      "evidenceBase": [
+        "011DFDA5-F5A7-461A-9D96-E28E4964E7FB",
+        "C0048DBC-BDED-46D6-9331-49B3A47275A3",
+        "B8F0B7D9-0FF8-4E38-9DEF-C88D976272BF",
+        "AB8D769A-CCEB-4C2D-A3D8-21641E0EC664",
+        "FF8BB83C-AC0D-46AF-9410-9563636DF431",
+        "701F94F7-0892-4C17-8BFC-6B7CF3BBF568"
+      ],
+      "runs": [
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a1-live/final/live_model-L-E2-stability-2.json",
+          "runId": "67299350-2177-4178-938d-90e1cc3f2f05",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Self help",
+            "Social responsibility",
+            "Soft textures",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a1-live/final/live_model-L-E2-stability-3.json",
+          "runId": "ac184f93-377a-4314-99cd-19c56db2dee0",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Self help",
+            "Social responsibility",
+            "Female-led storytelling",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a1-live/final/live_model-L-E2.json",
+          "runId": "635d563e-dd14-4d79-b096-bcd82c422e3d",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Folk music",
+            "Self-help and personal growth",
+            "Female-led friendship stories",
+            "New York City urban culture"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/attempt3-pre-label-fix/live_model-L-E2.json",
+          "runId": "e1078347-64f6-4168-8037-da7d7bbd4090",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Social responsibility",
+            "Soft textures",
+            "Folk music",
+            "Self-help media"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/final/live_model-L-E2-stability-2.json",
+          "runId": "b6586acc-fde6-4442-95ea-0c301463acfd",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Female-led storytelling",
+            "New York City culture",
+            "Self-help literature",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/final/live_model-L-E2-stability-3.json",
+          "runId": "aaf4ad0c-0650-4033-a41a-c0d722c1109c",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Female-protagonist stories",
+            "Self-help books",
+            "Social responsibility",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/final/live_model-L-E2.json",
+          "runId": "a7a23bae-a3c8-416c-bf1f-1648a8267e3d",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Female-led stories",
+            "Self-help and personal growth",
+            "Social responsibility and conscious consumption",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/focused1/live_model-L-E2.json",
+          "runId": "068a380c-a214-4128-b87f-4e3dd21ea49e",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Self help",
+            "Social responsibility",
+            "Soft textures",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "evals/qloo-value/artifacts/live_model-L-E2.json",
+          "runId": "a7a23bae-a3c8-416c-bf1f-1648a8267e3d",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Female-led stories",
+            "Self-help and personal growth",
+            "Social responsibility and conscious consumption",
+            "Folk music"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pool-d7254362",
+      "brand": "Allbirds",
+      "brandQlooId": "78A44C09-E691-42DA-A553-5CDE6EE9B18A",
+      "candidatePool": [
+        {
+          "canonicalConceptKey": "soft_texture",
+          "tagId": "urn:tag:aesthetic_property:qloo:soft_textures",
+          "label": "Soft Textures",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "athletic_influencer",
+          "tagId": "urn:tag:influencer_appeal:qloo:athletic_influencers",
+          "label": "Athletic Influencers",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "casual_lifestyle_influencer",
+          "tagId": "urn:tag:influencer_appeal:qloo:casual_lifestyle_influencers",
+          "label": "Casual Lifestyle Influencers",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "casualness",
+          "tagId": "urn:tag:emotional_tone:qloo:casualness",
+          "label": "casualness",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "coastal",
+          "tagId": "urn:tag:lifestyle:qloo:coastal",
+          "label": "Coastal",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "comfort_focused",
+          "tagId": "urn:tag:aesthetic_property:qloo:comfort_focused",
+          "label": "Comfort Focused",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "community_driven",
+          "tagId": "urn:tag:lifestyle:qloo:community_driven",
+          "label": "Community Driven",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "community_oriented",
+          "tagId": "urn:tag:emotional_tone:qloo:community_oriented",
+          "label": "Community-Oriented",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "community_oriented_individual",
+          "tagId": "urn:tag:customer_identity:qloo:community_oriented_individuals",
+          "label": "community-oriented individuals",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "compassion",
+          "tagId": "urn:tag:emotional_tone:qloo:compassion",
+          "label": "Compassion",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "conscious_consumption",
+          "tagId": "urn:tag:lifestyle:qloo:conscious_consumption",
+          "label": "Conscious Consumption",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "country",
+          "tagId": "urn:tag:genre:music:country",
+          "label": "country",
+          "support": 1
+        }
+      ],
+      "evidenceBase": [
+        "011DFDA5-F5A7-461A-9D96-E28E4964E7FB",
+        "C0048DBC-BDED-46D6-9331-49B3A47275A3",
+        "B8F0B7D9-0FF8-4E38-9DEF-C88D976272BF",
+        "AB8D769A-CCEB-4C2D-A3D8-21641E0EC664",
+        "FF8BB83C-AC0D-46AF-9410-9563636DF431",
+        "701F94F7-0892-4C17-8BFC-6B7CF3BBF568"
+      ],
+      "runs": [
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a1-live/final/baseline-L-E2.json",
+          "runId": "23a22191-07b8-40d3-8961-2b592184d8ff",
+          "model": "baseline-policy-v2",
+          "chosen": [
+            "Soft Textures",
+            "Casual Lifestyle Influencers",
+            "Coastal",
+            "Athletic Influencers"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/attempt1-aborted/baseline-L-E2.json",
+          "runId": "21ce6e39-8549-43fb-a7ef-d9bd420fe5bf",
+          "model": "baseline-policy-v2",
+          "chosen": [
+            "Soft Textures",
+            "Casual Lifestyle Influencers",
+            "Coastal",
+            "Athletic Influencers"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/attempt3-pre-label-fix/baseline-L-E2.json",
+          "runId": "a8e6ab63-4ff9-471a-a7a7-7f519e4590c0",
+          "model": "baseline-policy-v2",
+          "chosen": [
+            "Soft Textures",
+            "Casual Lifestyle Influencers",
+            "Coastal",
+            "Athletic Influencers"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/final/baseline-L-E2.json",
+          "runId": "413d0009-49ea-4667-a875-630f1ea9c8e2",
+          "model": "baseline-policy-v2",
+          "chosen": [
+            "Soft Textures",
+            "Casual Lifestyle Influencers",
+            "Coastal",
+            "Athletic Influencers"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pool-bc43a31d",
+      "brand": "Oatly",
+      "brandQlooId": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "candidatePool": [
+        {
+          "canonicalConceptKey": "british",
+          "tagId": "urn:tag:genre:music:british",
+          "label": "british",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "england",
+          "tagId": "urn:tag:keyword:media:england",
+          "label": "england",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "friendship",
+          "tagId": "urn:tag:keyword:media:friendship",
+          "label": "friendship",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "london_england",
+          "tagId": "urn:tag:keyword:media:london_england",
+          "label": "london england",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "chance_encounter",
+          "tagId": "urn:tag:keyword:qloo:chance_encounter",
+          "label": "Chance Encounter",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "cooking",
+          "tagId": "urn:tag:genre:media:cooking",
+          "label": "Cooking",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "deep",
+          "tagId": "urn:tag:content:qloo:deep",
+          "label": "Deep",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "dynamic_storytelling",
+          "tagId": "urn:tag:style:qloo:dynamic_storytelling",
+          "label": "Dynamic Storytelling",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "environmentally_aware",
+          "tagId": "urn:tag:audience:qloo:environmentally_aware",
+          "label": "Environmentally Aware",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "eye_opening",
+          "tagId": "urn:tag:plot:qloo:eye_opening",
+          "label": "Eye-Opening",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "family_relationship",
+          "tagId": "urn:tag:keyword:media:family_relationships",
+          "label": "family relationships",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "feminism",
+          "tagId": "urn:tag:genre:media:feminism",
+          "label": "Feminism",
+          "support": 1
+        }
+      ],
+      "evidenceBase": [
+        "82ABA78E-DA57-4E6B-B956-F56E77BD0661",
+        "C770B4D0-8776-42D8-8353-95C91836E4E2",
+        "80BA1963-AACC-48B1-B832-72E780C4FA8D",
+        "68331716-A54E-4477-81FC-97EF3BCC8723",
+        "CF79BA2C-A846-4F56-AC38-5FBC2389BF29",
+        "1F645FD2-FF8A-4902-8D2D-F18438BDABD5"
+      ],
+      "runs": [
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a1-live/final/baseline-L-E1.json",
+          "runId": "c57b04bc-326a-4734-941b-2274b5c9ec93",
+          "model": "baseline-policy-v2",
+          "chosen": []
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/attempt1-aborted/baseline-L-E1.json",
+          "runId": "4d420604-8b52-48e7-8b4f-842cb39fb0e5",
+          "model": "baseline-policy-v2",
+          "chosen": []
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/attempt3-pre-label-fix/baseline-L-E1.json",
+          "runId": "6380799c-5b4e-4124-8a42-4bff4d261304",
+          "model": "baseline-policy-v2",
+          "chosen": []
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/final/baseline-L-E1.json",
+          "runId": "9fb18b59-73b6-48b1-b5f0-086769ad4e72",
+          "model": "baseline-policy-v2",
+          "chosen": []
+        }
+      ]
+    },
+    {
+      "id": "pool-ebc85f4b",
+      "brand": "Oatly",
+      "brandQlooId": "012081EE-E2BA-420E-9904-417CAF65214B",
+      "candidatePool": [
+        {
+          "canonicalConceptKey": "friendship",
+          "tagId": "urn:tag:keyword:media:friendship",
+          "label": "friendship",
+          "support": 5
+        },
+        {
+          "canonicalConceptKey": "england",
+          "tagId": "urn:tag:keyword:media:england",
+          "label": "england",
+          "support": 3
+        },
+        {
+          "canonicalConceptKey": "folk",
+          "tagId": "urn:tag:genre:music:folk",
+          "label": "folk",
+          "support": 3
+        },
+        {
+          "canonicalConceptKey": "london_england",
+          "tagId": "urn:tag:keyword:media:london_england",
+          "label": "london england",
+          "support": 3
+        },
+        {
+          "canonicalConceptKey": "teenage_girl",
+          "tagId": "urn:tag:keyword:media:teenage_girl",
+          "label": "teenage girl",
+          "support": 3
+        },
+        {
+          "canonicalConceptKey": "british",
+          "tagId": "urn:tag:genre:music:british",
+          "label": "british",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "cooking",
+          "tagId": "urn:tag:genre:media:cooking",
+          "label": "Cooking",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "family_relationship",
+          "tagId": "urn:tag:keyword:media:family_relationships",
+          "label": "family relationships",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "feminism",
+          "tagId": "urn:tag:genre:media:feminism",
+          "label": "Feminism",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "new_york_city",
+          "tagId": "urn:tag:keyword:media:new_york_city",
+          "label": "new york city",
+          "support": 2
+        },
+        {
+          "canonicalConceptKey": "21st_century",
+          "tagId": "urn:tag:keyword:media:21st_century",
+          "label": "21st century",
+          "support": 1
+        },
+        {
+          "canonicalConceptKey": "african_american",
+          "tagId": "urn:tag:keyword:media:african_american",
+          "label": "african american",
+          "support": 1
+        }
+      ],
+      "evidenceBase": [
+        "82ABA78E-DA57-4E6B-B956-F56E77BD0661",
+        "C770B4D0-8776-42D8-8353-95C91836E4E2",
+        "80BA1963-AACC-48B1-B832-72E780C4FA8D",
+        "68331716-A54E-4477-81FC-97EF3BCC8723",
+        "CF79BA2C-A846-4F56-AC38-5FBC2389BF29",
+        "1F645FD2-FF8A-4902-8D2D-F18438BDABD5"
+      ],
+      "runs": [
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a1-live/final/live_model-L-E1-stability-2.json",
+          "runId": "70c22d62-844f-4c9d-984d-3cad8317482a",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Cooking",
+            "Feminism",
+            "Folk music",
+            "Friendship stories"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a1-live/final/live_model-L-E1-stability-3.json",
+          "runId": "c5f906ab-a0cd-4fcd-820a-bdd012cc74bf",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "British culture",
+            "Cooking",
+            "Feminism",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a1-live/final/live_model-L-E1.json",
+          "runId": "e8557d6e-31f3-4998-8349-744a8a68c930",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Cooking and food culture",
+            "Feminism and women-led culture",
+            "Folk music",
+            "Friendship stories"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/attempt3-pre-label-fix/live_model-L-E1.json",
+          "runId": "35bb5a71-7c62-49a6-9036-d33a465731cb",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Cooking & food culture",
+            "Feminism & women's rights",
+            "Folk music",
+            "London, England urban culture"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/final/live_model-L-E1-stability-2.json",
+          "runId": "f52c358a-03d6-44dc-96a1-9e7babf98c70",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Cooking and cookbooks",
+            "Feminism and women-led culture",
+            "Folk music",
+            "British and London culture"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/final/live_model-L-E1-stability-3.json",
+          "runId": "76c46ad1-a954-4f6d-a85b-ba88ecf7686d",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Feminism and women-led culture",
+            "Home cooking and food culture",
+            "London and British urban culture",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/final/live_model-L-E1.json",
+          "runId": "92a17d28-d3f8-4cc0-a47b-c53c7aa79d91",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Cooking and food culture",
+            "Feminism and women's voices",
+            "British and London urban culture",
+            "Folk and indie music"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint5a2-live/focused1/live_model-L-E1.json",
+          "runId": "5281c3cb-ccfe-412f-aaa8-b717e532c3fb",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Coming-of-age and teenage girl stories",
+            "English and London culture",
+            "Friendship stories",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "backend/feasibility-output/ (local, gitignored) sprint8b-c9/live_model-L-E1.json",
+          "runId": "dbf7300d-3f79-49fb-ad69-13d369942189",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Cooking and food culture",
+            "Feminism and women-led culture",
+            "British and England culture",
+            "Folk music"
+          ]
+        },
+        {
+          "source": "evals/qloo-value/artifacts/live_model-L-E1.json",
+          "runId": "92a17d28-d3f8-4cc0-a47b-c53c7aa79d91",
+          "model": "claude-haiku-5-5",
+          "chosen": [
+            "Cooking and food culture",
+            "Feminism and women's voices",
+            "British and London urban culture",
+            "Folk and indie music"
+          ]
+        }
+      ]
+    }
+  ]
+}

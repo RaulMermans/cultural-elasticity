@@ -10,7 +10,7 @@
  */
 import type { TerritoryGrounding } from "../state.js";
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
-import type { AgentTrace, QueryResponse } from "@cultural-elasticity/shared";
+import type { AgentTrace, DiscoverySeed, QueryResponse } from "@cultural-elasticity/shared";
 import { jobActivity, type JobActivity } from "./activity.js";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../errors.js";
 import type { SpendBound } from "../../ops/spend.js";
@@ -36,7 +36,7 @@ export type JobView = {
 export type JobCreated = JobView & { accessToken: string };
 
 export type JobRequest =
-  | { kind: "execute"; body: QueryBody; model: string; expectedBrandId?: string; territoryGrounding?: TerritoryGrounding }
+  | { kind: "execute"; body: QueryBody; model: string; expectedBrandId?: string; territoryGrounding?: TerritoryGrounding; discoverySeeds?: DiscoverySeed[] }
   | { kind: "confirm"; queryId: string; model: string }
   | { kind: "continue"; runId: string; clarification: string; model: string };
 
@@ -390,7 +390,7 @@ export class JobManager {
 async function runRequest(runner: InvestigationRunner, request: JobRequest, hooks: QueryHooks): Promise<QueryResponse> {
   if (request.kind === "confirm") return runner.confirm(request.queryId, hooks);
   if (request.kind === "continue") return runner.continueRun(request.runId, request.clarification, hooks);
-  return runner.execute(request.body, { ...hooks, expectedBrandId: request.expectedBrandId, territoryGrounding: request.territoryGrounding });
+  return runner.execute(request.body, { ...hooks, expectedBrandId: request.expectedBrandId, territoryGrounding: request.territoryGrounding, discoverySeeds: request.discoverySeeds });
 }
 
 function publicError(error: unknown): { code: string; message: string } {

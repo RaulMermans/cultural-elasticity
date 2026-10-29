@@ -11,6 +11,8 @@
  * environment values, inactive skills, unexposed tools.
  */
 import { exemplarCandidates } from "./candidate-discovery.js";
+import { matchOperationalRule } from "../methodology/operational-tags.js";
+import { tagFacet } from "../methodology/tag-facets.js";
 import { assessComparisonFeasibility, feasibilityView } from "./feasibility.js";
 import { frontierCandidatePool, frontierEvidenceBaseGap } from "./frontier.js";
 import { comparisonRepresentationPlan, preferredTypeFor } from "./representation-alignment.js";
@@ -30,6 +32,7 @@ const MAX_TAGS = 24;
 const MAX_CANDIDATES_PER_TERRITORY = 8;
 const MAX_REFERENCE_CANDIDATES = 8;
 const MAX_FRONTIER_CONCEPTS = 10;
+const MAX_SEEDS = 12;
 
 export type ContextOptions = {
   active?: readonly SkillDefinition[];
@@ -125,7 +128,15 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
     evidence.relatedEntities = relatedIds.slice(0, 10).map((id) => ({ id, label: state.entities.get(id)?.label ?? id, profiled: state.profiles.has(id) }));
   }
   // Sprint 5A.1: the stage-A candidate pool (fixed evidence base, canonical dedup, stable order) replaces the raw list.
-  if (needs.has("frontierConcepts")) evidence.frontierConcepts = frontierCandidatePool(state).slice(0, MAX_FRONTIER_CONCEPTS).map(({ tagId, label, canonicalConceptKey, support, probes }) => ({ tagId, label, canonicalKey: canonicalConceptKey, support, ...(probes.length > 0 && { probes }) }));
+  if (needs.has("frontierConcepts")) {
+    // Sprint 10A: each concept says which facet it is from, whether the brand's own profile carries that facet, and which
+    // evidence-base entities carry it (why it surfaced). Labels only; ids stay in the pool and the trace.
+    evidence.frontierConcepts = frontierCandidatePool(state).slice(0, MAX_FRONTIER_CONCEPTS).map(({ tagId, label, canonicalConceptKey, support, probes, facet, facetRole, domainRelation, supporters }) => ({ tagId, label, canonicalKey: canonicalConceptKey, support, ...(probes.length > 0 && { probes }), facet, facetRole, domainRelation, supportedBy: supporters.slice(0, 3).map((x) => `${x.label}${x.relation === "SEED_ENTITY_TAG" ? " (seed)" : ""}`) }));
+    const brandId = state.brand.entity?.id;
+    const profile = brandId ? state.profiles.get(brandId) : undefined;
+    if (profile) evidence.brandProfileFacets = [...new Set(profile.tagIds.filter((id) => matchOperationalRule({ id }) === undefined).flatMap((id) => tagFacet(id) ?? []))].sort();
+    if (state.discoverySeeds?.length) evidence.seeds = state.discoverySeeds.slice(0, MAX_SEEDS).map((seed) => ({ id: seed.id, label: seed.label, domain: seed.domain, profiled: state.profiles.has(seed.id) }));
+  }
   if (needs.has("referenceCandidates")) {
     const listed = referenceCandidates(state)
       // Only meaningful candidates, and none from a namespace that already came back empty twice for this type.

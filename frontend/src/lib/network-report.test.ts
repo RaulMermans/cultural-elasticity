@@ -111,3 +111,20 @@ test("Sprint 9O: each exported card is the card its live dossier shows, with the
   assert.equal(live.nextActions[0]?.kind, "COMPARE_WITH_NAMED");
   for (const action of live.nextActions) assert.ok(block.bullets?.includes(`Next: ${action.text}`), action.text);
 });
+
+test("Sprint 10A: the export prints the evidence status and the signals a discovered direction surfaced from (parity)", async () => {
+  const { territoryReading } = await import("./territory-reading.ts");
+  const response = structuredClone(fixture.compare.view.response);
+  const result = response.investigation!.result as unknown as { territories: { key: string; label: string }[]; comparisonSetConstruction: Record<string, unknown> };
+  const target = result.territories[0]!;
+  // SYNTHETIC opportunity view for one territory of the fixture.
+  result.comparisonSetConstruction = { ...result.comparisonSetConstruction, opportunities: [{ territoryKey: target.key, direction: target.label, source: "agent_hypothesis", status: "QLOO_SUPPORTED", blocker: null, surfacedBy: [{ id: "SYN-AR-1", label: "SYN artist", relation: "SEED_ENTITY_TAG", correlationIds: ["syn-1"] }], facet: "genre:syn", domainRelation: "OUTSIDE_BRAND_PROFILE_FACETS", interpretation: "SYN reading", unknowns: [], nextInvestigation: null }] };
+  const asked: Inquiry = { ...inquiry, jobId: "syn-10a", origin: "explore", response };
+  const exported = buildNetworkReport({ view, nodes: buildNetwork(view.brand.name, view.directions, [asked]), inquiries: [asked], links: [], now });
+  const block = exported.sections.find((section) => section.id === "territories")!.blocks.find((item) => item.heading === target.label)!;
+  const live = territoryReading(result as never, target.key, view.brand.name)!.surfaced!;
+  assert.ok(block.bullets?.includes(`Evidence status: ${live.status}. ${live.statusText}`));
+  assert.ok(block.bullets?.includes(`Surfaced from: ${live.signals.join("; ")}`));
+  assert.ok(block.bullets?.includes("Agent's interpretation (not Qloo evidence): SYN reading"));
+  assert.doesNotMatch(renderReportHtml(exported), /\b(QLOO_SUPPORTED|SEED_ENTITY_TAG|OUTSIDE_BRAND_PROFILE_FACETS)\b/u);
+});

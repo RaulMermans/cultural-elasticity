@@ -16,10 +16,11 @@
  * Relative positions and classes depend on the comparison set, so how the set was built is always
  * recorded (ComparisonSetConstruction) and returned with the result.
  */
-import type { AgentTerritoryResult, AnchorDecision, CandidateCanonicalization, CandidateSource, ComparisonSetConstruction, TerritoryEvidenceStatus } from "@cultural-elasticity/shared";
+import type { AgentTerritoryResult, AnchorDecision, CandidateCanonicalization, CandidateSource, ComparisonSetConstruction, DomainRelation, FacetRole, OpportunityBlocker, OpportunitySignal, OpportunityStatus, OpportunityView, TerritoryEvidenceStatus } from "@cultural-elasticity/shared";
 import { setOverlap } from "../analysis/overlap.js";
 import { matchOperationalRule } from "../methodology/operational-tags.js";
-import { frontierConcepts, labelTokens } from "./candidate-discovery.js";
+import { tagFacet, tagRole } from "../methodology/tag-facets.js";
+import { labelTokens } from "./candidate-discovery.js";
 import { canonicalConceptKey, canonicalRelation, canonicalTagName } from "./concept-dedup.js";
 import { conceptPools, eligibleMembers, territoryConcepts, territoryProbeState, territoryQueryTags } from "./probe-policy.js";
 import { memoRun } from "./derived-cache.js";
@@ -258,36 +259,166 @@ export function unproductiveHypothesisProbeReason(state: AgentRunState, tagIds: 
   return null;
 }
 
-export type FrontierPoolEntry = { tagId: string; label: string; canonicalConceptKey: string; support: number; probes: { type: string; members: number }[] };
+export type FrontierPoolSupporter = { id: string; label: string; relation: "RELATED_ENTITY_TAG" | "SEED_ENTITY_TAG"; correlationId: string };
+
+export type FrontierPoolEntry = {
+  tagId: string;
+  label: string;
+  canonicalConceptKey: string;
+  support: number;
+  probes: { type: string; members: number }[];
+  /** Sprint 10A (frontier-pool/v2): the tag's URN facet, its role, and whether the brand's own profile carries the facet. */
+  facet: string | null;
+  facetRole: FacetRole | null;
+  domainRelation: DomainRelation;
+  /** Evidence-base entities whose profile carries the tag, in evidence-base order (why the concept surfaced). */
+  supporters: FrontierPoolSupporter[];
+};
+
+/** Sprint 10A: the pool's selection rule (recorded with every pool, so two runs can be compared). */
+export const FRONTIER_POOL_RULE = "frontier-pool/v2";
+/** Sprint 10A: at most this many seed entities (baseline-scan observations) are profiled per run. */
+export const MAX_SEED_PROFILES = 3;
+/** Taxonomy concepts carried by at least this many evidence-base profiles are preferred over free keywords. */
+const PREFERRED_SUPPORT = 2;
 
 /**
- * Stage A candidate pool: concepts carried by the evidence-base profiles but not by the brand (frontierConcepts),
- * deduplicated by canonical concept key (the best-supported tag of each key is kept; ties by tag id), bounded and in a
- * stable order (support, then canonical key). The agent (stage B) prioritizes, chooses and may add lateral hypotheses;
- * every choice is still validated with Qloo.
+ * Stage A candidate pool: concepts carried by the evidence-base profiles (the fixed related base, plus the seeds profiled
+ * in this run) but not by the brand, deduplicated by canonical concept key (the best-supported tag of each key is kept;
+ * ties by tag id). The agent (stage B) prioritizes, chooses and may add lateral hypotheses; every choice is still
+ * validated with Qloo.
+ *
+ * Sprint 10A order (frontier-pool/v2). Ranking by support alone let free media keywords ("friendship", "england") fill the
+ * bounded pool ahead of taxonomy concepts (live Oatly and Allbirds pools), and a single namespace could take every slot:
+ *   tier A  taxonomy concepts (not DESCRIPTIVE_KEYWORD) with support ≥ 2, interleaved across tag namespaces (round-robin;
+ *           namespaces ordered by their best support), each namespace in support order. The best-supported taxonomy
+ *           concept is always first.
+ *   tier B  everything else, by support; at equal support a taxonomy concept before a keyword.
+ * Order depends only on Qloo's answers and the seed profiles, never on a name. What the pool size cuts is recorded.
  */
 export function frontierCandidatePool(state: AgentRunState): FrontierPoolEntry[] {
+  return frontierPoolSelection(state).pool;
+}
+
+/** The pool and the concepts it deferred (comparisonSetConstruction.deferredConcepts). */
+export function frontierPoolSelection(state: AgentRunState): { pool: FrontierPoolEntry[]; deferred: { tagId: string; label: string; support: number; reason: string }[] } {
   return memoRun(state, "frontierPool", () => computeFrontierCandidatePool(state));
 }
 
-function computeFrontierCandidatePool(state: AgentRunState): FrontierPoolEntry[] {
-  const base = new Set(frontierEvidenceBase(state));
-  const concepts = frontierConcepts(state, 1).map((c) => ({ ...c, support: countSupport(state, c.tagId, base) })).filter((c) => c.support > 0);
-  const byKey = new Map<string, (typeof concepts)[number]>();
-  for (const c of concepts) {
-    const key = canonicalConceptKey(c.tagId);
-    const prev = byKey.get(key);
-    if (!prev || c.support > prev.support || (c.support === prev.support && c.tagId < prev.tagId)) byKey.set(key, c);
-  }
-  return [...byKey.entries()]
-    .map(([key, c]) => ({ tagId: c.tagId, label: c.label, canonicalConceptKey: key, support: c.support, probes: conceptPools(state, c.tagId).map((p) => ({ type: p.targetType, members: eligibleMembers(state, p) })) }))
-    .sort((a, b) => b.support - a.support || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey))
-    .slice(0, FRONTIER_POOL_SIZE);
+/** Seeds whose tag profile was fetched in this run (a failed or empty profile is not evidence). */
+export function profiledSeeds(state: AgentRunState): string[] {
+  return (state.discoverySeeds ?? []).map((seed) => seed.id).filter((id) => (state.profiles.get(id)?.tagIds.length ?? 0) > 0);
 }
 
-/** Evidence-base profiles carrying the tag. */
-function countSupport(state: AgentRunState, tagId: string, base: ReadonlySet<string>): number {
-  return [...base].filter((id) => state.profiles.get(id)?.tagIds.includes(tagId)).length;
+/** Refusal of a seed profile beyond MAX_SEED_PROFILES (null when allowed, or when the entity is not a seed). */
+export function seedProfileRefusal(state: AgentRunState, entityId: string): string | null {
+  if (!(state.discoverySeeds ?? []).some((seed) => seed.id === entityId) || state.profiles.has(entityId)) return null;
+  const fetched = (state.discoverySeeds ?? []).filter((seed) => state.profiles.has(seed.id)).length;
+  return fetched >= MAX_SEED_PROFILES ? `at most ${MAX_SEED_PROFILES} seed entities are profiled per run (${fetched} already); choose from frontierConcepts or test a hypothesis` : null;
+}
+
+/** Facets of the brand's own cultural tags (operational tags excluded); null when the brand profile is not collected. */
+function brandProfileFacets(state: AgentRunState): Set<string> | null {
+  const brandId = state.brand.entity?.id;
+  const profile = brandId ? state.profiles.get(brandId) : undefined;
+  if (!profile) return null;
+  return new Set(profile.tagIds.filter((id) => matchOperationalRule({ id }) === undefined).flatMap((id) => tagFacet(id) ?? []));
+}
+
+export function domainRelationOf(state: AgentRunState, tagId: string): DomainRelation {
+  const facets = brandProfileFacets(state);
+  const facet = tagFacet(tagId);
+  if (!facets || !facet) return "BRAND_PROFILE_UNKNOWN";
+  return facets.has(facet) ? "WITHIN_BRAND_PROFILE_FACETS" : "OUTSIDE_BRAND_PROFILE_FACETS";
+}
+
+function computeFrontierCandidatePool(state: AgentRunState): { pool: FrontierPoolEntry[]; deferred: { tagId: string; label: string; support: number; reason: string }[] } {
+  const brandId = state.brand.entity?.id;
+  if (!brandId) return { pool: [], deferred: [] };
+  const brandTags = new Set(state.profiles.get(brandId)?.tagIds ?? []);
+  const seedIds = new Set(profiledSeeds(state));
+  const seedLabels = new Map((state.discoverySeeds ?? []).map((seed) => [seed.id, seed.label]));
+  const base = [...frontierEvidenceBase(state), ...[...seedIds].filter((id) => id !== brandId)];
+  const supporters = new Map<string, FrontierPoolSupporter[]>();
+  for (const id of new Set(base)) {
+    const profile = state.profiles.get(id);
+    if (!profile) continue;
+    for (const tagId of new Set(profile.tagIds)) {
+      // Sprint 5A: venue-listing attributes (amenities, decor, …) are not frontier territories.
+      if (brandTags.has(tagId) || matchOperationalRule({ id: tagId }) !== undefined || incidentalConcept(tagId) !== undefined) continue;
+      const supporter: FrontierPoolSupporter = { id, label: state.entities.get(id)?.label ?? seedLabels.get(id) ?? id, relation: seedIds.has(id) ? "SEED_ENTITY_TAG" : "RELATED_ENTITY_TAG", correlationId: profile.call.envelope.execution.correlation_id };
+      supporters.set(tagId, [...(supporters.get(tagId) ?? []), supporter]);
+    }
+  }
+  const byKey = new Map<string, { tagId: string; support: number }>();
+  for (const [tagId, list] of supporters) {
+    const key = canonicalConceptKey(tagId);
+    const prev = byKey.get(key);
+    if (!prev || list.length > prev.support || (list.length === prev.support && tagId < prev.tagId)) byKey.set(key, { tagId, support: list.length });
+  }
+  const entries: FrontierPoolEntry[] = [...byKey.entries()].map(([key, { tagId, support }]) => {
+    const facet = tagFacet(tagId);
+    return {
+      tagId,
+      label: state.tags.get(tagId)?.label ?? tagId,
+      canonicalConceptKey: key,
+      support,
+      probes: conceptPools(state, tagId).map((p) => ({ type: p.targetType, members: eligibleMembers(state, p) })),
+      facet,
+      facetRole: facet ? tagRole(facet) : null,
+      domainRelation: domainRelationOf(state, tagId),
+      supporters: supporters.get(tagId)!,
+    };
+  });
+  const ordered = orderFrontierPool(entries);
+  const deferred = ordered.slice(FRONTIER_POOL_SIZE).map((e) => ({ tagId: e.tagId, label: e.label, support: e.support, reason: `beyond the ${FRONTIER_POOL_SIZE}-concept pool (${FRONTIER_POOL_RULE}: ${preferredPoolEntry(e) ? "taxonomy concept, after the interleaved namespaces" : e.facetRole === "DESCRIPTIVE_KEYWORD" ? "free keyword" : `support ${e.support}`})` }));
+  return { pool: ordered.slice(0, FRONTIER_POOL_SIZE), deferred };
+}
+
+type Orderable = { canonicalConceptKey: string; support: number; facet: string | null; facetRole: FacetRole | null };
+const preferredPoolEntry = (e: Orderable) => e.facetRole !== "DESCRIPTIVE_KEYWORD" && e.support >= PREFERRED_SUPPORT;
+
+/** The frontier-pool/v2 order (see frontierCandidatePool); pure, so evaluation code can apply it to recorded pools. */
+export function orderFrontierPool<E extends Orderable>(entries: readonly E[]): E[] {
+  const bySupport = (a: E, b: E) => b.support - a.support || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey);
+  const groups = new Map<string, E[]>();
+  for (const e of entries.filter(preferredPoolEntry).sort(bySupport)) groups.set(e.facet ?? "", [...(groups.get(e.facet ?? "") ?? []), e]);
+  const lanes = [...groups.entries()].sort(([fa, a], [fb, b]) => bySupport(a[0]!, b[0]!) || fa.localeCompare(fb)).map(([, list]) => list);
+  const tierA: E[] = [];
+  for (let round = 0; lanes.some((lane) => lane.length > round); round += 1) for (const lane of lanes) if (lane[round]) tierA.push(lane[round]!);
+  const tierB = entries.filter((e) => !preferredPoolEntry(e)).sort((a, b) => b.support - a.support || Number(a.facetRole === "DESCRIPTIVE_KEYWORD") - Number(b.facetRole === "DESCRIPTIVE_KEYWORD") || a.canonicalConceptKey.localeCompare(b.canonicalConceptKey));
+  return [...tierA, ...tierB];
+}
+
+/** Sprint 10A: the observed signals a territory surfaced from (pool supporters, cited seeds and tags), with their calls. */
+export function surfacedBy(state: AgentRunState, t: TerritoryState): OpportunitySignal[] {
+  const out = new Map<string, OpportunitySignal>();
+  const add = (signal: OpportunitySignal) => {
+    const prev = out.get(signal.id);
+    out.set(signal.id, prev ? { ...prev, correlationIds: [...new Set([...prev.correlationIds, ...signal.correlationIds])] } : signal);
+  };
+  const brandId = state.brand.entity?.id;
+  const poolEntry = frontierCandidatePool(state).find((e) => e.tagId === t.sourceTagId || t.evidenceTagIds.includes(e.tagId));
+  for (const s of poolEntry?.supporters ?? []) add({ id: s.id, label: s.label, relation: s.relation, correlationIds: [s.correlationId] });
+  for (const id of t.motivatedBy) {
+    const seed = state.discoverySeeds?.find((x) => x.id === id);
+    if (seed) { add({ id, label: seed.label, relation: "BRAND_CONDITIONED_ENTITY", correlationIds: [seed.correlationId] }); continue; }
+    const tag = state.tags.get(id);
+    if (tag) {
+      const fromBrand = tag.sources.filter((src) => src.kind === "profile" && src.subjectId === brandId);
+      const fromSeed = tag.sources.filter((src) => src.kind === "profile" && state.discoverySeeds?.some((x) => x.id === src.subjectId));
+      add({ id, label: tag.label, relation: fromBrand.length ? "BRAND_PROFILE_TAG" : fromSeed.length ? "SEED_ENTITY_TAG" : "RELATED_ENTITY_TAG", correlationIds: [...new Set(tag.sources.map((src) => src.correlationId))] });
+      continue;
+    }
+    const entity = state.entities.get(id);
+    if (entity) add({ id, label: entity.label, relation: entity.sources.some((src) => src.conditionedOn !== null || src.kind === "related") ? "BRAND_CONDITIONED_ENTITY" : "RELATED_ENTITY_TAG", correlationIds: [...new Set(entity.sources.map((src) => src.correlationId))] });
+  }
+  return [...out.values()];
+}
+
+/** Sprint 10A: an id the proposer may cite as motivation — observed in this run, or a server-held seed. */
+export function observedSignal(state: AgentRunState, id: string): boolean {
+  return state.tags.has(id) || state.entities.has(id) || (state.discoverySeeds ?? []).some((seed) => seed.id === id);
 }
 
 /** Sprint 5A.1 canonical identity of a territory's concept (see CandidateCanonicalization in the shared contract). */
@@ -446,7 +577,14 @@ export function comparisonSetConstruction(state: AgentRunState, results: readonl
     final: finalTerritories.map((t) => ({ key: t.key, label: t.label, role: t.role, source: sourceOf(t), route: byKey.get(t.key)!.analysisRoute })),
     dedupDecisions: state.trace.conceptDedup,
     semanticAssessments: state.semanticAssessments,
-    ...(state.interpretation?.intent === "explore_frontier" && { candidatePool: frontierCandidatePool(state).map(({ canonicalConceptKey, tagId, label, support }) => ({ canonicalConceptKey, tagId, label, support })), evidenceBase: frontierEvidenceBase(state) }),
+    ...(state.interpretation?.intent === "explore_frontier" && {
+      candidatePool: frontierCandidatePool(state).map(({ canonicalConceptKey, tagId, label, support, facet, facetRole, domainRelation, supporters }) => ({ canonicalConceptKey, tagId, label, support, facet, facetRole, domainRelation, supportingEntities: supporters.map((x) => x.label) })),
+      evidenceBase: frontierEvidenceBase(state),
+      candidatePoolRule: FRONTIER_POOL_RULE,
+      deferredConcepts: frontierPoolSelection(state).deferred,
+      ...(state.discoverySeeds?.length && { seeds: state.discoverySeeds.map((seed) => ({ id: seed.id, label: seed.label, domain: seed.domain, correlationId: seed.correlationId, profiled: state.profiles.has(seed.id) })) }),
+      opportunities: frontierOpportunities(state, results),
+    }),
     diversity: {
       assessment: frontier.length < 2 ? "unknown" : diversity.pairs.length > 0 ? "overlapping" : diversity.unknown ? "unknown" : "diverse",
       similarPairs: diversity.pairs.map(({ a, b, basis }) => ({ a, b, basis })),
@@ -461,6 +599,83 @@ export function comparisonSetConstruction(state: AgentRunState, results: readonl
     },
     note: NOTE,
   };
+}
+
+// ---- Sprint 10A: opportunity status (opportunity-status/v1) ----
+
+const BLOCKER_BY_CODE: Record<string, OpportunityBlocker> = {
+  DUPLICATE_TERRITORY: "DUPLICATE",
+  LOW_DIVERSITY: "DUPLICATE",
+  BUDGET_EXHAUSTED: "INCONCLUSIVE",
+  NO_VALID_REPRESENTATION: "UNMEASURABLE",
+  REPRESENTATION_QUALITY_WEAK: "UNMEASURABLE",
+};
+
+/** Brand-independent Qloo members of the territory's concept in this run (pools only; a profile carrying the tag is not a member). */
+export function brandIndependentMembers(state: AgentRunState, t: TerritoryState): boolean {
+  return t.concept !== null && supportingPools(state, t.concept.id).length > 0;
+}
+
+/**
+ * What the run's Qloo evidence established about a frontier candidate (see OpportunityStatus for the exact definitions).
+ * QLOO_SUPPORTED and RELATIVELY_MEASURED both require brand-independent members in this run. This is stricter than the
+ * candidate gate (qlooSupport also accepts a non-brand profile carrying the tag): a profile, a seed, a motivating signal
+ * or a model judgment never makes a candidate "supported".
+ */
+export function opportunityStatus(state: AgentRunState, t: TerritoryState, r: AgentTerritoryResult | undefined): { status: OpportunityStatus; blocker: OpportunityBlocker | null } {
+  const supported = brandIndependentMembers(state, t);
+  if (t.status === "dropped") return { status: "NOT_ESTABLISHED", blocker: BLOCKER_BY_CODE[t.dropReason?.code ?? ""] ?? "UNSUPPORTED" };
+  if (!r) return supported ? { status: "QLOO_SUPPORTED", blocker: null } : { status: "UNVALIDATED_HYPOTHESIS", blocker: null };
+  // A run that ended before analysing the candidate (NOT_INVESTIGATED, BUDGET_EXHAUSTED) is inconclusive, not unmeasurable.
+  if (r.analysisRoute === "INSUFFICIENT_EVIDENCE") return { status: "NOT_ESTABLISHED", blocker: ["NOT_INVESTIGATED", "BUDGET_EXHAUSTED"].includes(r.representation.failure?.code ?? "") ? "INCONCLUSIVE" : supported ? "UNMEASURABLE" : "UNSUPPORTED" };
+  if (!supported) return { status: "NOT_ESTABLISHED", blocker: "INCONCLUSIVE" };
+  if (r.analysisRoute === "FULL_RELATIVE_ANALYSIS" && typeof r.relativePosition?.position === "number") return { status: "RELATIVELY_MEASURED", blocker: null };
+  return { status: "QLOO_SUPPORTED", blocker: null };
+}
+
+const NEXT: Record<OpportunityStatus | OpportunityBlocker, ((direction: string) => string) | null> = {
+  OBSERVED_ASSOCIATION: (d) => `Resolve ${d} to a Qloo concept and test it for brand-independent members.`,
+  UNVALIDATED_HYPOTHESIS: (d) => `Resolve ${d} to a Qloo concept and test it for brand-independent members.`,
+  QLOO_SUPPORTED: (d) => `Place ${d} in a comparison set of at least three territories of one entity type to measure a relative position.`,
+  RELATIVELY_MEASURED: (d) => `Check whether ${d}'s position holds in a different comparison set.`,
+  NOT_ESTABLISHED: null,
+  UNSUPPORTED: null,
+  DUPLICATE: null,
+  UNMEASURABLE: (d) => `Look for an entity type for which Qloo returns members of ${d}, then represent it.`,
+  INCONCLUSIVE: (d) => `Repeat the investigation of ${d} with budget left for its probes.`,
+};
+
+/** Every frontier candidate of the run, explained from evidence; only `interpretation` is the model's text. */
+export function frontierOpportunities(state: AgentRunState, results: readonly AgentTerritoryResult[]): OpportunityView[] {
+  const byKey = new Map(results.map((r) => [r.key, r]));
+  return state.territories.filter((t) => t.role === "frontier_candidate").map((t) => {
+    const r = byKey.get(t.key);
+    const { status, blocker } = opportunityStatus(state, t, r);
+    const signals = surfacedBy(state, t);
+    const conceptId = t.concept?.id ?? t.sourceTagId;
+    const unknowns: string[] = [];
+    if (t.origin === "agent_hypothesis") unknowns.push("The link between the signals and this direction is the agent's interpretation, not Qloo evidence.");
+    if (signals.length > 0 && signals.every((x) => x.relation !== "BRAND_PROFILE_TAG")) unknowns.push(`The signals behind it are indirect (other entities' profiles or brand-related lists), not a measured affinity between ${state.brand.entity?.label ?? "the brand"} and this direction.`);
+    if (status === "UNVALIDATED_HYPOTHESIS") unknowns.push("Qloo support was not tested before the run ended.");
+    if (status === "QLOO_SUPPORTED") unknowns.push("No relative position was measured, so how far the brand extends into it is unknown.");
+    if (status === "RELATIVELY_MEASURED") unknowns.push("The position holds only for this comparison set.");
+    if (status === "NOT_ESTABLISHED") unknowns.push(t.dropReason?.detail ?? r?.representation.failure?.detail ?? "No measurable Qloo evidence.");
+    unknowns.push("Whether it would be credible or commercially useful. No method here measures that.");
+    const next = NEXT[blocker ?? status];
+    return {
+      territoryKey: t.key,
+      direction: t.label,
+      source: t.source === "agent_hypothesis" ? "agent_hypothesis" : "qloo_grounded",
+      status,
+      blocker,
+      surfacedBy: signals,
+      facet: conceptId ? tagFacet(conceptId) : null,
+      domainRelation: conceptId ? domainRelationOf(state, conceptId) : "BRAND_PROFILE_UNKNOWN",
+      interpretation: (t.origin === "agent_hypothesis" ? t.rationale : t.semanticJudgment?.reason ?? null)?.slice(0, 300) ?? null,
+      unknowns: unknowns.map((u) => u.slice(0, 300)),
+      nextInvestigation: next ? next(t.label) : null,
+    };
+  });
 }
 
 // ---- Frontier set stability (repeated runs of the same request) ----

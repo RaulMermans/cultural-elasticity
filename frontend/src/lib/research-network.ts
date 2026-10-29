@@ -10,7 +10,8 @@ import type { DirectionView } from "./research-view.ts";
 
 export const BRAND_NODE = "brand";
 
-export type InquiryOrigin = "direction" | "question";
+/** Sprint 10A: "explore" is open discovery started from the scan's signals (the explore handoff). */
+export type InquiryOrigin = "direction" | "question" | "explore";
 
 /** One investigation in the network. Its job token reads the job's public view; it starts nothing. */
 export type Inquiry = {
@@ -198,9 +199,9 @@ export function buildNetwork(brand: string, directions: readonly DirectionView[]
     const branch = branchName.get(parentId) ?? null;
     if (branch) branchName.set(id, branch);
     nodes.push({ id, parentId, kind: "inquiry", label: inquiry.question, tone: state.tone, status: state.status, runId, territoryKey: null, directionKey: null, jobId: inquiry.jobId });
-    // A direction investigation is about that direction; a question can name or discover other territories. The
-    // branch's own territories (a connection's two ends) are never repeated as findings.
-    if (inquiry.origin !== "question" || !inquiry.response) continue;
+    // A direction investigation is about that direction; a question or an exploration can name or discover other
+    // territories. The branch's own territories (a connection's two ends) are never repeated as findings.
+    if (inquiry.origin === "direction" || !inquiry.response) continue;
     inquiry.response.territories.forEach((territory, index) => {
       if (branch?.includes(normName(territory.name))) return;
       const copy = territoryCopy(inquiry.response!, territory);

@@ -85,7 +85,11 @@ export type AgentDecisionContext = {
     brandProfile?: { id: string; label: string }[] | null;
     relatedEntities?: { id: string; label: string; profiled: boolean }[];
     /** Concepts carried by Qloo-related entities but not by the brand (deterministically derived). */
-    frontierConcepts?: { tagId: string; label: string; support: number; canonicalKey?: string; probes?: { type: string; members: number }[] }[];
+    frontierConcepts?: { tagId: string; label: string; support: number; canonicalKey?: string; probes?: { type: string; members: number }[]; facet?: string | null; facetRole?: string | null; domainRelation?: string; supportedBy?: string[] }[];
+    /** Sprint 10A: baseline-scan entities this explore run starts from (observations, never support). */
+    seeds?: { id: string; label: string; domain: string; profiled: boolean }[];
+    /** Sprint 10A: facets of the brand's own Qloo tag profile (what "within"/"outside" the brand's profile means). */
+    brandProfileFacets?: string[];
     /** Sprint 5A.1: the entity type the comparison can share, and what each territory still needs for it. */
     representationPlan?: { preferredCommonType: string | null; feasibility: string; supportedTerritoriesByType: Record<string, string[]>; missingRequirements: string[] };
     referenceCandidates?: { tagId: string; label: string; namespace: string; namespaceYield: string; probe: { entityType: string; eligible: number } | null; usable: boolean | null; semantic: string; justification: string; typeEvidence?: number }[];
