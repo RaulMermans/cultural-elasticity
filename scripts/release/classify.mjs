@@ -108,7 +108,8 @@ export function classifyRelease(e) {
     // The baseline budget is cumulative in PostgreSQL; the env value is the absolute limit applied at boot.
     const db = e.ops?.baselineBudget;
     if (db) {
-      if (f.baselineTotal !== null && db.limitCalls !== f.baselineTotal) degradations.push("BASELINE_LIMIT_NOT_APPLIED");
+      // The limit reaches PostgreSQL only when baseline routes boot enabled; a disabled baseline keeps the old row.
+      if (f.baselineEnabled === "1" && f.baselineTotal !== null && db.limitCalls !== f.baselineTotal) degradations.push("BASELINE_LIMIT_NOT_APPLIED");
       if (f.baselineLiveEnabled === "1" && db.limitCalls <= db.usedCalls) failures.push("BASELINE_QUOTA_AT_OR_BELOW_USAGE");
     } else if (f.baselineLiveEnabled === "1") degradations.push("BASELINE_BUDGET_NOT_VERIFIED");
     if (open && e.ops && e.ops.runLedger == null) failures.push("RUN_LEDGER_NOT_DURABLE");

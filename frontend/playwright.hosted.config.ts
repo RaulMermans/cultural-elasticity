@@ -22,6 +22,8 @@ export default defineConfig({
     navigationTimeout: 60_000,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    // The research network floats its cards; reduced motion keeps them still so clicks are stable (as in e2e).
+    reducedMotion: "reduce",
   },
   projects: [
     { name: "desktop-1440x900", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } },
