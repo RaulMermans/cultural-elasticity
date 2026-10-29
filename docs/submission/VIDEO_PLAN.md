@@ -1,6 +1,6 @@
 # Demo video plan (75 seconds)
 
-**Status:** not recorded. This is a ready-to-record plan.
+**Status:** not recorded. This is a ready-to-record plan, optional for the submission.
 
 **Rules for the recording:**
 
@@ -9,27 +9,34 @@
 - Never simulate an agent step.
 - Keep no credentials, browser profile or other tabs on screen.
 
-## Setup
+## Footage source (Sprint 9O)
+
+Record from a **completed, verified run**, not a run made only for filming.
+
+The Sprint 9O desktop acceptance run (pre-registered case `9o-c4-holdout-discovery`) can be recorded in the same browser session with `E2E_VIDEO=1`. Playwright then keeps a genuine 1440×900 recording of the real hosted product next to the run's evidence. That footage is the raw material.
+
+If it is unusable, record by hand from the saved research in the library. Reopening saved research makes no new provider call.
 
 | | |
 | --- | --- |
 | Browser | Chrome, window 1440×900, zoom 100%, no extensions bar |
 | URL | https://cultural-elasticity-raulmermans-projects.vercel.app |
-| Capture | macOS `Shift-Cmd-5` (record selected portion), or QuickTime screen recording at 60 fps |
-| Brand | Use a brand not yet in your library, so the scan is visibly new; Patagonia or Crocs both work |
-| Spend | About 1 brand scan and 1 investigation from the public allowance (roughly 30 Qloo calls and under $0.02) |
+| Capture | The Playwright video (`E2E_VIDEO=1`), or macOS `Shift-Cmd-5` / QuickTime at 60 fps |
+| Spend | None beyond the acceptance run itself |
 
 ## Shot list and voice-over
 
-| Time | Screen | Voice-over |
-| --- | --- | --- |
-| 0–8 s | The home page headline: "How far can a brand stretch before it stops feeling like itself?" | "Brands keep moving into new territory, from footwear into food and outdoor gear into jewelry. But how far can a brand stretch before it stops being credible?" |
-| 8–20 s | Type "Patagonia" and select **Find brand**. Qloo confirms the entity; select **Start research**. Cut (time-lapse) to the network appearing. | "Cultural Elasticity asks Qloo, not a language model. Qloo resolves the brand and maps its audience's taste: artists, places, films, books and tags." |
-| 20–30 s | Hover the brand node, select one direction card, and show the dossier's evidence chips. | "Each connection comes with its evidence, straight from Qloo." |
-| 30–45 s | Type "How far can Patagonia extend into luxury jewelry?" into the composer and select **Ask the agent**. Show the live agent steps for 3 seconds, then cut (time-lapse). | "An AI agent plans the investigation. It finds Qloo entities that stand for the territory and alternatives Qloo can measure, then collects brand-conditioned rankings." |
-| 45–60 s | The result card: the outcome, then the steadiness line, the ranking, and "What we don't know yet". | "Tested code, not the model, places the territory: natural fit, credible stretch or cultural break. When Qloo's evidence is too thin, it says so instead of guessing." |
-| 60–70 s | Select **PDF**, then show the downloaded report for 2 seconds. Select **Save and go back** and show the library. | "Every reading exports as a report and stays in your library, with the Qloo provenance behind each number." |
-| 70–75 s | Return to the home page and show the URL. | "Cultural Elasticity: evidence, not speculation, about where your brand belongs. Try it live." |
+| Time | Beat | Screen | Voice-over |
+| --- | --- | --- | --- |
+| 0–8 s | The strategist's problem | Home page headline | "Brand teams keep looking for their next territory. Usually they guess, or ask a chatbot that cites nothing." |
+| 8–20 s | A real Qloo fingerprint | Brand typed, **Find brand**, Qloo confirms, **Start research**. Cut (time-lapse) to the network. | "Cultural Elasticity starts from Qloo. It maps what the brand's audience already shares: artists, places, films, books and tastes." |
+| 20–30 s | An interesting direction | Select the direction that was investigated; show its dossier and Qloo evidence chips. | "Some directions are expected. Some are not. Each one comes with the Qloo evidence that put it there." |
+| 30–45 s | Real agent research | **Investigate**; show the live agent steps for 3 s, then a "time-lapse" cut. | "An AI agent plans the research: it finds Qloo entities for the territory and alternatives Qloo can measure." |
+| 45–58 s | A defensible finding and its uncertainty | The reading: outcome, steadiness, "What we don't know yet". | "Tested code, not the model, places it. When Qloo's evidence is thin, it says so." |
+| 58–68 s | The decision card | Scroll the decision card: finding, why it matters, uncertainty, next actions. Show the PDF for 2 s. | "Every reading ends in a decision: what was found, what is uncertain, and what to research next." |
+| 68–75 s | The product link | Home page with the URL visible. | "Discover the unexpected. Validate it with cultural intelligence. Try it live." |
+
+Read the voice-over against the run actually filmed. If the reading was "Not settled", say so on screen. Never describe a class the run did not produce.
 
 ## Editing
 

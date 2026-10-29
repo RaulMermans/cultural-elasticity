@@ -16,12 +16,15 @@ export default defineConfig({
   retries: 0,
   reporter: "list",
   // Failure traces stay local: they can hold full page content. The specs write their own redacted evidence.
-  outputDir: "test-results/hosted",
+  // Sprint 9O: outside test-results/, which the synthetic suite clears at start (it broke a concurrent hosted run in 9M).
+  outputDir: process.env.E2E_OUTPUT_DIR ?? "test-results-hosted",
   use: {
     baseURL,
     navigationTimeout: 60_000,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    // Sprint 9O: E2E_VIDEO=1 keeps a genuine recording of the hosted run (raw demo footage; no extra provider call).
+    video: process.env.E2E_VIDEO === "1" ? { mode: "on", size: { width: 1440, height: 900 } } : "off",
     // The research network floats its cards; reduced motion keeps them still so clicks are stable (as in e2e).
     reducedMotion: "reduce",
   },

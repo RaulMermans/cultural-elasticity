@@ -32,7 +32,8 @@
  *   thin-panel discovery the target exemplars' profiles are reference discovery only when ≥ MEANINGFUL_EXEMPLAR_SUPPORT
  *                        validated exemplars exist: with one, their tags can be at most WEAK, so the calls cannot help
  *   bounded probing      after REFERENCE_EMPTY_PROBE_LIMIT empty reference probes of the type while references are still
- *                        missing and no usable probed candidate covers them, FULL is not feasible (NO_REFERENCE_YIELD)
+ *                        missing and neither usable probed candidates nor unprobed type-evidenced ones (Sprint 9O)
+ *                        cover them, FULL is not feasible (NO_REFERENCE_YIELD)
  */
 import { matchOperationalRule } from "../methodology/operational-tags.js";
 import { tagNamespace, territoryQueryTags } from "./probe-policy.js";
@@ -346,6 +347,9 @@ function computeReferencePlan(state: AgentRunState): ReferencePlan {
   ];
   const ready = active.filter((t) => t.status !== "analyzed" && (t.representation || t.conceptOnly));
   const usableProbed = meaningful.filter((c) => c.usable === true).length;
+  // Sprint 9O: the probe limit is an efficiency bound, not proof. Unprobed candidates observed on profiles of the type
+  // remain realistically obtainable references, so the bound blocks FULL only when they cannot cover what is missing.
+  const typedUnprobed = meaningful.filter((c) => c.usable === null && c.typeEvidence > 0).length;
   const cost = completionCost({ needed, usableProbed, pending: pending.length, discovery: meaningful.length >= needed ? 0 : discovery.length, reserve: analysisReserve(state, ready) });
   const skill = state.skillUsage.get("build_comparison_set");
   const probes = state.feasibilityPolicy === "enforce" ? referenceProbeLedger(state, entityType) : { made: 0, empty: 0, productive: 0 };
@@ -360,8 +364,8 @@ function computeReferencePlan(state: AgentRunState): ReferencePlan {
           ? ["TURN_BUDGET", `only ${turnsLeft} turn(s) left; references and analysis need ${cost.turns}`]
           : remainingQlooCalls(state) < cost.calls
             ? ["QLOO_BUDGET", `${remainingQlooCalls(state)} Qloo call(s) left; references and analysis need about ${cost.calls}`]
-            : needed > 0 && probes.empty >= REFERENCE_EMPTY_PROBE_LIMIT && usableProbed < needed
-              ? ["NO_REFERENCE_YIELD", `${probes.empty} brand-independent reference probes returned no eligible ${entityType} member and the ${needed} missing reference(s) have no usable probed candidate${thin}`]
+            : needed > 0 && probes.empty >= REFERENCE_EMPTY_PROBE_LIMIT && usableProbed + typedUnprobed < needed
+              ? ["NO_REFERENCE_YIELD", `${probes.empty} brand-independent reference probes returned no eligible ${entityType} member and the ${needed} missing reference(s) have no usable probed candidate or unprobed candidate observed on ${entityType} profiles${thin}`]
               : needed > 0 && meaningful.length < needed && discovery.length === 0
                 ? ["NO_MEANINGFUL_REFERENCE_CANDIDATES", `only ${meaningful.length} semantically meaningful reference candidate(s) with possible ${entityType} members; ${needed} needed${thin}`]
                 : [null, null];

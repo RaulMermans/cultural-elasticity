@@ -41,6 +41,8 @@ jobs:
       - run: pnpm eval:live
       - run: pnpm eval:elasticity
       - run: pnpm eval:agent
+      - name: Discovery-to-decision eval (synthetic world + recorded live artefacts; no provider call)
+        run: pnpm eval:d2d
       - run: pnpm eval:query
       - run: pnpm build
       - name: Deployment configuration regression guard (offline; no cloud credentials)

@@ -19,6 +19,12 @@ railway status --json | node -e '
   const env = s.environments?.edges?.map((e) => e.node).find((e) => e.name === "production");
   if (s.name !== "cultural-elasticity" || !env) { console.error("REFUSED: Railway CLI is not linked to cultural-elasticity/production"); process.exit(1); }'
 
+# Sprint 9O: this window rewrites the run-wide ceilings (75 Qloo, $2.00). During a public evaluation those ceilings are
+# the evaluation's own (durable ledger already above 75), so opening it would shut admissions for every visitor.
+railway variables --json | node -e '
+  const v = JSON.parse(require("fs").readFileSync(0, "utf8"));
+  if (v.CE_PUBLIC_EVALUATION === "1") { console.error("REFUSED: a public evaluation is configured; its ceilings must not be rewritten. Close it first (scripts/public-evaluation-close.sh) or use an operator credential only, with owner approval."); process.exit(1); }'
+
 # Current cumulative baseline usage, read with the diagnostics token (piped, never printed). Fail closed.
 USED=$(railway variables --json | node -e '
   const v = JSON.parse(require("fs").readFileSync(0, "utf8"));
