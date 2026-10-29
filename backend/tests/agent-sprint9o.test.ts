@@ -80,3 +80,73 @@ describe("Sprint 9O reference-probe bound counterexample", () => {
     expect(probeValue(state, "urn:tag:genre:synmusic:lofi_beats")).toMatchObject({ value: "NONE" });
   });
 });
+
+describe("Sprint 9O baseline grounding (live Carhartt → Blue Collar re-resolved the name and never probed the scan's tag)", () => {
+  const COFFEE = "urn:tag:cuisine:syn:coffee_houses";
+  const grounding = (territory: string, tagId: string) => ({ territory, tagId, label: territory, type: tagId.split(":").slice(0, 4).join(":"), subjectId: "SYN-BR-9N01", correlationId: "syn-baseline-entity-tags" });
+
+  it("a grounded direction tells the model to probe the baseline's own tag first, and the run anchors to it", async () => {
+    const { buildDecisionContext } = await import("../src/agent/context.js");
+    const { applyInterpretation } = await import("../src/agent/router.js");
+    const state = freshState({ brand: "Halden Apothecary", territories: ["Coffee Houses"] });
+    state.territoryGrounding = grounding("Coffee Houses", COFFEE);
+    applyInterpretation(state, { intent: "analyze_move", brand: "Halden Apothecary", territories: ["Coffee Houses"] }, "query_layer");
+    const t = state.territories[0]!;
+    expect(t.sourceTagId).toBe(COFFEE);
+    expect(state.tags.get(COFFEE)?.sources).toEqual([{ kind: "profile", query: null, subjectId: "SYN-BR-9N01", correlationId: "syn-baseline-entity-tags" }]);
+    transition(state, "RESOLVING", "test");
+    await executeToolCall(state, registry, scripted(), "qloo_resolve_entity", { name: "Halden Apothecary", type: "brand", role: "brand" });
+    transition(state, "INVESTIGATING", "test");
+    const view = buildDecisionContext(state, registry, null).territories.find((x) => x.key === t.key) as { nextProbe?: { tagId?: string } } | undefined;
+    expect(JSON.stringify(view?.nextProbe ?? null)).toContain(COFFEE);
+    expect(assessEvidenceSufficiency(state).nextActions.find((a) => a.target === t.key && a.value === "HIGH")).toMatchObject({ action: "qloo_recommend" });
+
+    const { AgentRuntime } = await import("../src/agent/runtime.js");
+    const { BaselinePolicyModel } = await import("../src/agent/model/baseline.js");
+    const r = await new AgentRuntime({ model: new BaselinePolicyModel(), provider: scripted() }).run({ userQuery: "How far can Halden Apothecary extend into Coffee Houses?", brand: "Halden Apothecary", territories: ["Coffee Houses"] }, undefined, { territoryGrounding: grounding("Coffee Houses", COFFEE) });
+    expect("territories" in r && r.territories.find((x) => x.label === "Coffee Houses")?.resolvedConcept?.id).toBe(COFFEE);
+  });
+
+  it("a grounded tag Qloo returns no members for leaves the direction unclassified, with the honest reason", async () => {
+    const { AgentRuntime } = await import("../src/agent/runtime.js");
+    const { BaselinePolicyModel } = await import("../src/agent/model/baseline.js");
+    const LOFI = "urn:tag:genre:synmusic:lofi_beats";
+    const r = await new AgentRuntime({ model: new BaselinePolicyModel(), provider: scripted() }).run({ userQuery: "How far can Corvid Basics extend into Lofi Beats?", brand: "Corvid Basics", territories: ["Lofi Beats"] }, undefined, { territoryGrounding: { ...grounding("Lofi Beats", LOFI), subjectId: "SYN-BR-9N02" } });
+    const t = "territories" in r ? r.territories.find((x) => x.label === "Lofi Beats") : undefined;
+    expect(r.trace.toolCalls.filter((c) => c.tool === "qloo_recommend").every((c) => c.status === "empty")).toBe(true);
+    expect(t?.classification ?? null).toBeNull();
+    expect(t?.analysisRoute).toBe("INSUFFICIENT_EVIDENCE");
+    expect(t?.limitations.map((l) => l.code)).toContain("NO_VALID_REPRESENTATION");
+  });
+
+  it("the handoff grounds a direction only from an ok entity_tags observation on the brand", async () => {
+    const { directionGrounding } = await import("../src/api/baseline-handoff.js");
+    const ref = { operation: "entity_tags" as const, correlationId: "syn-c1", sourceId: "s", capturedAt: "t", sourceStatus: "ok" as const, scope: "brand" };
+    const result = { brand: { name: "Syn", qlooId: "SYN-BR-1" }, territories: [
+      { id: "d1", name: "Blue Collar", canonicalConcept: "urn:tag:keyword:qloo:blue_collar", supportingReferences: [ref] },
+      { id: "d2", name: "Partial", canonicalConcept: "urn:tag:keyword:qloo:partial", supportingReferences: [{ ...ref, sourceStatus: "partial" as const }] },
+    ] } as unknown as Parameters<typeof directionGrounding>[0];
+    expect(directionGrounding(result, "d1")).toEqual({ territory: "Blue Collar", tagId: "urn:tag:keyword:qloo:blue_collar", label: "Blue Collar", type: "urn:tag:keyword:qloo", subjectId: "SYN-BR-1", correlationId: "syn-c1" });
+    expect(directionGrounding(result, "d2")).toBeNull();
+    expect(directionGrounding(result, "missing")).toBeNull();
+  });
+});
+
+describe("Sprint 9O drop reasons the reader sees are the runtime's observation (live Carhartt: 'the one probe' after five)", () => {
+  it("replaces the model's account of empty probes with the recorded count", async () => {
+    const LOFI = "urn:tag:genre:synmusic:lofi_beats";
+    const state = freshState({ brand: "Corvid Basics", territories: ["Lofi Beats"] });
+    const provider = scripted();
+    const exec = (tool: string, args: unknown) => executeToolCall(state, registry, provider, tool, args);
+    await exec("interpret_request", { intent: "analyze_move", brand: "Corvid Basics", territories: ["Lofi Beats"] });
+    transition(state, "RESOLVING", "test");
+    await exec("qloo_resolve_entity", { name: "Corvid Basics", type: "brand", role: "brand" });
+    transition(state, "INVESTIGATING", "test");
+    await exec("qloo_find_tags", { query: "Lofi Beats", limit: 8 });
+    for (const targetType of ["place", "brand", "artist"]) await exec("qloo_recommend", { targetType, tagIds: [LOFI], conditionOnBrand: false, limit: 20 });
+    await exec("drop_territory", { territoryKey: "lofi_beats", code: "TERRITORY_UNRESOLVED", reason: "the one probe returned no place entities" });
+    const detail = state.territories.find((t) => t.key === "lofi_beats")!.dropReason!.detail;
+    expect(detail).toBe("Lofi Beats: 3 brand-independent Qloo probe(s) of 1 tag(s) (place, brand, artist); none returned entities.");
+    expect(state.candidateRejections.at(-1)?.reason).toBe("the one probe returned no place entities");
+  });
+});

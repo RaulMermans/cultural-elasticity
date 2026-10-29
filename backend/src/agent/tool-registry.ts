@@ -17,6 +17,7 @@ import { AGENT_INTENTS, RANKABLE_TYPES, shortEntityType, type RankableType } fro
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { callQloo, describedEntity, PROFILE_TAKE, recordFindTags, recordPool, recordProfile, recordRelated, recordResolved } from "./qloo-gateway.js";
 import { strategyExhausted } from "./readiness.js";
+import { eligibleMembers, territoryConcepts } from "./probe-policy.js";
 import { referenceCandidates } from "./reference-strategy.js";
 import { alternateAnchorRefusal, anchorOnObservedMembers, FRONTIER_EVIDENCE_BASE, FRONTIER_RELATED_TAKE, recordAnchorDecision } from "./frontier.js";
 import { alignmentDeferral } from "./representation-alignment.js";
@@ -260,6 +261,18 @@ const assessConceptDuplicates: AgentTool<{ judgments: { a: string; b: string; ve
   },
 };
 
+
+/** What the run observed for a territory's Qloo concepts: deterministic, from recorded brand-independent pools. */
+function observedSupport(state: AgentRunState, t: { label: string } & Parameters<typeof territoryConcepts>[1]): string {
+  const concepts = territoryConcepts(state, t);
+  const pools = state.pools.filter((p) => p.conditionedOn === null && p.tagIds.length === 1 && concepts.includes(p.tagIds[0]!));
+  if (concepts.length === 0) return `${t.label}: Qloo returned no tag for it in this run.`;
+  if (pools.length === 0) return `${t.label}: ${concepts.length} Qloo tag(s) found, none probed for entities in this run.`;
+  const withMembers = pools.filter((p) => eligibleMembers(state, p) > 0).length;
+  const types = [...new Set(pools.map((p) => p.targetType))].join(", ");
+  return `${t.label}: ${pools.length} brand-independent Qloo probe(s) of ${new Set(pools.map((p) => p.tagIds[0])).size} tag(s) (${types}); ${withMembers === 0 ? "none" : withMembers} returned entities.`;
+}
+
 const dropTerritory: AgentTool<{ territoryKey: string; code: "TERRITORY_UNRESOLVED" | "TERRITORY_AMBIGUOUS" | "NO_VALID_REPRESENTATION" | "DUPLICATE_TERRITORY" | "QLOO_EMPTY"; reason: string }> = {
   name: "drop_territory",
   description: "No Qloo call. Remove a territory from scope with a taxonomy code and reason (Qloo has no concept for it, or it duplicates another). It stays in the result as unsupported; never silently deleted. Do not drop a user-named territory that still has a recovery option.",
@@ -275,7 +288,9 @@ const dropTerritory: AgentTool<{ territoryKey: string; code: "TERRITORY_UNRESOLV
   async execute({ state }, input) {
     const t = findTerritory(state, input.territoryKey)!;
     t.status = "dropped";
-    t.dropReason = { code: input.code, detail: input.reason };
+    // Sprint 9O: for "no Qloo support" drops the reader sees what the runtime observed, never the model's account of it
+    // (live Carhartt: the model wrote "the one probe" after five). The model's note stays in the trace.
+    t.dropReason = { code: input.code, detail: input.code === "DUPLICATE_TERRITORY" || input.code === "TERRITORY_AMBIGUOUS" ? input.reason : observedSupport(state, t) };
     state.candidateRejections.push({ key: t.key, stage: input.code === "DUPLICATE_TERRITORY" ? "dedup" : input.code === "NO_VALID_REPRESENTATION" ? "representation" : input.code === "QLOO_EMPTY" ? "qloo_support" : "resolution", code: input.code, reason: input.reason });
     return { status: "ok", summary: `${t.key} dropped (${input.code})` };
   },

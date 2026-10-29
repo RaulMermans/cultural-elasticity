@@ -20,6 +20,12 @@ export type EntitySource = { kind: EntitySourceKind; tagIds: string[]; condition
 
 export type EntityRecord = { id: string; label: string; type: RankableType | undefined; sources: EntitySource[] };
 
+/**
+ * Sprint 9O: a baseline direction's own Qloo tag, observed on the brand's tag profile in the authorized scan. It is a
+ * starting point for the investigation (the territory's sourceTagId), not support: members must still come from Qloo.
+ */
+export type TerritoryGrounding = { territory: string; tagId: string; label: string; type: string; subjectId: string; correlationId: string };
+
 export type TagRecord = { id: string; label: string; type: string; sources: { kind: "find_tags" | "profile"; query: string | null; subjectId: string | null; correlationId: string }[] };
 
 export type ProfileRecord = { subjectId: string; call: LiveCall; tagIds: string[]; take: number };
@@ -96,6 +102,8 @@ export type AgentRunState = {
   runId: string;
   /** A canonical baseline identity to recheck before using the newly resolved brand. */
   expectedBrandId?: string | null;
+  /** Sprint 9O: the Qloo tag the authorized baseline observed for the investigated direction (server-held, never from text). */
+  territoryGrounding?: TerritoryGrounding | null;
   status: AgentRunStatus;
   request: AgentRequest;
   limits: InvestigationLimits;

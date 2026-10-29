@@ -232,8 +232,9 @@ The bound never fired wrongly on the existing fixtures. The counterexample is ne
 | 3 | Hosted job results were not persisted, so the Uniqlo trace was lost in Sprint 9N | Sprint 9N report | Harness capture plus manifest (§6) | Fixed on the branch |
 | 4 | The synthetic E2E clears the hosted output (Sprint 9M) | Sprint 9M note | Separate output directory | Fixed (merged in #48) |
 | 5 | **The export prints a different decision card than the live dossier.** The live first next action was "compare Blue Collar with country and Outdoor Adventure Enthusiasts"; the HTML said "Explore the Qloo connections…". Cause: `network-report.ts` called `territoryReading` without the baseline context (other directions, the direction's why) that `ResearchNetwork` passes. The 9N parity test was tautological: it compared with the same context-free call. | Live run 1 export; a new test fails before the fix | The report passes each card's dossier context | Fixed on `sprint/9o-live-run-1`; not deployed |
-| 6 | Baseline → agent handoff drops the direction's observed Qloo tag (§5a finding 1) | Live run 1 trace | Not fixed: a contract change; needs a decision | Open |
-| 7 | The card says "Qloo does not support X as a concept" when only the tried tags were empty (§5a finding 2) | Live run 1 | Not fixed | Open |
+| 6 | Baseline → agent handoff drops the direction's observed Qloo tag (§5a finding 1) | Live run 1 trace | The handoff hands the scan's tag to the runtime, server-held like `expectedBrandId`: only an ok `entity_tags` observation on the brand counts, and never from user or model text. The target gets it as `sourceTagId`, so the agent is told to probe it first. An empty grounded tag still ends unclassified. | Fixed on `sprint/9o-live-run-1`; not deployed |
+| 7 | The card says "Qloo does not support X as a concept" when only the tried tags were empty (§5a finding 2) | Live run 1 | Reworded to what was observed: "No Qloo tag tried for X in this run returned entities…" | Fixed on the branch |
+| 8 | A model-written drop reason ("the one probe…" after five) became the limitation detail shown to readers (§5a finding 3) | Live run 1 | "No support" drops show the runtime's recorded probe count; the model's note stays in the trace | Fixed on the branch |
 
 ## 13. Desktop and mobile results
 

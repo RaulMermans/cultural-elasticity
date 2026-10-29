@@ -13,7 +13,7 @@ import type { AnalysisRoute, CapabilityAvailability } from "@cultural-elasticity
 import { MAX_PANEL_OPTIONS } from "../methodology/contracts.js";
 import { DEFAULT_QLOO_CALLS, interpretationSchema, type AgentRequest, type Interpretation, type RankableType } from "./contracts.js";
 import { planRepresentation } from "./representation-planner.js";
-import { addTerritory, type AgentRunState, type TerritoryState } from "./state.js";
+import { addTerritory, recordTag, type AgentRunState, type TerritoryState } from "./state.js";
 
 /**
  * A relative position needs at least three territories in one panel: with two options every rank
@@ -55,7 +55,14 @@ export function applyInterpretation(state: AgentRunState, interpretation: Interp
     state.limits.maxQlooCalls = Math.max(state.usage.qlooCalls, DEFAULT_QLOO_CALLS[interpretation.intent]);
     state.trace.limits.maxQlooCalls = state.limits.maxQlooCalls;
   }
-  for (const label of interpretation.territories) addTerritory(state, { label, role: "target", origin: "user", rationale: "named by the user" });
+  for (const label of interpretation.territories) {
+    // Sprint 9O: a direction handed over from the baseline keeps the Qloo tag the scan observed (live Carhartt → Blue
+    // Collar re-resolved the name and never probed it). It is the first concept to probe, not evidence of support.
+    const g = state.territoryGrounding;
+    const grounded = g && g.territory.trim().toLowerCase() === label.trim().toLowerCase() ? g : null;
+    if (grounded) recordTag(state, { id: grounded.tagId, label: grounded.label, type: grounded.type }, { kind: "profile", query: null, subjectId: grounded.subjectId, correlationId: grounded.correlationId });
+    addTerritory(state, { label, role: "target", origin: "user", rationale: grounded ? `named by the user; the brand baseline observed it as Qloo tag ${grounded.tagId}` : "named by the user", ...(grounded && { sourceTagId: grounded.tagId }) });
+  }
 }
 
 /** Intent implied by the request structure alone, when it is unambiguous. */

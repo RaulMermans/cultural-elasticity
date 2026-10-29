@@ -37,7 +37,7 @@ import { comparisonRepresentationPlan, preferredTypeFor } from "./representation
 import { applyInterpretation, resolveInterpretation } from "./router.js";
 import { RunStore } from "./run-store.js";
 import { clearDerivedCache } from "./derived-cache.js";
-import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState } from "./state.js";
+import { activeTerritories, createRunState, derivePhase, remainingQlooCalls, TERMINAL_STATUSES, transition, type AgentRunState, type TerritoryGrounding } from "./state.js";
 import { AGENT_ALLOWED_PERMISSIONS, executeToolCall, openToolTrace, type SkillGate } from "./tool-executor.js";
 import type { SpendBound } from "../ops/spend.js";
 import { decisionCeilingUsd, priceUsd, roundUsd, synthesisCeilingUsd } from "../ops/pricing.js";
@@ -60,6 +60,8 @@ export type AgentRuntimeDeps = {
 export type RunOptions = {
   interpretation?: Interpretation;
   expectedBrandId?: string;
+  /** Sprint 9O: server-held baseline grounding for the investigated direction. */
+  territoryGrounding?: TerritoryGrounding;
   link?: InvestigationLink;
   signal?: AbortSignal;
   spend?: SpendBound;
@@ -105,6 +107,7 @@ export class AgentRuntime {
     if (check && !check.ok) throw new AgentInputError([{ path: "interpretation", message: check.reason }]);
     const state = createRunState(request, this.deps.model.info, { name: this.deps.provider.name, mode: this.deps.provider.mode, evidenceSource: this.deps.provider.evidenceSource }, limits);
     state.expectedBrandId = options.expectedBrandId ?? null;
+    state.territoryGrounding = options.territoryGrounding ?? null;
     state.feasibilityPolicy = this.deps.feasibilityPolicy ?? "enforce";
     if (options.link) {
       state.link = options.link;

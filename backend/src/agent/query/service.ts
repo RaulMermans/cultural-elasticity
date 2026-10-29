@@ -9,6 +9,7 @@
  * executes a query interpreted earlier (a dry run, or a supported alternative the user accepted) without
  * interpreting it again. The /api/agent/continue clarification path is separate and unchanged.
  */
+import type { TerritoryGrounding } from "../state.js";
 import { createHash, randomUUID } from "node:crypto";
 import { QUERY_SCHEMA_VERSION, type AgentRunResponse, type AgentTrace, type InvestigationLink, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type QueryResponse, type QueryState, type QueryTelemetry, type QueryTerritoryNode } from "@cultural-elasticity/shared";
 import { priceUsd } from "../finalizer.js";
@@ -50,6 +51,8 @@ export type QueryHooks = {
   signal?: AbortSignal;
   /** Server-validated baseline identity; never supplied by a query proposal. */
   expectedBrandId?: string;
+  /** Sprint 9O: server-held baseline grounding of the direction; never supplied by a query proposal. */
+  territoryGrounding?: TerritoryGrounding;
   onProgress?: (event: QueryProgress) => void;
   /** The agent run's live trace, for a readable activity view. */
   onTrace?: (trace: AgentTrace) => void;
@@ -213,6 +216,7 @@ export class QueryService {
       signal: hooks?.signal,
       spend: hooks?.spend,
       expectedBrandId: hooks?.expectedBrandId,
+      territoryGrounding: hooks?.territoryGrounding,
       onTrace: hooks?.onTrace,
       admission: { queueWaitMs: hooks?.queueWaitMs, interpretationMs: telemetry.interpretationLatencyMs },
     });

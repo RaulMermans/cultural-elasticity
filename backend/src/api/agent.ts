@@ -3,7 +3,7 @@ import { z } from "zod";
 import { projectCulturalConnections, type AgentAnalysisResult, type AgentRunResponse, type AgentTerritoryResult, type AnyBrandBaselineResult, type ComparativeReferenceCandidate } from "@cultural-elasticity/shared";
 import { createBaselinePool } from "../brand-baseline/db.js";
 import { BaselineRepository } from "../brand-baseline/repository.js";
-import { buildDeepInvestigationRequest, buildProposedInvestigationRequest, HandoffError } from "./baseline-handoff.js";
+import { buildDeepInvestigationRequest, buildProposedInvestigationRequest, directionGrounding, HandoffError } from "./baseline-handoff.js";
 import { admit, globalJobLimit, jobCreateLimit } from "./admission.js";
 import { baselineAllowed, developmentRoutesOpen } from "./exposure.js";
 import { buildComparativeHandoffRequest, collectReferenceCandidates, projectComparativeStrategicReport, representationProblem, validateComparativeOutcome, type ComparativePlan, type ExemplarProfileEvidence } from "../agent/comparative-bridge.js";
@@ -355,7 +355,8 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         return reply.code(200).send(prior);
       }
       const body = queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "analyze_move", territories: [prepared.territory.name] });
-      const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId }, request, reply));
+      const grounding = parsed.data.proposedDirection ? null : directionGrounding(scan.result, parsed.data.territoryId!);
+      const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId, ...(grounding && { territoryGrounding: grounding }) }, request, reply));
       handoffJobs.set(key, { directionKey: prepared.territory.id, pending });
       if (handoffJobs.size > 200) handoffJobs.delete(handoffJobs.keys().next().value!);
       const created = await pending;
