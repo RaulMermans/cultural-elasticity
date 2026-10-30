@@ -152,7 +152,10 @@ function BrandDossier({ view, onSelect, onExplore, busy }: { view: ResearchView;
 function InquiryResult({ response }: { response: QueryResponse }) {
   const result = response.investigation?.result ?? null;
   if (!response.investigation) {
-    return <p>{response.interpretation?.clarificationQuestion ?? reasonCopy(response.reasons[0]?.code ?? response.state, response.interpretation?.unsupportedCapabilities[0] ?? null)}</p>;
+    return <>
+      <p>{response.interpretation?.clarificationQuestion ?? reasonCopy(response.reasons[0]?.code ?? response.state, response.interpretation?.unsupportedCapabilities[0] ?? null)}</p>
+      <p className="quiet" data-testid="inquiry-no-credit">This question did not start an investigation, so it used no investigation credit.{response.state === "UNSUPPORTED_OPERATION" || response.state === "PARTIALLY_SUPPORTED" ? " Asking it again unchanged would get the same answer; ask about one cultural territory for the brand instead." : ""}</p>
+    </>;
   }
   if (!result) return <p className="quiet">The investigation returned no result yet.</p>;
   if (result.status === "NEEDS_INPUT") return <p><strong>The agent needs one answer:</strong> {result.question}</p>;

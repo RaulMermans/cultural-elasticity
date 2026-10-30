@@ -167,6 +167,12 @@ export function agentRoutes(
     const handoffJobs = new Map<string, { directionKey: string; pending: Promise<unknown> }>();
     /** Investigations started from a baseline scan (job id → scan). Scan ownership is how siblings are found. */
     const handoffOrigins = new Map<string, { scanId: string }>();
+    /**
+     * Hotfix (P0): the request headers of public jobs that hold an investigation unit, in memory only (no visitor identity
+     * is written anywhere). When the committed answer started no investigation and made no Qloo call, the unit goes back
+     * once: the entry is deleted when used, and after a restart it is gone, so the unit is kept (doubt keeps the unit).
+     */
+    const heldInvestigationUnits = new Map<string, Record<string, unknown>>();
     /** Comparative jobs and the plan the server authorized for each (in memory, like the jobs themselves). */
     const comparativeJobs = new Map<string, { scanId: string; plan: ComparativePlan; baseline: AnyBrandBaselineResult; parentRunId: string }>();
     const comparativeKeys = new Map<string, { referenceKey: string; pending: Promise<unknown> }>();
@@ -189,6 +195,14 @@ export function agentRoutes(
         }
         if (name === "job_completed" || name === "job_failed" || name === "job_cancelled" || name === "job_expired") {
           const jobId = typeof event.jobId === "string" ? event.jobId : "";
+          const holder = heldInvestigationUnits.get(jobId);
+          if (holder) {
+            heldInvestigationUnits.delete(jobId);
+            // Only a completed answer that started no investigation and dispatched no Qloo call gives the unit back.
+            if (name === "job_completed" && event.startedInvestigation === false && (usage?.qlooCalls ?? 0) === 0) {
+              void returnPublicQuota(holder, "investigation").then(() => opsMetrics().record("investigation_unit_returned")).catch(() => undefined);
+            }
+          }
           const hold = reservations.get(jobId);
           if (hold) {
             const settled = spendLedger().settle(hold.id, {
@@ -326,18 +340,27 @@ export function agentRoutes(
       const held = await reserveSpend(reply);
       if (!held) return;
       const hold = held.reservation;
-      const quota = await takePublicQuota(headersOf(request), "investigation");
-      if (!quota.ok) {
+      const refuse = (status: number, body: { error: string; message: string }) => {
         spendLedger().settle(hold.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
         releaseCents(held.durableCents);
         opsMetrics().record("admission_rejected");
-        return reply.code(quota.status).send({ error: quota.error, message: quota.message });
+        return reply.code(status).send(body);
+      };
+      // Hotfix (P0): a question unit bounds interpretation spend (never returned); the investigation unit can be.
+      const asked = await takePublicQuota(headersOf(request), "question");
+      if (!asked.ok) return refuse(asked.status, { error: asked.error, message: asked.message });
+      const quota = await takePublicQuota(headersOf(request), "investigation");
+      if (!quota.ok) {
+        await returnPublicQuota(headersOf(request), "question");
+        return refuse(quota.status, { error: quota.error, message: quota.message });
       }
       opsMetrics().record("budget_reserved");
       return handle(reply, async () => {
         try {
           const bound = spendLedger().bound(hold.id) ?? undefined;
           const created = await jobs.admit(jobRequest, { ...(bound && { spend: bound }), ...(origin && { origin }) });
+          heldInvestigationUnits.set(created.jobId, headersOf(request));
+          if (heldInvestigationUnits.size > 1_000) heldInvestigationUnits.delete(heldInvestigationUnits.keys().next().value!);
           spendLedger().attach(hold.id, created.jobId);
           const started = created.status === "running";
           reservations.set(created.jobId, { id: hold.id, started, durableCents: held.durableCents });
@@ -350,7 +373,10 @@ export function agentRoutes(
           releaseCents(held.durableCents);
           // Refused before the job was recorded (stopping, queue full, duplicate confirm): nothing can start from it.
           // A durable-write failure keeps the unit, since a commit with a lost reply could still be recovered.
-          if (error instanceof JobRejectedError && error.code !== "durability_unavailable") await returnPublicQuota(headersOf(request), "investigation");
+          if (error instanceof JobRejectedError && error.code !== "durability_unavailable") {
+            await returnPublicQuota(headersOf(request), "investigation");
+            await returnPublicQuota(headersOf(request), "question");
+          }
           throw error;
         }
       });

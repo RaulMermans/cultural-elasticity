@@ -13,6 +13,7 @@ export type OpsEventName =
   | "budget_reserved"
   | "budget_exceeded"
   | "budget_reconciled"
+  | "investigation_unit_returned"
   | "backend_restart"
   | "backend_shutdown"
   | "result_unavailable";

@@ -446,7 +446,7 @@ export function reasonCopy(code: string, capability: string | null): string {
   const named: Record<string, string> = {
     compare_brands: "Comparing two brands is recognized, and it is not available yet.",
     competitor_whitespace: "Looking for space a competitor leaves open is recognized, and it is not available yet.",
-    bridge_builder: "Finding a bridge between territories is recognized, and it is not available yet.",
+    bridge_builder: "Explaining what links the brand with one artist, place, title or territory is recognized, and it is not available yet. To research the brand's cultural signals, use “Explore these signals with the agent”, or ask about one cultural territory for the brand.",
     multi_brand_portfolio_analysis: "A portfolio across several brands is recognized, and it is not available yet.",
     out_of_scope: "This question sits outside cultural expansion.",
     BRAND_MISSING: "Which brand should the investigation follow?",
