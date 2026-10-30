@@ -27,20 +27,13 @@ export function directEvidenceFacts(state: AgentRunState, t: TerritoryState, r: 
     if (scan) brandProfile = { status: "CONTAINS_CONCEPT", source: "baseline_scan", correlationId: scan.correlationId };
   }
 
-  // The brand-conditioned query on the concept tag; the one the result's conditioned evidence cites when there is one.
-  const pools = concept && brand ? state.pools.filter((p) => p.conditionedOn === brand.id && p.tagIds.length === 1 && same(p.tagIds[0]!)) : [];
-  const cited = r.conditionedEvidence?.correlationId ?? null;
-  const pool = pools.find((p) => p.call.envelope.execution.correlation_id === cited) ?? pools.at(-1);
-  const failedConditioned = state.trace.toolCalls.some((c) => c.tool === "qloo_recommend" && c.status === "failed" && (c.arguments as { conditionOnBrand?: unknown; tagIds?: unknown })?.conditionOnBrand === true && Array.isArray((c.arguments as { tagIds?: unknown }).tagIds) && ((c.arguments as { tagIds: string[] }).tagIds).some(same));
-  let conditionedQuery: DirectEvidenceFacts["conditionedQuery"] = { status: failedConditioned ? "FAILED" : "NOT_RUN", entityCount: 0, correlationId: null };
-  if (pool) {
-    const status = pool.call.envelope.status;
-    const members = new Set(pool.memberIds).size;
-    const correlationId = pool.call.envelope.execution.correlation_id;
-    conditionedQuery = status === "ok" || status === "empty"
-      ? { status: members > 0 ? "RETURNED" : "CLEAN_EMPTY", entityCount: members, correlationId }
-      : { status: "UNRELIABLE", entityCount: members, correlationId };
-  }
+  // The brand-conditioned query, read from the result's own conditioned evidence (the analysis's call). Run-state pools
+  // are not used: after a durable replay they need not hold the same records, and the facts must not change on recovery.
+  const c = r.conditionedEvidence;
+  const conditionedQuery: DirectEvidenceFacts["conditionedQuery"] = c && c.entityCount > 0
+    ? { status: c.correlationId ? "RETURNED" : "UNRELIABLE", entityCount: c.entityCount, correlationId: c.correlationId }
+    : r.capabilities.conditionedEvidence === "EMPTY" ? { status: "CLEAN_EMPTY", entityCount: 0, correlationId: c?.correlationId ?? null }
+    : { status: r.limitations.some((l) => l.code === "CONDITIONED_CALL_FAILED") ? "FAILED" : "NOT_RUN", entityCount: 0, correlationId: null };
 
   const searches = state.trace.toolCalls.filter((c) => c.tool === "qloo_find_tags" && c.status !== "rejected" && (c.arguments as { query?: unknown })?.query === t.label);
   const conceptSearch: DirectEvidenceFacts["conceptSearch"] = searches.some((c) => c.status === "ok") ? "FOUND"
