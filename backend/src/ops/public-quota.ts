@@ -1,4 +1,4 @@
-import { publicEvaluationQuota } from "../config/production.js";
+import { publicEvaluationExpiry, publicEvaluationQuota } from "../config/production.js";
 import { networkKeyOf, verifyPaidOperator } from "./identity.js";
 import { runLedger } from "./run-ledger.js";
 
@@ -22,7 +22,17 @@ export async function takePublicQuota(headers: Record<string, unknown>, kind: Pu
   if (taken.ok) return { ok: true };
   if (taken.code === "limit_reached") {
     const what = kind === "investigation" ? "investigations" : kind === "scan" ? "brand research runs" : "brand searches";
-    return { ok: false, status: 429, error: "visitor_quota_reached", message: `You have used this evaluation's allowance of ${what}. Saved research and the recorded example remain available.` };
+    const expiry = publicEvaluationExpiry(env);
+    const until = expiry === null ? "" : `, which runs until ${formatEvaluationEnd(expiry)}`;
+    return { ok: false, status: 429, error: "visitor_quota_reached", message: `This network has used its ${publicEvaluationQuota(kind, env)} ${what} for this evaluation${until}. Saved research and the recorded example remain available.` };
   }
   return { ok: false, status: 503, error: "quota_unavailable", message: "New research cannot start because the usage record is unavailable." };
+}
+
+/** "6 Nov 2026, 05:00 UTC": fixed to UTC so the server and every visitor read the same moment. */
+export function formatEvaluationEnd(ms: number): string {
+  const d = new Date(ms);
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getUTCDate()} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
 }

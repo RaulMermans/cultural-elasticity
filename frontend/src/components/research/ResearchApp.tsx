@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { parseAdmission, type AdmissionStatus } from "@/lib/admissions";
+import { parseAdmission, type AdmissionStatus, type PublicAllowance } from "@/lib/admissions";
 import { availabilityCopy, scanStatusCopy, stageCopy } from "@/lib/research-copy";
 import { HOME, SESSION_RESEARCH, parseRoute, routeQuery, type Route } from "@/lib/research-route";
 import { AtlasApp } from "../atlas/AtlasApp";
@@ -13,13 +13,17 @@ import { useBrandResearch } from "./use-brand-research";
 export function ResearchApp({ initialRoute }: { initialRoute: Route }) {
   const [route, setRoute] = useState<Route>(initialRoute);
   const [admissions, setAdmissions] = useState<AdmissionStatus>("unknown");
+  const [allowance, setAllowance] = useState<PublicAllowance | null>(null);
   const research = useBrandResearch();
   const focusKey = useRef(`${initialRoute.mode}:${initialRoute.research}`);
 
   useEffect(() => {
     const onPop = () => setRoute(parseRoute(new URLSearchParams(window.location.search)));
     window.addEventListener("popstate", onPop);
-    void fetch("/api/agent/admissions", { cache: "no-store" }).then(async (response) => parseAdmission(await response.json()).status).then(setAdmissions).catch(() => setAdmissions("unavailable"));
+    void fetch("/api/agent/admissions", { cache: "no-store" })
+      .then(async (response) => parseAdmission(await response.json()))
+      .then((view) => { setAdmissions(view.status); setAllowance(view.allowance ?? null); })
+      .catch(() => setAdmissions("unavailable"));
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
@@ -55,6 +59,7 @@ export function ResearchApp({ initialRoute }: { initialRoute: Route }) {
     body = (
       <BrandDiscovery
         availability={research.availability}
+        allowance={allowance}
         resolution={research.resolution}
         busy={research.busy}
         error={research.error}

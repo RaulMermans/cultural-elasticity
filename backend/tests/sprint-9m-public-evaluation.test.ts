@@ -89,6 +89,17 @@ describe("public evaluation admission", () => {
     expect(readiness({ ...evaluation, CE_PUBLIC_EVALUATION_EXPIRES_AT: "2020-01-01T00:00:00Z" }).dependencies.paidOperatorRequired).toBe(true);
   });
 
+  it("readiness shows the configured allowance only while the evaluation is open, and the refusal names it", async () => {
+    expect(readiness({ CE_PUBLIC_DEPLOYMENT: "1" } as NodeJS.ProcessEnv).publicAllowance).toBeNull();
+    expect(readiness({ ...evaluation, CE_PUBLIC_EVALUATION_EXPIRES_AT: "2020-01-01T00:00:00Z" }).publicAllowance).toBeNull();
+    const env = { ...evaluation, CE_PUBLIC_QUOTA_INVESTIGATIONS: "1", CE_PUBLIC_QUOTA_SCANS: "12" };
+    expect(readiness(env).publicAllowance).toEqual({ endsAt: new Date(FUTURE).toISOString(), searches: 10, scans: 12, investigations: 1 });
+    expect(await takePublicQuota({ "x-ce-network": NETWORK_A }, "investigation", env)).toEqual({ ok: true });
+    const refused = await takePublicQuota({ "x-ce-network": NETWORK_A }, "investigation", env);
+    expect(refused).toMatchObject({ ok: false, error: "visitor_quota_reached" });
+    expect(refused.ok ? "" : refused.message).toContain("its 1 investigations for this evaluation, which runs until ");
+  });
+
   it("per-network quotas are durable, separate per network and kind, refuse unattributed callers and skip operators", async () => {
     const env = { ...evaluation, CE_PUBLIC_QUOTA_INVESTIGATIONS: "2" };
     const caller = (network: string) => ({ "x-ce-network": network });
