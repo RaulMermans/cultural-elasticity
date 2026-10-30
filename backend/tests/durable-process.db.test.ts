@@ -7,7 +7,7 @@
  * Needs DATABASE_URL of a disposable database (migrations are applied here). Run: pnpm test:durable
  */
 import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createBaselinePool, migrate, type Database } from "../src/brand-baseline/db.js";
 import { DurableAgentStore } from "../src/agent/durable/store.js";
 import { buildRunManifest } from "../src/agent/durable/manifest.js";
@@ -50,10 +50,30 @@ beforeAll(async () => {
   await w.kill("SIGTERM");
 }, 120_000);
 
+// A failed assertion skips a test's own kills; a surviving worker would then recover the NEXT test's job and log its
+// dispatches to another oracle file. Every worker is stopped after each test, pass or fail (kill is a no-op once exited).
+afterEach(async () => {
+  for (const w of workers) await w.kill();
+});
+
 afterAll(async () => {
   for (const w of workers) await w.kill();
   await pool?.end();
 });
+
+/**
+ * The in-process view reports a finished job before the durable terminal commit lands (jobs.ts: memoryFinish, then
+ * persistTerminal), so the row is read until it reaches the expected status rather than at once.
+ */
+async function rowReaches(jobId: string, status: string, timeoutMs = 15_000): Promise<string | undefined> {
+  const started = Date.now();
+  let row = await jobRow(pool, jobId);
+  while (row?.status !== status && Date.now() - started < timeoutMs) {
+    await sleep(100);
+    row = await jobRow(pool, jobId);
+  }
+  return row?.status;
+}
 
 describe("REAL PROCESS crash recovery (synthetic provider, disposable PostgreSQL)", () => {
   it("Test 1 — crash before dispatch: resumes safely, no phantom or duplicate call, same result", async () => {
@@ -194,7 +214,7 @@ describe("REAL PROCESS crash recovery (synthetic provider, disposable PostgreSQL
       expect(dispatches(log)).toHaveLength(reference.qloo);
       const finals = (await pool.query("SELECT count(*)::int AS n FROM agent_checkpoints WHERE job_id=$1 AND boundary='final'", [jobId])).rows[0].n;
       expect(finals).toBe(1);
-      expect((await jobRow(pool, jobId))?.status).toBe("COMPLETED");
+      expect(await rowReaches(jobId, "COMPLETED")).toBe("COMPLETED");
       await b.kill("SIGTERM");
     }
   }, 150_000);
