@@ -1,53 +1,44 @@
 # Architecture
 
-## Target (hybrid workflow-agent)
+How Cultural Elasticity works today. The engineering rules behind it are in [../AGENTS.md](../AGENTS.md); the sprint-by-sprint history is indexed in [README.md](README.md#development-history).
+
+![Architecture diagram](media/architecture.png)
+
+## Request path
 
 ```
-Qloo adapter                     backend/src/qloo (live-adapter.ts)               ← provider-specific schemas STOP here
-      ↓
-EvidencePacket                   backend/src/evidence/schema.ts                    ← canonical, provider-independent
-      ↓
-Cultural Evidence Core           backend/src/evidence + backend/src/analysis       ← deterministic, tested, no LLM, no I/O
-      ↓
-AnalysisIngredients              packages/shared/src/analysis.ts                   ← stable downstream boundary
-      ↓
-Cultural Elasticity Methodology  backend/src/methodology                           ← Sprint 2: deterministic, no LLM, no agent, no I/O
-  (MethodologyInput: brand + territory representations + rank panels + exemplar profiles + conditioned lists)
-      ↓
-CulturalElasticityResult         packages/shared/src/methodology.ts                ← position · robustness · coherence · quality · class · trace
-      ↓
-Future Agent Interpretation      (not built: may choose investigations and explain results, never produce numbers)
-      ↓
-Frontend (Next.js, Vercel)       ← talks only to the backend; never sees Qloo or its credential
+Browser ──► Next.js (Vercel, frontend/)                 server-side proxy routes only; no key reaches the browser
+              │  server-to-server, CE_INTERNAL_API_SECRET
+              ▼
+           Fastify API (Railway, backend/src/api)       admission, per-network quotas, spend reservations, readiness
+              ├─► Brand baseline (backend/src/brand-baseline)   fixed, model-free Qloo scan → fingerprint + directions
+              ├─► Query layer (backend/src/agent/query)          one Haiku interpretation (no tools) → deterministic gate
+              │        └─► Agent runtime (backend/src/agent)      skills, budgets, probing, stopping, claim validation
+              │               ├─► Claude Haiku (agent/model)       proposes the next action; never sets a number
+              │               └─► QlooClient (backend/src/qloo)    typed tools over the official harness
+              └─► PostgreSQL                                       scans, reservations, Qloo/model ledgers, quotas
 ```
 
-Provider-specific shapes (harness envelopes, Qloo entity/tag records, `compare_audiences` passthroughs) exist only in the adapter. Everything from `EvidencePacket` down is provider-independent, so Sprint 0B can change the adapter without touching the engine. See [sprint-1/CULTURAL_EVIDENCE_CORE.md](sprint-1/CULTURAL_EVIDENCE_CORE.md).
+## Layers
 
-**Implemented so far:**
+| Layer | Where | Responsibility |
+| --- | --- | --- |
+| Qloo client | `backend/src/qloo` | The only path to Qloo. `HarnessMcpTransport` (`qloo mcp`, default) or `HarnessExecTransport` (`AGENT_QLOO_TRANSPORT=exec`), both pinned to the hackathon host. Status policy, at most one retry when Qloo marks an error retryable, zod normalization, dispatch limits |
+| Evidence core | `backend/src/evidence`, `backend/src/analysis` | Provider-independent `EvidencePacket` and deterministic ingredients; refuses cross-call comparisons |
+| Methodology | `backend/src/methodology` | Rank-panel position, representation robustness, coherence, provisional class. No LLM, no I/O (a test enforces this) |
+| Brand baseline | `backend/src/brand-baseline` | A seven-call, model-free scan with durable reservations; observations, themes and hypotheses kept separate (`ce-brand-baseline/0.2`) |
+| Query layer | `backend/src/agent/query` | Interprets a natural-language request once, then the gate approves, clarifies or refuses. Deferred operations (bridges, whitespace, competitor comparison) are reported as unsupported and use no investigation allowance |
+| Agent runtime | `backend/src/agent` | Research policy v1 routes each question (direct evidence, comparison, exploration). Skills (`agent/skills`) expose only their own tools. The runtime owns state, budgets, probing bounds (`probe-policy.ts`), representation quality, semantic comparison validity, sufficiency, the claim validator and stopping |
+| Shared projections | `packages/shared` | Contracts plus `evidence-assessment/v1` and `decision-card/v2`: one deterministic reading used by the workspace, the HTML/PDF report and the evaluations |
+| Frontend | `frontend/src` | The brand research workspace (default) and the Living Atlas (`?mode=atlas`). A view over validated results: it never adds evidence, scores or model calls |
 
-- Sprint 0: the frontend shell, `/health`, the Qloo adapter, the Qloo-side evidence record (`contracts/qloo.ts`) and the feasibility workflow.
-- Sprint 1: the canonical `EvidencePacket`, the Cultural Evidence Core, `AnalysisIngredients`, `POST /api/analysis/ingredients` (offline, development only), `/dev/analysis` (development only) and the methodology eval harness.
-- Sprint 2: `EvidencePacket.conditionedEntities` (brand-conditioned territory evidence, `ce-evidence/0.2`) end to end; the Cultural Elasticity Methodology v0 (`backend/src/methodology`); the live benchmark capture (`backend/src/capture`, `pnpm capture:elasticity`); `POST /api/methodology/analyze` and `/dev/methodology` (development only); `pnpm eval:elasticity` and `pnpm methodology:jacquemus`. See [sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md](sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md).
-- Sprint 3: the agentic investigation runtime (`backend/src/agent`). See [sprint-3/AGENTIC_INVESTIGATION_RUNTIME.md](sprint-3/AGENTIC_INVESTIGATION_RUNTIME.md).
-- Sprint 4: runtime skills, just-in-time context, representation quality and recovery, concept deduplication, frontier construction, sufficiency v2, the live agent harness (`pnpm eval:agent:live`). Capture configs, feasibility pins and the synthetic world moved to `backend/scripts/`. See [sprint-4/AGENT_COMPETENCE_AND_SKILLS.md](sprint-4/AGENT_COMPETENCE_AND_SKILLS.md).
-- Sprint 0B: the hackathon host safety gate (`qloo/environment.ts`), the live Qloo → `EvidencePacket` adapter (`qloo/live-adapter.ts`, written from live output), the pinned live investigation (`feasibility/live.ts`, `live-config.ts`) and the live and recorded eval class (`pnpm eval:live`). The Sprint 1 engine ran on live data unchanged.
-- Sprint 5B.1: one query interpretation policy and a deterministic execution gate. See [sprint-5b1/QUERY_INTELLIGENCE.md](sprint-5b1/QUERY_INTELLIGENCE.md).
-- Sprint 9C: the brand research workspace becomes the default frontend view (`frontend/src/components/research/`); `frontend/src/lib/research-view.ts` adapts the canonical baseline result without adding evidence, and the Living Atlas moves to `?mode=atlas`. See [sprint-9c/BRAND_FIRST_RESEARCH_WORKSPACE.md](sprint-9c/BRAND_FIRST_RESEARCH_WORKSPACE.md).
-- Sprint 9D: a server-side baseline handoff validates scan ownership, territory provenance and canonical brand identity before enqueuing the existing agent. Research findings, read-only Atlas comparison and the deterministic strategic brief project completed evidence without provider calls. The new handoff idempotency and jobs remain in-process; only baseline scans are PostgreSQL-durable. The Qloo value audit uses frozen recorded-live results, with the LLM-only arm not run. See [sprint-9d/AGENTIC_INTELLIGENCE_AND_STRATEGIC_DECISION.md](sprint-9d/AGENTIC_INTELLIGENCE_AND_STRATEGIC_DECISION.md).
-- Sprint 5B.2: the Living Atlas product surface and in-process JobManager. See [sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md](sprint-5b2/LIVING_ATLAS_IMPLEMENTATION.md).
-- Sprint 5B.3: Atlas product quality — clarification continuity, return navigation, comparison integrity, evidence attribution, job expiry, public guards, intelligent narrowing, and a recorded live example. See [sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md](sprint-5b3/LIVING_ATLAS_PRODUCT_EXCELLENCE.md).
-- Sprint 7A: deployment foundation — persistent backend host, server-to-server auth, visitor admission, reservation-based spend control, health/readiness, and a verified recorded example. See [sprint-7a/DEPLOYMENT_FOUNDATION.md](sprint-7a/DEPLOYMENT_FOUNDATION.md). Jobs remain in-process. A freeze-after-response host is still incompatible.
-- Sprint 7B: controlled public launch — observed spend is never truncated, one visitor identity per request, readiness is admission not provider proof, operator-triggered provider probes, runtime pre-call spend bounds. See [sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md](sprint-7b/CONTROLLED_PUBLIC_LAUNCH.md). Public Railway/Vercel publication still needs owner approval.
-- Sprint 8A: monotonic runtime spans and latency coverage; eval-only effort/token experiment config; C9 still blocks readiness pending a live gate. Vercel-only is **not** proven. Recommended hosting remains Vercel frontend plus a persistent backend. See [sprint-8a/AGENT_PERFORMANCE_AND_VERCEL_FEASIBILITY.md](sprint-8a/AGENT_PERFORMANCE_AND_VERCEL_FEASIBILITY.md). Do not treat the Workflow/MCP local proofs as hosted compatibility.
-- Sprint 8B: live parent tracing (95% span coverage), late-Qloo budget reservation, derived-view memo, focused live C9 pass on L-C2/L-E1 evaluators, SSO-protected Hobby Function preview. Agent stays **`AGENT_MODEL_NOT_READY`** (full 7-case gate not repeated). Vercel-only is **`VERCEL_ONLY_CONDITIONAL`**. See [sprint-8b/LIVE_AGENT_OPTIMIZATION_AND_VERCEL_PROOF.md](sprint-8b/LIVE_AGENT_OPTIMIZATION_AND_VERCEL_PROOF.md).
-- Sprint 8C: derived-view memo proven on a live parent (227 s, context assembly 1.4 s), browser E2E restored, hosted Vercel MCP still conditional. See [sprint-8c/VERIFIED_AGENT_PERFORMANCE_AND_VERCEL_RECOVERY.md](sprint-8c/VERIFIED_AGENT_PERFORMANCE_AND_VERCEL_RECOVERY.md).
-- Sprint 8D: evidence-first frontier exploration (Channel A before hypotheses; unsupported hypotheses no longer fill the candidate quota). See [sprint-8d/AGENT_RESEARCH_QUALITY_AND_COMPETENCE.md](sprint-8d/AGENT_RESEARCH_QUALITY_AND_COMPETENCE.md).
-- Sprint 8E: brand-scoped evidence-base gap, live-eval budget preflight and suite spend guard, live parent re-run (0 invalid actions, 3 PARTIAL), Railway backend deployed with admissions off. Vercel integration not verified. See [sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md](sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md).
-- Sprint 8F: GitHub as the intended release source; Vercel Authentication All Deployments; CI path-filtered E2E/Docker; operator Git SHA on `/ops/status`. See [sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md](sprint-8f/GITHUB_CONNECTED_DEPLOYMENTS_AND_RELEASE.md).
-- Sprint 8F.1: existing Railway and Vercel projects GitHub-connected (`RaulMermans/cultural-elasticity`). Railway source staged `main@4c35a20`; Vercel Git-linked with All Deployments and pre-production-only Git builds. See [sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md](sprint-8f1/PLAYWRIGHT_GITHUB_DEPLOYMENT_INTEGRATION.md).
-- Sprint 8F.2: Railway `accept-deploy` of that Git source (live SHA `47a20fd`, admissions off). Protected Vercel preview of `deploy/8f2-protected-preview@47a20fd`; anonymous access refused; hosted Vercel→Railway verified while paused. See [sprint-8f2/DEPLOYMENT_ACTIVATION_AND_HOSTED_E2E.md](sprint-8f2/DEPLOYMENT_ACTIVATION_AND_HOSTED_E2E.md).
-- Sprint 10A: evidence-to-opportunity discovery — `frontier-pool/v2` (taxonomy concepts interleaved across tag facets before free keywords, deferrals recorded), server-held baseline-scan seeds for a user-initiated explore run (≤ 3 profiled, never support), validated `motivatedBy`, and `opportunity-status/v1` per frontier candidate. `explore_candidate_territories` v6, `run-evaluators-v2.2`. Offline only; quality not established. See [sprint-10a/OPPORTUNITY_DISCOVERY_INTELLIGENCE.md](sprint-10a/OPPORTUNITY_DISCOVERY_INTELLIGENCE.md).
-- Sprint 8D: single-agent research competence — Channel A evidence base before ungrounded hypothesis probes, unsupported hypotheses do not fill the frontier quota, unproductive empty re-probes refused. Frozen evaluators unchanged. Full live gate not run (`LIVE_GATE_BLOCKED_BY_APPROVAL`). See [sprint-8d/AGENT_RESEARCH_QUALITY_AND_COMPETENCE.md](sprint-8d/AGENT_RESEARCH_QUALITY_AND_COMPETENCE.md).
+## Durability
+
+| Durable in PostgreSQL | In process |
+| --- | --- |
+| Brand scans and their provider-call reservations; Qloo and model budget ledgers; per-network public quotas | Running agent investigations and their job state (a restart interrupts them) |
+
+Durable agent jobs with journal replay (`CE_DURABLE_AGENT=1`, migration 002, `backend/src/agent/durable`) exist and recovered two interrupted live runs in Sprint 10D. They are not enabled in production.
 
 ## Cultural Evidence Core pipeline
 
@@ -79,8 +70,8 @@ The methodology imports no LLM, agent, Fastify, MCP, transport or `child_process
 product code ──► QlooClient (interface)
                    └─ HarnessQlooClient: status policy, retry ≤1, normalization
                         └─ QlooTransport (interface)
-                             ├─ HarnessExecTransport  → `qloo exec <workflow>` (implemented; pinned to the hackathon host)
-                             └─ (future) HarnessMcpTransport → `qloo mcp` stdio
+                             ├─ HarnessMcpTransport  → `qloo mcp` stdio (default for the agent)
+                             └─ HarnessExecTransport → `qloo exec <workflow>` (AGENT_QLOO_TRANSPORT=exec, and the feasibility scripts)
 ```
 
 ### Hackathon environment and host gate
@@ -96,14 +87,14 @@ Hackathon keys work only on `https://hackathon.api.qloo.com`. The harness would 
 - Envelope → zod validation (`normalize.ts`) → internal contracts. Contract mismatches raise `QlooContractError` and are never retried.
 - The harness runs as a local child or stdio process. That is why the backend needs a container-capable runtime and why Qloo calls never run in the browser or in ordinary serverless functions.
 
-## Deployment (GitHub is the source)
+## Deployment
 
 | Part | Target | Notes |
 | --- | --- | --- |
-| frontend | Vercel project `cultural-elasticity` | Next.js Living Atlas. Root directory `frontend/`. Server-only `BACKEND_URL` and `CE_INTERNAL_API_SECRET` on **preview** only. No `NEXT_PUBLIC_` secrets. Vercel Authentication is **All Deployments**. Git is linked to `RaulMermans/cultural-elasticity`. A protected **preview** exists (`deploy/8f2-protected-preview@47a20fd`). Git production builds remain skipped. The production alias is unassigned (`DEPLOYMENT_NOT_FOUND`). |
-| backend | Railway `cultural-elasticity-api` | Persistent Docker from `backend/Dockerfile` at the repository root (includes `packages/shared`). One replica, us-east4, 0.5 vCPU / 1 GB, sleep off, `CE_ACCEPT_INVESTIGATIONS=0`. `railway.json` watch paths cover backend/shared/lockfile only. Live source is GitHub `RaulMermans/cultural-elasticity` at `47a20fd` (deployment `77b42d21`). |
+| Frontend | Vercel project `cultural-elasticity`, root `frontend/` | Production builds from `main`. Server-only `BACKEND_URL` and `CE_INTERNAL_API_SECRET`; no `NEXT_PUBLIC_` secrets |
+| Backend | Railway service `cultural-elasticity-api`, `backend/Dockerfile` from the repository root | Production builds from `main`. One replica, PostgreSQL attached, sleep off |
 
-The two deploy independently. Do not host `JobManager` on freeze-after-response functions. Jobs, the run store and the spend ledger are in-memory: a Railway restart drops them. Canonical runbook: [sprint-8f2/DEPLOYMENT_ACTIVATION_AND_HOSTED_E2E.md](sprint-8f2/DEPLOYMENT_ACTIVATION_AND_HOSTED_E2E.md). Sprint 8E recovery: [sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md §24](sprint-8e/LIVE_AGENT_VALIDATION_AND_RAILWAY_DEPLOYMENT.md). Production domains and public paid investigations remain unexecuted.
+A merge to `main` deploys both. `node scripts/release/verify-production.mjs` confirms that both serve the released SHA and checks readiness, admissions and budgets read-only. The public evaluation runs under a durable global ceiling, per-network quotas, an expiry and a kill switch (`scripts/public-evaluation-open.sh`, `scripts/public-evaluation-close.sh`). The canonical policy is [operations/DEPLOYMENT_RELEASE_CONTRACT.md](operations/DEPLOYMENT_RELEASE_CONTRACT.md).
 
 ## Validation categories
 

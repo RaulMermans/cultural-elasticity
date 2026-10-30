@@ -1,27 +1,38 @@
 # Documentation
 
-## Start here
+This page separates **current documentation** (how the product works today) from the **development history** (what each sprint decided, measured and left unverified at the time). If they disagree, the current documentation and the code win.
+
+## Current documentation
 
 | Document | What it covers |
 | --- | --- |
-| [../README.md](../README.md) | What the product does, why Qloo matters, how the agent works, and the quickstart |
-| [architecture.md](architecture.md) | The layers from the Qloo adapter to the frontend, and the evidence pipeline |
-| [methodology/README.md](methodology/README.md) | The Cultural Elasticity methodology: position, robustness and classification |
-| [sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md](sprint-2/CULTURAL_ELASTICITY_METHODOLOGY.md) | The original methodology specification and its rules |
-| [operations/DEPLOYMENT_RELEASE_CONTRACT.md](operations/DEPLOYMENT_RELEASE_CONTRACT.md) | The Vercel and Railway release policy and verification |
-| [design/LIVING_ATLAS_DESIGN_SYSTEM.md](design/LIVING_ATLAS_DESIGN_SYSTEM.md) | The visual design system |
-| [../AGENTS.md](../AGENTS.md) | The rules every change must follow (evidence, numbers, secrets, generalization) |
+| [../README.md](../README.md) | What the product does, how Qloo and the agent are used, quickstart, testing and limitations |
+| [architecture.md](architecture.md) | The layers from the Qloo client to the frontend, the evidence pipeline and the deployment |
+| [methodology/README.md](methodology/README.md) | Evidence assessment, position, robustness and classification |
+| [operations/DEPLOYMENT_RELEASE_CONTRACT.md](operations/DEPLOYMENT_RELEASE_CONTRACT.md) | Vercel and Railway release policy and verification |
+| [design/LIVING_ATLAS_DESIGN_SYSTEM.md](design/LIVING_ATLAS_DESIGN_SYSTEM.md) | The Cultural Observatory visual design system |
+| [../AGENTS.md](../AGENTS.md) | The engineering contract every change follows (evidence, numbers, secrets, generalization) |
+
+## Hackathon submission
+
+| Document | What it covers |
+| --- | --- |
+| [submission/DEVPOST.md](submission/DEVPOST.md) | The submission text, ready to paste |
+| [submission/DEMO_STORYBOARD.md](submission/DEMO_STORYBOARD.md) | The judge demonstration, its fallback and a screen-recording plan |
+| [submission/FINAL_RELEASE_REVIEW.md](submission/FINAL_RELEASE_REVIEW.md) | The final release review and verdict |
+| [media/](media/) | Screenshots of the real product and the architecture diagram |
 
 ## Live evidence
 
-These are real Qloo and Claude runs on the hosted product, with their usage and limitations:
+Real Qloo and Claude runs, with their usage and limitations:
 
-- [sprint-9m/LIVE_EVALUATION_EVIDENCE.md](sprint-9m/LIVE_EVALUATION_EVIDENCE.md): the public evaluation release, plus the [Pre-registered Cultural Break attempt](sprint-9m/CULTURAL_BREAK_PROTOCOL.md).
-- [sprint-9l/LIVE_RELEASE_EVIDENCE.md](sprint-9l/LIVE_RELEASE_EVIDENCE.md): the first full hosted journey (Crocs).
+- [sprint-9l/LIVE_RELEASE_EVIDENCE.md](sprint-9l/LIVE_RELEASE_EVIDENCE.md): the first full hosted journey (Crocs), the source of the recorded Crocs report.
+- [sprint-9m/LIVE_EVALUATION_EVIDENCE.md](sprint-9m/LIVE_EVALUATION_EVIDENCE.md): the public evaluation release (Patagonia), plus the [pre-registered Cultural Break attempt](sprint-9m/CULTURAL_BREAK_PROTOCOL.md).
+- [sprint-10d/FINAL_RESEARCH_INTELLIGENCE_AND_RELEASE.md](sprint-10d/FINAL_RESEARCH_INTELLIGENCE_AND_RELEASE.md): four live research questions, durable recovery of two interrupted live runs, and the failures they exposed.
 
 ## Development history
 
-The project was built in sprints. Each folder records what was decided, measured and left unverified at the time. These are historical records: later sprints may supersede them, and their status lines describe that moment, not today.
+What was implemented, tested and learned, sprint by sprint. The project was built in sprints. Each folder records what was decided, measured and left unverified at the time. These are historical records: later sprints may supersede them, and their status lines describe that moment, not today.
 
 | Sprint | Record |
 | --- | --- |
@@ -67,3 +78,6 @@ The project was built in sprints. Each folder records what was decided, measured
 | 10c | [Durable agent execution and live reliability](sprint-10c/DURABLE_AGENT_EXECUTION_AND_LIVE_RELIABILITY.md) |
 | 10d | [Final research intelligence and release (live L1–L4, release candidate)](sprint-10d/FINAL_RESEARCH_INTELLIGENCE_AND_RELEASE.md) |
 | 11 | [Research intelligence upgrade (research policy v1; pre-registered paired evaluation not yet run)](sprint-11/RESEARCH_INTELLIGENCE_UPGRADE.md) · [pre-registration](sprint-11/PREREGISTRATION.md) |
+| 12 | [Measurement and research completion (`evidence-assessment/v1`, conclusion-first results)](sprint-12/MEASUREMENT_AND_RESEARCH_COMPLETION.md) |
+| Hotfix | [Unsupported questions no longer use the investigation allowance](hotfix-quota/QUOTA_FREE_UNSUPPORTED_QUESTIONS.md) |
+| 13 | [Final release review](submission/FINAL_RELEASE_REVIEW.md) |
