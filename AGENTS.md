@@ -174,6 +174,18 @@ Canonical record: `docs/sprint-10c/DURABLE_AGENT_EXECUTION_AND_LIVE_RELIABILITY.
 3. **An attribute tag is not a territory.** A territory is never anchored to an incidental-attribute tag (venue facilities, product `material`, …) while its own Qloo search returned a concept of another namespace (`incidentalAnchorRefusal`).
 4. **Probe efficiency is not research correctness.** The decision audit cannot see a semantically wrong representation; each live run also gets a representation and claim review. Canonical record: `docs/sprint-10d/FINAL_RESEARCH_INTELLIGENCE_AND_RELEASE.md`.
 
+## Research intelligence (permanent, from Sprint 11)
+
+Canonical record: `docs/sprint-11/RESEARCH_INTELLIGENCE_UPGRADE.md`. Research policy v1 (`backend/src/agent/research-intelligence.ts`); `CE_RESEARCH_POLICY=v0` is the Sprint 10 arm and the rollback. A deterministic decision policy always runs v0.
+
+1. **The user's question governs the run.** The interpreter's research brief (meaning, `notThis`, useful answer, approach) is text only, comes from the single interpretation call, and travels with the request. It never carries tools, budgets, evidence or ids.
+2. **A Qloo concept is never silently the user's concept.** A user-named territory anchored to a differently named tag needs the agent's alignment judgment. The agent's own MISMATCHED verdict is refused. Any non-EQUIVALENT relation is stated in the result, the template and the card, and blocks a positive single-hypothesis verdict. Never encode concept or brand dictionaries.
+3. **Exemplars are instances, not neighbours.** User-named territories need a semantic judgment per exemplar against the brief. Sharing an audience, aesthetic, material or product category is `weak`. The model still only removes.
+4. **Choosing the method only narrows work.** `reframe_research` (compare → investigate, once, before analysis) adds no budget and drops pending references as not investigated. No approach change may add evidence, calls or turns.
+5. **The brand's own Qloo category is established positioning**, detected by tag URN facet (`tagRole`), never by name. Cited brand facts are requester-supplied context, labelled unverified, and never Qloo evidence.
+6. **Interpretation is layer 2 and is labelled.** Only an insight's observation states evidence, and it is validated like a finding. Its reasoning carries no numbers, no Qloo-evidence wording, no market facts and no names outside the run and the cited facts. The template never invents insights.
+7. **Improvement claims need the pre-registered paired evaluation** (`evals/research-intelligence/cases.json`; `pnpm eval:research-intelligence`). T0 synthetic tests are contract checks, never research-quality evidence. Holdouts stay frozen.
+
 ## Deployment provenance (permanent, from Sprint 8F)
 
 1. **GitHub is the canonical source.** `RaulMermans/cultural-elasticity` is the only release repository. Do not deploy from copied archives as the ordinary process.
