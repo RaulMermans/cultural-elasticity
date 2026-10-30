@@ -85,7 +85,7 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 1. **The Living Atlas presents validated query responses.** It does not own scores, evidence, or lineage. Since Sprint 9C it is the optional exploration view (`?mode=atlas`); the default product view is the brand research workspace (below).
 2. **Geometry is investigation lineage.** An edge means investigated-from. Spacing is not cultural distance, affinity, confidence, elasticity, or a recommendation.
 3. **Visual decisions follow** `.agents/skills/living-atlas-design/SKILL.md` (version 7). That is a development skill, not a runtime investigation skill. Tokens live in `frontend/src/app/globals.css` and match the skill. The product art direction is Cultural Observatory.
-4. **Jobs are in-process.** `POST /api/agent/jobs` detaches work from the HTTP request inside one Node process. Jobs are not durable across restarts and are not safe on a host that freezes after the response. The browser talks only to the Next.js routes.
+4. **Jobs are in-process by default.** `POST /api/agent/jobs` detaches work from the HTTP request inside one Node process. Without `CE_DURABLE_AGENT=1` they are not durable across restarts (Sprint 10C adds the opt-in durable mode below). They are never safe on a host that freezes after the response. The browser talks only to the Next.js routes.
 5. **A system directive cannot be confirmed.** A rejected directive does not become a confirmable alternative, and a second confirmation is refused.
 6. **Not investigated is not unsupported.** Incomplete or interrupted is not "no usable evidence." Evidence support is not an investment recommendation.
 
@@ -100,7 +100,7 @@ Agent runs report the model honestly: a run driven by the scripted model or the 
 
 1. **A baseline direction is a hypothesis.** The server rereads the authorized scan, verifies territory ownership and supporting provenance, and pins the canonical Qloo brand ID before using the existing agent runtime. Selection does not upgrade support.
 2. **The research finding and brief are projections.** They preserve source scope, validated claims and recorded/live origin. Comparison reads completed same-brand results only and makes no provider call or cross-call numerical ranking. Canonical record: `docs/sprint-9d/AGENTIC_INTELLIGENCE_AND_STRATEGIC_DECISION.md`.
-3. **Agent jobs are still in process.** Handoff idempotency and job results disappear on backend restart. Public paid investigations remain disabled pending separate readiness and durability decisions. *(Superseded for the approved window 2026-10-29 → 2026-11-06T05:00Z by the Sprint 9M public evaluation below; outside an approved evaluation this rule still holds.)* The Sprint 9D benchmark has no LLM-only arm yet; do not claim measured comparative Qloo value.
+3. **Agent jobs are in process unless durable mode is on** (Sprint 10C). Handoff idempotency and comparative plans still disappear on backend restart. Public paid investigations remain disabled pending separate readiness and durability decisions. *(Superseded for the approved window 2026-10-29 → 2026-11-06T05:00Z by the Sprint 9M public evaluation below; outside an approved evaluation this rule still holds.)* The Sprint 9D benchmark has no LLM-only arm yet; do not claim measured comparative Qloo value.
 
 ## Comparative handoff and cross-domain relationships (Sprint 9I)
 
@@ -151,6 +151,21 @@ Canonical record: `docs/sprint-9j/LIVE_VALIDATION_AND_RELEASE_REPORT.md`.
 2. **Attribute before fixing.** `eval:competence -- --audit <dirs>` groups stored LLM runs by label and cause. Do not answer a Qloo-data or deterministic-policy cause with prompt text.
 3. **Context states why, never grants.** `focus.withdrawn` explains tools a closed skill no longer offers. Exposure and validation stay in code. Every turn records its focus (`turn.focus`).
 4. **A context change is an arm.** Ship it behind a runtime switch so the paired Haiku run compares like with like. Offline results of deterministic policies say nothing about its effect.
+
+## Durable agent execution (permanent, from Sprint 10C)
+
+Canonical record: `docs/sprint-10c/DURABLE_AGENT_EXECUTION_AND_LIVE_RELIABILITY.md`.
+
+1. **Durable mode is opt-in and explicit.** It needs `CE_DURABLE_AGENT=1`, `DATABASE_URL` and migration `002_durable_agent.sql`, applied by `pnpm db:migrate` and never by the API. A missing schema refuses durable admission (503).
+2. **Recovery is deterministic replay of the provider-call journal** (`backend/src/agent/durable/`). A committed answer is reused and never sent again. The runtime is not rewritten; persistence wraps it.
+3. **A call that may have been dispatched without a committed answer is never repeated automatically.** It becomes `OUTCOME_UNKNOWN` and the job is quarantined (`INTERRUPTED_UNCERTAIN`). Only an explicit operator decision (`pnpm agent:recovery -- authorize <jobId>`) resumes it; the unknown calls stay charged. Do not claim exactly-once execution.
+4. **Every advancing write is lease-fenced** (owner, epoch, unexpired lease, under a row lock). A worker that lost its lease commits nothing and halts before it reserves a call. Only one worker plus a fenced stale worker is validated; do not claim distributed execution.
+5. **Restarts never reset budgets or deadlines.** Recovered jobs keep their original model reservation and authorization, and replayed calls never reach the dispatch counter. `deadline_at` is persisted.
+6. **Recovery rules are code, in fixed order:** cancel, then quarantine on unknown, then timeout, then attempt limit, then resume. No model decides how to recover. Replay divergence (a fingerprint or checkpoint digest mismatch, or unreproduced committed rows) quarantines.
+7. **Checkpoints are versioned** (`agent-checkpoint/v1`). An unknown version is refused, never guessed. Process-bound objects never enter `AgentRunState`.
+8. **A local stateful policy must implement `AgentModel.replay()`.** A provider adapter must stay stateless per call, otherwise replay is invalid.
+9. **Durability is validated with real process interruption** (`pnpm test:durable`: SIGKILL, SIGSTOP, SIGTERM against disposable PostgreSQL, synthetic provider). Fault injection (`CE_DURABLE_FAULT`) is test-only and ignored on a public runtime.
+10. **Infrastructure recovery is not research quality.** A resumed job is not evidence that the research is useful; report the two separately. Live acceptance (`pnpm durable:live`) runs locally, only with owner approval.
 
 ## Deployment provenance (permanent, from Sprint 8F)
 
@@ -225,6 +240,10 @@ pnpm eval:competence -- --decisions
 pnpm eval:competence -- --audit <dirs>
                         # decision-quality audit of stored LLM runs (files only)
 pnpm eval:query         # offline gate/handoff replay over the query manifest (synthetic); never NLU evidence
+DATABASE_URL=<disposable> pnpm db:migrate && pnpm test:durable
+                        # Sprint 10C real process-interruption recovery (synthetic provider, disposable PostgreSQL)
+pnpm durable:live -- --plan
+                        # Sprint 10C live acceptance plan; the run itself needs owner approval (local only)
 pnpm eval:query -- --live
 pnpm test:e2e           # browser tests against a SYNTHETIC job API; never live Qloo or Haiku
                         # real Haiku interpretation, dry run (no Qloo): LIVE_HAIKU_INTERPRETATION

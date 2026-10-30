@@ -2,7 +2,8 @@
 # If GitHub Actions is unpaid/unavailable, run the same checks locally:
 #   pnpm lint && pnpm typecheck && pnpm test && pnpm eval:methodology &&
 #   pnpm eval:live && pnpm eval:elasticity && pnpm eval:agent && pnpm eval:d2d && pnpm eval:discovery && pnpm eval:competence -- --decisions && pnpm eval:query &&
-#   pnpm build && pnpm check:secrets && pnpm test:e2e && pnpm smoke:docker
+#   pnpm build && pnpm check:secrets && pnpm test:e2e && pnpm smoke:docker &&
+#   DATABASE_URL=<disposable db> pnpm db:migrate && pnpm test:durable
 # Release stays blocked until this evidence exists.
 name: CI
 
@@ -130,3 +131,41 @@ jobs:
       - name: Docker smoke (no provider network)
         if: steps.filter.outputs.run == 'true'
         run: bash scripts/smoke-docker.sh
+
+  durable:
+    # Sprint 10C: real process-interruption tests against a disposable PostgreSQL service (synthetic provider only).
+    runs-on: ubuntu-latest
+    needs: verify
+    env:
+      QLOO_API_KEY: ""
+      ANTHROPIC_API_KEY: ""
+      DATABASE_URL: postgres://ce:ce@127.0.0.1:5432/ce_durable
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ce
+          POSTGRES_PASSWORD: ce
+          POSTGRES_DB: ce_durable
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ce -d ce_durable"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @cultural-elasticity/shared build
+      - name: Explicit migration (twice; the second run must apply nothing)
+        run: pnpm db:migrate && pnpm db:migrate | grep -q "applied=0"
+      - name: Process-interruption recovery (SIGKILL / SIGSTOP / SIGTERM; no provider call)
+        run: pnpm test:durable
+      - name: Baseline durability (existing real-PostgreSQL suite)
+        run: pnpm test:db

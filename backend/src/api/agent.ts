@@ -15,9 +15,11 @@ import { conservativeReserveUsd } from "../ops/pricing.js";
 import { createAgentModel, createLiveToolProvider, createQueryInterpreter, type ModelChoice } from "../agent/factory.js";
 import { confirmBody, queryBody } from "../agent/query/contracts.js";
 import type { QueryInterpreter } from "../agent/query/interpreter.js";
-import { JobManager, JobRejectedError, type JobRequest } from "../agent/query/jobs.js";
+import { JobManager, JobRejectedError, type DurableJobOptions, type JobRequest } from "../agent/query/jobs.js";
 import { QueryAlreadyExecutedError, QueryService, QueryStore } from "../agent/query/service.js";
 import { RunStore } from "../agent/run-store.js";
+import { JournaledInterpreter, JournaledModel, JournaledToolProvider } from "../agent/durable/decorators.js";
+import { DurableAgentStore } from "../agent/durable/store.js";
 import { AgentRuntime } from "../agent/runtime.js";
 import type { AgentToolProvider } from "../agent/tool-provider.js";
 import type { EvidenceIssue } from "../evidence/schema.js";
@@ -45,15 +47,34 @@ export function feasibilityPolicyFromEnv(env: NodeJS.ProcessEnv = process.env): 
   return env.CE_FEASIBILITY_POLICY === "observe" ? "observe" : "enforce";
 }
 
-export function liveRuntimeFactory(): AgentRuntimeFactory {
-  const store = new RunStore();
+/**
+ * Sprint 10C: durable agent jobs are opt-in (`CE_DURABLE_AGENT=1` with `DATABASE_URL`). The schema comes from the
+ * explicit migration 002_durable_agent.sql; the API never migrates. Lease and retention can be tuned for tests.
+ */
+export function durableAgentFromEnv(env: NodeJS.ProcessEnv = process.env): DurableJobOptions | null {
+  if (env.CE_DURABLE_AGENT !== "1" || !env.DATABASE_URL) return null;
+  const positive = (raw: string | undefined) => {
+    const value = Number(raw);
+    return raw && Number.isFinite(value) && value > 0 ? value : undefined;
+  };
+  const retentionHours = positive(env.CE_AGENT_RETENTION_HOURS);
+  return {
+    store: new DurableAgentStore(createBaselinePool(env.DATABASE_URL)),
+    ...(positive(env.CE_AGENT_LEASE_MS) !== undefined && { leaseMs: positive(env.CE_AGENT_LEASE_MS)! }),
+    ...(positive(env.CE_AGENT_RETENTION_MS) !== undefined ? { retentionMs: positive(env.CE_AGENT_RETENTION_MS)! } : retentionHours !== undefined ? { retentionMs: retentionHours * 3_600_000 } : {}),
+  };
+}
+
+export function liveRuntimeFactory(options: { store?: RunStore; journaled?: boolean } = {}): AgentRuntimeFactory {
+  const store = options.store ?? new RunStore();
   const runtimes = new Map<ModelChoice, AgentRuntime>();
   let provider: AgentToolProvider | undefined;
   return (choice) => {
     const existing = runtimes.get(choice);
     if (existing) return existing;
-    const model = createAgentModel(choice);
-    provider ??= createLiveToolProvider();
+    const created = createAgentModel(choice);
+    const model = options.journaled ? new JournaledModel(created) : created;
+    provider ??= options.journaled ? new JournaledToolProvider(createLiveToolProvider()) : createLiveToolProvider();
     const runtime = new AgentRuntime({ model, provider, store, feasibilityPolicy: feasibilityPolicyFromEnv() });
     runtimes.set(choice, runtime);
     return runtime;
@@ -103,8 +124,23 @@ function issues(error: z.ZodError): EvidenceIssue[] {
  *   POST /api/agent/jobs/:id/cancel
  * A live run makes real Qloo calls (spaced to respect rate limits) and can take minutes.
  */
-export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(), interpreters: QueryInterpreterFactory = createQueryInterpreter, injected: { baselines?: BaselineReader } = {}) {
-  const queries = new QueryStore();
+export function agentRoutes(
+  injectedFactory?: AgentRuntimeFactory,
+  injectedInterpreters?: QueryInterpreterFactory,
+  injected: { baselines?: BaselineReader; durable?: DurableJobOptions | null; runStore?: RunStore } = {},
+) {
+  // Sprint 10C: one durable configuration for jobs, interpreted queries and held runs (null = in-process only).
+  const durable = injected.durable === undefined ? durableAgentFromEnv() : injected.durable;
+  const runStore = injected.runStore ?? new RunStore();
+  const factory = injectedFactory ?? liveRuntimeFactory({ store: runStore, journaled: durable !== null });
+  const interpreters: QueryInterpreterFactory = injectedFactory || injectedInterpreters || !durable
+    ? (injectedInterpreters ?? createQueryInterpreter)
+    : (choice) => new JournaledInterpreter(createQueryInterpreter(choice));
+  const queryRetentionMs = durable?.retentionMs ?? 7 * 24 * 3_600_000;
+  const queries = new QueryStore(200, durable ? {
+    put: (record) => durable.store.putQuery(record.queryId, record, queryRetentionMs),
+    claim: (queryId, jobId) => durable.store.markQueryExecuted(queryId, jobId),
+  } : null);
   const services = new Map<ModelChoice, QueryService>();
   const service = (choice: ModelChoice, log: (t: unknown) => void) => {
     let existing = services.get(choice);
@@ -126,7 +162,9 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
     const comparativeKeys = new Map<string, { referenceKey: string; pending: Promise<unknown> }>();
     const baselinePool = !injected.baselines && process.env.CE_BASELINE_ENABLED === "1" && process.env.DATABASE_URL ? createBaselinePool(process.env.DATABASE_URL) : null;
     const baselines: BaselineReader | null = injected.baselines ?? (baselinePool ? new BaselineRepository(baselinePool) : null);
+    let durableReady = durable === null;
     const jobs = new JobManager({
+      ...(durable && { durable: { ...durable, runStore, queryStore: queries } }),
       runnerFor: (model) => service(model === "baseline" ? "baseline" : "auto", log),
       log: (event) => {
         log(event);
@@ -173,8 +211,25 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       },
     });
     registerJobManager(jobs);
+    if (durable) {
+      // Startup recovery (Sprint 10C): schema check first; a missing schema refuses durable admission (503), it is
+      // never created implicitly.
+      app.addHook("onReady", async () => {
+        durableReady = await durable.store.schemaReady();
+        if (!durableReady) {
+          app.log.error({ event: "durable_schema_missing" }, "durable agent jobs need migration 002_durable_agent.sql (pnpm db:migrate)");
+          return;
+        }
+        const summary = await jobs.recover();
+        app.log.info({ durableRecovery: summary }, "durable agent recovery");
+      });
+    }
     app.addHook("onClose", async () => {
       jobs.shutdown("The investigation service is stopping.");
+      if (durable) {
+        await jobs.drain();
+        await durable.store.pool.end().catch(() => undefined);
+      }
       await baselinePool?.end();
     });
     const modelChoice = (model: string | undefined) => (model === "baseline" ? "baseline" : "auto");
@@ -251,7 +306,11 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         throw error;
       }
     };
-    const enqueue = async (jobRequest: JobRequest, request: FastifyRequest, reply: FastifyReply) => {
+    const enqueue = async (jobRequest: JobRequest, request: FastifyRequest, reply: FastifyReply, origin?: string) => {
+      if (!durableReady) {
+        opsMetrics().record("admission_rejected");
+        return reply.code(503).send({ error: "durability_unavailable", message: "Investigations cannot start because their durable record is unavailable." });
+      }
       const quota = await takePublicQuota(headersOf(request), "investigation");
       if (!quota.ok) {
         opsMetrics().record("admission_rejected");
@@ -264,7 +323,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       return handle(reply, async () => {
         try {
           const bound = spendLedger().bound(hold.id) ?? undefined;
-          const created = jobs.create(jobRequest, bound ? { spend: bound } : undefined);
+          const created = await jobs.admit(jobRequest, { ...(bound && { spend: bound }), ...(origin && { origin }) });
           spendLedger().attach(hold.id, created.jobId);
           const started = created.status === "running";
           reservations.set(created.jobId, { id: hold.id, started, durableCents: held.durableCents });
@@ -361,7 +420,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
         : queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "explore_frontier", territories: [] });
       const grounding = parsed.data.territoryId ? directionGrounding(scan.result, parsed.data.territoryId) : null;
       const seeds = "seeds" in prepared && prepared.seeds.length ? prepared.seeds : null;
-      const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId, ...(grounding && { territoryGrounding: grounding }), ...(seeds && { discoverySeeds: seeds }) }, request, reply));
+      const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId, ...(grounding && { territoryGrounding: grounding }), ...(seeds && { discoverySeeds: seeds }) }, request, reply, `scan:${parsed.data.scanId}`));
       handoffJobs.set(key, { directionKey, pending });
       if (handoffJobs.size > 200) handoffJobs.delete(handoffJobs.keys().next().value!);
       const created = await pending;
@@ -407,8 +466,11 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       const jobToken = tokenOf(request.headers["x-job-token"]);
       if (!baselines || !scanToken || !jobToken) { void reply.code(404).send({ error: "investigation_not_found" }); return null; }
       const scan = await baselines.readScan(parsed.data.scanId, scanToken);
+      // Sprint 10C: after a restart the scan ↔ job links come from the durable job records.
+      const durableSiblings = jobs.isDurable ? await jobs.originJobs(`scan:${parsed.data.scanId}`) : [];
+      for (const jobId of durableSiblings) if (!handoffOrigins.has(jobId)) remember(handoffOrigins, jobId, { scanId: parsed.data.scanId });
       const origin = handoffOrigins.get(parsed.data.parentJobId);
-      const view = jobs.get(parsed.data.parentJobId, jobToken);
+      const view = await jobs.read(parsed.data.parentJobId, jobToken);
       // Unknown scan, wrong token, a job from another scan or a job that is gone all look the same.
       if (!scan?.result || !view || origin?.scanId !== parsed.data.scanId) { void reply.code(404).send({ error: "investigation_not_found" }); return null; }
       const parent = completedResult(view);
@@ -416,10 +478,11 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       if (parent.brand?.id !== scan.result.brand.qlooId) { void reply.code(409).send({ error: "brand_mismatch", message: "The investigation resolved a different Qloo brand than this research scan." }); return null; }
       const target = parent.territories.find((t) => t.role === "target") ?? null;
       if (!target) { void reply.code(409).send({ error: "target_not_found" }); return null; }
-      const siblings = [...handoffOrigins.entries()].filter(([jobId, item]) => item.scanId === parsed.data.scanId && jobId !== parsed.data.parentJobId).flatMap(([jobId]) => {
-        const result = completedResult(jobs.peek(jobId));
+      const siblingIds = [...handoffOrigins.entries()].filter(([jobId, item]) => item.scanId === parsed.data.scanId && jobId !== parsed.data.parentJobId).map(([jobId]) => jobId);
+      const siblings = (await Promise.all(siblingIds.map(async (jobId) => {
+        const result = completedResult(await jobs.peekDurable(jobId));
         return result ? [{ jobId, result }] : [];
-      });
+      }))).flat();
       const parentRunId = view.response!.investigation!.runId;
       const candidates = collectReferenceCandidates({ brandId: scan.result.brand.qlooId, target, exemplarProfiles: exemplarProfiles(parentRunId, target), siblings, baseline: scan.result });
       return { body: parsed.data, context: { scan: scan.result, parentRunId, parent, target, candidates, siblings: siblings.map((s) => s.result) } };
@@ -497,7 +560,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
     /** The validated comparative report for a comparative job. Recomputed from the held result on every read. */
     app.get<{ Params: { id: string } }>("/api/agent/handoff/compare/:id/report", async (request, reply) => {
       if (rejectUnauthenticated(request, reply)) return;
-      const view = jobs.get(request.params.id, tokenOf(request.headers["x-job-token"]));
+      const view = await jobs.read(request.params.id, tokenOf(request.headers["x-job-token"]));
       const entry = comparativeJobs.get(request.params.id);
       if (!view || !entry) return reply.code(404).send({ error: "job_not_found", message: "This comparison is not available. It may have expired, or the server may have restarted." });
       const result = view.response?.investigation?.result;
@@ -518,7 +581,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
     app.post<{ Body: unknown }>("/api/agent/handoff/jobs", { bodyLimit: 4096 }, (request, reply) => handoff(request, reply, true));
     app.get<{ Params: { id: string } }>("/api/agent/jobs/:id", async (request, reply) => {
       if (rejectUnauthenticated(request, reply)) return;
-      const view = jobs.get(request.params.id, tokenOf(request.headers["x-job-token"]));
+      const view = await jobs.read(request.params.id, tokenOf(request.headers["x-job-token"]));
       if (!view) {
         opsMetrics().record("result_unavailable");
         return reply.code(404).send({ error: "job_not_found", message: "This investigation is not available. It may have expired, or the server may have restarted." });
@@ -529,7 +592,7 @@ export function agentRoutes(factory: AgentRuntimeFactory = liveRuntimeFactory(),
       if (rejectUnauthenticated(request, reply)) return;
       const visitor = admitVisitor(headersOf(request), true);
       if (!admit(`cancel:${visitor.visitorId}`, 60, 60_000)) return reply.code(429).send({ error: "too_many_requests", message: "Too many stop requests. Wait a moment and try again." });
-      const view = jobs.cancel(request.params.id, tokenOf(request.headers["x-job-token"]));
+      const view = await jobs.stop(request.params.id, tokenOf(request.headers["x-job-token"]));
       if (!view) {
         opsMetrics().record("result_unavailable");
         return reply.code(404).send({ error: "job_not_found", message: "This investigation is not available. It may have expired, or the server may have restarted." });

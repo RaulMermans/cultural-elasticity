@@ -37,6 +37,15 @@ export class ScriptedAgentModel implements AgentModel {
     return { decisions: Array.isArray(value) ? value : { invalid: value.invalid } };
   }
 
+  /** Sprint 10C: a reused decision still consumes its script step. */
+  async replay(context: AgentDecisionContext): Promise<void> {
+    await this.decide(context);
+  }
+
+  async replaySynthesis(context: FinalizationContext): Promise<void> {
+    await this.synthesize(context);
+  }
+
   async synthesize(context: FinalizationContext): Promise<SynthesisTurn> {
     this.seenFinalization.push(context);
     const output = this.synthesis[this.synthesisStep];

@@ -9,7 +9,7 @@ import { syntheticBrand, syntheticTag, syntheticTagObservation } from "./fixture
 import { buildApp } from "../src/app.js";
 import { BaselineCallGate, BaselineWorker } from "../src/brand-baseline/worker.js";
 import { compactEntity, compactTag, envelope, FixtureTransport } from "./fixtures/synthetic/envelopes.js";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resetLifecycle } from "../src/ops/lifecycle.js";
 
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL_REQUIRED_FOR_REAL_POSTGRES_TESTS");
@@ -182,7 +182,7 @@ describe("REAL POSTGRES synthetic baseline durability", () => {
       expect((await app.inject({ method: "GET", url: "/ops/baselines" })).statusCode).toBe(404);
       const response = await app.inject({ method: "GET", url: "/ops/baselines", headers: { "x-ce-operator": "synthetic-operator-token" } });
       expect(response.statusCode).toBe(200);
-      expect(response.json()).toMatchObject({ enabled: false, liveEnabled: false, databaseReady: true, migrationCount: 1 });
+      expect(response.json()).toMatchObject({ enabled: false, liveEnabled: false, databaseReady: true, migrationCount: readdirSync(new URL("../migrations/", import.meta.url)).filter((name) => name.endsWith(".sql")).length });
       expect(response.body).not.toContain("postgresql://");
     } finally {
       await app.close();

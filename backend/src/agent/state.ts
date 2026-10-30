@@ -191,8 +191,7 @@ export type AgentRunState = {
   lateSettlements: { operationId: string; observedAttempts: number; charged: number; discarded: boolean; afterFinalization: boolean }[];
 };
 
-export function createRunState(request: AgentRequest, model: AgentModelInfo, toolProvider: AgentRunState["toolProvider"], limits?: InvestigationLimits): AgentRunState {
-  const runId = randomUUID();
+export function createRunState(request: AgentRequest, model: AgentModelInfo, toolProvider: AgentRunState["toolProvider"], limits?: InvestigationLimits, runId: string = randomUUID()): AgentRunState {
   const resolvedLimits = limits ?? { ...defaultLimits(request.intent), ...(request.limits ?? {}) };
   if (request.researchMode === "single_hypothesis_v1") {
     resolvedLimits.maxQlooCalls = Math.min(request.limits?.maxQlooCalls ?? limits?.maxQlooCalls ?? 12, 12);

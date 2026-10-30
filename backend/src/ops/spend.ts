@@ -269,3 +269,25 @@ export function resetSpend(env: NodeJS.ProcessEnv = process.env): SpendLedger {
   ledger = new SpendLedger(env);
   return ledger;
 }
+
+/**
+ * Sprint 10C: the envelope of a recovered durable job. Its model reservation was taken (and durably held) when the job
+ * was admitted by an earlier process, so no new reservation is made: the replay re-adds the usage the journal recorded
+ * and new calls are bounded by what remains of the original authorization.
+ */
+export function fixedSpendBound(authorizedUsd: number): SpendBound {
+  let observed = 0;
+  return {
+    reservationId: "recovered",
+    authorizedUsd,
+    observedUsd: () => observed,
+    remainingUsd: () => roundUsd(Math.max(0, authorizedUsd - observed)),
+    authorizeNextCall: (estimateUsd: number) => Number.isFinite(estimateUsd) && estimateUsd >= 0 && estimateUsd <= Math.max(0, authorizedUsd - observed),
+    addObserved: (usd: number) => {
+      observed = roundUsd(observed + Math.max(0, usd));
+    },
+    markUnknownCall: (ceilingUsd: number) => {
+      observed = roundUsd(observed + Math.max(0, ceilingUsd));
+    },
+  };
+}
