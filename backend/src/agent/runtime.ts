@@ -56,6 +56,8 @@ export type AgentRuntimeDeps = {
   feasibilityPolicy?: "enforce" | "observe";
   /** Sprint 9O: false turns the runtime reference search off (the competence evaluation's matched "before" arm). */
   referenceDiscovery?: boolean;
+  /** Sprint 10B: false omits focus.withdrawn (the decision evaluation's matched "before" arm). */
+  withdrawnToolNotes?: boolean;
 };
 
 /** Sprint 5B.1: a gate-approved interpretation and the run's parent-child link (both optional). */

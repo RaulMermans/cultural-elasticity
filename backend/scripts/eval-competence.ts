@@ -6,6 +6,10 @@
  *        recorded for the case is served from the recording, so the arms see identical Qloo answers (a matched
  *        comparison). Live dispatches stop at the manifest's allowance; model spend is checked before each run.
  *        Report label: LIVE (recorded). Needs QLOO_API_KEY, QLOO_API_BASE_URL and ANTHROPIC_API_KEY.
+ *   -- --decisions [--policy …] [--arms before,new] [--split dev,holdout] [--repeats N] [--approved-usd X]
+ *        Sprint 10B decision-point cases (evals/competence/decisions.json) on the SYNTHETIC world: one turn per case is
+ *        taken by the policy under test (scripts/competence/decisions.ts). Offline by default; `--policy haiku` calls
+ *        Anthropic only, under an owner-approved ceiling. Report label: SYNTHETIC / LIVE_HAIKU_DECISIONS.
  *   -- --replay <dir> [--model baseline|haiku] [--arms …]
  *        The same cases on the recorded answers only. No Qloo call; `baseline` makes no provider call at all.
  *        A call never recorded is a FAILED call (never evidence) and is counted as a coverage miss.
@@ -34,6 +38,11 @@ const arg = (name: string) => {
   const i = process.argv.indexOf(name);
   return i >= 0 ? process.argv[i + 1] : undefined;
 };
+if (process.argv.includes("--decisions")) {
+  const { decisionsCli } = await import("./competence/decisions.js");
+  const price = MODEL_PRICES["claude-haiku-5-5"] ?? HAIKU_CONSERVATIVE;
+  process.exit(await decisionsCli(process.argv, () => createAgentModel("anthropic"), price));
+}
 const live = process.argv.includes("--live");
 const dir = live ? arg("--out") : arg("--replay");
 if (!dir) throw new Error("usage: eval:competence -- --live --out <dir> | --replay <dir> [--model baseline|haiku]");
