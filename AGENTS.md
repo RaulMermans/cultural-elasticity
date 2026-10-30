@@ -224,6 +224,16 @@ Canonical release contract: `docs/operations/DEPLOYMENT_RELEASE_CONTRACT.md`. Ru
 3. **The tag URN is authoritative** for facet and operational classification; a returned type label never overrides it. Names are never used to classify, only to flag possible duplicates, which are never merged or counted twice.
 4. **Stored results are never rewritten.** Re-projections of stored observations are separate derived artifacts with `execution.derivedFrom`. Canonical record: `docs/sprint-9b1/CULTURAL_INTELLIGENCE_GROUNDING_REPORT.md`.
 
+## Measurement and research completion (permanent, from Sprint 12)
+
+1. **Direct evidence is assessed without a comparison** (`evidence-assessment/v1`, `packages/shared/src/evidence-assessment.ts`). Every target gets an evidence outcome from explicit rules: established association, observed association, limited evidence, no support in the tested scope, not testable as asked, incomplete. These are evidence categories, never calibrated strengths or elasticity classes.
+2. **A missing comparison never erases a valid direct assessment, and never replaces it.** The UI, report and Decision Card lead with the research conclusion; the comparative result is its own section and stays explicit when unavailable.
+3. **No affinity from counts, no negative from absence.** Returned-entity counts and saturation are never strength. A clean empty answer is "no support in the tested scope", never a negative fit. A failed, partial or degraded call is never evidence of absence.
+4. **A concept is not evidence for itself.** The investigated concept's own tag is removed from shared signals (it is shared by construction).
+5. **Compound questions keep one assessment per concept** (`splitCompoundTarget`, v1 only). Evidence for one part is never read as evidence about another; a part that does not fit the existing budget is reported as not investigated. Budgets are unchanged.
+6. **Recommendations follow the real blocker.** A named comparison may only use references a validated source supplied (`validatedReferences`); the brand's other directions in list order are never comparison references. A blocked evidence path is never offered again as a paid run.
+7. **The assessment is one shared projection.** The runtime stores it, and the UI, exports and evaluations call the same function. Older stored results are assessed from what they show (`DERIVED_FROM_STORED_RESULT`), never rewritten.
+
 ## Engineering
 
 - Keep **frontend/backend boundaries clean.** The frontend talks only to the backend. Only the backend talks to Qloo, through `QlooClient` (`backend/src/qloo`).
@@ -252,6 +262,8 @@ pnpm eval:agent:replay -- <dir>
 pnpm eval:d2d           # offline Discovery-to-Decision suite: observe vs enforce arms (synthetic) + recorded live artefacts as run
 pnpm eval:d2d -- --score <dir> [<dir>]
                         # score stored agent results with the same metrics (offline half of a model comparison)
+pnpm --filter backend exec tsx scripts/eval-research-completion.ts [--dir <stored results>] [--out <dir>]
+                        # Sprint 12 offline replay: production card vs evidence assessment over stored results; never live validation
 pnpm eval:discovery     # offline; real recorded frontier pools + Loewe scan seeds (mechanism/safety), never discovery-quality or live evidence
 pnpm eval:competence -- --decisions
                         # decision points on the synthetic world (reference + instruments); never a model validation

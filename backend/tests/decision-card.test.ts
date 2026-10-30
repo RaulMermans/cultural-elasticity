@@ -74,13 +74,26 @@ describe("decision card implications", () => {
 });
 
 describe("decision card next actions (repeat risk)", () => {
-  it("never suggests asking again when Qloo's evidence blocked it; offers a named comparison instead", () => {
+  it("never suggests asking again when Qloo's evidence blocked it, and never names unvalidated directions", () => {
     const r = result([territory()], feasibility("THIN_TARGET_PANEL", "LIKELY_REPEATS"));
-    const card = decisionCard(r, "syn_target", { otherDirections: ["Synthetic Target", "Dir A", "Dir B"] })!;
+    const card = decisionCard(r, "syn_target")!;
     expect(card.nextActions.map((a) => a.kind)).not.toContain("RUN_AGAIN");
-    expect(card.nextActions[0]).toMatchObject({ kind: "COMPARE_WITH_NAMED", question: "Compare Synthetic Target with Dir A and Dir B" });
-    expect(card.uncertain[0]).toMatch(/Only 1 example passed validation/u);
+    expect(card.nextActions.map((a) => a.kind)).not.toContain("COMPARE_WITH_NAMED");
+    expect(card.nextActions.map((a) => a.kind)).not.toContain("MEASURE_WITH_COMPARISON");
+    expect(card.comparative.text).toMatch(/Only 1 example passed validation/u);
     expect(card.repeat).toBe("LIKELY_REPEATS");
+    expect(decisionCardViolations(card, r)).toEqual([]);
+  });
+
+  it("names a comparison only with references a validated source supplied", () => {
+    const t = territory({ conditionedEvidence: { support: "SUPPORTED", entityCount: 12, topEntities: [{ label: "Example One", rank: 1 }], correlationId: "SYN-C1" }, coherence: { rawSharedMedian: 2, filteredSharedMedian: 2, filteredBand: "SPARSE", exemplarsCompared: 1, consistentlyShared: [{ id: "urn:tag:keyword:syn:other", label: "Other Signal" }] } } as never);
+    const r = result([t], feasibility("NO_MEANINGFUL_REFERENCE_CANDIDATES", "MAY_CHANGE"));
+    const card = decisionCard(r, "syn_target", { validatedReferences: ["Ref B", "Ref C"] })!;
+    expect(card.conclusion?.outcome).toBe("OBSERVED_ASSOCIATION");
+    expect(card.nextActions[0]).toMatchObject({ kind: "COMPARE_WITH_NAMED", question: "Compare Synthetic Target with Ref B and Ref C" });
+    expect(decisionCardViolations(card, r, { validatedReferences: ["Ref B", "Ref C"] })).toEqual([]);
+    // The same card checked against a context that never validated those names is a violation.
+    expect(decisionCardViolations(card, r).join()).toMatch(/no validated source/u);
   });
 
   it("suggests running again only when the run's own budget blocked it", () => {

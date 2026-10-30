@@ -3,7 +3,7 @@
  * read from the deterministic result (class, ranks, robustness, shared signals, conditioned evidence, exemplars);
  * nothing is computed, estimated or ranked here. Sentences restate those values; none forecasts commercial outcomes.
  */
-import { decisionCard, type AgentRunResponse, type AgentTerritoryResult, type DecisionCard, type DecisionCardContext, type OpportunityView } from "@cultural-elasticity/shared";
+import { decisionCard, nonTautologicalSignals, researchAssessmentOf, type AgentRunResponse, type AgentTerritoryResult, type DecisionCard, type DecisionCardContext, type OpportunityView } from "@cultural-elasticity/shared";
 
 export type FitStep = "NATURAL_ADJACENCY" | "CREDIBLE_STRETCH" | "CULTURAL_BREAK";
 
@@ -15,6 +15,8 @@ export const FIT_STEPS: { code: FitStep; label: string }[] = [
 
 export type TerritoryReading = {
   name: string;
+  /** Sprint 12: the user's question, which the research conclusion answers. */
+  question: string | null;
   fit: { code: string; label: string; onScale: FitStep | null; meaning: string } | null;
   steadiness: { steady: boolean; text: string } | null;
   /** The comparison, in the methodology's order (1 is the strongest association within the set). */
@@ -142,17 +144,21 @@ export function territoryReading(result: AgentRunResponse | null | undefined, te
   const unknowns = unique(territory.limitations.map((limitation) => UNKNOWN[limitation.code]?.(name, brand)));
   if (!compared.length && !unknowns.some((line) => line.includes("wasn't ranked"))) unknowns.unshift(`${name} wasn't ranked against other territories, so there is no comparison yet.`);
   if (steadiness && !steadiness.steady) unknowns.push("Whether the ranking holds with other examples.");
+  // Sprint 12: the assessment's rule and the calls behind each observation go to the technical details.
+  const assessed = territory.role === "target" ? researchAssessmentOf(done).territories.find((item) => item.territoryKey === territory.key) : undefined;
+  const provenance = assessed ? [`Evidence assessment (${assessed.version}, ${assessed.basis === "DIRECT_FACTS" ? "recorded facts" : "rebuilt from the stored result"}): ${assessed.rule}.`, ...assessed.observed.filter((item) => item.correlationIds.length).map((item) => `${item.code}: Qloo call ${item.correlationIds.slice(0, 3).join(", ")}`)] : [];
   return {
     name,
+    question: done.userQuery || null,
     fit,
     steadiness,
     compared,
-    sharedTastes: unique(territory.coherence?.consistentlyShared.map((signal) => signal.label) ?? []).slice(0, 10),
+    sharedTastes: unique(nonTautologicalSignals(territory).kept.map((signal) => signal.label)).slice(0, 10),
     closestMatches: unique(territory.conditionedEvidence?.topEntities.map((entity) => entity.label) ?? []).slice(0, 8),
     examples,
     concept: territory.resolvedConcept?.label ?? null,
     unknowns,
-    technical: unique([...territory.keyEvidence, ...territory.limitations.map((limitation) => limitation.detail)]),
+    technical: unique([...provenance, ...territory.keyEvidence, ...territory.limitations.map((limitation) => limitation.detail)]),
     decision: decisionCard(done, territory.key, context),
     surfaced: surfacedReading(done.comparisonSetConstruction?.opportunities?.find((item) => item.territoryKey === territory.key), brand),
   };

@@ -24,4 +24,5 @@ export * from "./query-validate.js";
 export * from "./brand-baseline.js";
 export * from "./connections.js";
 export * from "./decision-card.js";
+export * from "./evidence-assessment.js";
 export * from "./opportunity.js";

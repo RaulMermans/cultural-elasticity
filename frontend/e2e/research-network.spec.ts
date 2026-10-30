@@ -69,7 +69,16 @@ test("SYNTHETIC investigating a direction attaches the agent's validated result 
   await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
   await page.getByTestId("network-investigate").click();
   await expect(page.getByTestId("network-node-inquiry")).toHaveCount(1);
-  await expect(page.getByTestId("network-dossier")).toContainText("Not measured yet");
+  // Sprint 12: the research conclusion leads; the missing comparison is stated in its own, later section.
+  const reading = page.getByTestId("network-dossier").getByTestId("network-reading");
+  await expect(reading.getByTestId("research-conclusion")).toBeVisible();
+  await expect(reading.getByTestId("evidence-measurement")).toBeVisible();
+  await expect(reading.getByTestId("network-verdict")).toContainText("Not established comparatively");
+  expect(await reading.evaluate((root) => {
+    const order = ["research-conclusion", "evidence-measurement", "network-elasticity"].map((id) => root.querySelector(`[data-testid="${id}"]`));
+    return order.every((el, i) => el && (i === 0 || Boolean(order[i - 1]!.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)));
+  })).toBe(true);
+  await expect(reading.getByTestId("decision-finding")).not.toContainText(/^Not measured/u);
   expect(calls.handoffs).toHaveLength(1);
   const body = calls.handoffs[0] as Record<string, unknown>;
   expect(Object.keys(body).sort()).toEqual(["idempotencyKey", "scanId", "territoryId"]);
@@ -221,7 +230,7 @@ test("SYNTHETIC a branch is removed only after a second confirmation, and a kept
   await startLarkspur(page);
   await page.getByLabel(/Ask a research question about/u).fill("How far can Larkspur Velo extend into Gravel Riding?");
   await page.getByRole("button", { name: "Ask the agent" }).click();
-  await expect(page.getByTestId("network-dossier")).toContainText("Not measured yet");
+  await expect(page.getByTestId("network-dossier").getByTestId("research-conclusion-label")).toHaveText("Limited evidence");
   // The server forgets the job; the answer already kept in this browser stays.
   await page.route("**/api/agent/jobs/*", (route) => json(route, { error: "not_found" }, 404));
   await page.reload();

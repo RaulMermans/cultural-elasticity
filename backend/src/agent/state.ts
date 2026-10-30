@@ -180,6 +180,8 @@ export type AgentRunState = {
   researchPolicy?: "v0" | "v1";
   /** Sprint 11: the research approach the run follows and who chose it (v1 only). */
   researchApproach?: import("@cultural-elasticity/shared").ResearchApproachRecord;
+  /** Sprint 12: one target per concept of a compound question (set at interpretation, v1 only). */
+  researchScope?: import("@cultural-elasticity/shared").ResearchScope;
   /** Sprint 5B.1: parent-child link of a query-layer run (server-recorded; null for a run started outside it). */
   link: InvestigationLink | null;
   startedAt: number;

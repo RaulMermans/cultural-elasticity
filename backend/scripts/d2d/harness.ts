@@ -106,7 +106,7 @@ export function runMetrics(response: AgentRunResponse): RunMetrics {
   const cross = full.filter((t) => !r.methodologyRuns.some((m) => (t.comparisonSet?.territoryKeys ?? []).every((k) => m.territoryKeys.includes(k)))).length;
   const targets = r.territories.filter((t) => t.role === "target" || (r.intent === "explore_frontier" && t.role === "frontier_candidate"));
   const cards = targets.flatMap((t) => {
-    const card = decisionCard(r, t.key, { otherDirections: r.territories.filter((x) => x.key !== t.key).map((x) => x.label) });
+    const card = decisionCard(r, t.key);
     return card ? [{ territory: t.key, implication: card.implication.code, next: card.nextActions.map((a) => a.kind), violations: decisionCardViolations(card, r) }] : [];
   });
   const partial = targets.filter((t) => t.analysisRoute !== "FULL_RELATIVE_ANALYSIS");

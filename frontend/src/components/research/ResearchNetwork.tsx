@@ -209,7 +209,7 @@ function Placements({ response, brand, locate, onSelect }: { response: QueryResp
   </div>;
 }
 
-function InquiryDossier({ inquiry, node, brand, branch, locate, onSelect, onAnswer, onAsk, onMeasure, onRetry, onRephrase, busy, directions }: { inquiry: Inquiry; node: NetworkNode; brand: string; branch: string | null; locate: (name: string, key: string | null, index: number) => string | null; onSelect: (id: string) => void; onAnswer: (text: string) => void; onAsk: (question: string) => void; onMeasure?: () => void; onRetry?: () => void; onRephrase?: () => void; busy: boolean; directions?: readonly string[] }) {
+function InquiryDossier({ inquiry, node, brand, branch, locate, onSelect, onAnswer, onAsk, onMeasure, onRetry, onRephrase, busy }: { inquiry: Inquiry; node: NetworkNode; brand: string; branch: string | null; locate: (name: string, key: string | null, index: number) => string | null; onSelect: (id: string) => void; onAnswer: (text: string) => void; onAsk: (question: string) => void; onMeasure?: () => void; onRetry?: () => void; onRephrase?: () => void; busy: boolean }) {
   const [answer, setAnswer] = useState("");
   const response = inquiry.response;
   const result = response?.investigation?.result;
@@ -226,7 +226,7 @@ function InquiryDossier({ inquiry, node, brand, branch, locate, onSelect, onAnsw
     {running ? <AgentActivity entries={inquiry.activity ?? []} live /> : null}
     {/* Decision first: the deterministic reading, then the agent's validated write-up and the evidence. */}
     {!running && response?.investigation ? (territory || response.territories.length <= 1
-      ? <Reading result={result} territoryKey={territory?.territoryKey ?? null} brand={brand} investigated onMeasure={onMeasure} busy={busy} context={{ otherDirections: directions ?? [] }} />
+      ? <Reading result={result} territoryKey={territory?.territoryKey ?? null} brand={brand} investigated onMeasure={onMeasure} busy={busy} />
       : <Placements response={response} brand={brand} locate={locate} onSelect={onSelect} />) : running ? <ElasticityBlock elasticity={null} brand={brand} pending /> : null}
     {response && !running ? <InquiryResult response={response} /> : null}
     {!running && response && !response.investigation && onRephrase ? <button type="button" className="rw-secondary" disabled={busy} onClick={onRephrase}>Edit and ask again</button> : null}
@@ -241,13 +241,13 @@ function InquiryDossier({ inquiry, node, brand, branch, locate, onSelect, onAnsw
   </>;
 }
 
-function FindingDossier({ node, inquiry, brand, onInvestigate, onMeasure, busy, directions }: { node: NetworkNode; inquiry: Inquiry | null; brand: string; onInvestigate: () => void; onMeasure?: () => void; busy: boolean; directions?: readonly string[] }) {
+function FindingDossier({ node, inquiry, brand, onInvestigate, onMeasure, busy }: { node: NetworkNode; inquiry: Inquiry | null; brand: string; onInvestigate: () => void; onMeasure?: () => void; busy: boolean }) {
   const response = inquiry?.response ?? null;
   return <>
     <p className="kicker">Territory found by the agent</p>
     <h2>{node.label}</h2>
     <p className="rn-status" data-tone={node.tone}>{node.status}</p>
-    <Reading result={response?.investigation?.result} territoryKey={node.territoryKey} brand={brand} pending={Boolean(inquiry && isPending(inquiry))} investigated onMeasure={onMeasure} busy={busy} context={{ otherDirections: directions ?? [] }} />
+    <Reading result={response?.investigation?.result} territoryKey={node.territoryKey} brand={brand} pending={Boolean(inquiry && isPending(inquiry))} investigated onMeasure={onMeasure} busy={busy} />
     <h3>Continue this path</h3>
     <p className="quiet">It came up in another question. Investigating it runs a full investigation of {node.label} and grows this branch.</p>
     <button type="button" className="primary" disabled={busy} onClick={onInvestigate}>Investigate {node.label} further</button>
@@ -287,7 +287,7 @@ function DirectionDossier({ view, direction, inquiries, canInvestigate, blockedR
     <h3>Its cultural fingerprint</h3>
     <p>{direction.signals.join("; ")}. {direction.strength}.</p>
     {connections.length ? <><h3>Connections behind it</h3><ul>{connections.map((item) => <li key={item.key}><TagButton label={item.name} kind={item.kind === "tag" ? "concept" : "entity"} /> <span className="quiet">{item.contextLine}</span></li>)}</ul></> : null}
-    {latest ? <Reading result={latestResult} territoryKey={branchTerritory(latest.response, direction.name)?.territoryKey ?? null} brand={view.brand.name} pending={running} investigated onMeasure={repeats ? onMeasure?.(latestResult) : undefined} busy={busy} context={{ directionWhy: direction.why, otherDirections: view.directions.map((item) => item.name) }} />
+    {latest ? <Reading result={latestResult} territoryKey={branchTerritory(latest.response, direction.name)?.territoryKey ?? null} brand={view.brand.name} pending={running} investigated onMeasure={repeats ? onMeasure?.(latestResult) : undefined} busy={busy} context={{ directionWhy: direction.why }} />
       : <ElasticityBlock elasticity={null} brand={view.brand.name} pending={running} />}
     <h3>Still unknown</h3>
     <ul>{direction.unknown.map((line) => <li key={line}>{line}</li>)}</ul>
@@ -479,10 +479,10 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, blo
       if (byId.has(finding)) return finding;
       return ends.find((end) => normName(byId.get(end)?.label ?? "") === normName(name)) ?? null;
     };
-    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} locate={locate} onSelect={setSelectedId} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question, inquiry.response?.investigation?.result)} onRetry={retryFor(inquiry)} directions={view.directions.map((direction) => direction.name)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
+    dossier = inquiry ? <InquiryDossier key={inquiry.jobId} inquiry={inquiry} node={selected} brand={view.brand.name} branch={branch} locate={locate} onSelect={setSelectedId} busy={network.starting || !live} onAnswer={(text) => void open(network.answer(inquiry, text))} onAsk={(text) => void open(network.ask(text, askFrom))} onMeasure={measureFor(branch ?? inquiry.response?.territories[0]?.name ?? inquiry.question, inquiry.response?.investigation?.result)} onRetry={retryFor(inquiry)} onRephrase={live ? () => { setQuestion(inquiry.question); setSelectedId(inquiry.parentId); composerRef.current?.focus(); } : undefined} /> : null;
   } else if (selected.kind === "finding") {
     const parentInquiry = inquiryOf(selected);
-    dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateTerritory(selected.label, selected.id)} onMeasure={measureFor(selected.label, parentInquiry?.response?.investigation?.result)} directions={view.directions.map((direction) => direction.name)} />;
+    dossier = <FindingDossier node={selected} inquiry={parentInquiry} brand={view.brand.name} busy={network.starting || !live || Boolean(parentInquiry && isPending(parentInquiry))} onInvestigate={() => investigateTerritory(selected.label, selected.id)} onMeasure={measureFor(selected.label, parentInquiry?.response?.investigation?.result)} />;
   } else {
     dossier = <BrandDossier view={view} onSelect={setSelectedId} busy={network.starting} {...(canInvestigate && scanToken && { onExplore: () => void open(network.exploreSignals()) })} />;
   }

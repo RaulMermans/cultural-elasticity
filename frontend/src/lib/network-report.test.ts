@@ -25,7 +25,8 @@ test("the summary restates each measured class with its territories", () => {
 test("territory readings name the comparison each rank holds in", () => {
   const territories = report.sections.find((section) => section.id === "territories")!;
   const mountain = territories.blocks.find((block) => block.heading === "Mountain Town")!;
-  assert.match(mountain.meta!, /Natural fit · ranked 1 of 3 among/u);
+  // Sprint 12: the research conclusion leads; the comparative result and its set follow.
+  assert.match(mountain.meta!, /^[A-Z][a-z ]+ · comparative: natural fit · ranked 1 of 3 among/u);
 });
 
 test("the report is stamped with the download time and the file name carries it", () => {
@@ -105,10 +106,10 @@ test("Sprint 9O: each exported card is the card its live dossier shows, with the
   const asked: Inquiry = { ...inquiry, jobId: "syn-9o", parentId: directionNodeId(direction.key), origin: "direction", question: `Investigate ${direction.name}`, response };
   const unmeasured = buildNetworkReport({ view: wide, nodes: buildNetwork(wide.brand.name, wide.directions, [asked]), inquiries: [asked], links: [], now });
   const block = unmeasured.sections.find((section) => section.id === "territories")!.blocks.find((item) => item.heading === direction.name)!;
-  // ResearchNetwork's direction dossier passes the direction's own "why" and the brand's other directions.
-  const live = decisionCard(result as never, territory.key as string, { directionWhy: direction.why, otherDirections: wide.directions.map((item) => item.name) })!;
+  // ResearchNetwork's direction dossier passes the direction's own "why" (Sprint 12: never the brand's other directions).
+  const live = decisionCard(result as never, territory.key as string, { directionWhy: direction.why })!;
   assert.notDeepEqual(live, decisionCard(result as never, territory.key as string), "the live context must change this card");
-  assert.equal(live.nextActions[0]?.kind, "COMPARE_WITH_NAMED");
+  assert.ok(live.nextActions.every((action) => action.kind !== "COMPARE_WITH_NAMED" && !/Harbour Walks|Night Ferries/u.test(action.text)), "the brand's other directions are not comparison references");
   for (const action of live.nextActions) assert.ok(block.bullets?.includes(`Next: ${action.text}`), action.text);
 });
 
