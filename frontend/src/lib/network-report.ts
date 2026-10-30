@@ -55,7 +55,10 @@ function cardReadings(nodes: readonly NetworkNode[], inquiries: readonly Inquiry
     for (const child of nodes) {
       if (child.parentId !== card.id || child.kind !== "inquiry" || !child.jobId) continue;
       const inquiry = byJob.get(child.jobId);
-      const own = inquiry?.response?.territories.find((item) => normName(item.name) === normName(card.label));
+      // Sprint 13: the dossier's rule (ResearchNetwork `branchTerritory`): a one-territory answer belongs to its branch
+      // even when the agent's territory name differs from the card's label, so the export never drops a shown reading.
+      const territories = inquiry?.response?.territories ?? [];
+      const own = territories.find((item) => normName(item.name) === normName(card.label)) ?? (territories.length === 1 ? territories[0] : undefined);
       if (inquiry?.response && own) candidates.push({ response: inquiry.response, key: own.territoryKey, question: inquiry.question, askedAt: inquiry.createdAt });
     }
     // Sprint 9O: the same decision-card context as the card's live dossier (ResearchNetwork), so the export prints its card.

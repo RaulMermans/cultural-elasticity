@@ -61,20 +61,21 @@ export function BrandDiscovery({ availability, allowance, resolution, busy, erro
         <p className="eyebrow">Cultural Elasticity · built on Qloo</p>
         <h1 id="rw-discovery-title" tabIndex={-1}>How far can a brand stretch before it stops feeling like itself?</h1>
         <p className="rw-discovery__lede">
-          Enter a brand. Qloo maps its cultural fingerprint, then an AI agent investigates any territory you choose and places it against Qloo-validated alternatives, with the evidence and with what it still can&apos;t tell.
+          A research tool for brand strategists, insights teams and creative agencies. Enter a brand: Qloo maps its cultural fingerprint, then an AI agent investigates any territory you choose, reports what Qloo&apos;s evidence shows directly and, when a fair comparison exists, places it against Qloo-validated alternatives. It also says what it still can&apos;t tell.
         </p>
         <ol className="rw-steps" aria-label="How the research works">
           <li><strong>Cultural fingerprint</strong><span>What Qloo associates with the brand: artists, places, films, books and taste tags.</span></li>
           <li><strong>Agent investigation</strong><span>Claude plans a bounded set of Qloo lookups for the territory you pick or ask about.</span></li>
-          <li><strong>A reading you can act on</strong><span>Where the territory sits, how steady that is, and what evidence is missing.</span></li>
+          <li><strong>A reading you can check</strong><span>What the evidence shows directly, where the territory sits when it can be compared, and what is still missing.</span></li>
         </ol>
+        <p className="rw-outcomes__note">When a fair comparison is possible, the territory is placed in one of four outcomes:</p>
         <dl className="rw-outcomes" aria-label="What the outcomes mean">
           <div><dt>Natural fit</dt><dd>Near the top of the comparison: close to the brand&apos;s observed taste.</dd></div>
           <div><dt>Credible stretch</dt><dd>In the middle: further out, with real shared taste.</dd></div>
           <div><dt>Cultural break</dt><dd>Near the bottom: little shared taste with the brand.</dd></div>
           <div><dt>Not settled</dt><dd>The answer changes with the examples, or Qloo returned too little, so no call is made.</dd></div>
         </dl>
-        <p className="rw-outcomes__note">Every outcome is relative to the alternatives the agent compared, never a forecast of sales. All numbers come from Qloo; the model only plans and explains.</p>
+        <p className="rw-outcomes__note">Without one, the reading says so plainly: limited evidence, no support in the scope tested, or not testable as asked. Every outcome is relative to the alternatives the agent compared, never a forecast of sales. All numbers come from Qloo; the model only plans and explains.</p>
       </section>
 
       <section className="rw-discovery__search" aria-labelledby="rw-search-title">

@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import type { AnyBrandBaselineResult, QueryResponse } from "@cultural-elasticity/shared";
 import { buildNetworkReport, renderReportHtml, reportFileName } from "./network-report.ts";
-import { buildNetwork, type Inquiry } from "./research-network.ts";
+import { buildNetwork, directionNodeId, type Inquiry } from "./research-network.ts";
 import { buildResearchView } from "./research-view.ts";
 
 const fixture = JSON.parse(readFileSync(new URL("../../../backend/tests/fixtures/synthetic/comparative-e2e.json", import.meta.url), "utf8")) as { baseline: AnyBrandBaselineResult; compare: { view: { response: QueryResponse } } };
@@ -128,4 +128,13 @@ test("Sprint 10A: the export prints the evidence status and the signals a discov
   assert.ok(block.bullets?.includes(`Surfaced from: ${live.signals.join("; ")}`));
   assert.ok(block.bullets?.includes("Agent's interpretation (not Qloo evidence): SYN reading"));
   assert.doesNotMatch(renderReportHtml(exported), /\b(QLOO_SUPPORTED|SEED_ENTITY_TAG|OUTSIDE_BRAND_PROFILE_FACETS)\b/u);
+});
+
+test("Sprint 13: a direction's one-territory answer is exported even when the agent named the territory differently (parity with the dossier)", () => {
+  const parent = (JSON.parse(readFileSync(new URL("../../../backend/tests/fixtures/synthetic/comparative-e2e.json", import.meta.url), "utf8")) as { parent: { view: { response: QueryResponse } } }).parent.view.response;
+  const direction = view.directions[0]!;
+  assert.notEqual(parent.territories[0]!.name, direction.name, "SYNTHETIC: the answer's territory name differs from the direction label");
+  const asked: Inquiry = { ...inquiry, jobId: "syn-2", origin: "direction", parentId: directionNodeId(direction.key), question: `Investigate ${direction.name}`, response: parent };
+  const exported = buildNetworkReport({ view, nodes: buildNetwork(view.brand.name, view.directions, [asked]), inquiries: [asked], links: [], now });
+  assert.match(exported.summary.join(" "), /giving a reading for 1 territory\b/u);
 });

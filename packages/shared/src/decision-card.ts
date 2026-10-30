@@ -84,7 +84,7 @@ const IMPLICATION: Record<DecisionImplication, { label: string; text: (t: string
   SUPPORTED_FOR_EXPLORATION: { label: "Supported case for further exploration", text: (t, b) => `Within this comparison, Qloo's evidence supports exploring ${t} further for ${b}.` },
   PRELIMINARY_HYPOTHESIS: { label: "Preliminary hypothesis to validate", text: (t) => `${t} is a hypothesis worth validating; the evidence does not settle it yet.` },
   RELATIVE_FIT_NOT_SUPPORTED: { label: "Relative fit not supported", text: (t, b) => `Within this comparison, Qloo's evidence does not support ${t} as a close fit for ${b}.` },
-  INCONCLUSIVE: { label: "Inconclusive evidence", text: (t) => `The evidence gathered for ${t} does not support a conclusion either way yet.` },
+  INCONCLUSIVE: { label: "No decision yet", text: (t) => `The evidence gathered for ${t} does not support a conclusion either way yet.` },
   ESTABLISHED_POSITIONING: { label: "Part of the existing position", text: (t, b) => `Treat ${t} as cultural ground ${b} already holds; the strategic question is how to deepen or extend it, not whether it fits.` },
   NO_SUPPORT_FOUND: { label: "No support found in the scope tested", text: (t, b) => `Qloo's evidence gives no reason to pursue ${t} for ${b} on this concept; this is not proof that no relationship exists.` },
   NOT_TESTABLE_AS_ASKED: { label: "Not testable as asked", text: (t) => `Qloo has no faithful concept for ${t} as asked, so this investigation cannot answer the question.` },

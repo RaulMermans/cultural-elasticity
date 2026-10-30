@@ -8,7 +8,8 @@
       "sprint/12-measurement-research-completion": false,
       "hotfix/sprint-12-durable-facts": false,
       "hotfix/quota-free-unsupported-questions": false,
-      "hotfix/public-quota-limits": false
+      "hotfix/public-quota-limits": false,
+      "sprint/13-final-release": false
     }
   }
 }

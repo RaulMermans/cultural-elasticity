@@ -1023,9 +1023,10 @@ body:not(:has(.atlas)) .sprint { margin-bottom: 0; opacity: 0.7; }
 .rn-composer p { margin: 0; font-size: 0.8rem; }
 .rn-trace { margin-top: var(--ce-space-3); border: 1px solid #d5e3d7; border-radius: 14px; background: linear-gradient(180deg, #f4f9f4, #fffdf8); padding: var(--ce-space-3); }
 .rn-trace[data-live="true"] { box-shadow: 0 0 0 0 rgba(74, 122, 88, 0.35); animation: rn-glow 2.4s ease-in-out infinite; }
-.rn-trace ol { list-style: none; margin: 0; padding: 0 0 0 1.1rem; display: grid; gap: var(--ce-space-2); max-height: 340px; overflow-y: auto; position: relative; border-left: 2px dashed #c9d8cc; }
+/* The timeline line is drawn inside the scrolling list: a border outside its padding box clipped every step marker. */
+.rn-trace ol { list-style: none; margin: 0; padding: 0 0 0 1.6rem; display: grid; gap: var(--ce-space-2); max-height: 340px; overflow-y: auto; position: relative; background: repeating-linear-gradient(to bottom, #c9d8cc 0 4px, transparent 4px 8px) 6px 0 / 2px 100% no-repeat local; }
 .rn-trace li { position: relative; display: grid; gap: 2px; animation: rn-step 360ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
-.rn-trace li::before { content: ""; position: absolute; left: calc(-1.1rem - 6px); top: 0.35rem; width: 10px; height: 10px; border-radius: 50%; background: #fffdf8; border: 2px solid var(--ce-botanical); }
+.rn-trace li::before { content: ""; position: absolute; left: calc(-1.6rem); top: 0.35rem; width: 10px; height: 10px; border-radius: 50%; background: #fffdf8; border: 2px solid var(--ce-botanical); }
 .rn-trace li[data-kind="step"]::before { background: var(--ce-botanical); }
 .rn-trace li[data-status="empty"]::before { border-color: var(--ce-brass); }
 .rn-trace li[data-status="failed"]::before { border-color: #a14a3a; background: #f6e1dc; }
