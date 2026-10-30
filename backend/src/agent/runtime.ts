@@ -515,7 +515,7 @@ export class AgentRuntime {
           reject("ask_user", "NO_OPEN_AMBIGUITY", "nothing requires the user; resolve with Qloo evidence", { reasonSummary: decision.reasonSummary ?? "" });
           return { accepted: false, stop: null };
         }
-        const options = state.brand.ambiguity && !state.brand.entity ? state.brand.ambiguity.candidates.map((c) => ({ id: c.qlooId, label: c.label, ...(c.type !== undefined && { type: c.type }) })) : [];
+        const options = state.brand.ambiguity && !state.brand.entity ? state.brand.ambiguity.candidates.map((c) => ({ id: c.qlooId, label: c.label, ...(c.type !== undefined && { type: c.type }), ...(c.popularity !== undefined && { popularity: c.popularity }), ...(c.description !== undefined && { description: c.description }) })) : [];
         state.pendingQuestion = { question: decision.question, ambiguity: decision.ambiguity, options };
         transition(state, "NEEDS_INPUT", decision.ambiguity);
         return { accepted: true, stop: "needs_input" };

@@ -42,6 +42,9 @@ export const INCIDENTAL_ATTRIBUTE_NAMESPACES: readonly { namespace: string; note
   { namespace: "good_for", note: "occasion a venue listing suits" },
   // [live 2026-10-20] casual_elegance
   { namespace: "decor", note: "interior decor of a venue listing" },
+  // [live 2026-10-30, Sprint 10D trace L3] a material tag returned watch brands (by case material) for a craft territory,
+  // while the same tag search also returned culture and industry concepts of that name.
+  { namespace: "material", note: "material a product is made of" },
 ];
 
 /** Namespaces of descriptors (tone, adjective, audience, ambience): a different analytical level than a territory. */
@@ -65,6 +68,18 @@ export function incidentalConcept(tagId: string): { code: "OPERATIONAL_TAG" | "I
   const ns = qlooSource(tagId);
   const hit = ns && INCIDENTAL_ATTRIBUTE_NAMESPACES.find((n) => n.namespace === ns.namespace);
   return hit ? { code: "INCIDENTAL_ATTRIBUTE", explanation: `${hit.note} (namespace ${ns!.namespace}), not a cultural territory` } : undefined;
+}
+
+/**
+ * Sprint 10D: a territory is not anchored to an incidental attribute tag while its own Qloo search returned a concept
+ * of another namespace. With no such alternative the anchor stays possible (and the reference rules still apply).
+ */
+export function incidentalAnchorRefusal(searchTags: readonly string[] | undefined, tagId: string): string | null {
+  const incidental = incidentalConcept(tagId);
+  if (!incidental) return null;
+  const alternatives = (searchTags ?? []).filter((id) => id !== tagId && !incidentalConcept(id) && !descriptorConcept(id));
+  if (alternatives.length === 0) return null;
+  return `${tagId} is an ${incidental.explanation}; this territory's own Qloo search also returned ${alternatives.slice(0, 4).join(", ")}`;
 }
 
 export function descriptorConcept(tagId: string): string | undefined {

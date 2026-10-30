@@ -200,7 +200,8 @@ pnpm test:e2e           # browser tests against a synthetic job API
 - **Provisional thresholds.** The 0.8 and 0.2 percentile cut-offs are published and tested, but not calibrated against commercial outcomes.
 - **Qloo coverage.** Some brands and concepts are not resolvable, and some territories return no members. The product then reports *unsupported* or *inconclusive* instead of guessing.
 - **Speed.** Calls are spaced to respect Qloo rate limits, so a brand scan takes about a minute and an investigation takes 1–4 minutes.
-- **In-process jobs.** Running investigations are held in one backend process; a restart interrupts them, though saved results and durable budgets survive.
+- **In-process jobs by default.** Production holds running investigations in one backend process; a restart interrupts them, though saved results and durable budgets survive. Durable agent jobs with journal replay (`CE_DURABLE_AGENT=1`, migration 002) recovered two real interrupted Qloo + Haiku investigations in Sprint 10D, but are not yet enabled in production.
+- **Thin research value so far.** On four real research questions (Sprint 10D), the agent produced honest partial results and grounded negatives, not a supported non-obvious direction. No independent human review has rated the findings yet. See [docs/sprint-10d](docs/sprint-10d/FINAL_RESEARCH_INTELLIGENCE_AND_RELEASE.md).
 - **Bounded public allowance.** The demo shares a capped Qloo and model budget, with small per-visitor quotas. When it is used up, the product says so and offers the recorded example.
 
 ## Project history

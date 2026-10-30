@@ -48,9 +48,15 @@ export type JobView = {
 export type JobCreated = JobView & { accessToken: string };
 
 export type JobRequest =
-  | { kind: "execute"; body: QueryBody; model: string; expectedBrandId?: string; territoryGrounding?: TerritoryGrounding; discoverySeeds?: DiscoverySeed[] }
+  | { kind: "execute"; body: QueryBody; model: string; expectedBrandId?: string; territoryGrounding?: TerritoryGrounding; discoverySeeds?: DiscoverySeed[]; handoff?: HandoffRecord }
   | { kind: "confirm"; queryId: string; model: string }
   | { kind: "continue"; runId: string; clarification: string; model: string };
+
+/**
+ * Sprint 10D: the handoff that admitted a job, stored with its durable request so that idempotency and a comparative
+ * report plan outlive a restart. Never read by the runtime; `plan` is the route's own projection (opaque here).
+ */
+export type HandoffRecord = { idempotencyKey: string; requestKey: string; plan?: unknown };
 
 export interface InvestigationRunner {
   execute(body: QueryBody, hooks?: QueryHooks): Promise<QueryResponse>;
@@ -382,6 +388,23 @@ export class JobManager {
     if (held || !this.durable || !isUuid(id)) return held;
     const row = await this.durable.store.getJob(id).catch(() => null);
     return row ? durableView(row) : null;
+  }
+
+  /** Durable mode: the handoff records of the jobs recorded under an origin scope. */
+  async originHandoffs(origin: string): Promise<{ jobId: string; handoff: HandoffRecord }[]> {
+    if (!this.durable) return [];
+    const rows = await this.durable.store.jobsByOrigin(origin).catch(() => []);
+    return rows.flatMap((row) => {
+      const handoff = handoffOf(row.request);
+      return handoff ? [{ jobId: row.id, handoff }] : [];
+    });
+  }
+
+  /** Durable mode: the handoff record of one job, for a reader that already proved the job token. */
+  async durableHandoff(id: string): Promise<HandoffRecord | null> {
+    if (!this.durable || !isUuid(id)) return null;
+    const row = await this.durable.store.getJob(id).catch(() => null);
+    return row ? handoffOf(row.request) : null;
   }
 
   /** Durable mode: jobs the server recorded under an origin scope (e.g. one baseline scan). */
@@ -931,4 +954,11 @@ function tokenMatches(stored: string, presented: string): boolean {
   const left = Buffer.from(stored);
   const right = Buffer.from(hashToken(presented));
   return left.length === right.length && timingSafeEqual(left, right);
+}
+
+function handoffOf(request: unknown): HandoffRecord | null {
+  const handoff = (request as { handoff?: Partial<HandoffRecord> } | null)?.handoff;
+  return handoff && typeof handoff.idempotencyKey === "string" && typeof handoff.requestKey === "string"
+    ? { idempotencyKey: handoff.idempotencyKey, requestKey: handoff.requestKey, ...(handoff.plan !== undefined && { plan: handoff.plan }) }
+    : null;
 }

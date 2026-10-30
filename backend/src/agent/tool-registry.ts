@@ -17,13 +17,13 @@ import { AGENT_INTENTS, RANKABLE_TYPES, shortEntityType, type RankableType } fro
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { callQloo, describedEntity, PROFILE_TAKE, recordFindTags, recordPool, recordProfile, recordRelated, recordResolved } from "./qloo-gateway.js";
 import { strategyExhausted } from "./readiness.js";
-import { eligibleMembers, territoryConcepts } from "./probe-policy.js";
+import { eligibleMembers, territoryConcepts, territoryQueryTags } from "./probe-policy.js";
 import { referenceCandidates } from "./reference-strategy.js";
 import { alternateAnchorRefusal, anchorOnObservedMembers, FRONTIER_EVIDENCE_BASE, FRONTIER_RELATED_TAKE, observedSignal, recordAnchorDecision, seedProfileRefusal } from "./frontier.js";
 import { alignmentDeferral } from "./representation-alignment.js";
 import { validateTerritoryRepresentation } from "./representation-planner.js";
 import { applyInterpretation, resolveInterpretation } from "./router.js";
-import { assessReferenceConcept, incidentalConcept } from "./semantic-comparison.js";
+import { assessReferenceConcept, incidentalAnchorRefusal, incidentalConcept } from "./semantic-comparison.js";
 import { activeTerritories, addTerritory, derivePhase, findTerritory, recordEntity, type AgentRunState } from "./state.js";
 import type { AgentToolProvider } from "./tool-provider.js";
 
@@ -148,6 +148,8 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
     }
     const unobserved = observedTag(state, input.tagId);
     if (unobserved) return unobserved;
+    const incidental = incidentalAnchorRefusal(territoryQueryTags(state, t), input.tagId);
+    if (incidental) return `INCIDENTAL_ANCHOR_REFUSED: ${incidental}. Anchor a concept that names the cultural territory.`;
     // Sprint 5A.2: a grounded frontier candidate keeps its concept identity; an alternate anchor needs Qloo support.
     const alternate = alternateAnchorRefusal(state, t, input.tagId);
     if (alternate) return `ALTERNATE_ANCHOR_REFUSED: ${alternate.code} — ${alternate.reason}`;
@@ -350,7 +352,7 @@ const resolveEntity: AgentTool<{ name: string; type: RankableType; role: "brand"
         if (issue?.kind === "ambiguous" && candidates.length > 0) state.brand.ambiguity = { input: input.name, candidates, correlationId: result.call.envelope.execution.correlation_id };
         else state.brand.notFound = true;
       }
-      return { status: "needs_input", summary: `${issue?.kind ?? "unresolved"}: ${candidates.length} candidate(s)`, data: { kind: issue?.kind ?? null, candidates: candidates.map((c) => ({ id: c.qlooId, label: c.label, type: c.type ?? null })) } };
+      return { status: "needs_input", summary: `${issue?.kind ?? "unresolved"}: ${candidates.length} candidate(s)`, data: { kind: issue?.kind ?? null, candidates: candidates.map((c) => ({ id: c.qlooId, label: c.label, type: c.type ?? null, popularity: c.popularity ?? null, description: c.description ?? null })) } };
     }
     if (result.outcome === "empty" || !describedEntity(result.call)) {
       if (input.role === "brand") state.brand.notFound = true;

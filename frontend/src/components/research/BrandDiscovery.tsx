@@ -123,7 +123,15 @@ export function BrandDiscovery({ availability, resolution, busy, error, hasSessi
           <fieldset className="rw-candidates">
             <legend>{RESOLUTION_COPY.AMBIGUOUS}</legend>
             {(resolution.candidates ?? []).map((candidate) => (
-              <button type="button" className="rw-secondary" key={candidate.qlooId} disabled={busy} onClick={() => onResolve(name.trim(), candidate.qlooId)}>{candidate.label}{candidate.type ? ` · ${candidate.type.replace(/^urn:entity:/u, "")}` : ""} · ID {candidate.qlooId}</button>
+              <button type="button" className="rw-secondary" key={candidate.qlooId} disabled={busy} onClick={() => onResolve(name.trim(), candidate.qlooId)}>
+                {candidate.label}{candidate.type ? ` · ${candidate.type.replace(/^urn:entity:/u, "")}` : ""} · ID {candidate.qlooId}
+                {candidate.description || typeof candidate.popularity === "number" ? (
+                  <span className="rw-candidate-detail quiet">
+                    {candidate.description ? `Qloo: “${candidate.description}”` : ""}
+                    {typeof candidate.popularity === "number" ? `${candidate.description ? " · " : ""}Qloo popularity ${candidate.popularity.toFixed(2)}` : ""}
+                  </span>
+                ) : null}
+              </button>
             ))}
           </fieldset>
         ) : null}

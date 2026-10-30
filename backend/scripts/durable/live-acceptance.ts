@@ -17,7 +17,7 @@
  * a summary. A failed run is preserved as it happened.
  */
 import { spawn, type ChildProcess } from "node:child_process";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -26,6 +26,7 @@ import { DurableAgentStore } from "../../src/agent/durable/store.js";
 import { buildRunManifest } from "../../src/agent/durable/manifest.js";
 import { DEFAULT_QLOO_CALLS } from "../../src/agent/contracts.js";
 import { conservativeReserveUsd } from "../../src/ops/pricing.js";
+import { PAID_OPERATOR_HEADER } from "../../src/config/production.js";
 
 /** Pre-registered 2026-10-30 before any live result. None is a benchmark, holdout or fixture brand. */
 export const ASSIGNMENTS = [
@@ -41,11 +42,32 @@ const arg = (name: string) => {
   return i >= 0 ? process.argv[i + 1] : undefined;
 };
 
-function worstCase() {
+/**
+ * Worst case of the SELECTED assignments (Sprint 10D: `--only` used to be ignored here). Runs are sequential and a
+ * settled run returns its unused model reservation, so at most one reservation is open at a time, plus the
+ * interrupted run's, which is never returned. `modelReservedIfNoneSettlesUsd` is the bound if no release landed.
+ */
+export function worstCase(selected: readonly { intent: keyof typeof DEFAULT_QLOO_CALLS; interrupt: boolean }[] = ASSIGNMENTS) {
   const reserveUsd = conservativeReserveUsd({});
-  const qloo = ASSIGNMENTS.reduce((n, a) => n + DEFAULT_QLOO_CALLS[a.intent], 0);
-  // One operator-authorized re-dispatch is the only way an interrupted call is ever sent twice.
-  return { qloo, qlooWithAuthorizedRedispatch: qloo + 1, modelReservePerRunUsd: reserveUsd, modelReservedIfNoneSettlesUsd: Math.round(reserveUsd * ASSIGNMENTS.length * 100) / 100 };
+  const qloo = selected.reduce((n, a) => n + DEFAULT_QLOO_CALLS[a.intent], 0);
+  const interrupted = selected.filter((a) => a.interrupt).length;
+  return {
+    runs: selected.length,
+    qloo,
+    // One operator-authorized re-dispatch per interrupted run is the only way a call is ever sent twice.
+    qlooWithAuthorizedRedispatch: qloo + interrupted,
+    modelReservePerRunUsd: reserveUsd,
+    modelMinimumApprovalUsd: Math.round(reserveUsd * (interrupted + (selected.length > interrupted ? 1 : 0)) * 100) / 100,
+    modelReservedIfNoneSettlesUsd: Math.round(reserveUsd * selected.length * 100) / 100,
+  };
+}
+
+/**
+ * `retry` (Sprint 10D) adds one more attempt of an assignment, right after it, as `<id>#retry`. It is for an attempt
+ * lost to an infrastructure failure; both attempts stay in the record.
+ */
+export function selectAssignments(only: readonly string[] | undefined, retry: readonly string[] = []) {
+  return ASSIGNMENTS.filter((a) => !only || only.includes(a.id)).flatMap((a) => (retry.includes(a.id) ? [a, { ...a, id: `${a.id}#retry` }] : [a]));
 }
 
 function readKeys(file: string): { QLOO_API_KEY: string; ANTHROPIC_API_KEY: string } {
@@ -55,41 +77,63 @@ function readKeys(file: string): { QLOO_API_KEY: string; ANTHROPIC_API_KEY: stri
 }
 
 async function main(): Promise<number> {
-  const plan = worstCase();
+  const only = arg("--only")?.split(",");
+  const selected = selectAssignments(only, arg("--retry")?.split(","));
+  if (selected.length === 0) {
+    console.error("NO_ASSIGNMENT_SELECTED");
+    return 2;
+  }
+  const plan = worstCase(selected);
   if (process.argv.includes("--plan")) {
-    console.log(JSON.stringify({ assignments: ASSIGNMENTS, worstCase: plan, model: "claude-haiku-5-5 (production default)" }, null, 2));
+    console.log(JSON.stringify({ assignments: selected, worstCase: plan, model: "claude-haiku-5-5 (production default)" }, null, 2));
     return 0;
   }
+  // Sprint 10D: --rehearse runs the identical harness on the SYNTHETIC worker (no key read, no provider call).
+  const rehearse = process.argv.includes("--rehearse");
   const approvedQloo = Number(arg("--approved-qloo"));
   const approvedUsd = Number(arg("--approved-usd"));
   const envFile = arg("--env-file");
   const databaseUrl = arg("--database-url");
-  if (!Number.isInteger(approvedQloo) || approvedQloo <= 0 || !Number.isFinite(approvedUsd) || approvedUsd <= 0 || !envFile || !databaseUrl) {
-    console.error("usage: --approved-qloo <N> --approved-usd <USD> --env-file <file> --database-url <local postgres url> [--session <dir>] [--only L1,L4]");
+  if (!Number.isInteger(approvedQloo) || approvedQloo <= 0 || !Number.isFinite(approvedUsd) || approvedUsd <= 0 || (!envFile && !rehearse) || !databaseUrl) {
+    console.error("usage: --approved-qloo <N> --approved-usd <USD> (--env-file <file> | --rehearse) --database-url <local postgres url> [--session <dir>] [--only L1,L4] [--new-allowance]");
     return 2;
   }
   if (!/^postgres(ql)?:\/\/[^@]*@(127\.0\.0\.1|localhost)(:\d+)?\//u.test(databaseUrl)) {
     console.error("LIVE_DATABASE_NOT_LOCAL: the live acceptance only runs against a local, isolated database");
     return 2;
   }
-  if (approvedQloo < plan.qlooWithAuthorizedRedispatch) {
+  // A resumed session is checked against its ledger once the database is open (below).
+  const resuming = Boolean(arg("--session") && existsSync(join(arg("--session")!, "summary.json")));
+  if (!resuming && approvedQloo < plan.qlooWithAuthorizedRedispatch) {
     console.error(`APPROVAL_TOO_SMALL: the worst case is ${plan.qlooWithAuthorizedRedispatch} Qloo calls; reduce --only or raise the approval`);
     return 4;
   }
-  const keys = readKeys(envFile);
-  if (!keys.QLOO_API_KEY || !keys.ANTHROPIC_API_KEY) {
+  if (approvedUsd < plan.modelMinimumApprovalUsd) {
+    console.error(`APPROVAL_TOO_SMALL: the model reservations need at least $${plan.modelMinimumApprovalUsd.toFixed(2)}`);
+    return 4;
+  }
+  const keys = rehearse ? { QLOO_API_KEY: "", ANTHROPIC_API_KEY: "" } : readKeys(envFile!);
+  if (!rehearse && (!keys.QLOO_API_KEY || !keys.ANTHROPIC_API_KEY)) {
     console.error("LIVE_KEYS_MISSING: QLOO_API_KEY and ANTHROPIC_API_KEY must be in the env file (LIVE_QLOO_VALIDATION_NOT_RUN)");
     return 2;
   }
-  const session = arg("--session") ?? join(backend, "feasibility-output", "sprint-10c", new Date().toISOString().replace(/[:.]/gu, "-"));
+  const session = arg("--session") ?? join(backend, "feasibility-output", rehearse ? "durable-rehearsal" : "durable-live", new Date().toISOString().replace(/[:.]/gu, "-"));
   mkdirSync(session, { recursive: true });
   const credentialFile = join(session, ".session-credential");
   if (!existsSync(credentialFile)) writeFileSync(credentialFile, randomBytes(32).toString("hex"), { mode: 0o600 });
   const credential = readFileSync(credentialFile, "utf8").trim();
-  const only = arg("--only")?.split(",");
 
   const pool = createBaselinePool(databaseUrl);
   await migrate(pool);
+  // Sprint 10D: a new session on a database that already carries another session's run ledger would grant a fresh
+  // allowance. Resume with --session <dir>, or pass --new-allowance when the owner approved a separate one.
+  const ledgerKey = `run:${createHash("sha256").update(credential).digest("hex").slice(0, 32)}:`;
+  const others = await pool.query<{ n: string }>("SELECT count(*) AS n FROM baseline_budget_accounts WHERE budget_key LIKE 'run:%' AND budget_key NOT LIKE $1", [`${ledgerKey}%`]);
+  if (Number(others.rows[0]?.n ?? 0) > 0 && !process.argv.includes("--new-allowance")) {
+    await pool.end();
+    console.error("ALLOWANCE_ALREADY_OPEN: this database holds another session's ledger; resume it with --session <dir> or pass --new-allowance");
+    return 4;
+  }
   const store = new DurableAgentStore(pool);
   const port = 4320;
   const env = (fault?: string): NodeJS.ProcessEnv => ({
@@ -98,16 +142,14 @@ async function main(): Promise<number> {
     NODE_ENV: "development",
     CE_PUBLIC_DEPLOYMENT: "0",
     CE_DURABLE_AGENT: "1",
-    CE_DURABLE_PROVIDER: "live",
+    CE_DURABLE_PROVIDER: rehearse ? "synthetic" : "live",
     CE_AGENT_LEASE_MS: "5000",
     DATABASE_URL: databaseUrl,
     CE_ACCEPT_INVESTIGATIONS: "1",
     CE_PAID_OPERATOR_TOKEN: credential,
     CE_PROCESS_QLOO_CALL_LIMIT: String(approvedQloo),
     CE_SPEND_BUDGET_USD: approvedUsd.toFixed(2),
-    QLOO_API_BASE_URL: "https://hackathon.api.qloo.com",
-    QLOO_API_KEY: keys.QLOO_API_KEY,
-    ANTHROPIC_API_KEY: keys.ANTHROPIC_API_KEY,
+    ...(rehearse ? {} : { QLOO_API_BASE_URL: "https://hackathon.api.qloo.com", QLOO_API_KEY: keys.QLOO_API_KEY, ANTHROPIC_API_KEY: keys.ANTHROPIC_API_KEY }),
     PORT: String(port),
     ...(fault ? { CE_DURABLE_FAULT_INJECTION: "1", CE_DURABLE_FAULT: fault } : {}),
   });
@@ -127,46 +169,138 @@ async function main(): Promise<number> {
     c.kill(signal);
     await exited;
   };
-  const summary: Record<string, unknown>[] = [];
+  const previous = existsSync(join(session, "summary.json")) ? (JSON.parse(readFileSync(join(session, "summary.json"), "utf8")) as { runs: Record<string, unknown>[] }).runs : [];
+  const summary: Record<string, unknown>[] = previous.filter((r) => r.jobId);
+  // A resumed session is bounded by what the ledger already used plus the worst case of every run not yet finished.
+  const usedQloo = Number((await ledgerRowsOf(pool, ledgerKey)).find((r) => r.counter === "qloo_calls")?.used ?? 0);
+  const remainingPlan = worstCase(selected.filter((a) => !summary.some((r) => r.id === a.id && r.status !== "running")));
+  if (usedQloo + remainingPlan.qlooWithAuthorizedRedispatch > approvedQloo) {
+    await pool.end();
+    console.error(`APPROVAL_TOO_SMALL: ${usedQloo} Qloo calls already used + worst case ${remainingPlan.qlooWithAuthorizedRedispatch} exceeds ${approvedQloo}`);
+    return 4;
+  }
+  const ledgerRows = () => ledgerRowsOf(pool, ledgerKey);
+  // Written after every run (Sprint 10D), so a harness crash keeps everything that already happened.
+  const persist = async () => {
+    writeFileSync(join(session, "summary.json"), `${JSON.stringify({ approvedQloo, approvedUsd, worstCase: plan, runs: summary }, null, 2)}\n`);
+    writeFileSync(join(session, "ledger.json"), `${JSON.stringify(await ledgerRows(), null, 2)}\n`);
+  };
+  const tokensFile = join(session, ".job-tokens.json");
+  const tokens: Record<string, string> = existsSync(tokensFile) ? (JSON.parse(readFileSync(tokensFile, "utf8")) as Record<string, string>) : {};
+  const finished = new Set(summary.filter((r) => r.status !== "running").map((r) => String(r.id)));
+  // Sprint 10D: an admitted job that a previous harness never saw finish is ADOPTED, never resubmitted. A worker's
+  // startup recovery resumes it from the journal; the harness only waits for it.
+  const active = (await pool.query<{ id: string; query: string }>("SELECT id, request->'body'->>'query' AS query FROM agent_jobs WHERE status IN ('QUEUED','RUNNING','RECOVERING')")).rows;
+  const adoptable = new Map(active.flatMap((row) => {
+    const a = selected.find((item) => item.query === row.query && !item.id.endsWith("#retry"));
+    return a ? [[a.id, row.id] as const] : [];
+  }));
   try {
-    for (const a of ASSIGNMENTS) {
-      if (only && !only.includes(a.id)) continue;
-      await start(a.interrupt ? "checkpoint.turn.after:2" : undefined);
-      const startedAt = Date.now();
-      const created = await fetch(`http://127.0.0.1:${port}/api/agent/jobs`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ query: a.query }) });
-      const job = (await created.json()) as { jobId?: string; accessToken?: string; error?: string };
-      if (!job.jobId || !job.accessToken) {
-        summary.push({ id: a.id, admitted: false, status: created.status, error: job.error ?? null });
-        await kill("SIGTERM");
+    for (const a of selected) {
+      // A resumed session never repeats an admitted assignment (failed or not); one refused at admission sent nothing.
+      if (finished.has(a.id)) continue;
+      // A retry runs only when the original attempt ended without a completed investigation.
+      if (a.id.endsWith("#retry") && summary.find((r) => r.id === a.id.replace(/#retry$/u, ""))?.status === "completed") {
+        summary.push({ id: a.id, status: "skipped", reason: "ORIGINAL_COMPLETED" });
+        await persist();
         continue;
       }
+      const startedAt = Date.now();
+      let jobId: string | undefined = adoptable.get(a.id) ?? (summary.find((r) => r.id === a.id)?.jobId as string | undefined);
       let interruption: Record<string, unknown> | null = null;
-      if (a.interrupt) {
-        await waitFor(() => output.includes("CE_FAULT_REACHED checkpoint.turn.after"), 20 * 60_000, "checkpoint before interruption");
-        const before = await store.calls(job.jobId);
-        await kill("SIGKILL");
-        const killedAt = Date.now();
-        await start();
-        interruption = { killedAfterCheckpoint: 2, committedBeforeKill: before.filter((c) => c.status === "COMPLETED" || c.status === "FAILED").length, restartMs: Date.now() - killedAt };
+      const recovery = { adopted: Boolean(jobId), unplannedWorkerRestarts: 0 };
+      try {
+        if (jobId) {
+          await start();
+        } else {
+          await start(a.interrupt ? "checkpoint.turn.after:2" : undefined);
+          const created = await fetch(`http://127.0.0.1:${port}/api/agent/jobs`, {
+            method: "POST",
+            headers: { "content-type": "application/json", [PAID_OPERATOR_HEADER]: credential },
+            body: JSON.stringify({ query: a.query }),
+          });
+          const job = (await created.json()) as { jobId?: string; accessToken?: string; error?: string };
+          if (!job.jobId || !job.accessToken) {
+            await kill("SIGTERM");
+            summary.push({ id: a.id, admitted: false, status: created.status, error: job.error ?? null, ledgerAfter: await ledgerRows() });
+            continue;
+          }
+          jobId = job.jobId;
+          tokens[a.id] = job.accessToken;
+          writeFileSync(tokensFile, JSON.stringify(tokens), { mode: 0o600 });
+          // Recorded at admission, so a harness crash can never lead to a second submission.
+          summary.push({ id: a.id, kind: a.kind, query: a.query, jobId, status: "running" });
+          await persist();
+          if (a.interrupt) {
+            await waitFor(() => output.includes("CE_FAULT_REACHED checkpoint.turn.after") || jobSettled(output), 20 * 60_000, "checkpoint before interruption");
+            if (!output.includes("CE_FAULT_REACHED checkpoint.turn.after")) throw new Error("the run ended before its interruption checkpoint");
+            const before = await store.calls(job.jobId);
+            await kill("SIGKILL");
+            const killedAt = Date.now();
+            await start();
+            interruption = { killedAfterCheckpoint: 2, committedBeforeKill: before.filter((c) => c.status === "COMPLETED" || c.status === "FAILED").length, restartMs: Date.now() - killedAt };
+          }
+        }
+        const id = jobId;
+        // Waits on the durable record. A worker that died is replaced (at most twice); its recovery resumes the job.
+        const deadline = Date.now() + 25 * 60_000;
+        let status = (await store.getJob(id))?.status;
+        while (status && ["QUEUED", "RUNNING", "RECOVERING"].includes(status) && Date.now() < deadline) {
+          const c = child as ChildProcess | null;
+          if ((!c || c.exitCode !== null || c.signalCode !== null) && recovery.unplannedWorkerRestarts < 2) {
+            recovery.unplannedWorkerRestarts += 1;
+            await start();
+          }
+          await new Promise((resolve) => setTimeout(resolve, 2_000));
+          status = (await store.getJob(id))?.status;
+        }
+        // Without the access token the durable status is read directly, in the API's lowercase vocabulary.
+        const view = tokens[a.id] ? await poll(port, id, tokens[a.id]!) : { status: (status ?? "unknown").toLowerCase(), error: null, response: (await store.getJob(id))?.result ?? null };
+        const row = await store.getJob(id);
+        const result = (view.response as { investigation?: { result?: unknown } } | null)?.investigation?.result ?? null;
+        if (result) writeFileSync(join(session, `${a.id}-result.json`), `${JSON.stringify(result, null, 2)}\n`);
+        writeFileSync(join(session, `${a.id}-view.json`), `${JSON.stringify(view, null, 2)}\n`);
+        await kill("SIGTERM");
+        const entry = { id: a.id, kind: a.kind, query: a.query, jobId, status: view.status, durableStatus: row?.status, error: view.error ?? null, attempts: row?.attempt, interruption, recovery, wallMs: Date.now() - startedAt, ledgerAfter: await ledgerRows() };
+        const at = summary.findIndex((r) => r.id === a.id);
+        if (at >= 0) summary[at] = entry;
+        else summary.push(entry);
+      } catch (error) {
+        // A failure is preserved as it happened: whatever the journal holds is still written below.
+        await kill("SIGTERM");
+        const entry = { id: a.id, kind: a.kind, query: a.query, jobId: jobId ?? null, status: "harness_error", error: { code: "HARNESS_ERROR", message: String(error) }, interruption, recovery, wallMs: Date.now() - startedAt, workerTail: output.slice(-4_000), ledgerAfter: await ledgerRows() };
+        const at = summary.findIndex((r) => r.id === a.id);
+        if (at >= 0) summary[at] = entry;
+        else summary.push(entry);
+      } finally {
+        if (jobId) {
+          const manifest = await buildRunManifest(store, jobId).catch(() => null);
+          writeFileSync(join(session, `${a.id}-manifest.json`), `${JSON.stringify(manifest, null, 2)}\n`);
+          const entry = summary.find((r) => r.id === a.id);
+          if (entry) Object.assign(entry, { totals: manifest?.providerCalls.totals ?? null, labels: manifest?.labels ?? null });
+        }
+        await persist();
       }
-      const view = await poll(port, job.jobId, job.accessToken);
-      const row = await store.getJob(job.jobId);
-      const manifest = await buildRunManifest(store, job.jobId);
-      const result = (view.response as { investigation?: { result?: unknown } } | null)?.investigation?.result ?? null;
-      writeFileSync(join(session, `${a.id}-manifest.json`), `${JSON.stringify(manifest, null, 2)}\n`);
-      if (result) writeFileSync(join(session, `${a.id}-result.json`), `${JSON.stringify(result, null, 2)}\n`);
-      summary.push({ id: a.id, kind: a.kind, query: a.query, jobId: job.jobId, status: view.status, durableStatus: row?.status, error: view.error ?? null, attempts: row?.attempt, interruption, wallMs: Date.now() - startedAt, totals: manifest?.providerCalls.totals ?? null, labels: manifest?.labels ?? null });
-      await kill("SIGTERM");
     }
   } finally {
     await kill("SIGKILL");
-    writeFileSync(join(session, "summary.json"), `${JSON.stringify({ approvedQloo, approvedUsd, worstCase: plan, runs: summary }, null, 2)}\n`);
-    const ledger = await pool.query("SELECT budget_key LIKE '%qloo_calls' AS qloo, used_calls, limit_calls FROM baseline_budget_accounts WHERE budget_key LIKE 'run:%' AND budget_key NOT LIKE '%quota%'").catch(() => ({ rows: [] }));
-    writeFileSync(join(session, "ledger.json"), `${JSON.stringify(ledger.rows, null, 2)}\n`);
+    await persist().catch(() => undefined);
     await pool.end();
     console.log(`DURABLE_LIVE_SESSION ${session}`);
   }
   return 0;
+}
+
+async function ledgerRowsOf(pool: ReturnType<typeof createBaselinePool>, ledgerKey: string): Promise<{ counter: string; used: number; limit: number }[]> {
+  const result = await pool
+    .query<{ counter: string; used: number; limit: number }>(`SELECT replace(budget_key, $1, '') AS counter, used_calls AS used, limit_calls AS "limit" FROM baseline_budget_accounts WHERE budget_key LIKE $2 AND budget_key NOT LIKE '%quota%'`, [ledgerKey, `${ledgerKey}%`])
+    .catch(() => ({ rows: [] as { counter: string; used: number; limit: number }[] }));
+  return result.rows;
+}
+
+/** The worker logged the job's end (it finished before reaching an interruption point). */
+function jobSettled(log: string): boolean {
+  return /"event":"job_(completed|failed|cancelled)"/u.test(log);
 }
 
 async function waitFor(check: () => boolean, timeoutMs: number, what: string): Promise<void> {
@@ -188,4 +322,4 @@ async function poll(port: number, jobId: string, token: string): Promise<Record<
   }
 }
 
-process.exitCode = await main();
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) process.exitCode = await main();
