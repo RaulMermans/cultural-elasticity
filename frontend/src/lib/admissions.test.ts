@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { admissionCopy, allowanceCopy, interpretAdmissionProbe, liveQuestionsEnabled, parseAdmission } from "./admissions.ts";
+import { admissionCopy, interpretAdmissionProbe, liveQuestionsEnabled, parseAdmission } from "./admissions.ts";
 
 test("admission views stay public and do not enable paused ask", () => {
   assert.deepEqual(parseAdmission({ status: "accepting" }), { status: "accepting" });
@@ -48,14 +48,4 @@ test("accepting investigations stay accepting and enable Ask", () => {
 test("checking copy does not enable Ask", () => {
   assert.equal(admissionCopy("unknown").shortLabel, "Checking the research service.");
   assert.equal(admissionCopy("unknown").liveEnabled, false);
-});
-
-test("the public allowance copy follows the configured numbers and is dropped when malformed or not accepting", () => {
-  const allowance = { endsAt: "2026-11-06T05:00:00.000Z", searches: 10, scans: 12, investigations: 1 };
-  assert.deepEqual(parseAdmission({ status: "accepting", allowance }), { status: "accepting", allowance });
-  assert.deepEqual(parseAdmission({ status: "paused", allowance }), { status: "paused" });
-  assert.deepEqual(parseAdmission({ status: "accepting", allowance: { ...allowance, scans: -1 } }), { status: "accepting" });
-  assert.deepEqual(parseAdmission({ status: "accepting", allowance: { ...allowance, endsAt: "soon" } }), { status: "accepting" });
-  assert.equal(allowanceCopy(allowance), "Public evaluation: each network can start 12 brand research runs and 1 investigation until 6 Nov 2026, 05:00 UTC. Opening saved research and the recorded examples doesn't count.");
-  assert.match(allowanceCopy({ ...allowance, investigations: 0 }), /and no investigations until/);
 });

@@ -10,12 +10,12 @@ type Fixture = { baseline: { scanId: string; scanStatus: string }; parent: { cre
 const fixture = JSON.parse(readFileSync(new URL("../../backend/tests/fixtures/synthetic/comparative-e2e.json", import.meta.url), "utf8")) as Fixture;
 const json = (route: Route, value: unknown, status = 200) => route.fulfill({ status, contentType: "application/json", body: JSON.stringify(value) });
 
-async function stubLive(page: Page, baseline: unknown = fixture.baseline) {
+async function stubLive(page: Page, baseline: unknown = fixture.baseline, status: () => unknown = () => ({ enabled: true, semantics: "baseline_admission_only" })) {
   const calls = { handoffs: [] as unknown[], questions: [] as unknown[] };
   await page.route("**/api/agent/admissions", (route) => json(route, { status: "accepting" }));
   await page.route("**/api/brands/**", (route) => {
     const path = new URL(route.request().url()).pathname;
-    if (path === "/api/brands/status") return json(route, { enabled: true, semantics: "baseline_admission_only" });
+    if (path === "/api/brands/status") return json(route, status());
     if (path === "/api/brands/resolve") return json(route, { resolutionId: "00000000-0000-4000-8000-000000000030", accessToken: "syn-token", status: "RESOLVED", entity: { qlooId: "SYN-BR-3001", label: "Larkspur Velo" } });
     if (path === "/api/brands/baselines" && route.request().method() === "POST") return json(route, { scanId: fixture.baseline.scanId, scanStatus: "QUEUED", reused: false, cached: false }, 202);
     if (path === `/api/brands/baselines/${fixture.baseline.scanId}`) return json(route, { scanStatus: fixture.baseline.scanStatus, providerCallCount: 2, stages: [{ stage: "tags", status: "COMPLETE" }], result: baseline });
@@ -363,4 +363,58 @@ test("SYNTHETIC Sprint 10A: the scan's cross-domain signals can be explored with
   expect(Object.keys(body).sort()).toEqual(["explore", "idempotencyKey", "scanId"]);
   expect(body.explore).toBe(true);
   await expect(page.getByTestId("network-dossier")).toContainText("Agent exploration");
+});
+
+// Hotfix: SYNTHETIC per-caller eligibility, as `/api/brands/status` reports it for a public-evaluation visitor.
+const allowance = (investigationsUsed: number, scansUsed = 1) => ({ endsAt: "2026-11-06T05:00:00.000Z", searches: { used: 1, limit: 20 }, scans: { used: scansUsed, limit: 8 }, investigations: { used: investigationsUsed, limit: 12 } });
+const eligible = (newBrandResearch: string, investigations: string, used = 4, scansUsed = 1) => ({ enabled: true, admissionsOpen: true, operator: "authorized", semantics: "baseline_admission_for_caller", research: { newBrandResearch, investigations, allowance: allowance(used, scansUsed) } });
+
+test("SYNTHETIC HOTFIX the homepage shows this network's allowance left and still lets a raised allowance start", async ({ page }) => {
+  await stubLive(page, fixture.baseline, () => eligible("available", "available", 4));
+  await page.goto("/");
+  await expect(page.getByTestId("research-availability")).toContainText("New brand research available.");
+  await expect(page.getByTestId("public-allowance")).toContainText("7 of 8 brand research runs, 8 of 12 investigations and 19 of 20 brand searches left, until 6 Nov 2026, 05:00 UTC");
+  await expect(page.getByRole("button", { name: "Find brand" })).toBeEnabled();
+});
+
+test("SYNTHETIC HOTFIX a used brand research allowance says so on the homepage and disables the search", async ({ page }) => {
+  await stubLive(page, fixture.baseline, () => eligible("visitor_allowance_used", "available", 4, 8));
+  await page.goto("/");
+  await expect(page.getByTestId("research-availability")).toContainText("This network has used its brand research allowance.");
+  await expect(page.getByText("New brand research available.")).toHaveCount(0);
+  await page.getByRole("combobox", { name: "Brand name" }).fill("Larkspur Velo");
+  await expect(page.getByRole("button", { name: "Find brand" })).toBeDisabled();
+});
+
+test("SYNTHETIC HOTFIX a used investigation allowance replaces Measure cultural fit with the reason and turns the composer off", async ({ page }) => {
+  const calls = await stubLive(page, fixture.baseline, () => eligible("available", "visitor_allowance_used", 12));
+  await startLarkspur(page);
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
+  await expect(page.getByTestId("network-investigate")).toHaveCount(0);
+  await expect(page.getByTestId("network-investigate-blocked")).toContainText("This network has used its investigation allowance");
+  await expect(page.getByTestId("network-live-note")).toContainText("This network has used its investigation allowance");
+  await expect(page.getByLabel(/Ask about/u)).toBeDisabled();
+  expect([...calls.handoffs, ...calls.questions]).toEqual([]);
+});
+
+test("SYNTHETIC HOTFIX a server 429 shows its own reason and the controls follow the re-read status", async ({ page }) => {
+  let reads = 0;
+  await stubLive(page, fixture.baseline, () => (++reads <= 3 ? eligible("available", "available", 11) : eligible("available", "visitor_allowance_used", 12)));
+  await page.route("**/api/research/handoff/jobs", (route) => json(route, { error: "visitor_quota_reached", message: "This network has used its allowance of 12 investigations for this evaluation, which runs until 6 Nov 2026, 05:00 UTC. Saved research and the recorded example remain available." }, 429));
+  await startLarkspur(page);
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
+  await page.getByTestId("network-investigate").click();
+  await expect(page.getByTestId("network-composer").getByRole("alert")).toContainText("This network has used its allowance of 12 investigations");
+  await expect(page.getByTestId("network-investigate")).toHaveCount(0);
+  await expect(page.getByTestId("network-investigate-blocked")).toBeVisible();
+});
+
+test("SYNTHETIC HOTFIX a shared-budget 429 is not reported as the visitor's allowance", async ({ page }) => {
+  await stubLive(page, fixture.baseline, () => eligible("available", "available", 2));
+  await page.route("**/api/research/handoff/jobs", (route) => json(route, { error: "budget_exhausted" }, 429));
+  await startLarkspur(page);
+  await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
+  await page.getByTestId("network-investigate").click();
+  await expect(page.getByTestId("network-composer").getByRole("alert")).toContainText("shared research budget");
+  await expect(page.getByTestId("network-composer").getByRole("alert")).not.toContainText("allowance");
 });

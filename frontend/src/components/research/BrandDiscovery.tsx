@@ -2,15 +2,14 @@
 
 import { useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { brandSuggestions, type SuggestionSource } from "@/lib/brand-suggestions";
-import { allowanceCopy, type PublicAllowance } from "@/lib/admissions";
-import { RESOLUTION_COPY, availabilityCopy, type BrandResearchAvailability } from "@/lib/research-copy";
+import { RESOLUTION_COPY, allowanceCopy, availabilityCopy, type BrandResearchAvailability, type VisitorAllowance } from "@/lib/research-copy";
 import { sameName } from "@/lib/research-route";
 import { formatDate } from "@/lib/research-summary";
 import type { LibraryEntry, Resolution } from "./use-brand-research";
 
 export function BrandDiscovery({ availability, allowance, resolution, busy, error, hasSessionScan, library, onResolve, onStart, onClearResolution, onOpenSession, onOpenLibrary }: {
   availability: BrandResearchAvailability;
-  allowance: PublicAllowance | null;
+  allowance: VisitorAllowance | null;
   resolution: Resolution | null;
   busy: boolean;
   error: string;
@@ -107,7 +106,7 @@ export function BrandDiscovery({ availability, allowance, resolution, busy, erro
           </div>
         </form>
         <p className="rw-availability" role="status" data-testid="research-availability"><strong>{copy.label}</strong> {copy.detail} {live ? "Search is submitted explicitly and Qloo checks the brand identity before any scan starts." : "Your research library below still opens."}</p>
-        {live && allowance ? <p className="rw-availability" data-testid="public-allowance">{allowanceCopy(allowance)}</p> : null}
+        {allowance ? <p className="rw-availability" data-testid="public-allowance">{allowanceCopy(allowance)}</p> : null}
         <div className="rw-example" data-testid="recorded-examples">
           <p>Want to see finished results first? Two research reports recorded from live runs on 29 October 2026, with real Qloo and Claude calls. Opening them runs nothing new.</p>
           <ul>

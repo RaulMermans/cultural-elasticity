@@ -2,7 +2,7 @@
 
 import { isBrandBaselineResult, type AnyBrandBaselineResult } from "@cultural-elasticity/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { RESOLUTION_COPY, TERMINAL_SCAN_STATUSES, apiErrorCopy, type BrandResearchAvailability } from "@/lib/research-copy";
+import { RESOLUTION_COPY, TERMINAL_SCAN_STATUSES, apiErrorCopy, availabilityFromStatus, parseResearchEligibility, type BrandResearchAvailability, type ResearchEligibility } from "@/lib/research-copy";
 
 /** `popularity` and `description` are Qloo's own resolution detail (Sprint 10D): shown to help the choice, never used to make it. */
 export type Candidate = { qlooId: string; label: string; type?: string; popularity?: number; description?: string };
@@ -57,16 +57,27 @@ export function useBrandResearch() {
   const startKey = useRef<string | null>(null);
   const starting = useRef(false);
 
-  useEffect(() => {
-    let active = true;
-    void fetch("/api/brands/status", { cache: "no-store" }).then(async (response) => {
+  const [eligibility, setEligibility] = useState<ResearchEligibility | null>(null);
+  const statusVersion = useRef(0);
+
+  /** A free read of what this caller can start; repeated after each paid start or refusal so the page stays honest. */
+  const refreshStatus = useCallback(async () => {
+    const version = ++statusVersion.current;
+    try {
+      const response = await fetch("/api/brands/status", { cache: "no-store" });
       const body = await json(response);
-      if (active) setAvailability(response.ok && body ? body.enabled === true ? "available" : "paused" : "unavailable");
-    }).catch(() => { if (active) setAvailability("unavailable"); });
+      if (version !== statusVersion.current) return;
+      setAvailability(availabilityFromStatus(body, response.ok));
+      setEligibility(response.ok ? parseResearchEligibility(body?.research) : null);
+    } catch { if (version === statusVersion.current) { setAvailability("unavailable"); setEligibility(null); } }
+  }, []);
+
+  useEffect(() => {
+    void refreshStatus();
     setPointer(readPointer());
     setLibrary(readLibrary());
-    return () => { active = false; };
-  }, []);
+    return () => { statusVersion.current++; };
+  }, [refreshStatus]);
 
   useEffect(() => {
     if (!pointer) return;
@@ -100,13 +111,14 @@ export function useBrandResearch() {
       const response = await fetch("/api/brands/resolve", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, ...(selectedQlooId ? { selectedQlooId } : {}) }) });
       const body = await json(response);
       if (version !== lookupVersion.current) return;
+      void refreshStatus();
       if (!response.ok && body?.status !== "TEMPORARILY_UNAVAILABLE") { setError(apiErrorCopy(body?.error)); setResolution(null); return; }
       if (!body || typeof body.status !== "string" || typeof body.resolutionId !== "string" || typeof body.accessToken !== "string") { setError(apiErrorCopy(null)); return; }
       setResolution(body as Resolution);
       if (RESOLUTION_COPY[body.status] && body.status !== "AMBIGUOUS") setError(RESOLUTION_COPY[body.status]!);
     } catch { if (version === lookupVersion.current) setError("The research service can't be reached right now. Please try again later."); }
     finally { if (version === lookupVersion.current) setBusy(false); }
-  }, []);
+  }, [refreshStatus]);
 
   const start = useCallback(async (): Promise<boolean> => {
     if (!resolution || resolution.status !== "RESOLVED" || starting.current) return false;
@@ -116,6 +128,7 @@ export function useBrandResearch() {
     try {
       const response = await fetch("/api/brands/baselines", { method: "POST", headers: { "content-type": "application/json", "x-baseline-token": resolution.accessToken }, body: JSON.stringify({ resolutionId: resolution.resolutionId, idempotencyKey: startKey.current }) });
       const body = await json(response);
+      void refreshStatus();
       if (!response.ok || !body || typeof body.scanId !== "string" || typeof body.scanStatus !== "string") { setError(apiErrorCopy(body?.error)); return false; }
       const next = { scanId: body.scanId, token: resolution.accessToken };
       try { sessionStorage.setItem(POINTER_KEY, JSON.stringify(next)); } catch { /* Storage may be blocked; the scan still runs for this page. */ }
@@ -129,7 +142,7 @@ export function useBrandResearch() {
       return true;
     } catch { setError("The start request could not be confirmed. Check the current scan before starting again; the provider may already have received it."); return false; }
     finally { starting.current = false; setBusy(false); }
-  }, [resolution]);
+  }, [resolution, refreshStatus]);
 
   const clearResolution = useCallback(() => { lookupVersion.current++; startKey.current = null; setResolution(null); setBusy(false); setError(""); }, []);
 
@@ -141,5 +154,5 @@ export function useBrandResearch() {
     setPointer(next);
   }, []);
 
-  return { availability, resolution, scan, scanToken: pointer?.token ?? null, hasSessionScan: Boolean(pointer), busy, error, library, resolve, start, clearResolution, openScan };
+  return { availability, eligibility, refreshStatus, resolution, scan, scanToken: pointer?.token ?? null, hasSessionScan: Boolean(pointer), busy, error, library, resolve, start, clearResolution, openScan };
 }

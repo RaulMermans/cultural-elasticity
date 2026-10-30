@@ -13,8 +13,9 @@ import { readiness } from "../src/api/health.js";
 import { publicEvaluationActive, validatePublicRuntime } from "../src/config/production.js";
 import { verifyPaidOperator } from "../src/ops/identity.js";
 import { resetLifecycle } from "../src/ops/lifecycle.js";
-import { takePublicQuota } from "../src/ops/public-quota.js";
-import { runCredential, setRunLedgerForTests, unusedReservationCents } from "../src/ops/run-ledger.js";
+import { researchEligibility } from "../src/ops/eligibility.js";
+import { returnPublicQuota, takePublicQuota, visitorAllowance } from "../src/ops/public-quota.js";
+import { refusingRunLedger, runCredential, setRunLedgerForTests, unusedReservationCents } from "../src/ops/run-ledger.js";
 import { resetSpend, spendLedger } from "../src/ops/spend.js";
 import { scripted } from "./fixtures/synthetic/agent.js";
 import { memoryRunLedger } from "./fixtures/synthetic/run-ledger.js";
@@ -27,7 +28,7 @@ const NETWORK_B = "b".repeat(32);
 const KEYS = [
   "CE_PUBLIC_DEPLOYMENT", "CE_INTERNAL_API_SECRET", "CE_ACCEPT_INVESTIGATIONS", "CE_SPEND_BUDGET_USD", "CE_INVESTIGATION_RESERVE_USD",
   "CE_PAID_OPERATOR_TOKEN", "CE_PAID_OPERATOR_EXPIRES_AT", "QLOO_API_KEY", "ANTHROPIC_API_KEY", "QLOO_API_BASE_URL",
-  "CE_PUBLIC_EVALUATION", "CE_PUBLIC_EVALUATION_ID", "CE_PUBLIC_EVALUATION_EXPIRES_AT", "CE_PUBLIC_QUOTA_INVESTIGATIONS", "CE_PROCESS_QLOO_CALL_LIMIT", "DATABASE_URL",
+  "CE_PUBLIC_EVALUATION", "CE_PUBLIC_EVALUATION_ID", "CE_PUBLIC_EVALUATION_EXPIRES_AT", "CE_PUBLIC_QUOTA_INVESTIGATIONS", "CE_PUBLIC_QUOTA_SCANS", "CE_PUBLIC_QUOTA_RESOLVES", "CE_PROCESS_QLOO_CALL_LIMIT", "DATABASE_URL",
 ] as const;
 const previous = Object.fromEntries(KEYS.map((key) => [key, process.env[key]]));
 let ledger = memoryRunLedger();
@@ -89,15 +90,75 @@ describe("public evaluation admission", () => {
     expect(readiness({ ...evaluation, CE_PUBLIC_EVALUATION_EXPIRES_AT: "2020-01-01T00:00:00Z" }).dependencies.paidOperatorRequired).toBe(true);
   });
 
-  it("readiness shows the configured allowance only while the evaluation is open, and the refusal names it", async () => {
-    expect(readiness({ CE_PUBLIC_DEPLOYMENT: "1" } as NodeJS.ProcessEnv).publicAllowance).toBeNull();
-    expect(readiness({ ...evaluation, CE_PUBLIC_EVALUATION_EXPIRES_AT: "2020-01-01T00:00:00Z" }).publicAllowance).toBeNull();
-    const env = { ...evaluation, CE_PUBLIC_QUOTA_INVESTIGATIONS: "1", CE_PUBLIC_QUOTA_SCANS: "12" };
-    expect(readiness(env).publicAllowance).toEqual({ endsAt: new Date(FUTURE).toISOString(), searches: 10, scans: 12, investigations: 1 });
-    expect(await takePublicQuota({ "x-ce-network": NETWORK_A }, "investigation", env)).toEqual({ ok: true });
-    const refused = await takePublicQuota({ "x-ce-network": NETWORK_A }, "investigation", env);
-    expect(refused).toMatchObject({ ok: false, error: "visitor_quota_reached" });
-    expect(refused.ok ? "" : refused.message).toContain("its 1 investigations for this evaluation, which runs until ");
+  it("HOTFIX: a raised quota admits a visitor who had used the old one, keeps their usage, and still caps them", async () => {
+    const caller = { "x-ce-network": NETWORK_A };
+    const at = (n: string) => ({ ...evaluation, CE_PUBLIC_QUOTA_INVESTIGATIONS: n });
+    for (let i = 0; i < 4; i += 1) expect(await takePublicQuota(caller, "investigation", at("4"))).toEqual({ ok: true });
+    const refused = await takePublicQuota(caller, "investigation", at("4"));
+    expect(refused).toMatchObject({ ok: false, status: 429, error: "visitor_quota_reached" });
+    expect(refused.ok ? "" : refused.message).toBe("This network has used its allowance of 4 investigations for this evaluation, which runs until 1 Jan 2999, 00:00 UTC. Saved research and the recorded example remain available.");
+    expect(ledger.quotas.get(`investigation:${NETWORK_A}`)).toEqual({ limit: 4, used: 4 });
+    ledger.rows.set("qloo_calls", { limit: 1000, used: 70 });
+    ledger.rows.set("model_usd_cents", { limit: 500, used: 5 });
+
+    // Railway raises the variable to 12: the next request applies it, the 4 used stay used.
+    expect(await takePublicQuota(caller, "investigation", at("12"))).toEqual({ ok: true });
+    expect(ledger.quotas.get(`investigation:${NETWORK_A}`)).toEqual({ limit: 12, used: 5 });
+    for (let i = 0; i < 7; i += 1) expect(await takePublicQuota(caller, "investigation", at("12"))).toEqual({ ok: true });
+    expect(await takePublicQuota(caller, "investigation", at("12"))).toMatchObject({ ok: false, error: "visitor_quota_reached" });
+    expect(ledger.quotas.get(`investigation:${NETWORK_A}`)).toEqual({ limit: 12, used: 12 });
+
+    // A lower (or accidentally unset) variable neither resets the usage nor reopens anything.
+    expect(await takePublicQuota(caller, "investigation", at("4"))).toMatchObject({ ok: false, error: "visitor_quota_reached" });
+    expect(await takePublicQuota(caller, "investigation", { ...evaluation, CE_PUBLIC_QUOTA_INVESTIGATIONS: "" })).toMatchObject({ ok: false });
+    expect(ledger.quotas.get(`investigation:${NETWORK_A}`)).toEqual({ limit: 12, used: 12 });
+    // The global caps are separate counters and never move with a quota.
+    expect(ledger.rows.get("qloo_calls")).toEqual({ limit: 1000, used: 70 });
+    expect(ledger.rows.get("model_usd_cents")).toEqual({ limit: 500, used: 5 });
+  });
+
+  it("HOTFIX: a quota unit is returned only to an evaluation visitor, and the allowance read takes nothing", async () => {
+    const env = { ...evaluation, CE_PUBLIC_QUOTA_INVESTIGATIONS: "12" };
+    const caller = { "x-ce-network": NETWORK_A };
+    expect(await visitorAllowance(caller, env)).toEqual({ endsAt: new Date(FUTURE).toISOString(), searches: { used: 0, limit: 10 }, scans: { used: 0, limit: 4 }, investigations: { used: 0, limit: 12 } });
+    await takePublicQuota(caller, "investigation", env);
+    await takePublicQuota(caller, "investigation", env);
+    await returnPublicQuota(caller, "investigation", env);
+    expect(ledger.quotas.get(`investigation:${NETWORK_A}`)).toEqual({ limit: 12, used: 1 });
+    expect((await visitorAllowance(caller, env))?.investigations).toEqual({ used: 1, limit: 12 });
+    expect((await visitorAllowance(caller, { ...env, CE_PUBLIC_QUOTA_INVESTIGATIONS: "4" }))?.investigations).toEqual({ used: 1, limit: 12 });
+    const operator = { ...env, CE_PAID_OPERATOR_TOKEN: PAID, CE_PAID_OPERATOR_EXPIRES_AT: FUTURE };
+    await returnPublicQuota({ ...caller, "x-ce-paid-operator": PAID }, "investigation", operator);
+    expect(ledger.quotas.get(`investigation:${NETWORK_A}`)?.used).toBe(1);
+    expect(await visitorAllowance({ ...caller, "x-ce-paid-operator": PAID }, operator)).toBeNull();
+    expect(await visitorAllowance({}, env)).toBeNull();
+    expect(await visitorAllowance(caller, { ...env, CE_PUBLIC_EVALUATION_EXPIRES_AT: "2020-01-01T00:00:00Z" })).toBeNull();
+  });
+
+  it("HOTFIX: eligibility reports states only, and an unreadable ledger never claims a refusal", async () => {
+    Object.assign(process.env, { CE_ACCEPT_INVESTIGATIONS: "1", CE_SPEND_BUDGET_USD: "5", CE_INVESTIGATION_RESERVE_USD: "0.5" });
+    resetLifecycle();
+    resetSpend();
+    resetAdmission();
+    const env = { ...evaluation, CE_SPEND_BUDGET_USD: "5", CE_INVESTIGATION_RESERVE_USD: "0.5", CE_PUBLIC_QUOTA_INVESTIGATIONS: "2", CE_PUBLIC_QUOTA_SCANS: "1" };
+    const headers = { "x-ce-network": NETWORK_A };
+    const budget = async () => ({ limitCalls: 400, usedCalls: 20 });
+    const check = () => researchEligibility({ headers, callerAuthorized: true, baselineOpen: true, baselineBudget: budget, env });
+    expect(await check()).toMatchObject({ newBrandResearch: "available", investigations: "available" });
+    await takePublicQuota(headers, "scan", env);
+    await takePublicQuota(headers, "investigation", env);
+    await takePublicQuota(headers, "investigation", env);
+    const spent = await check();
+    expect(spent).toMatchObject({ newBrandResearch: "visitor_allowance_used", investigations: "visitor_allowance_used" });
+    expect(Object.keys(spent)).toEqual(["newBrandResearch", "investigations", "allowance"]);
+    // Raising the variable reopens it without touching the counter.
+    expect(await researchEligibility({ headers, callerAuthorized: true, baselineOpen: true, baselineBudget: budget, env: { ...env, CE_PUBLIC_QUOTA_INVESTIGATIONS: "12" } })).toMatchObject({ investigations: "available" });
+    ledger.rows.set("model_usd_cents", { limit: 500, used: 480 });
+    expect(await check()).toMatchObject({ investigations: "budget_exhausted" });
+    expect(await researchEligibility({ headers, callerAuthorized: true, baselineOpen: true, baselineBudget: async () => ({ limitCalls: 400, usedCalls: 395 }), env })).toMatchObject({ newBrandResearch: "budget_exhausted" });
+    expect(await researchEligibility({ headers, callerAuthorized: false, baselineOpen: true, baselineBudget: budget, env })).toMatchObject({ newBrandResearch: "operator_required", investigations: "operator_required" });
+    setRunLedgerForTests(refusingRunLedger);
+    expect(await check()).toMatchObject({ investigations: "unknown", allowance: null });
   });
 
   it("per-network quotas are durable, separate per network and kind, refuse unattributed callers and skip operators", async () => {
@@ -163,6 +224,33 @@ describe("SYNTHETIC public evaluation through the HTTP API", () => {
     const refused = await h.app.inject({ method: "POST", url: "/api/agent/jobs", headers: h.visitor(NETWORK_A), payload });
     expect(refused.statusCode).toBe(403);
     expect(spendLedger().snapshot().reservedUsd).toBe(0);
+    await h.app.close();
+  });
+
+  it("HOTFIX: a budget refusal costs no quota, and a quota refusal returns the spend it held", async () => {
+    const h = harness({ CE_PUBLIC_QUOTA_INVESTIGATIONS: "1" });
+    ledger.rows.set("model_usd_cents", { limit: 200, used: 200 });
+    const broke = await h.app.inject({ method: "POST", url: "/api/agent/jobs", headers: h.visitor(NETWORK_A), payload });
+    expect(broke.statusCode).toBe(429);
+    expect(broke.json()).toMatchObject({ error: "budget_exhausted" });
+    expect(ledger.quotas.get(`investigation:${NETWORK_A}`)).toBeUndefined();
+
+    ledger.rows.set("model_usd_cents", { limit: 200, used: 0 });
+    ledger.quotas.set(`investigation:${NETWORK_A}`, { limit: 1, used: 1 });
+    const over = await h.app.inject({ method: "POST", url: "/api/agent/jobs", headers: h.visitor(NETWORK_A), payload });
+    expect(over.statusCode).toBe(429);
+    expect(over.json()).toMatchObject({ error: "visitor_quota_reached" });
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(ledger.rows.get("model_usd_cents")).toEqual({ limit: 200, used: 0 });
+    expect(spendLedger().snapshot().reservedUsd).toBe(0);
+    expect(ledger.quotas.get(`investigation:${NETWORK_A}`)).toEqual({ limit: 1, used: 1 });
+
+    // Raised on Railway: the same visitor is admitted on the next request.
+    process.env.CE_PUBLIC_QUOTA_INVESTIGATIONS = "12";
+    const raised = await h.app.inject({ method: "POST", url: "/api/agent/jobs", headers: h.visitor(NETWORK_A), payload });
+    expect(raised.statusCode, raised.body).toBe(202);
+    expect(ledger.quotas.get(`investigation:${NETWORK_A}`)).toEqual({ limit: 12, used: 2 });
+    await h.waitFor(raised.json().jobId, raised.json().accessToken);
     await h.app.close();
   });
 

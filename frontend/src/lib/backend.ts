@@ -1,5 +1,5 @@
 import "server-only";
-import { interpretAdmissionProbe, parseAllowance, type AdmissionView } from "./admissions";
+import { interpretAdmissionProbe, type AdmissionView } from "./admissions";
 import { backendBaseUrl, backendConfigIssues } from "./backend-url";
 import type { Caller } from "./job-route";
 import { admissionForOperatorCheck, admissionForVisitor, PAID_OPERATOR_HEADER } from "./operator";
@@ -187,9 +187,6 @@ export async function getAdmissionStatus(operator: string | null = null): Promis
   const operatorRequired = dependencies?.paidOperatorRequired !== false;
   if (readyBody?.acceptingInvestigations === true) {
     const view = admissionForVisitor({ status: "accepting" }, { operatorRequired, operatorPresent: operator !== null });
-    // An operator is not quota-limited, so only an anonymous visitor is shown the public allowance.
-    const allowance = operator === null ? parseAllowance(readyBody.publicAllowance) : null;
-    if (view.status === "accepting" && allowance) return { ...view, allowance };
     if (view.status !== "accepting" || !operatorRequired) return view;
     // A present cookie may hold an expired or revoked credential: ask Railway (a free read) before enabling Ask.
     const brand = await backendFetch("/api/brands/status", {}, 2500, undefined, operator);

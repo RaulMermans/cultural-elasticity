@@ -1,9 +1,6 @@
 export type AdmissionStatus = "unknown" | "accepting" | "paused" | "unavailable";
 
-/** The configured per-network allowance of an open public evaluation (backend `/ready`). Config only, never usage. */
-export type PublicAllowance = { endsAt: string; searches: number; scans: number; investigations: number };
-
-export type AdmissionView = { status: Exclude<AdmissionStatus, "unknown">; allowance?: PublicAllowance };
+export type AdmissionView = { status: Exclude<AdmissionStatus, "unknown"> };
 
 export type AdmissionCopy = {
   status: AdmissionStatus;
@@ -15,32 +12,9 @@ export type AdmissionCopy = {
 export function parseAdmission(value: unknown): AdmissionView {
   if (value && typeof value === "object" && "status" in value) {
     const status = (value as { status: unknown }).status;
-    if (status === "accepting" || status === "paused" || status === "unavailable") {
-      const allowance = status === "accepting" ? parseAllowance((value as { allowance?: unknown }).allowance) : null;
-      return allowance ? { status, allowance } : { status };
-    }
+    if (status === "accepting" || status === "paused" || status === "unavailable") return { status };
   }
   return { status: "unavailable" };
-}
-
-export function parseAllowance(value: unknown): PublicAllowance | null {
-  if (!isRecord(value) || typeof value.endsAt !== "string" || !Number.isFinite(Date.parse(value.endsAt))) return null;
-  const counts = [value.searches, value.scans, value.investigations];
-  if (!counts.every((n) => Number.isInteger(n) && (n as number) >= 0)) return null;
-  return { endsAt: value.endsAt, searches: value.searches as number, scans: value.scans as number, investigations: value.investigations as number };
-}
-
-/** One sentence naming the configured numbers, so a changed variable changes the copy. Fixed to UTC. */
-export function allowanceCopy(allowance: PublicAllowance): string {
-  const count = (n: number, one: string, many: string) => `${n === 0 ? "no" : n} ${n === 1 ? one : many}`;
-  return `Public evaluation: each network can start ${count(allowance.scans, "brand research run", "brand research runs")} and ${count(allowance.investigations, "investigation", "investigations")} until ${formatUtc(allowance.endsAt)}. Opening saved research and the recorded examples doesn't count.`;
-}
-
-function formatUtc(iso: string): string {
-  const d = new Date(iso);
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getUTCDate()} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
 }
 
 export function liveQuestionsEnabled(status: AdmissionStatus): boolean {

@@ -94,20 +94,6 @@ export function publicEvaluationQuota(kind: "resolve" | "scan" | "investigation"
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : 0;
 }
 
-export type PublicAllowance = { endsAt: string; searches: number; scans: number; investigations: number };
-
-/** The configured per-network allowance a visitor sees, or null when no public evaluation is open. Config only, never usage. */
-export function publicEvaluationAllowance(env: NodeJS.ProcessEnv = process.env, now = Date.now()): PublicAllowance | null {
-  const expiry = publicEvaluationExpiry(env);
-  if (!publicEvaluationActive(env, now) || expiry === null) return null;
-  return {
-    endsAt: new Date(expiry).toISOString(),
-    searches: publicEvaluationQuota("resolve", env),
-    scans: publicEvaluationQuota("scan", env),
-    investigations: publicEvaluationQuota("investigation", env),
-  };
-}
-
 function positiveNumber(value: string | undefined): number | null {
   if (value === undefined || value === "") return null;
   const parsed = Number(value);

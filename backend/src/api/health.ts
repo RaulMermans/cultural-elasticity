@@ -1,6 +1,6 @@
 import { API_SERVICE_NAME, type HealthResponse } from "@cultural-elasticity/shared";
 import type { FastifyInstance } from "fastify";
-import { paidOperatorRequired, publicEvaluationActive, publicEvaluationAllowance, publicRuntime, type PublicAllowance } from "../config/production.js";
+import { paidOperatorRequired, publicEvaluationActive, publicRuntime } from "../config/production.js";
 import { canAcceptInvestigations, lifecycle } from "../ops/lifecycle.js";
 import { spendLedger } from "../ops/spend.js";
 
@@ -20,8 +20,6 @@ export type ReadyResponse = {
   acceptingInvestigations: boolean;
   publicRuntime: boolean;
   reasons: ReadyReason[];
-  /** Sprint 10E: the configured per-network allowance while a public evaluation is open. Never usage or spend. */
-  publicAllowance: PublicAllowance | null;
   /** Admission only. Never a claim that Qloo, Haiku, or the agent competence gate passed. */
   semantics: {
     liveness: "not_this_endpoint";
@@ -62,7 +60,6 @@ export function readiness(env: NodeJS.ProcessEnv = process.env): ReadyResponse {
     acceptingInvestigations: canAcceptInvestigations(),
     publicRuntime: publicRuntime(env),
     reasons,
-    publicAllowance: publicEvaluationAllowance(env),
     semantics: {
       liveness: "not_this_endpoint",
       admission,
