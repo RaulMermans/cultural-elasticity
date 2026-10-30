@@ -74,11 +74,13 @@ describe("runtime skills", () => {
       // Sprint 8D: Channel A evidence-base-first and hypotheses that do not fill the viable quota.
       // Sprint 9N bump (docs/sprint-9n/DISCOVERY_TO_DECISION_OPTIMIZATION.md): comparison feasibility, type evidence,
       // bounded reference probing; eval evidence in `pnpm eval:d2d`.
-      resolve_territory: 5,
-      build_territory_representation: 4,
-      build_comparison_set: 5,
+      // Sprint 11 bump (docs/sprint-11/RESEARCH_INTELLIGENCE_UPGRADE.md): research policy v1 — concept alignment at
+      // anchoring, intent-judged exemplars, reframe_research; eval evidence in tests/agent-sprint11.test.ts.
+      resolve_territory: 6,
+      build_territory_representation: 5,
+      build_comparison_set: 6,
       explore_candidate_territories: 6,
-      analyze_territories: 3,
+      analyze_territories: 4,
     });
   });
 

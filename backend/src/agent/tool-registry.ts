@@ -13,7 +13,8 @@
 import type { AgentRunStatus, AgentToolCallTrace } from "@cultural-elasticity/shared";
 import { z } from "zod";
 import { applyConceptDedup, canonicalTagName, deterministicDuplicate } from "./concept-dedup.js";
-import { AGENT_INTENTS, RANKABLE_TYPES, shortEntityType, type RankableType } from "./contracts.js";
+import { AGENT_INTENTS, CONCEPT_RELATIONS, RANKABLE_TYPES, shortEntityType, type RankableType } from "./contracts.js";
+import { alignmentRequired, nameAlignment, policyOf, reframeRefusal } from "./research-intelligence.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { callQloo, describedEntity, PROFILE_TAKE, recordFindTags, recordPool, recordProfile, recordRelated, recordResolved } from "./qloo-gateway.js";
 import { strategyExhausted } from "./readiness.js";
@@ -47,6 +48,13 @@ export type AgentTool<I = unknown> = {
   /** Further state precondition; returns the refusal reason. */
   precondition?: (state: AgentRunState, input: I) => string | undefined;
   execute: (context: ToolContext, input: I) => Promise<ToolResult>;
+  /**
+   * Sprint 11: what a research-policy v0 run is shown (evaluation arm A). The input schema is a superset; v0 sees the
+   * Sprint 10 description and its JSON schema without `v1Properties`, so arm A's model sees the Sprint 10 tool.
+   */
+  v0?: { description: string; hiddenProperties: readonly string[] };
+  /** Sprint 11: a tool offered only under research policy v1. */
+  v1Only?: boolean;
 };
 
 const text = z.string().trim().min(1);
@@ -83,6 +91,10 @@ const interpretRequest: AgentTool<{ intent: (typeof AGENT_INTENTS)[number]; bran
 };
 
 const semanticSchema = z.strictObject({ relevance: z.enum(["strong", "adequate", "weak", "mismatch"]), reason: text.max(300) });
+/** Sprint 11: the agent's judgment of how a Qloo concept covers the concept the user meant (qualifies or refuses; never supports). */
+const alignmentSchema = z.strictObject({ relation: z.enum(CONCEPT_RELATIONS), reason: text.max(300), uncovered: z.array(text.max(120)).max(4).optional() });
+/** Sprint 11 (v1): what each relevance level means, judged against the phenomenon the user meant (research.brief). */
+const RELEVANCE_SCALE = "strong = a clear instance of the phenomenon the user means; adequate = an instance, though not the most typical; weak = shares an audience, aesthetic or product category with it but is not an instance of it (e.g. a company that sells to its participants); mismatch = a different phenomenon. Judge against research.brief, not against the tag name alone.";
 
 const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier_candidate"; origin: "agent_hypothesis" | "qloo_evidence"; rationale: string; evidenceTagIds?: string[] | undefined; motivatedBy?: string[] | undefined; semantic?: { relevance: "strong" | "adequate" | "weak" | "mismatch"; reason: string } | undefined }> = {
   name: "propose_territory",
@@ -129,11 +141,12 @@ const proposeTerritory: AgentTool<{ label: string; role: "reference" | "frontier
   },
 };
 
-const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
+const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string; alignment?: { relation: (typeof CONCEPT_RELATIONS)[number]; reason: string; uncovered?: string[] | undefined } | undefined }> = {
   name: "anchor_territory",
-  description: "No Qloo call. Anchor a territory to one Qloo concept tag returned in this run (by qloo_find_tags or a tag profile). Use it once a tag clearly names the territory, preferably one Qloo returned members for. Two territories cannot share a concept. A reference anchored to a non-meaningful concept (venue attribute, weak tie) is dropped with the reason. Next: qloo_recommend on the concept, then validate_territory_representation.",
+  description: "No Qloo call. Anchor a territory to one Qloo concept tag returned in this run (by qloo_find_tags or a tag profile), preferably one Qloo returned members for. Two territories cannot share a concept. For a territory the user named, give alignment: how this Qloo concept covers what the user means (research.brief) — EQUIVALENT, NARROWER (a useful part), PARTIAL_COVERAGE (one part of a compound question; list the rest in uncovered), RELATED_DIFFERENT (a neighbouring, different concept) or MISMATCHED (a different phenomenon), with a specific reason. It is required unless the tag carries the territory's own name. MISMATCHED is refused: search for a better concept, decompose the question, or drop the territory as unsupported. A non-EQUIVALENT concept is reported as exactly that; it never counts as the user's concept. A reference anchored to a non-meaningful concept (venue attribute, weak tie) is dropped with the reason. Next: qloo_recommend on the concept, then validate_territory_representation.",
   permission: "local_computation",
-  inputSchema: z.strictObject({ territoryKey: text, tagId: text }),
+  inputSchema: z.strictObject({ territoryKey: text, tagId: text, alignment: alignmentSchema.optional() }),
+  v0: { description: "No Qloo call. Anchor a territory to one Qloo concept tag returned in this run (by qloo_find_tags or a tag profile). Use it once a tag clearly names the territory, preferably one Qloo returned members for. Two territories cannot share a concept. A reference anchored to a non-meaningful concept (venue attribute, weak tie) is dropped with the reason. Next: qloo_recommend on the concept, then validate_territory_representation.", hiddenProperties: ["alignment"] },
   maxQlooCalls: 0,
   phases: AFTER_INTERPRETATION,
   precondition(state, input) {
@@ -155,7 +168,14 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
     if (alternate) return `ALTERNATE_ANCHOR_REFUSED: ${alternate.code} — ${alternate.reason}`;
     // Sprint 5A.1: bounded entity-type alignment for comparisons (representation-alignment.ts).
     const deferral = alignmentDeferral(state, t, input.tagId);
-    return deferral ? `TYPE_ALIGNMENT_PENDING: ${deferral}` : undefined;
+    if (deferral) return `TYPE_ALIGNMENT_PENDING: ${deferral}`;
+    // Sprint 11: a user-named territory keeps the user's meaning. The agent judges coverage; code refuses only its own MISMATCHED verdict.
+    const tag = state.tags.get(input.tagId)!;
+    if (policyOf(state) === "v1" && t.role === "target" && t.origin === "user") {
+      if (!input.alignment && alignmentRequired(state, t, tag)) return `CONCEPT_ALIGNMENT_REQUIRED: "${tag.label}" does not carry the name "${t.label}". Give alignment: does it mean what the user means (research.brief)? EQUIVALENT, NARROWER, PARTIAL_COVERAGE, RELATED_DIFFERENT or MISMATCHED, with a specific reason.`;
+      if (input.alignment?.relation === "MISMATCHED") return `CONCEPT_MISMATCH: you judged "${tag.label}" a different phenomenon from "${t.label}" (${input.alignment.reason}). Search for a better Qloo concept, investigate an accurately described narrower concept, or drop_territory with TERRITORY_UNRESOLVED and report that the intended concept is not supported.`;
+    }
+    return undefined;
   },
   async execute({ state }, input) {
     const t = findTerritory(state, input.territoryKey)!;
@@ -175,20 +195,56 @@ const anchorTerritory: AgentTool<{ territoryKey: string; tagId: string }> = {
     t.concept = { id: tag.id, label: tag.label, type: tag.type };
     if (changed) t.representation = null;
     t.status = "anchored";
+    if (policyOf(state) === "v1" && t.role === "target" && t.origin === "user") {
+      t.conceptAlignment = input.alignment
+        ? { userConcept: t.label, qlooConcept: { id: tag.id, label: tag.label }, relation: input.alignment.relation, reason: input.alignment.reason, uncovered: input.alignment.uncovered ?? [], decidedBy: "agent" }
+        : nameAlignment(t, tag);
+    }
     if (t.role === "frontier_candidate" && t.sourceTagId) {
       const alternate = tag.id !== t.sourceTagId && !t.evidenceTagIds.includes(tag.id);
       recordAnchorDecision(state, t, tag.id, alternate ? "ALTERNATE_WITH_MEMBERS" : "MODEL_ANCHOR", "agent", null, alternate ? "alternate with observed Qloo members; the grounding tag returned none" : "anchored to its own evidence tag");
     }
-    return { status: "ok", summary: `${t.key} anchored to ${tag.label} (${tag.id})${changed ? "; previous representation cleared" : ""}` };
+    const qualified = t.conceptAlignment && t.conceptAlignment.relation !== "EQUIVALENT" ? `; recorded as ${t.conceptAlignment.relation} to "${t.label}" — the result will say so` : "";
+    return { status: "ok", summary: `${t.key} anchored to ${tag.label} (${tag.id})${changed ? "; previous representation cleared" : ""}${qualified}` };
+  },
+};
+
+/**
+ * Sprint 11: the agent may decide that a ranking is the wrong method for the user's question and investigate the
+ * direction instead. It only narrows the work: no budget is added, pending references are dropped as not investigated,
+ * and the result says the comparison was declined and why.
+ */
+const reframeResearch: AgentTool<{ approach: "investigate"; reason: string }> = {
+  name: "reframe_research",
+  description: "No Qloo call. Switch this run from a comparison to an investigation of the named direction when a ranking would not answer the user's question (research.brief) — e.g. the available reference concepts are not meaningful alternatives at the same analytical level, or the question is about what the connection means rather than where it ranks. Give a specific reason. Once per run, before any target is analyzed. It adds no budget; pending references are dropped as not investigated, and the result reports that the comparison was declined.",
+  permission: "local_computation",
+  inputSchema: z.strictObject({ approach: z.literal("investigate"), reason: text.max(300) }),
+  maxQlooCalls: 0,
+  phases: AFTER_BRAND,
+  v1Only: true,
+  precondition(state) {
+    return reframeRefusal(state) ?? undefined;
+  },
+  async execute({ state }, input) {
+    state.researchApproach = { approach: "investigate", decidedBy: "agent", reason: input.reason, reframedFrom: "compare", reframedAtIteration: state.usage.iterations };
+    const dropped: string[] = [];
+    for (const t of activeTerritories(state)) {
+      if (t.role !== "reference" || t.status === "analyzed") continue;
+      t.status = "dropped";
+      t.dropReason = { code: "NOT_INVESTIGATED", detail: `comparison declined by the agent: ${input.reason}` };
+      dropped.push(t.key);
+    }
+    return { status: "ok", summary: `research reframed to an investigation without a comparison set${dropped.length ? `; references dropped as not investigated: ${dropped.join(", ")}` : ""}` };
   },
 };
 
 const validateRepresentation: AgentTool<{ territoryKey: string; entityType: RankableType; exemplars: { id: string; reason: string; semantic?: { relevance: "strong" | "adequate" | "weak" | "mismatch"; reason: string } | undefined }[] }> = {
   name: "validate_territory_representation",
   description:
-    "No Qloo call. Propose exemplar entities (1–3, preferably 3, ids returned by Qloo in this run) that represent an anchored territory, each with a short selection reason and optionally your semantic judgment (relevance strong|adequate|weak|mismatch + reason). The deterministic quality evaluator checks Qloo links each one to the concept through brand-independent evidence, one entity type, no duplicates or name families, not the brand, and — when peer profiles are known — that it is not a cultural outlier among Qloo's members. Your judgment is advisory: it can remove a candidate, never add Qloo support. If only weak exemplars survive, the representation is refused. A (concept, type) strategy that fails twice is exhausted.",
+    `No Qloo call. Propose exemplar entities (1–3, preferably 3, ids returned by Qloo in this run) that represent an anchored territory, each with a short selection reason and your semantic judgment (relevance + a specific reason grounded in what Qloo returned). Required for a territory the user named. ${RELEVANCE_SCALE} The deterministic quality evaluator checks Qloo links each one to the concept through brand-independent evidence, one entity type, no duplicates or name families, not the brand, and — when peer profiles are known — that it is not a cultural outlier among Qloo's members. Your judgment can remove a candidate, never add Qloo support. If only weak exemplars survive, the representation is refused: then try another entity type, another concept, or declare_concept_only. A (concept, type) strategy that fails twice is exhausted.`,
   permission: "local_computation",
   inputSchema: z.strictObject({ territoryKey: text, entityType: rankableType, exemplars: z.array(z.strictObject({ id: text, reason: text.max(300), semantic: semanticSchema.optional() })).min(1).max(6) }),
+  v0: { description: "No Qloo call. Propose exemplar entities (1–3, preferably 3, ids returned by Qloo in this run) that represent an anchored territory, each with a short selection reason and optionally your semantic judgment (relevance strong|adequate|weak|mismatch + reason). The deterministic quality evaluator checks Qloo links each one to the concept through brand-independent evidence, one entity type, no duplicates or name families, not the brand, and — when peer profiles are known — that it is not a cultural outlier among Qloo's members. Your judgment is advisory: it can remove a candidate, never add Qloo support. If only weak exemplars survive, the representation is refused. A (concept, type) strategy that fails twice is exhausted.", hiddenProperties: [] },
   maxQlooCalls: 0,
   phases: AFTER_BRAND,
   precondition(state, input) {
@@ -197,6 +253,8 @@ const validateRepresentation: AgentTool<{ territoryKey: string; entityType: Rank
     if (t.status === "analyzed") return "territory already analyzed";
     if (t.attempts >= state.limits.maxRepresentationAttemptsPerTerritory) return `representation attempts exhausted (${state.limits.maxRepresentationAttemptsPerTerritory})`;
     if (t.concept && strategyExhausted(t, t.concept.id, input.entityType)) return `STRATEGY_EXHAUSTED: ${input.entityType} exemplars for ${t.concept.label} failed twice; try another entity type, an alternate Qloo concept, or declare_concept_only`;
+    // Sprint 11: a user-named territory is represented only with an explicit judgment of each exemplar against the user's meaning.
+    if (policyOf(state) === "v1" && t.role === "target" && t.origin === "user" && input.exemplars.some((e) => !e.semantic)) return `SEMANTIC_JUDGMENT_REQUIRED: give each exemplar of ${t.label} a semantic judgment against the phenomenon the user means (research.brief). ${RELEVANCE_SCALE}`;
     return undefined;
   },
   async execute({ state }, input) {
@@ -476,6 +534,7 @@ export const AGENT_TOOLS: readonly AgentTool<never>[] = [
   relatedEntities,
   proposeTerritory,
   anchorTerritory,
+  reframeResearch,
   validateRepresentation,
   declareConceptOnly,
   assessConceptDuplicates,
@@ -513,4 +572,23 @@ export function toolJsonSchema(tool: AgentTool<never>): Record<string, unknown> 
   const schema = z.toJSONSchema(tool.inputSchema as z.ZodType, { io: "input" }) as Record<string, unknown>;
   jsonSchemaCache.set(tool, schema);
   return schema;
+}
+
+/** Sprint 11: the tool as a run of this research policy sees it (v0 = the Sprint 10 description and schema). */
+export function toolSpecFor(tool: AgentTool<never>, policy: "v0" | "v1"): { name: string; description: string; inputSchema: Record<string, unknown> } {
+  const schema = toolJsonSchema(tool);
+  if (policy === "v1" || !tool.v0) return { name: tool.name, description: tool.description, inputSchema: schema };
+  const hidden = new Set(tool.v0.hiddenProperties);
+  const strip = (node: unknown): unknown => {
+    if (Array.isArray(node)) return node.map(strip);
+    if (!node || typeof node !== "object") return node;
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(node)) {
+      if (k === "properties" && v && typeof v === "object") out[k] = Object.fromEntries(Object.entries(v).filter(([p]) => !hidden.has(p)).map(([p, x]) => [p, strip(x)]));
+      else if (k === "required" && Array.isArray(v)) out[k] = v.filter((p) => !hidden.has(p as string));
+      else out[k] = strip(v);
+    }
+    return out;
+  };
+  return { name: tool.name, description: tool.v0.description, inputSchema: strip(schema) as Record<string, unknown> };
 }

@@ -202,6 +202,8 @@ export class QueryService {
     if (body.researchMode && gate.plan?.request.intent === "analyze_move" && gate.plan.request.territories?.length === 1) {
       gate.plan.request.researchMode = body.researchMode;
     }
+    // Sprint 11: cited brand facts supplied by the requester are context for judgment, never Qloo evidence.
+    if ("brandContext" in body && body.brandContext && gate.plan) gate.plan.request.brandContext = body.brandContext;
     const interpretation = gate.interpretation;
     telemetry.intent = interpretation.primaryIntent;
     telemetry.secondaryIntents = interpretation.secondaryIntents;

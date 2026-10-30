@@ -66,3 +66,4 @@ The project was built in sprints. Each folder records what was decided, measured
 | 10b | [Agent research competence](sprint-10b/AGENT_RESEARCH_COMPETENCE.md) ([pre-registration](sprint-10b/PREREGISTRATION.md)) |
 | 10c | [Durable agent execution and live reliability](sprint-10c/DURABLE_AGENT_EXECUTION_AND_LIVE_RELIABILITY.md) |
 | 10d | [Final research intelligence and release (live L1–L4, release candidate)](sprint-10d/FINAL_RESEARCH_INTELLIGENCE_AND_RELEASE.md) |
+| 11 | [Research intelligence upgrade (research policy v1; pre-registered paired evaluation not yet run)](sprint-11/RESEARCH_INTELLIGENCE_UPGRADE.md) · [pre-registration](sprint-11/PREREGISTRATION.md) |

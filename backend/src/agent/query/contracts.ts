@@ -6,7 +6,7 @@
  */
 import { QUERY_INTENTS } from "@cultural-elasticity/shared";
 import { z } from "zod";
-import { AGENT_INTENTS } from "../contracts.js";
+import { AGENT_INTENTS, brandContextSchema, RESEARCH_APPROACHES, researchBriefSchema } from "../contracts.js";
 
 const text = (max: number) => z.string().trim().min(1).max(max);
 
@@ -41,6 +41,11 @@ export const queryProposalSchema = z.strictObject({
       requiresClarification: z.boolean(),
     })
     .nullable(),
+  /**
+   * Sprint 11 (research policy v1): the research objective as the user means it. Text only: it cannot carry tools,
+   * budgets, evidence or ids. Absent in a v0 answer. The gate passes a valid brief to the run; the runtime only reads it.
+   */
+  researchBrief: researchBriefSchema.nullable().optional(),
 });
 export type QueryProposal = z.output<typeof queryProposalSchema>;
 
@@ -83,6 +88,32 @@ export const QUERY_PROPOSAL_JSON_SCHEMA = {
   additionalProperties: false,
 } as const;
 
+/** Sprint 11 (research policy v1): the same schema plus the research brief. */
+export const QUERY_PROPOSAL_JSON_SCHEMA_V1 = {
+  ...QUERY_PROPOSAL_JSON_SCHEMA,
+  properties: {
+    ...QUERY_PROPOSAL_JSON_SCHEMA.properties,
+    researchBrief: {
+      anyOf: [
+        {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            centralQuestion: { type: "string" },
+            concepts: { type: "array", items: { type: "object", additionalProperties: false, properties: { name: { type: "string" }, meaning: { type: "string" }, notThis: { type: "array", items: { type: "string" } } }, required: ["name", "meaning", "notThis"] } },
+            usefulAnswer: { type: "string" },
+            approach: { type: "string", enum: [...RESEARCH_APPROACHES] },
+            approachReason: { type: "string" },
+          },
+          required: ["centralQuestion", "concepts", "usefulAnswer", "approach", "approachReason"],
+        },
+        { type: "null" },
+      ],
+    },
+  },
+  required: [...QUERY_PROPOSAL_JSON_SCHEMA.required, "researchBrief"],
+} as const;
+
 // ---- API bodies ----
 
 const contextBody = z.strictObject({ runId: z.string().uuid(), selectedTerritoryKey: text(80).optional() });
@@ -100,6 +131,8 @@ const investigationBody = z.strictObject({
   query: text(2_000),
   ...explicitFields,
   researchMode: z.literal("single_hypothesis_v1").optional(),
+  /** Sprint 11: cited business facts about the brand (requester-supplied context; never Qloo evidence). */
+  brandContext: brandContextSchema.optional(),
   context: contextBody.optional(),
   /**
    * Territories chosen from earlier investigations of one brand. The server reads their labels from those runs

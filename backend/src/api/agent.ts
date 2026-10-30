@@ -8,6 +8,7 @@ import { admit, globalJobLimit, jobCreateLimit } from "./admission.js";
 import { baselineAllowed, developmentRoutesOpen } from "./exposure.js";
 import { buildComparativeHandoffRequest, collectReferenceCandidates, projectComparativeStrategicReport, representationProblem, validateComparativeOutcome, type ComparativePlan, type ExemplarProfileEvidence } from "../agent/comparative-bridge.js";
 import { defaultLimits } from "../agent/contracts.js";
+import { researchPolicyFromEnv } from "../agent/research-intelligence.js";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../agent/errors.js";
 import { DEFAULT_AGENT_MODEL } from "../agent/model/anthropic.js";
 import { MAX_PANEL_OPTIONS } from "../methodology/contracts.js";
@@ -75,7 +76,7 @@ export function liveRuntimeFactory(options: { store?: RunStore; journaled?: bool
     const created = createAgentModel(choice);
     const model = options.journaled ? new JournaledModel(created) : created;
     provider ??= options.journaled ? new JournaledToolProvider(createLiveToolProvider()) : createLiveToolProvider();
-    const runtime = new AgentRuntime({ model, provider, store, feasibilityPolicy: feasibilityPolicyFromEnv() });
+    const runtime = new AgentRuntime({ model, provider, store, feasibilityPolicy: feasibilityPolicyFromEnv(), researchPolicy: created.info.kind === "llm" ? researchPolicyFromEnv() : "v0" });
     runtimes.set(choice, runtime);
     return runtime;
   };

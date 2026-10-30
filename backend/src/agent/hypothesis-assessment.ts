@@ -28,12 +28,16 @@ export function assessSingleHypothesis(state: AgentRunState, target: AgentTerrit
   const supporting = state.status === "COMPLETE" && !inBrandProfile && sourceIsEligible && members.length > 0 && target?.representation.exemplars.length && shared.length > 0
     ? [`A source-linked brand-conditioned query returned members. Separately, the validated concept representation shares ${shared.map((item) => item.label).join(", ")} with the brand profile.`]
     : [];
+  // Sprint 11: evidence about a related but different concept is never a verdict on the concept the user asked about.
+  const alignment = target?.conceptAlignment;
+  const substituted = alignment?.relation === "RELATED_DIFFERENT";
   let outcome: Assessment["outcome"] = "INCONCLUSIVE";
   if (state.status !== "COMPLETE" || !brand) outcome = "UNABLE_TO_COMPLETE_RESEARCH";
   else if (!concept && cleanEmptyConceptSearch) outcome = "NOT_SUPPORTED_BY_CURRENT_EVIDENCE";
   else if (sourceIsEligible && allRelevantQueriesCleanEmpty) outcome = "NOT_SUPPORTED_BY_CURRENT_EVIDENCE";
-  else if (supporting.length > 0 && !inBrandProfile) outcome = "WORTH_FURTHER_INVESTIGATION";
+  else if (supporting.length > 0 && !inBrandProfile && !substituted) outcome = "WORTH_FURTHER_INVESTIGATION";
   const limitations = [
+    ...(alignment && alignment.relation !== "EQUIVALENT" ? [`The investigated Qloo concept "${alignment.qlooConcept.label}" is not the same as "${alignment.userConcept}" (${alignment.relation.toLowerCase().replaceAll("_", " ")}): ${alignment.reason}`] : []),
     ...(inBrandProfile ? [`${concept!.label} already appears in the observed brand profile; this does not establish a new direction.`] : []),
     ...(!sourceIsEligible ? ["A completed, source-linked brand-conditioned query for this concept is unavailable."] : []),
     ...(members.length > 0 && shared.length === 0 ? ["The observed relationship lacks a verified shared cultural signal in the available profiles."] : []),

@@ -34,6 +34,7 @@
     "eval:d2d": "pnpm --filter backend eval:d2d",
     "eval:competence": "pnpm --filter backend eval:competence",
     "eval:query": "pnpm --filter backend eval:query",
+    "eval:research-intelligence": "pnpm --filter backend eval:research-intelligence",
     "test:e2e": "pnpm --filter frontend test:e2e",
     "db:migrate": "pnpm --filter backend db:migrate",
     "baseline:canary": "pnpm --filter backend baseline:canary",

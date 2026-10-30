@@ -8,8 +8,9 @@
  * The synthesis can explain results. It cannot change a route, class, level or number: those are
  * copied from deterministic code into the result regardless of what the model wrote.
  */
+import { brandCoreTag, brandIntelligenceBrief, policyOf, researchLimitations, withoutComparison } from "./research-intelligence.js";
 import { comparativeRun, finalFeasibility } from "./feasibility.js";
-import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type Limitation } from "@cultural-elasticity/shared";
+import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type ConceptRelation, type Limitation } from "@cultural-elasticity/shared";
 import { reconcileLatency } from "../ops/latency.js";
 import { recorderOf, reconcileSpanCoverage } from "../ops/spans.js";
 import { priceUsd } from "../ops/pricing.js";
@@ -17,7 +18,7 @@ import { unanalyzedResult } from "./analysis-runner.js";
 import { classifyRunFailure } from "./failure-taxonomy.js";
 import { candidateCanonicalization, comparisonSetConstruction, evidenceStatus } from "./frontier.js";
 import { conceptProbeState, probeViews } from "./probe-policy.js";
-import { categorize, validateClaims, validateFindings } from "./claim-validator.js";
+import { categorize, validateClaims, validateConceptFraming, validateFindings, validateInsights } from "./claim-validator.js";
 import { synthesisSchema, type Synthesis } from "./contracts.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { assessSingleHypothesis } from "./hypothesis-assessment.js";
@@ -53,6 +54,14 @@ export function territoryOrder(results: AgentTerritoryResult[]): AgentTerritoryR
   return [...results].sort((a, b) => role[a.role] - role[b.role] || route[a.analysisRoute] - route[b.analysisRoute] || (a.relativePosition?.position ?? 99) - (b.relativePosition?.position ?? 99) || a.key.localeCompare(b.key));
 }
 
+const CONCEPT_RELATION_PHRASE: Record<ConceptRelation, string> = {
+  EQUIVALENT: "equivalent to",
+  NARROWER: "narrower than",
+  PARTIAL_COVERAGE: "to cover only part of",
+  RELATED_DIFFERENT: "related to but different from",
+  MISMATCHED: "a different phenomenon from",
+};
+
 /** A synthesis built only from deterministic values. It must always pass validateClaims. */
 export function templateSynthesis(brandLabel: string | null, results: AgentTerritoryResult[]): Synthesis {
   const lines = results.map((r) => {
@@ -61,9 +70,18 @@ export function templateSynthesis(brandLabel: string | null, results: AgentTerri
     }
     if (r.analysisRoute === "INSUFFICIENT_EVIDENCE") return `${r.label}: ${ROUTE_PHRASE[r.analysisRoute]} (${r.representation.failure?.code ?? "no evidence"}).`;
     return `${r.label}: ${ROUTE_PHRASE[r.analysisRoute]}.`;
+  }).map((line, i) => {
+    // Sprint 11: a non-equivalent concept and the brand's own category are stated next to the result they qualify.
+    const r = results[i]!;
+    const a = r.conceptAlignment;
+    const qualifiers = [
+      ...(a && a.relation !== "EQUIVALENT" ? [`The evidence is about Qloo's ${a.qlooConcept.label} concept, which the agent judged ${CONCEPT_RELATION_PHRASE[a.relation]} ${a.userConcept}.`] : []),
+      ...(r.brandCore ? [`Qloo categorises the brand itself as ${r.brandCore.label}, so this is established positioning rather than an extension.`] : []),
+    ];
+    return [line, ...qualifiers].join(" ");
   });
   const head = `${brandLabel ?? "The brand"}: ${results.length} territory result(s), each reported only to the extent its Qloo evidence supports. Classes are provisional and relative to their comparison set; these results describe cultural-affinity evidence, not commercial outcomes.`;
-  return { summary: [head, ...lines].join("\n"), territoryNotes: [], findings: [], followUpOptions: templateFollowUps(results) };
+  return { summary: [head, ...lines].join("\n"), territoryNotes: [], findings: [], followUpOptions: templateFollowUps(results), insights: [] };
 }
 
 function templateFollowUps(results: AgentTerritoryResult[]): string[] {
@@ -245,7 +263,12 @@ export function allResults(state: AgentRunState): AgentTerritoryResult[] {
       const r = state.results.get(t.key) ?? unanalyzedResult(state, t, code);
       // Sprint 5A.1 (additive): canonical identity, UI evidence status and the probes behind the route.
       const probes = probeViews(state, t);
-      return { ...r, candidate: candidateCanonicalization(state, t), evidenceStatus: evidenceStatus(r), ...(probes.length > 0 && { probes }) };
+      const base: AgentTerritoryResult = { ...r, candidate: candidateCanonicalization(state, t), evidenceStatus: evidenceStatus(r), ...(probes.length > 0 && { probes }) };
+      if (policyOf(state) !== "v1") return base;
+      // Sprint 11: the agent's concept judgment and the brand-core check qualify the result; no number changes.
+      const core = t.role === "target" && r.resolvedConcept ? brandCoreTag(state, r.resolvedConcept.id) : null;
+      const enriched: AgentTerritoryResult = { ...base, ...(t.conceptAlignment && { conceptAlignment: t.conceptAlignment }), ...(core && { brandCore: core }) };
+      return { ...enriched, limitations: [...r.limitations, ...researchLimitations(state, enriched)] };
     }),
   );
 }
@@ -263,6 +286,17 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
     runLimitations: runLimitations(state, results).map((l) => `${l.code}: ${l.detail}`),
     finalSufficiency: sufficiency,
   };
+  // Sprint 11 (research policy v1): the question as the user meant it and the brand context select the two-layer synthesis.
+  const v1 = policyOf(state) === "v1";
+  const brandBrief = v1 ? brandIntelligenceBrief(state) : null;
+  const brandFacts = brandBrief?.facts.map((f) => ({ ref: f.ref, statement: f.statement })) ?? [];
+  if (v1) {
+    context.research = {
+      researchBrief: state.request.researchBrief ?? null,
+      approach: state.researchApproach ?? null,
+      brandIntelligence: brandBrief ? { facts: brandBrief.facts.map((f) => ({ ref: f.ref, statement: f.statement, source: f.source.title })), positioning: brandBrief.positioning, qlooCategoryTags: brandBrief.qlooObserved?.categoryTags.map((t) => t.label) ?? [] } : null,
+    };
+  }
 
   let synthesis: Synthesis | null = null;
   let violations: string[] = [];
@@ -296,7 +330,11 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
       }
       // Grounded findings are validated against their cited fields, then rendered as territory notes.
       const rendered = renderFindings(parsed.data);
-      violations = [...validateFindings(parsed.data.findings, results), ...validateClaims(rendered, results, extraLabels)];
+      violations = [
+        ...validateFindings(parsed.data.findings, results),
+        ...validateClaims(rendered, results, extraLabels),
+        ...(v1 ? [...validateConceptFraming(rendered, results), ...validateInsights(parsed.data.insights, results, brandFacts, extraLabels)] : []),
+      ];
       record(violations.length === 0, turn.output);
       if (violations.length === 0) {
         synthesis = rendered;
@@ -327,7 +365,7 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
     userQuery: state.request.userQuery,
     brand: state.brand.entity ? { id: state.brand.entity.id, label: state.brand.entity.label, type: state.brand.entity.type, resolution: state.brand.entity.resolution } : null,
     territories: results,
-    ...(state.request.researchMode === "single_hypothesis_v1" && { hypothesisAssessment: assessSingleHypothesis(state, results.find((item) => item.role === "target")) }),
+    ...(withoutComparison(state) && results.filter((item) => item.role === "target").length === 1 && { hypothesisAssessment: assessSingleHypothesis(state, results.find((item) => item.role === "target")) }),
     methodologyRuns: state.methodologyRuns,
     summary,
     followUpOptions: final.followUpOptions,
@@ -341,6 +379,13 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
     layers: layers(state, results, { text: summaryText, source, passed: finalViolations.length === 0 }, final.followUpOptions, final.findings),
     failureCategory: null,
     ...(comparativeRun(state) && { comparisonFeasibility: finalFeasibility(state) }),
+    ...(v1 && {
+      researchBrief: state.request.researchBrief ?? null,
+      ...(state.researchApproach && { researchApproach: state.researchApproach }),
+      ...(brandBrief && { brandIntelligence: brandBrief }),
+      // Layer 2 exists only when the model synthesis passed validation; the deterministic template never invents one.
+      insights: synthesis ? final.insights.map((i) => ({ ...i })) : [],
+    }),
   };
   result.failureCategory = classifyRunFailure(result);
   return result;

@@ -9,6 +9,7 @@
  *   attribute / recordTurn  usage per skill; a skill whose turn or Qloo-call budget is spent is
  *                           exhausted and deactivated (its work is then reported with what exists).
  */
+import { policyOf } from "../research-intelligence.js";
 import type { SkillRef } from "@cultural-elasticity/shared";
 import { activeTerritories, derivePhase, type AgentRunState } from "../state.js";
 import type { ToolRegistry } from "../tool-registry.js";
@@ -46,7 +47,8 @@ export class SkillRegistry {
   exposure(state: AgentRunState, tools: ToolRegistry, active: readonly SkillDefinition[] = this.select(state)): { tools: string[]; actions: TerminalAction[] } {
     const phase = derivePhase(state);
     const names = new Set(active.flatMap((s) => s.allowedTools));
-    const exposed = tools.list().filter((t) => names.has(t.name) && t.phases.includes(phase)).map((t) => t.name);
+    const v0 = policyOf(state) === "v0";
+    const exposed = tools.list().filter((t) => names.has(t.name) && t.phases.includes(phase) && !(v0 && t.v1Only)).map((t) => t.name);
     const actions = [...new Set(active.flatMap((s) => s.allowedActions))];
     return { tools: exposed, actions };
   }

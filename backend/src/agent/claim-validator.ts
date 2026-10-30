@@ -291,3 +291,84 @@ export function categorize(violations: readonly string[]): Record<string, number
   for (const v of violations) out[classifyViolation(v)] = (out[classifyViolation(v)] ?? 0) + 1;
   return out;
 }
+
+// ---- Sprint 11: layer-2 strategic insights ----
+
+/** Reasoning may not pass itself off as evidence or market fact (layer 2 is labelled interpretation). */
+const REASONING_FORBIDDEN: { pattern: RegExp; why: string }[] = [
+  { pattern: /\d/u, why: "numbers belong only in the observation, grounded in its fields" },
+  { pattern: /\bqloo\b|\b(affinit(?:y|ies)|tag members?|brand-conditioned)\b/iu, why: "evidence claims belong only in the observation" },
+  { pattern: /\b(trend|trends|trending|growing|booming|surging|market size|willingness to pay|price premium|pricing power)\b/iu, why: "market facts are not established by this evidence" },
+  { pattern: /\b(proves?|proven|confirms?|confirmed|establishes|demonstrates)\b/iu, why: "reasoning is a hypothesis; it cannot prove or confirm" },
+];
+
+type Insight = Synthesis["insights"][number];
+
+/**
+ * Validates layer-2 insights. The observation is evidence and is checked exactly like a finding (fields resolve, numbers
+ * are values of those fields, names and class language match the run). Interpretation, implication, counterpoint and
+ * validation are labelled reasoning: no numbers, no evidence claims, no market facts, no names outside this run and the
+ * cited brand facts. Brand-fact references must exist and match the declared basis; a brand-core territory is ESTABLISHED.
+ */
+export function validateInsights(insights: readonly Insight[], results: readonly AgentTerritoryResult[], brandFacts: readonly { ref: number; statement: string }[], extraLabels: readonly string[] = []): string[] {
+  const violations: string[] = [];
+  const byKey = new Map(results.map((r) => [r.key, r]));
+  const factRefs = new Set(brandFacts.map((f) => f.ref));
+  const vocabulary = [
+    ...extraLabels,
+    ...brandFacts.map((f) => f.statement),
+    ...results.flatMap((r) => [r.label, r.key, r.resolvedConcept?.label ?? "", r.conceptAlignment?.userConcept ?? "", r.brandCore?.label ?? "", ...r.representation.exemplars.map((e) => e.label), ...(r.coherence?.consistentlyShared.map((x) => x.label) ?? []), ...(r.conditionedEvidence?.topEntities.map((e) => e.label) ?? [])]),
+  ].filter(Boolean);
+  for (const [i, s] of insights.entries()) {
+    const where = `insights[${i}]`;
+    const territory = s.territoryKey === null ? null : byKey.get(s.territoryKey);
+    if (s.territoryKey !== null && !territory) {
+      violations.push(`${where}: unknown territory "${s.territoryKey}"`);
+      continue;
+    }
+    // Layer 1 inside layer 2: the observation is grounded like a finding.
+    if (territory) {
+      violations.push(...validateFindings([{ territoryKey: territory.key, claimType: "representation", supportingFields: s.observationFields, interpretation: s.observation, limitationCodes: [] }], results).map((v) => v.replace("findings[0]", `${where}.observation`)));
+      violations.push(...validateClaims({ summary: "", territoryNotes: [{ territoryKey: territory.key, text: s.observation }], followUpOptions: [] }, results, extraLabels).map((v) => v.replace(`territoryNotes.${territory.key}`, `${where}.observation`)));
+    } else {
+      const views = results.map(synthesisTerritoryView);
+      for (const path of s.observationFields) if (!views.some((v) => at(v, path) !== null && at(v, path) !== undefined)) violations.push(`${where}.observation: supporting field "${path}" has no value in any territory`);
+      if (/\d/u.test(s.observation)) violations.push(`${where}.observation: a whole-question observation may not state numbers; attach it to a territory`);
+      violations.push(...validateClaims({ summary: s.observation, territoryNotes: [], followUpOptions: [] }, results, extraLabels).map((v) => v.replace(/^summary/u, `${where}.observation`)));
+    }
+    for (const field of ["interpretation", "implication", "counterpoint", "validation"] as const) {
+      const text = s[field];
+      for (const { pattern, why } of [...FORBIDDEN_LANGUAGE, ...REASONING_FORBIDDEN]) {
+        const hit = text.replace(NEGATED_DISCLAIMER, " ").match(pattern);
+        if (hit) violations.push(`${where}.${field}: "${hit[0]}" (${why})`);
+      }
+      for (const name of unknownNames(text, vocabulary)) violations.push(`${where}.${field}: "${name}" is not in this run's evidence or the cited brand facts`);
+      checkSegment(text, territory ? [territory] : "sentence", results, `${where}.${field}`, violations);
+    }
+    const usesFacts = s.basis.includes("BRAND_FACT");
+    if (usesFacts && s.brandFactRefs.length === 0) violations.push(`${where}: basis BRAND_FACT needs brandFactRefs`);
+    if (!usesFacts && s.brandFactRefs.length > 0) violations.push(`${where}: brandFactRefs given without basis BRAND_FACT`);
+    for (const ref of s.brandFactRefs) if (!factRefs.has(ref)) violations.push(`${where}: brand fact ${ref} does not exist`);
+    if (territory?.brandCore && s.horizon !== "ESTABLISHED") violations.push(`${where}: ${territory.label} is the brand's own Qloo category; its horizon is ESTABLISHED, not ${s.horizon}`);
+  }
+  return [...new Set(violations)];
+}
+
+/**
+ * Sprint 11: a sentence that names the user's concept for a territory investigated through a RELATED_DIFFERENT Qloo
+ * concept must also name the concept actually investigated, so the summary never implies the user's concept was covered.
+ */
+export function validateConceptFraming(synthesis: Pick<Synthesis, "summary" | "territoryNotes">, results: readonly AgentTerritoryResult[]): string[] {
+  const violations: string[] = [];
+  const texts = [{ where: "summary", text: synthesis.summary }, ...synthesis.territoryNotes.map((n) => ({ where: `territoryNotes.${n.territoryKey}`, text: n.text }))];
+  for (const r of results) {
+    const a = r.conceptAlignment;
+    if (!a || a.relation !== "RELATED_DIFFERENT") continue;
+    const user = new RegExp(`(^|[^\\p{L}\\p{N}])${escape(a.userConcept)}([^\\p{L}\\p{N}]|$)`, "iu");
+    const qloo = new RegExp(escape(a.qlooConcept.label), "iu");
+    for (const { where, text } of texts) for (const sentence of sentences(text)) {
+      if (user.test(sentence) && !qloo.test(sentence)) violations.push(`${where}: "${sentence.trim().slice(0, 120)}" speaks of ${a.userConcept} but the evidence is about ${a.qlooConcept.label}, a related but different concept; name ${a.qlooConcept.label} in that sentence`);
+    }
+  }
+  return violations;
+}

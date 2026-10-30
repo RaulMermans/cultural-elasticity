@@ -1,0 +1,85 @@
+{
+  "schema": "ce-research-intelligence-cases/1",
+  "registeredAt": "2026-10-30",
+  "notice": "Pre-registered before any Sprint 11 implementation commit. Cases, gold expectations, arms, rubric and thresholds are fixed here. Later changes are appended to `amendments` with a date and reason, and earlier results are kept. Brand and territory names are evaluation inputs only: nothing under backend/src reads this file (AGENTS.md generalization rule 2). DEVELOPMENT cases may be used for tuning; HOLDOUT cases may not, and none of their brands appears anywhere else in the repository at registration time.",
+  "arms": {
+    "A": {
+      "policy": "production research policy at main c8f3633 (no research brief, no concept alignment, mandatory reference construction for analyze_move, findings-only synthesis)",
+      "switch": "CE_RESEARCH_POLICY=v0"
+    },
+    "B": {
+      "policy": "Sprint 11 research-intelligence policy (research brief, concept alignment at anchoring, intent-judged exemplars, agent-chosen research approach, two-layer synthesis)",
+      "switch": "CE_RESEARCH_POLICY=v1 (default after this sprint)"
+    },
+    "controls": "Both arms use claude-haiku-5-5 at the production effort, the same tools, the same global budgets (no ceiling is raised), the same Qloo answers (calls shared by both arms are served from the case's recording), and the same brand-context packet when one is listed."
+  },
+  "goldSemantics": {
+    "conceptGold": "For each requested concept: what the user means (`meaning`) and nearby concepts that are NOT equivalent (`notEquivalent`). A run fails `conceptIntegrity` if it presents a concept matching a `notEquivalent` description as equivalent coverage of the user's concept, without qualification.",
+    "approachGold": "`acceptableApproaches` lists research approaches a competent strategist could defend. An approach outside the list is not an automatic failure; the blinded rater decides whether it was justified.",
+    "abstentionGold": "`abstention`: REQUIRED (the correct answer is that the direction is not supportable or not a cultural question), ACCEPTABLE (an honest inconclusive answer is fine), WRONG (strong Qloo coverage is expected; abstaining without evidence of absence is a judgment failure).",
+    "brandCoreGold": "`brandCore`: true when the requested concept is the brand's established business category. Such a result must be framed as established positioning, never as a stretch or a last-place opportunity."
+  },
+  "development": [
+    { "id": "d1-vinted-space-tourism", "brand": "Vinted", "query": "Could Vinted credibly move into space tourism?", "observedFailure": "investigated astrotourism and rural accommodation instead of commercial space travel", "concepts": [{ "name": "space tourism", "meaning": "commercial human spaceflight sold to private travellers", "notEquivalent": ["astrotourism / stargazing / dark-sky tourism", "rural or eco accommodation", "astronomy as a hobby"] }], "acceptableApproaches": ["investigate", "reframe"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "d2-vinted-repair-upcycling", "brand": "Vinted", "query": "Is clothing repair and upcycling a cultural territory Vinted could own?", "observedFailure": "compound question reduced to clothing repair and alteration businesses", "concepts": [{ "name": "clothing repair", "meaning": "mending and repairing garments as a practice", "notEquivalent": [] }, { "name": "upcycling", "meaning": "creative transformation of used garments into new designs", "notEquivalent": ["tailoring and alteration services", "dry cleaning"] }], "acceptableApproaches": ["investigate", "compare"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "d3-vinted-online-marketplace", "brand": "Vinted", "query": "How far is online marketplaces a stretch for Vinted?", "observedFailure": "provisional last-place ranking presented for the brand's own business category", "concepts": [{ "name": "online marketplaces", "meaning": "peer-to-peer and platform commerce: Vinted's own business model", "notEquivalent": [] }], "acceptableApproaches": ["investigate"], "abstention": "WRONG", "brandCore": true },
+    { "id": "d4-vinted-circular-economy", "brand": "Vinted", "query": "How does Vinted relate to circular economy culture?", "observedFailure": "relevant evidence but incomplete, unstable comparisons across runs", "concepts": [{ "name": "circular economy", "meaning": "reuse, resale and waste-reduction culture", "notEquivalent": ["recycling facilities", "waste-management services"] }], "acceptableApproaches": ["investigate", "compare"], "abstention": "WRONG", "brandCore": false },
+    { "id": "d5-diptyque-ceramics", "brand": "Diptyque", "query": "For Diptyque, compare boutique hotels, ceramics and jazz as cultural territories.", "observedFailure": "material tag (Ceramic) represented by ceramic watch brands; 10D safeguard already blocks the incidental anchor", "concepts": [{ "name": "ceramics", "meaning": "ceramic craft and studio pottery as a cultural practice", "notEquivalent": ["products made of ceramic material (watches, cookware)"] }, { "name": "boutique hotels", "meaning": "independent design-led hotels", "notEquivalent": [] }, { "name": "jazz", "meaning": "jazz music culture", "notEquivalent": [] }], "acceptableApproaches": ["compare"], "abstention": "ACCEPTABLE", "brandCore": false, "recorded": "~/dev/ce-10d/backend/feasibility-output/durable-live/sprint-10d-diagnostic/L3-*.json (live, not committed)" },
+    { "id": "d6-dyson-wellness-retreats", "brand": "Dyson", "query": "Could Dyson credibly move into wellness retreats?", "observedFailure": "wellness retreats represented by athleisure brands; references probed on doctor / electronic music / family relationships", "concepts": [{ "name": "wellness retreats", "meaning": "destination experiences and venues for rest, health and mindfulness", "notEquivalent": ["athleisure and yoga apparel brands", "fitness apps"] }], "acceptableApproaches": ["investigate"], "abstention": "ACCEPTABLE", "brandCore": false, "recorded": "~/dev/ce-10d/backend/feasibility-output/durable-live/sprint-10d-diagnostic/L4-*.json (live, not committed)" }
+  ],
+  "holdout": [
+    { "id": "h01", "structure": "established brand core", "brand": "Leica", "query": "What does street photography culture mean for Leica?", "concepts": [{ "name": "street photography", "meaning": "candid photography of public life as a practice and scene", "notEquivalent": ["camera retail stores", "photo-printing services"] }], "acceptableApproaches": ["investigate"], "abstention": "WRONG", "brandCore": false },
+    { "id": "h02", "structure": "brand's own business category", "brand": "Airbnb", "query": "Is short-term vacation rental a stretch for Airbnb?", "concepts": [{ "name": "vacation rentals", "meaning": "Airbnb's own business category", "notEquivalent": [] }], "acceptableApproaches": ["investigate"], "abstention": "WRONG", "brandCore": true },
+    { "id": "h03", "structure": "credible adjacent opportunity", "brand": "Smeg", "query": "Could Smeg extend into mid-century modern design culture?", "concepts": [{ "name": "mid-century modern design", "meaning": "the 1940s–60s design movement and its contemporary revival", "notEquivalent": ["generic furniture retailers"] }], "acceptableApproaches": ["investigate", "compare"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h04", "structure": "credible adjacent opportunity", "brand": "Ganni", "query": "Is vintage fashion a credible cultural direction for Ganni?", "concepts": [{ "name": "vintage fashion", "meaning": "secondhand and archival clothing culture", "notEquivalent": ["fast-fashion retailers"] }], "acceptableApproaches": ["investigate", "compare"], "abstention": "WRONG", "brandCore": false },
+    { "id": "h05", "structure": "unexpected cultural connection", "brand": "Bang & Olufsen", "query": "Could Bang & Olufsen build a cultural link with jazz clubs?", "concepts": [{ "name": "jazz clubs", "meaning": "live jazz venues and the scene around them", "notEquivalent": ["generic bars and nightclubs"] }], "acceptableApproaches": ["investigate"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h06", "structure": "compound concept", "brand": "Peloton", "query": "How credible is home fitness and meditation as a territory for Peloton?", "concepts": [{ "name": "home fitness", "meaning": "exercising at home", "notEquivalent": [] }, { "name": "meditation", "meaning": "meditation and mindfulness practice", "notEquivalent": ["spas and beauty salons"] }], "acceptableApproaches": ["investigate", "compare"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h07", "structure": "compound concept", "brand": "Hydro Flask", "query": "Should Hydro Flask lean into camping and van life culture?", "concepts": [{ "name": "camping", "meaning": "outdoor camping as a leisure practice", "notEquivalent": [] }, { "name": "van life", "meaning": "living and travelling in converted vans", "notEquivalent": ["car rental", "RV dealerships"] }], "acceptableApproaches": ["investigate", "compare"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h08", "structure": "semantically misleading near match", "brand": "Herschel", "query": "Is backpacking travel a cultural territory for Herschel?", "concepts": [{ "name": "backpacking travel", "meaning": "independent budget travel as a cultural practice", "notEquivalent": ["backpacks and bags as a product category", "luggage brands"] }], "acceptableApproaches": ["investigate"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h09", "structure": "semantically misleading near match", "brand": "Kiehl's", "query": "Could Kiehl's own apothecary culture?", "concepts": [{ "name": "apothecary culture", "meaning": "the heritage, craft and aesthetic of traditional apothecaries", "notEquivalent": ["pharmacies and drugstores as retail venues"] }], "acceptableApproaches": ["investigate"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h10", "structure": "semantically misleading near match", "brand": "Volcom", "query": "How does Volcom relate to surf culture?", "concepts": [{ "name": "surf culture", "meaning": "surfing as a lifestyle, scene and aesthetic", "notEquivalent": ["surf shops as retail venues", "beach hotels"] }], "acceptableApproaches": ["investigate"], "abstention": "WRONG", "brandCore": false },
+    { "id": "h11", "structure": "valid comparison", "brand": "Smeg", "query": "For Smeg, compare home baking, Italian cuisine and retro diners as cultural territories.", "concepts": [{ "name": "home baking", "meaning": "baking at home as a hobby", "notEquivalent": ["bakeries as venues"] }, { "name": "Italian cuisine", "meaning": "Italian food culture", "notEquivalent": [] }, { "name": "retro diners", "meaning": "the American diner aesthetic and venues", "notEquivalent": [] }], "acceptableApproaches": ["compare"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h12", "structure": "valid comparison", "brand": "Brompton", "query": "Compare urban cycling, coffee culture and architecture as territories for Brompton.", "concepts": [{ "name": "urban cycling", "meaning": "cycling as city transport and lifestyle", "notEquivalent": ["bicycle repair shops"] }, { "name": "coffee culture", "meaning": "café and specialty coffee culture", "notEquivalent": [] }, { "name": "architecture", "meaning": "architecture as a cultural interest", "notEquivalent": ["construction companies"] }], "acceptableApproaches": ["compare"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h13", "structure": "likely insufficient Qloo coverage", "brand": "Strava", "query": "Could Strava credibly move into competitive orienteering?", "concepts": [{ "name": "orienteering", "meaning": "the navigation sport", "notEquivalent": ["hiking trails", "maps and GPS devices"] }], "acceptableApproaches": ["investigate"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h14", "structure": "correct answer is abstention", "brand": "Byredo", "query": "Could Byredo move into deep-sea mining?", "concepts": [{ "name": "deep-sea mining", "meaning": "industrial seabed mineral extraction (not a cultural territory)", "notEquivalent": ["scuba diving", "ocean conservation", "marine aquariums"] }], "acceptableApproaches": ["investigate"], "abstention": "REQUIRED", "brandCore": false },
+    { "id": "h15", "structure": "opportunity with strong evidence expected", "brand": "Stanley", "query": "Is camping a strong cultural territory for Stanley?", "concepts": [{ "name": "camping", "meaning": "outdoor camping as a leisure practice", "notEquivalent": [] }], "acceptableApproaches": ["investigate", "compare"], "abstention": "WRONG", "brandCore": false },
+    { "id": "h16", "structure": "open discovery", "brand": "Aperol", "query": "What unexpected cultural territories could Aperol explore?", "concepts": [], "acceptableApproaches": ["explore"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h17", "structure": "open discovery", "brand": "Monocle", "query": "Where could Monocle go culturally beyond publishing?", "concepts": [], "acceptableApproaches": ["explore"], "abstention": "ACCEPTABLE", "brandCore": false },
+    { "id": "h18", "structure": "ambiguous territory", "brand": "Spotify", "query": "Could Spotify move into the drama scene?", "concepts": [{ "name": "drama", "meaning": "ambiguous: theatre, TV drama, or audio drama; a competent answer names the ambiguity or asks", "notEquivalent": ["interpersonal conflict"] }], "acceptableApproaches": ["investigate", "clarify"], "abstention": "ACCEPTABLE", "brandCore": false }
+  ],
+  "rubric": {
+    "scale": "0 = fails, 1 = partially, 2 = fully. Rated per run by a blinded human; runs of one case are shown as X/Y in a seeded random order with arm, model and policy fields removed.",
+    "dimensions": {
+      "intentFidelity": "Did the investigation answer the user's actual question, with the meaning the user intended?",
+      "culturalUnderstanding": "Were the concepts and exemplars meaningful instances of the intended cultural phenomenon?",
+      "researchJudgment": "Were the chosen evidence paths productive, and was effort spent where it could change the answer?",
+      "strategicUsefulness": "Would the conclusion help someone make a better research or business decision?",
+      "discoveryQuality": "Open-discovery cases only: were non-obvious directions relevant and grounded?"
+    },
+    "deterministic": {
+      "evidenceIntegrity": "0 fabricated Qloo ids/tags/affinities; every number traces to a deterministic result; claim validation passed or replaced by the template.",
+      "unsupportedClassification": "0 classifications outside a FULL relative route.",
+      "conceptIntegrity": "0 runs presenting a concept matching a gold `notEquivalent` description as EQUIVALENT (graded from the result's conceptAlignment and summary by the rater with the gold sheet visible AFTER blinded scoring).",
+      "brandCoreFraming": "brandCore cases: the result carries the brand-core limitation and never a stretch class without it.",
+      "efficiency": "Qloo calls and model USD per run; useful finding = a run rated ≥ 1 on strategicUsefulness."
+    }
+  },
+  "thresholds": {
+    "hardGates": [
+      "B evidenceIntegrity violations = 0",
+      "B unsupportedClassification = 0",
+      "B conceptIntegrity failures = 0 on holdouts",
+      "no regression in pnpm test, test:durable, eval:agent, eval:query, eval:methodology"
+    ],
+    "improvement": "Holdouts only, paired per case. Improvement is demonstrated when, for BOTH intentFidelity and strategicUsefulness, B wins more cases than A with a net margin ≥ 4 (wins − losses) and a one-sided sign test p < 0.10 over non-tied cases. A tie or a smaller margin is reported as NOT_DEMONSTRATED. Results below n = 16 rated holdouts are reported as INSUFFICIENT_SAMPLE.",
+    "efficiency": "Median Qloo calls per holdout run for B ≤ 1.25 × A, and Qloo calls per useful finding for B ≤ A.",
+    "interpretationTier": "Live Haiku interpretation only (no Qloo), B arm: the research brief names every gold concept separately for compound cases (h06, h07, d2) and states a notEquivalent distinction or ambiguity for ≥ 3 of the 4 near-match/ambiguous holdouts (h08, h09, h10, h18). Reported as LIVE_HAIKU_INTERPRETATION, never as agent validation."
+  },
+  "tiers": {
+    "T0": "Offline, provider-free, in CI: contract and runtime-rule tests on synthetic fixtures. Never research-quality evidence.",
+    "T1": "Live Haiku interpretation only over development + holdout queries. Needs explicit spending approval.",
+    "T2": "Live Qloo + Haiku paired A/B over the 18 holdouts (36 runs, shared recordings). Needs explicit spending approval.",
+    "T3": "Blinded human rating of T2 outputs (owner). Not independent of the project: reported as owner rating."
+  },
+  "amendments": []
+}
