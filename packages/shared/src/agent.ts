@@ -503,6 +503,11 @@ export type AgentTurnTrace = {
   repairReason?: string | null;
   /** Every decision of the first model attempt was schema-valid and accepted. */
   firstAttemptValid?: boolean;
+  /**
+   * Sprint 10B: the deterministic focus the first attempt was given (stage, blocker, first outstanding requirements,
+   * feasibility status, closed skills). Lets a trace answer "what did the agent know" without the full context.
+   */
+  focus?: { stage: string; blocker: string | null; outstanding: string[]; feasibility?: string; withdrawn?: string[] };
 };
 
 /** Sprint 8A: monotonic runtime phases. Markers (RUN_START/RUN_END) have duration 0. */

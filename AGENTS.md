@@ -145,6 +145,13 @@ Canonical record: `docs/sprint-9j/LIVE_VALIDATION_AND_RELEASE_REPORT.md`.
 4. **Pool order is a recorded rule** (`frontier-pool/v2`, `candidatePoolRule`). Facets come from the tag URN, never from names. `domainRelation` is a structural fact about the brand's profile facets, not novelty and not core versus adjacent. Do not add a novelty score. Concepts the bounded pool cuts are recorded with a reason.
 5. **Discovery quality needs human and live evidence.** `pnpm eval:discovery` replays real recorded pools and checks mechanism and safety only. A quality claim needs the blinded rating (`docs/sprint-10a/evaluation/rating-sheet.md`) and the frozen holdouts (`docs/sprint-10a/PREREGISTRATION.md`), which are never tuned on.
 
+## Agent decision competence (permanent, from Sprint 10B)
+
+1. **Measure decisions, not only runs.** `eval:competence -- --decisions` freezes one turn per case (`evals/competence/decisions.json`, pre-registered, dev/holdout). Cases use generic predicates only. The reference policy is a scorer ceiling, never a model validation.
+2. **Attribute before fixing.** `eval:competence -- --audit <dirs>` groups stored LLM runs by label and cause. Do not answer a Qloo-data or deterministic-policy cause with prompt text.
+3. **Context states why, never grants.** `focus.withdrawn` explains tools a closed skill no longer offers. Exposure and validation stay in code. Every turn records its focus (`turn.focus`).
+4. **A context change is an arm.** Ship it behind a runtime switch so the paired Haiku run compares like with like. Offline results of deterministic policies say nothing about its effect.
+
 ## Deployment provenance (permanent, from Sprint 8F)
 
 1. **GitHub is the canonical source.** `RaulMermans/cultural-elasticity` is the only release repository. Do not deploy from copied archives as the ordinary process.
@@ -212,6 +219,11 @@ pnpm eval:d2d           # offline Discovery-to-Decision suite: observe vs enforc
 pnpm eval:d2d -- --score <dir> [<dir>]
                         # score stored agent results with the same metrics (offline half of a model comparison)
 pnpm eval:discovery     # offline; real recorded frontier pools + Loewe scan seeds (mechanism/safety), never discovery-quality or live evidence
+pnpm eval:competence -- --decisions
+                        # decision points on the synthetic world (reference + instruments); never a model validation
+                        # --policy haiku needs ANTHROPIC_API_KEY and --approved-usd (no Qloo call): LIVE_HAIKU_DECISIONS
+pnpm eval:competence -- --audit <dirs>
+                        # decision-quality audit of stored LLM runs (files only)
 pnpm eval:query         # offline gate/handoff replay over the query manifest (synthetic); never NLU evidence
 pnpm eval:query -- --live
 pnpm test:e2e           # browser tests against a SYNTHETIC job API; never live Qloo or Haiku

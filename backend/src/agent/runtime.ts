@@ -253,8 +253,10 @@ export class AgentRuntime {
     for (let attempt = 1; attempt <= 2; attempt += 1) {
       const spans = recorderOf(state);
       const context = spans
-        ? spans.measureSync({ runId: state.runId, turnIndex: state.usage.iterations, phase: "CONTEXT_ASSEMBLY", operation: `attempt-${attempt}` }, () => buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair, sufficiency }))
-        : buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair, sufficiency });
+        ? spans.measureSync({ runId: state.runId, turnIndex: state.usage.iterations, phase: "CONTEXT_ASSEMBLY", operation: `attempt-${attempt}` }, () => buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair, sufficiency, skills: this.skills, withdrawnToolNotes: this.deps.withdrawnToolNotes }))
+        : buildDecisionContext(state, this.registry, lastTurn, { active, exposure, repair, sufficiency, skills: this.skills, withdrawnToolNotes: this.deps.withdrawnToolNotes });
+      // Sprint 10B observability: what the decision was based on (the first attempt's focus, compact).
+      if (attempt === 1 && context.focus) turnTrace.focus = { stage: context.focus.stage, blocker: context.focus.blocker?.slice(0, 200) ?? null, outstanding: context.focus.outstanding.slice(0, 3).map((o) => o.slice(0, 200)), ...(context.focus.feasibility && { feasibility: context.focus.feasibility.status }), ...(context.focus.withdrawn && { withdrawn: context.focus.withdrawn.map((w) => w.split(":")[0]!) }) };
       const size = contextSize(context);
       turnTrace.contextChars = Math.max(turnTrace.contextChars ?? 0, size.chars);
       turnTrace.contextTokensEstimate = Math.max(turnTrace.contextTokensEstimate ?? 0, size.tokensEstimate);

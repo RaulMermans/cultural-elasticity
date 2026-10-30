@@ -10,6 +10,9 @@
  *        Sprint 10B decision-point cases (evals/competence/decisions.json) on the SYNTHETIC world: one turn per case is
  *        taken by the policy under test (scripts/competence/decisions.ts). Offline by default; `--policy haiku` calls
  *        Anthropic only, under an owner-approved ceiling. Report label: SYNTHETIC / LIVE_HAIKU_DECISIONS.
+ *   -- --audit <dir> [<dir> …] [--json file]
+ *        Sprint 10B decision-quality audit of stored LLM runs (scripts/competence/audit.ts): refusals, empty probes and
+ *        stops grouped by taxonomy label and cause. Reads files only.
  *   -- --replay <dir> [--model baseline|haiku] [--arms …]
  *        The same cases on the recorded answers only. No Qloo call; `baseline` makes no provider call at all.
  *        A call never recorded is a FAILED call (never evidence) and is counted as a coverage miss.
@@ -38,6 +41,10 @@ const arg = (name: string) => {
   const i = process.argv.indexOf(name);
   return i >= 0 ? process.argv[i + 1] : undefined;
 };
+if (process.argv.includes("--audit")) {
+  const { auditCli } = await import("./competence/audit.js");
+  process.exit(auditCli(process.argv));
+}
 if (process.argv.includes("--decisions")) {
   const { decisionsCli } = await import("./competence/decisions.js");
   const price = MODEL_PRICES["claude-haiku-5-5"] ?? HAIKU_CONSERVATIVE;

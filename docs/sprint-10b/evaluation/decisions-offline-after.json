@@ -1,0 +1,7085 @@
+{
+  "schema": "ce-decision-report/1",
+  "label": "SYNTHETIC decision points (reference policy and trace-derived instruments; no provider call; never a model validation)",
+  "generatedAt": "2026-10-30T06:15:50.520Z",
+  "rows": [
+    {
+      "caseId": "d01-find-tags-first",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7577,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d02-find-tags-unseen",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7467,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d03-find-tags-compare",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8429,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d04-next-probe-after-empty",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 1,
+      "emptyProbes": 2,
+      "contextChars": 10077,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d05-next-probe-type-evidence",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9874,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d06-unmeasurable-probe",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "QLOO_DATA_INSUFFICIENT",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 11006,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d07-type-alignment",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 1,
+      "emptyProbes": 3,
+      "contextChars": 12625,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d08-place-probe",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9049,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d09-recover-untried-type",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 12993,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d10-unmeasurable-recovery",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 13670,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d11-strategy-exhausted",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 13787,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d12-weak-panel-recovery",
+      "split": "holdout",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 12694,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d13-complete-feasible-set",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 23975,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation",
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d14-complete-feasible-set-place",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 17992,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation",
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d15-reference-discovery",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 19660,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d16-meaningless-reference",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "SEMANTIC_MISMATCH",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "NOT_EXPOSED"
+      ],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 18170,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend✗NOT_EXPOSED"
+      ]
+    },
+    {
+      "caseId": "d17-reference-uncertain-place",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 3,
+      "emptyProbes": 1,
+      "contextChars": 19742,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d18-barren-namespace-refused",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 17104,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d19-deferred-reference-probes",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "FAILED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": null,
+      "badHits": [
+        "repeatsRefusal"
+      ],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "REFERENCE_DISCOVERY_PENDING",
+        "REFERENCE_DISCOVERY_PENDING",
+        "REFERENCE_DISCOVERY_PENDING",
+        "REFERENCE_DISCOVERY_PENDING"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 18886,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend✗REFERENCE_DISCOVERY_PENDING",
+        "qloo_recommend✗REFERENCE_DISCOVERY_PENDING",
+        "qloo_recommend✗REFERENCE_DISCOVERY_PENDING",
+        "qloo_recommend✗REFERENCE_DISCOVERY_PENDING"
+      ]
+    },
+    {
+      "caseId": "d20-set-complete-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 8647,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d21-set-complete-analyze-place",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 8648,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d22-infeasible-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7241,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d23-infeasible-analyze-meaningless",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 6101,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d24-finish-when-sufficient",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 6066,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d25-finish-when-sufficient-unseen",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 5947,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d26-finish-partial",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 4746,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d27-no-premature-stop-references",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 21373,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d28-no-premature-stop-validate",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 25984,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d29-no-premature-stop-eager",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 2,
+      "emptyProbes": 1,
+      "contextChars": 18425,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d30-validate-panel",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 7,
+      "productiveCalls": 7,
+      "emptyProbes": 0,
+      "contextChars": 12815,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d31-ambiguous-brand",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "NEEDS_INPUT",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 3644,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "ask_user"
+      ]
+    },
+    {
+      "caseId": "d32-frontier-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 14202,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_related_entities"
+      ]
+    },
+    {
+      "caseId": "d33-frontier-profile-related",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 15505,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags"
+      ]
+    },
+    {
+      "caseId": "d34-frontier-start",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 14215,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_related_entities"
+      ]
+    },
+    {
+      "caseId": "d35-seeds-and-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 15857,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags"
+      ]
+    },
+    {
+      "caseId": "d36-explore-closed-no-propose",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 14694,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d37-budget-anchor",
+      "split": "holdout",
+      "dimension": "efficiency",
+      "label": "BUDGET_EXHAUSTED",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "BUDGET_EXHAUSTED"
+      ],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8565,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "anchor_territory",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags✗BUDGET_EXHAUSTED",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d38-early-stop-refusal",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 19113,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d01-find-tags-first",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7752,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d02-find-tags-unseen",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7637,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d03-find-tags-compare",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8601,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d04-next-probe-after-empty",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 1,
+      "emptyProbes": 2,
+      "contextChars": 10077,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d05-next-probe-type-evidence",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9874,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d06-unmeasurable-probe",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "QLOO_DATA_INSUFFICIENT",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 11006,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d07-type-alignment",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 1,
+      "emptyProbes": 3,
+      "contextChars": 12625,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d08-place-probe",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9049,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d09-recover-untried-type",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 12993,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d10-unmeasurable-recovery",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 13670,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d11-strategy-exhausted",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 13787,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d12-weak-panel-recovery",
+      "split": "holdout",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 12694,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d13-complete-feasible-set",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 23975,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation",
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d14-complete-feasible-set-place",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 17992,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation",
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d15-reference-discovery",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 19915,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d16-meaningless-reference",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "SEMANTIC_MISMATCH",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "NOT_EXPOSED"
+      ],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 18425,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend✗NOT_EXPOSED"
+      ]
+    },
+    {
+      "caseId": "d17-reference-uncertain-place",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 3,
+      "emptyProbes": 1,
+      "contextChars": 19997,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d18-barren-namespace-refused",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 17104,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d19-deferred-reference-probes",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "FAILED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": null,
+      "badHits": [
+        "repeatsRefusal"
+      ],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "REFERENCE_DISCOVERY_PENDING",
+        "REFERENCE_DISCOVERY_PENDING",
+        "REFERENCE_DISCOVERY_PENDING",
+        "REFERENCE_DISCOVERY_PENDING"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 18886,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend✗REFERENCE_DISCOVERY_PENDING",
+        "qloo_recommend✗REFERENCE_DISCOVERY_PENDING",
+        "qloo_recommend✗REFERENCE_DISCOVERY_PENDING",
+        "qloo_recommend✗REFERENCE_DISCOVERY_PENDING"
+      ]
+    },
+    {
+      "caseId": "d20-set-complete-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 9347,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d21-set-complete-analyze-place",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 9348,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d22-infeasible-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7658,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d23-infeasible-analyze-meaningless",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 6707,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d24-finish-when-sufficient",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 6066,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d25-finish-when-sufficient-unseen",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 5947,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d26-finish-partial",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 4746,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d27-no-premature-stop-references",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 21801,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d28-no-premature-stop-validate",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 25984,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "validate_territory_representation",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d29-no-premature-stop-eager",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 2,
+      "emptyProbes": 1,
+      "contextChars": 18680,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d30-validate-panel",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 7,
+      "productiveCalls": 7,
+      "emptyProbes": 0,
+      "contextChars": 12815,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d31-ambiguous-brand",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "NEEDS_INPUT",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 3644,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "ask_user"
+      ]
+    },
+    {
+      "caseId": "d32-frontier-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 14374,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_related_entities"
+      ]
+    },
+    {
+      "caseId": "d33-frontier-profile-related",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 15505,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags"
+      ]
+    },
+    {
+      "caseId": "d34-frontier-start",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 14391,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_related_entities"
+      ]
+    },
+    {
+      "caseId": "d35-seeds-and-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 15857,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags"
+      ]
+    },
+    {
+      "caseId": "d36-explore-closed-no-propose",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 15287,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d37-budget-anchor",
+      "split": "holdout",
+      "dimension": "efficiency",
+      "label": "BUDGET_EXHAUSTED",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "BUDGET_EXHAUSTED"
+      ],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8565,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "anchor_territory",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags✗BUDGET_EXHAUSTED",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d38-early-stop-refusal",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "reference",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 19368,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "propose_territory",
+        "anchor_territory",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d01-find-tags-first",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7577,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d02-find-tags-unseen",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7467,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d03-find-tags-compare",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8429,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d04-next-probe-after-empty",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 1,
+      "emptyProbes": 2,
+      "contextChars": 10077,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d05-next-probe-type-evidence",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9874,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d06-unmeasurable-probe",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "QLOO_DATA_INSUFFICIENT",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 11006,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d07-type-alignment",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 1,
+      "emptyProbes": 3,
+      "contextChars": 12625,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d08-place-probe",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9049,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d09-recover-untried-type",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 12993,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d10-unmeasurable-recovery",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 13670,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d11-strategy-exhausted",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 13787,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d12-weak-panel-recovery",
+      "split": "holdout",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 12694,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d13-complete-feasible-set",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 23975,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d14-complete-feasible-set-place",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 17992,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d15-reference-discovery",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 19660,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d16-meaningless-reference",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "SEMANTIC_MISMATCH",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": null,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 18170,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d17-reference-uncertain-place",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 19742,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d18-barren-namespace-refused",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 17104,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d19-deferred-reference-probes",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "FAILED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": null,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 18886,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d20-set-complete-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 8647,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d21-set-complete-analyze-place",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 8648,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d22-infeasible-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7241,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d23-infeasible-analyze-meaningless",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 6101,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d24-finish-when-sufficient",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 6066,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d25-finish-when-sufficient-unseen",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 5947,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d26-finish-partial",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 4746,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d27-no-premature-stop-references",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 21373,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d28-no-premature-stop-validate",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 25984,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d29-no-premature-stop-eager",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 18425,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d30-validate-panel",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 7,
+      "productiveCalls": 7,
+      "emptyProbes": 0,
+      "contextChars": 12815,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d31-ambiguous-brand",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "NEEDS_INPUT",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 3644,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "ask_user"
+      ]
+    },
+    {
+      "caseId": "d32-frontier-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 14202,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d33-frontier-profile-related",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 15505,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d34-frontier-start",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 14215,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d35-seeds-and-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 15857,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d36-explore-closed-no-propose",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 14694,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d37-budget-anchor",
+      "split": "holdout",
+      "dimension": "efficiency",
+      "label": "BUDGET_EXHAUSTED",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "BUDGET_EXHAUSTED"
+      ],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8565,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "anchor_territory",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags✗BUDGET_EXHAUSTED",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d38-early-stop-refusal",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 19113,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d01-find-tags-first",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7752,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d02-find-tags-unseen",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7637,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d03-find-tags-compare",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8601,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d04-next-probe-after-empty",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 1,
+      "emptyProbes": 2,
+      "contextChars": 10077,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d05-next-probe-type-evidence",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9874,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d06-unmeasurable-probe",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "QLOO_DATA_INSUFFICIENT",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 11006,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d07-type-alignment",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 1,
+      "emptyProbes": 3,
+      "contextChars": 12625,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend",
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d08-place-probe",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9049,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d09-recover-untried-type",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 12993,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d10-unmeasurable-recovery",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 13670,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d11-strategy-exhausted",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 13787,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d12-weak-panel-recovery",
+      "split": "holdout",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 12694,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d13-complete-feasible-set",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 23975,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d14-complete-feasible-set-place",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 17992,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d15-reference-discovery",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 19915,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d16-meaningless-reference",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "SEMANTIC_MISMATCH",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": null,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 18425,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d17-reference-uncertain-place",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 19997,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d18-barren-namespace-refused",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 17104,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d19-deferred-reference-probes",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "FAILED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": null,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 18886,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d20-set-complete-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 9347,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d21-set-complete-analyze-place",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 9348,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d22-infeasible-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7658,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d23-infeasible-analyze-meaningless",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 6707,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d24-finish-when-sufficient",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 6066,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d25-finish-when-sufficient-unseen",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 5947,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d26-finish-partial",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 4746,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d27-no-premature-stop-references",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 21801,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d28-no-premature-stop-validate",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 25984,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d29-no-premature-stop-eager",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 18680,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d30-validate-panel",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 7,
+      "productiveCalls": 7,
+      "emptyProbes": 0,
+      "contextChars": 12815,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d31-ambiguous-brand",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "NEEDS_INPUT",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 3644,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "ask_user"
+      ]
+    },
+    {
+      "caseId": "d32-frontier-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 14374,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d33-frontier-profile-related",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 15505,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d34-frontier-start",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 14391,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d35-seeds-and-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [
+        "finish"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 15857,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d36-explore-closed-no-propose",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 15287,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d37-budget-anchor",
+      "split": "holdout",
+      "dimension": "efficiency",
+      "label": "BUDGET_EXHAUSTED",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "BUDGET_EXHAUSTED"
+      ],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8565,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "anchor_territory",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags✗BUDGET_EXHAUSTED",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d38-early-stop-refusal",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "instrument:eager-finish",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": true,
+      "refusals": [
+        "NOTHING_ANALYZED",
+        "NOTHING_ANALYZED"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 19368,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish✗NOTHING_ANALYZED",
+        "finish✗NOTHING_ANALYZED"
+      ]
+    },
+    {
+      "caseId": "d01-find-tags-first",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7577,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d02-find-tags-unseen",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7467,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d03-find-tags-compare",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8429,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d04-next-probe-after-empty",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 10077,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d05-next-probe-type-evidence",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "FAILED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9874,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d06-unmeasurable-probe",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "QLOO_DATA_INSUFFICIENT",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 11006,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d07-type-alignment",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "FAILED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 12625,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d08-place-probe",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 9049,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d09-recover-untried-type",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 12993,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d10-unmeasurable-recovery",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 13670,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d11-strategy-exhausted",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 13787,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d12-weak-panel-recovery",
+      "split": "holdout",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 12694,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d13-complete-feasible-set",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 23975,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d14-complete-feasible-set-place",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "DUPLICATE_ACTION"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 17992,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend✗DUPLICATE_ACTION"
+      ]
+    },
+    {
+      "caseId": "d15-reference-discovery",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 19660,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d16-meaningless-reference",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "SEMANTIC_MISMATCH",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 18170,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d17-reference-uncertain-place",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "REFERENCE_TYPE_EVIDENCE_PENDING"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 19742,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend✗REFERENCE_TYPE_EVIDENCE_PENDING"
+      ]
+    },
+    {
+      "caseId": "d18-barren-namespace-refused",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 17104,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d19-deferred-reference-probes",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": null,
+      "badHits": [
+        "repeatsRefusal"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 18886,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d20-set-complete-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 8647,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d21-set-complete-analyze-place",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 8648,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d22-infeasible-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7241,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d23-infeasible-analyze-meaningless",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 6101,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d24-finish-when-sufficient",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 6066,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d25-finish-when-sufficient-unseen",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 5947,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d26-finish-partial",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 4746,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d27-no-premature-stop-references",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 21373,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d28-no-premature-stop-validate",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 25984,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d29-no-premature-stop-eager",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 18425,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d30-validate-panel",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "PREMATURE_STOP",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 7,
+      "productiveCalls": 7,
+      "emptyProbes": 0,
+      "contextChars": 12815,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d31-ambiguous-brand",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "NEEDS_INPUT",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 3644,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "ask_user"
+      ]
+    },
+    {
+      "caseId": "d32-frontier-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 14202,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_related_entities"
+      ]
+    },
+    {
+      "caseId": "d33-frontier-profile-related",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 15505,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags"
+      ]
+    },
+    {
+      "caseId": "d34-frontier-start",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 14215,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_related_entities"
+      ]
+    },
+    {
+      "caseId": "d35-seeds-and-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 15857,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags"
+      ]
+    },
+    {
+      "caseId": "d36-explore-closed-no-propose",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 14694,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d37-budget-anchor",
+      "split": "holdout",
+      "dimension": "efficiency",
+      "label": "BUDGET_EXHAUSTED",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 8565,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d38-early-stop-refusal",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "before",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 19113,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d01-find-tags-first",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7752,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d02-find-tags-unseen",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7637,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d03-find-tags-compare",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 8601,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d04-next-probe-after-empty",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 10077,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d05-next-probe-type-evidence",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "FAILED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 9874,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d06-unmeasurable-probe",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "QLOO_DATA_INSUFFICIENT",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 11006,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d07-type-alignment",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "FAILED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 12625,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d08-place-probe",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "INVALID_ENTITY_TYPE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 9049,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d09-recover-untried-type",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 12993,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d10-unmeasurable-recovery",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 13670,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d11-strategy-exhausted",
+      "split": "dev",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 13787,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d12-weak-panel-recovery",
+      "split": "holdout",
+      "dimension": "recovery",
+      "label": "INEFFICIENT_RECOVERY",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 12694,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d13-complete-feasible-set",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 23975,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d14-complete-feasible-set-place",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "DUPLICATE_ACTION"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 17992,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend✗DUPLICATE_ACTION"
+      ]
+    },
+    {
+      "caseId": "d15-reference-discovery",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 19915,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d16-meaningless-reference",
+      "split": "holdout",
+      "dimension": "comparison",
+      "label": "SEMANTIC_MISMATCH",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 18425,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d17-reference-uncertain-place",
+      "split": "dev",
+      "dimension": "comparison",
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": false,
+      "repaired": false,
+      "refusals": [
+        "REFERENCE_TYPE_EVIDENCE_PENDING"
+      ],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 19997,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend✗REFERENCE_TYPE_EVIDENCE_PENDING"
+      ]
+    },
+    {
+      "caseId": "d18-barren-namespace-refused",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 17104,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d19-deferred-reference-probes",
+      "split": "holdout",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": null,
+      "badHits": [
+        "repeatsRefusal"
+      ],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 18886,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d20-set-complete-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 9347,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d21-set-complete-analyze-place",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 10,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 9348,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d22-infeasible-analyze",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 7658,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d23-infeasible-analyze-meaningless",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 6707,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "analyze"
+      ]
+    },
+    {
+      "caseId": "d24-finish-when-sufficient",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 6066,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d25-finish-when-sufficient-unseen",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 5947,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d26-finish-partial",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 4746,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "finish"
+      ]
+    },
+    {
+      "caseId": "d27-no-premature-stop-references",
+      "split": "dev",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 21801,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d28-no-premature-stop-validate",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 25984,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d29-no-premature-stop-eager",
+      "split": "holdout",
+      "dimension": "stopping",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 1,
+      "emptyProbes": 0,
+      "contextChars": 18680,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d30-validate-panel",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "PREMATURE_STOP",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 7,
+      "productiveCalls": 7,
+      "emptyProbes": 0,
+      "contextChars": 12815,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "validate_territory_representation"
+      ]
+    },
+    {
+      "caseId": "d31-ambiguous-brand",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "NEEDS_INPUT",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 0,
+      "productiveCalls": 0,
+      "emptyProbes": 0,
+      "contextChars": 3644,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "ask_user"
+      ]
+    },
+    {
+      "caseId": "d32-frontier-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 14374,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_related_entities"
+      ]
+    },
+    {
+      "caseId": "d33-frontier-profile-related",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 15505,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags"
+      ]
+    },
+    {
+      "caseId": "d34-frontier-start",
+      "split": "holdout",
+      "dimension": "discovery",
+      "label": "MISSED_AVAILABLE_EVIDENCE",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 2,
+      "productiveCalls": 2,
+      "emptyProbes": 0,
+      "contextChars": 14391,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_related_entities"
+      ]
+    },
+    {
+      "caseId": "d35-seeds-and-evidence-base",
+      "split": "dev",
+      "dimension": "discovery",
+      "label": "UNNECESSARY_CONTINUATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": true,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 3,
+      "productiveCalls": 3,
+      "emptyProbes": 0,
+      "contextChars": 15857,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags",
+        "qloo_get_entity_tags"
+      ]
+    },
+    {
+      "caseId": "d36-explore-closed-no-propose",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "BAD_TOOL_SELECTION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 4,
+      "productiveCalls": 4,
+      "emptyProbes": 0,
+      "contextChars": 15287,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags",
+        "qloo_find_tags"
+      ]
+    },
+    {
+      "caseId": "d37-budget-anchor",
+      "split": "holdout",
+      "dimension": "efficiency",
+      "label": "BUDGET_EXHAUSTED",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "BUDGET_EXHAUSTED",
+        "fullTerritories": 0,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": false,
+      "goodMet": false,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 8565,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    },
+    {
+      "caseId": "d38-early-stop-refusal",
+      "split": "dev",
+      "dimension": "decision",
+      "label": "CONTEXT_MISINTERPRETATION",
+      "arm": "new",
+      "policy": "instrument:ignore-guidance",
+      "outcome": {
+        "status": "COMPLETE",
+        "fullTerritories": 3,
+        "safetyViolations": 0
+      },
+      "reached": true,
+      "correct": true,
+      "goodMet": null,
+      "badHits": [],
+      "firstAttemptValid": true,
+      "repaired": false,
+      "refusals": [],
+      "qlooCalls": 1,
+      "productiveCalls": 0,
+      "emptyProbes": 1,
+      "contextChars": 19368,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "decisions": [
+        "qloo_recommend"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "name": "safety: no unsupported class, cross-call comparison or card violation",
+      "pass": true,
+      "value": 0
+    },
+    {
+      "name": "reachability: the reference policy reaches ≥ 90% of decision points",
+      "pass": true,
+      "value": "76/76"
+    },
+    {
+      "name": "sensitivity: instrument:eager-finish scores below the reference policy",
+      "pass": true,
+      "value": "30 < 68"
+    },
+    {
+      "name": "sensitivity: instrument:ignore-guidance scores below the reference policy",
+      "pass": true,
+      "value": "50 < 68"
+    }
+  ]
+}

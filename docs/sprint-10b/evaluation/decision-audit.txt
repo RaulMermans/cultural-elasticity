@@ -1,0 +1,27 @@
+Decision-quality audit of stored LLM runs (as run; files only, no provider call): 84 runs, 868 turns
+  valid-action rate 2036/2189 (93%); first-attempt-valid turns 780/868 (90%)
+  brand-independent probes followed  87/126 empty (69%)
+  brand-independent probes deviated  28/33 empty (85%)
+  brand-independent probes unranked  80/103 empty (78%)
+  brand-independent probes unrecorded 265/368 empty (72%)
+  non-FULL targets stopped while FULL was still feasible: 0/19
+  label                      cause                 count  note
+  UNATTRIBUTED_EMPTY_PROBE   DETERMINISTIC_POLICY    265  empty probe in a run whose engine recorded no probe ranking (before Sprint 5A.2)
+  QLOO_DATA_INSUFFICIENT     QLOO_DATA                87  empty probe that followed the runtime's evidence-ranked nextProbe
+  UNPRODUCTIVE_REFERENCE     DETERMINISTIC_POLICY     80  empty probe with no ranked recommendation that turn (reference / representation probes)
+  BAD_TOOL_SELECTION         CONTEXT                  66  tool of a skill that had closed (focus gave no reason before Sprint 10B)
+  PROVIDER_FAILURE           INFRASTRUCTURE           42  tool call failed (timeout, transport or contract)
+  MODEL_OUTPUT_INVALID       MODEL_DECISION           31  unparseable or schema-invalid turn
+  INVALID_ENTITY_TYPE        MODEL_DECISION           28  empty probe of a (tag, type) the runtime did not recommend that turn
+  UNNECESSARY_CONTINUATION   MODEL_DECISION           14  call that could not change the result
+  UNNECESSARY_CONTINUATION   MODEL_DECISION           11  exact repeat of a call already made
+  UNPRODUCTIVE_REFERENCE     MODEL_DECISION            9  reference from a namespace barren for the type
+  UNNECESSARY_CONTINUATION   MODEL_DECISION            8  call after its evidence was already complete
+  INVALID_ENTITY_TYPE        MODEL_DECISION            4  probe past the empty-type bound
+  SEMANTIC_MISMATCH          MODEL_DECISION            4  anchor to a different concept than the candidate's
+  INVALID_ENTITY_TYPE        MODEL_DECISION            2  type already barren in the namespace
+  BUDGET_EXHAUSTED           DETERMINISTIC_POLICY      2  skill budget spent
+  OTHER_REFUSAL              MODEL_DECISION            1  PRECONDITION
+  OTHER_REFUSAL              MODEL_DECISION            1  NOTHING_TO_ANALYZE
+  BUDGET_EXHAUSTED           DETERMINISTIC_POLICY      1  run ended on its budget
+  by cause: DETERMINISTIC_POLICY 348, MODEL_DECISION 113, QLOO_DATA 87, CONTEXT 66, INFRASTRUCTURE 42

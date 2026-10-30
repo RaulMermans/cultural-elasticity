@@ -1,0 +1,149 @@
+{
+  "schema": "ce-decision-audit/1",
+  "dirs": [
+    "~/dev/cultural-elasticity/backend/feasibility-output/sprint4-live",
+    "~/dev/cultural-elasticity/backend/feasibility-output/sprint5a-live",
+    "~/dev/cultural-elasticity/backend/feasibility-output/sprint5a1-live",
+    "~/dev/cultural-elasticity/backend/feasibility-output/sprint5a2-live",
+    "~/dev/cultural-elasticity/backend/feasibility-output/sprint8b-c9",
+    "../docs/sprint-9g",
+    "../docs/sprint-9o",
+    "../docs/sprint-8e",
+    "../evals/qloo-value"
+  ],
+  "runs": 84,
+  "turns": 868,
+  "firstValid": 780,
+  "decisions": 2189,
+  "accepted": 2036,
+  "probes": {
+    "followed": [
+      87,
+      126
+    ],
+    "deviated": [
+      28,
+      33
+    ],
+    "unranked": [
+      80,
+      103
+    ],
+    "unrecorded": [
+      265,
+      368
+    ]
+  },
+  "nonFullTargets": 19,
+  "prematureStops": 0,
+  "rows": [
+    {
+      "label": "UNATTRIBUTED_EMPTY_PROBE",
+      "cause": "DETERMINISTIC_POLICY",
+      "note": "empty probe in a run whose engine recorded no probe ranking (before Sprint 5A.2)",
+      "n": 265
+    },
+    {
+      "label": "QLOO_DATA_INSUFFICIENT",
+      "cause": "QLOO_DATA",
+      "note": "empty probe that followed the runtime's evidence-ranked nextProbe",
+      "n": 87
+    },
+    {
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "cause": "DETERMINISTIC_POLICY",
+      "note": "empty probe with no ranked recommendation that turn (reference / representation probes)",
+      "n": 80
+    },
+    {
+      "label": "BAD_TOOL_SELECTION",
+      "cause": "CONTEXT",
+      "note": "tool of a skill that had closed (focus gave no reason before Sprint 10B)",
+      "n": 66
+    },
+    {
+      "label": "PROVIDER_FAILURE",
+      "cause": "INFRASTRUCTURE",
+      "note": "tool call failed (timeout, transport or contract)",
+      "n": 42
+    },
+    {
+      "label": "MODEL_OUTPUT_INVALID",
+      "cause": "MODEL_DECISION",
+      "note": "unparseable or schema-invalid turn",
+      "n": 31
+    },
+    {
+      "label": "INVALID_ENTITY_TYPE",
+      "cause": "MODEL_DECISION",
+      "note": "empty probe of a (tag, type) the runtime did not recommend that turn",
+      "n": 28
+    },
+    {
+      "label": "UNNECESSARY_CONTINUATION",
+      "cause": "MODEL_DECISION",
+      "note": "call that could not change the result",
+      "n": 14
+    },
+    {
+      "label": "UNNECESSARY_CONTINUATION",
+      "cause": "MODEL_DECISION",
+      "note": "exact repeat of a call already made",
+      "n": 11
+    },
+    {
+      "label": "UNPRODUCTIVE_REFERENCE",
+      "cause": "MODEL_DECISION",
+      "note": "reference from a namespace barren for the type",
+      "n": 9
+    },
+    {
+      "label": "UNNECESSARY_CONTINUATION",
+      "cause": "MODEL_DECISION",
+      "note": "call after its evidence was already complete",
+      "n": 8
+    },
+    {
+      "label": "INVALID_ENTITY_TYPE",
+      "cause": "MODEL_DECISION",
+      "note": "probe past the empty-type bound",
+      "n": 4
+    },
+    {
+      "label": "SEMANTIC_MISMATCH",
+      "cause": "MODEL_DECISION",
+      "note": "anchor to a different concept than the candidate's",
+      "n": 4
+    },
+    {
+      "label": "INVALID_ENTITY_TYPE",
+      "cause": "MODEL_DECISION",
+      "note": "type already barren in the namespace",
+      "n": 2
+    },
+    {
+      "label": "BUDGET_EXHAUSTED",
+      "cause": "DETERMINISTIC_POLICY",
+      "note": "skill budget spent",
+      "n": 2
+    },
+    {
+      "label": "OTHER_REFUSAL",
+      "cause": "MODEL_DECISION",
+      "note": "PRECONDITION",
+      "n": 1
+    },
+    {
+      "label": "OTHER_REFUSAL",
+      "cause": "MODEL_DECISION",
+      "note": "NOTHING_TO_ANALYZE",
+      "n": 1
+    },
+    {
+      "label": "BUDGET_EXHAUSTED",
+      "cause": "DETERMINISTIC_POLICY",
+      "note": "run ended on its budget",
+      "n": 1
+    }
+  ]
+}
