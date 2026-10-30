@@ -1,0 +1,27 @@
+
+SYNTHETIC decision points (reference policy and trace-derived instruments; no provider call; never a model validation)
+  reference                   before dev     correct 20/22 [72–97%] | first-attempt valid 22/22 | Qloo 57 (44 productive, 4 empty probes) | reached 22/22 | safety violations 0
+  reference                   before holdout correct 14/16 [64–97%] | first-attempt valid 13/16 | Qloo 33 (20 productive, 5 empty probes) | reached 16/16 | safety violations 0
+  reference                   new    dev     correct 20/22 [72–97%] | first-attempt valid 22/22 | Qloo 57 (44 productive, 4 empty probes) | reached 22/22 | safety violations 0
+  reference                   new    holdout correct 14/16 [64–97%] | first-attempt valid 13/16 | Qloo 33 (20 productive, 5 empty probes) | reached 16/16 | safety violations 0
+  instrument:eager-finish     before dev     correct 10/22 [27–65%] | first-attempt valid 11/22 | Qloo 30 (20 productive, 2 empty probes) | reached 22/22 | safety violations 0
+  instrument:eager-finish     before holdout correct 5/16 [14–56%] | first-attempt valid 7/16 | Qloo 23 (12 productive, 3 empty probes) | reached 16/16 | safety violations 0
+  instrument:eager-finish     new    dev     correct 10/22 [27–65%] | first-attempt valid 11/22 | Qloo 30 (20 productive, 2 empty probes) | reached 22/22 | safety violations 0
+  instrument:eager-finish     new    holdout correct 5/16 [14–56%] | first-attempt valid 7/16 | Qloo 23 (12 productive, 3 empty probes) | reached 16/16 | safety violations 0
+  instrument:ignore-guidance  before dev     correct 15/22 [47–84%] | first-attempt valid 21/22 | Qloo 42 (27 productive, 6 empty probes) | reached 22/22 | safety violations 0
+  instrument:ignore-guidance  before holdout correct 10/16 [39–82%] | first-attempt valid 15/16 | Qloo 28 (16 productive, 4 empty probes) | reached 16/16 | safety violations 0
+  instrument:ignore-guidance  new    dev     correct 15/22 [47–84%] | first-attempt valid 21/22 | Qloo 42 (27 productive, 6 empty probes) | reached 22/22 | safety violations 0
+  instrument:ignore-guidance  new    holdout correct 10/16 [39–82%] | first-attempt valid 15/16 | Qloo 28 (16 productive, 4 empty probes) | reached 16/16 | safety violations 0
+  reference wrong: d05-next-probe-type-evidence [before] good=false bad=- decisions=qloo_recommend
+  reference wrong: d09-recover-untried-type [before] good=false bad=- decisions=analyze
+  reference wrong: d19-deferred-reference-probes [before] good=null bad=repeatsRefusal decisions=qloo_recommend✗REFERENCE_DISCOVERY_PENDING,qloo_recommend✗REFERENCE_DISCOVERY_PENDING,qloo_recommend✗REFERENCE_DISCOVERY_PENDING,qloo_recommend✗REFERENCE_DISCOVERY_PENDING
+  reference wrong: d36-explore-closed-no-propose [before] good=false bad=- decisions=qloo_find_tags,qloo_find_tags,qloo_find_tags,qloo_find_tags
+  reference wrong: d05-next-probe-type-evidence [new] good=false bad=- decisions=qloo_recommend
+  reference wrong: d09-recover-untried-type [new] good=false bad=- decisions=analyze
+  reference wrong: d19-deferred-reference-probes [new] good=null bad=repeatsRefusal decisions=qloo_recommend✗REFERENCE_DISCOVERY_PENDING,qloo_recommend✗REFERENCE_DISCOVERY_PENDING,qloo_recommend✗REFERENCE_DISCOVERY_PENDING,qloo_recommend✗REFERENCE_DISCOVERY_PENDING
+  reference wrong: d36-explore-closed-no-propose [new] good=false bad=- decisions=qloo_find_tags,qloo_find_tags,qloo_find_tags,qloo_find_tags
+  [PASS] safety: no unsupported class, cross-call comparison or card violation: 0
+  [PASS] reachability: the reference policy reaches ≥ 90% of decision points: 76/76
+  [PASS] sensitivity: instrument:eager-finish scores below the reference policy: 30 < 68
+  [PASS] sensitivity: instrument:ignore-guidance scores below the reference policy: 50 < 68
+  [NOT_RUN] improvement (Haiku before → new on holdout): LIVE_AGENT_MODEL_VALIDATION_NOT_RUN

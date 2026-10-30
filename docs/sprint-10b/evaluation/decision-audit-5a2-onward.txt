@@ -1,0 +1,21 @@
+Decision-quality audit of stored LLM runs (as run; files only, no provider call): 33 runs, 359 turns
+  valid-action rate 800/867 (92%); first-attempt-valid turns 319/359 (89%)
+  brand-independent probes followed  87/126 empty (69%)
+  brand-independent probes deviated  28/33 empty (85%)
+  brand-independent probes unranked  80/103 empty (78%)
+  brand-independent probes unrecorded 0/0 empty (n/a)
+  non-FULL targets stopped while FULL was still feasible: 0/14
+  label                      cause                 count  note
+  QLOO_DATA_INSUFFICIENT     QLOO_DATA                87  empty probe that followed the runtime's evidence-ranked nextProbe
+  UNPRODUCTIVE_REFERENCE     DETERMINISTIC_POLICY     80  empty probe with no ranked recommendation that turn (reference / representation probes)
+  BAD_TOOL_SELECTION         CONTEXT                  39  tool of a skill that had closed (focus gave no reason before Sprint 10B)
+  INVALID_ENTITY_TYPE        MODEL_DECISION           28  empty probe of a (tag, type) the runtime did not recommend that turn
+  PROVIDER_FAILURE           INFRASTRUCTURE           22  tool call failed (timeout, transport or contract)
+  UNNECESSARY_CONTINUATION   MODEL_DECISION           13  call that could not change the result
+  UNPRODUCTIVE_REFERENCE     MODEL_DECISION            5  reference from a namespace barren for the type
+  SEMANTIC_MISMATCH          MODEL_DECISION            4  anchor to a different concept than the candidate's
+  INVALID_ENTITY_TYPE        MODEL_DECISION            2  type already barren in the namespace
+  BUDGET_EXHAUSTED           DETERMINISTIC_POLICY      2  skill budget spent
+  UNNECESSARY_CONTINUATION   MODEL_DECISION            1  exact repeat of a call already made
+  MODEL_OUTPUT_INVALID       MODEL_DECISION            1  unparseable or schema-invalid turn
+  by cause: QLOO_DATA 87, DETERMINISTIC_POLICY 82, MODEL_DECISION 54, CONTEXT 39, INFRASTRUCTURE 22

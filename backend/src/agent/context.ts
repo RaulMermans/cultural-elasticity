@@ -40,6 +40,10 @@ export type ContextOptions = {
   repair?: AgentDecisionContext["repair"];
   /** Reuse the loop's sufficiency assessment instead of recomputing it during context assembly. */
   sufficiency?: SufficiencyAssessment;
+  /** The runtime's skill registry (closed skills are looked up in it). */
+  skills?: SkillRegistry;
+  /** Sprint 10B: false omits focus.withdrawn (the decision evaluation's "before" arm). */
+  withdrawnToolNotes?: boolean;
 };
 
 const defaultSkills = new SkillRegistry();
@@ -177,7 +181,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
 
   const sufficiency = options.sufficiency ?? assessEvidenceSufficiency(state);
   return {
-    focus: decisionFocus(state, active, exposure, sufficiency, lastTurn),
+    focus: decisionFocus(state, active, exposure, sufficiency, lastTurn, options.withdrawnToolNotes === false ? null : (options.skills ?? defaultSkills)),
     runId: state.runId,
     iteration: state.usage.iterations,
     userQuery: state.request.userQuery,
@@ -239,7 +243,7 @@ const OBJECTIVE: Record<string, string> = {
  * Sprint 5A: the critical next step, stated first. Every line is derived from deterministic state (sufficiency,
  * readiness, the reference plan, recovery guidance, refusals) so the model need not remember earlier turns.
  */
-function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[], exposure: { tools: readonly string[]; actions: readonly TerminalAction[] }, sufficiency: ReturnType<typeof assessEvidenceSufficiency>, lastTurn: AgentDecisionContext["lastTurn"]): DecisionFocus {
+function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[], exposure: { tools: readonly string[]; actions: readonly TerminalAction[] }, sufficiency: ReturnType<typeof assessEvidenceSufficiency>, lastTurn: AgentDecisionContext["lastTurn"], skills: SkillRegistry | null): DecisionFocus {
   const stage = investigationStage(state);
   const blockerAction = sufficiency.nextActions.find((a) => a.value === "HIGH" && a.action !== "finish");
   const outstanding: string[] = [];
@@ -261,6 +265,7 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
   const evidenceGap = frontierEvidenceBaseGap(state);
   if (evidenceGap) outstanding.unshift(`${evidenceGap.action} (${evidenceGap.target}): ${evidenceGap.reason}`);
   if (sufficiency.verdict === "SUFFICIENT") outstanding.push("evidence is sufficient: finish");
+  const withdrawn = skills ? withdrawnTools(state, skills, active, exposure) : [];
   const rejected = [
     ...(lastTurn?.rejections ?? []).map((r) => `${r.action}: ${r.code} — ${r.reason}`.slice(0, 220)),
     ...state.trace.earlyStops.slice(-4).map((e) => `${e.tool}: ${e.code} — ${e.reason}`.slice(0, 220)),
@@ -278,7 +283,33 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
     budget: { turnsLeft: Math.max(0, state.limits.maxAgentIterations - state.usage.iterations), qlooCallsLeft: remainingQlooCalls(state) },
     rejectedApproaches: [...new Set(rejected)].slice(0, 8),
     ...(feasibility && state.feasibilityPolicy === "enforce" && { feasibility: feasibilityView(feasibility) }),
+    ...(withdrawn.length > 0 && { withdrawn }),
   };
+}
+
+/**
+ * Sprint 10B: tools that a closed skill just stopped offering, and why. Live Haiku traces (Sprints 5A–9G) show the
+ * model calling them anyway once the skill closed (qloo_recommend after build_comparison_set: 32 refusals;
+ * propose_territory after explore_candidate_territories: 26): nextAllowed lost them without a reason. Only tools offered
+ * by a skill active the previous turn, or already refused as NOT_EXPOSED, are noted (each once), so the line appears
+ * when the temptation does. The reason is the skill's own declared preconditions and focus state, so it cannot drift from skill selection.
+ */
+function withdrawnTools(state: AgentRunState, skills: SkillRegistry, active: readonly SkillDefinition[], exposure: { tools: readonly string[] }): string[] {
+  const activeIds = new Set(active.map((s) => s.id));
+  const earlier = state.trace.turns.filter((t) => t.iteration < state.usage.iterations);
+  const refused = new Set(earlier.flatMap((t) => t.decisions.flatMap((d) => (d.tool && d.rejection?.startsWith("NOT_EXPOSED") ? [d.tool] : []))));
+  const lastSkills = new Set((earlier.at(-1)?.skills ?? []).map((s) => s.id));
+  const noted = new Set<string>();
+  return [...state.skillUsage.values()].flatMap(({ skill: ref, exhausted }) => {
+    const skill = skills.get(ref.id);
+    if (!skill || activeIds.has(skill.id)) return [];
+    const tools = skill.allowedTools.filter((t) => !exposure.tools.includes(t) && !noted.has(t) && (lastSkills.has(skill.id) || refused.has(t)));
+    if (tools.length === 0) return [];
+    for (const t of tools) noted.add(t);
+    const now = Object.entries(skill.focus(state) as Record<string, unknown>).map(([k, v]) => `${k} ${Array.isArray(v) ? v.join("/") || "none" : String(v)}`).join(", ");
+    const why = exhausted ? `turn budget ${skill.budget.maxTurns} spent` : `now ${now}; it needs ${skill.preconditions.join("; ")}`;
+    return [`${tools.join(", ")}: not offered — ${skill.id} closed (${why}). Do not call them.`.slice(0, 400)];
+  });
 }
 
 /** Serialized size of a decision context (characters, and a chars/4 token estimate). */

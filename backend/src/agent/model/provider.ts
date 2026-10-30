@@ -25,6 +25,8 @@ export type DecisionFocus = {
   rejectedApproaches: string[];
   /** Sprint 9N: the deterministic comparison-feasibility assessment (comparative runs only). Read-only. */
   feasibility?: FeasibilityView;
+  /** Sprint 10B: tools a skill used earlier in the run no longer offers, with the deterministic reason it closed. */
+  withdrawn?: string[];
 };
 
 /** Sprint 9N: what the model sees of comparison-feasibility/v1 (feasibility.ts). */
