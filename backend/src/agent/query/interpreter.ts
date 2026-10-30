@@ -10,7 +10,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { DEFAULT_AGENT_MODEL, fallbackParams, usageOf } from "../model/anthropic.js";
 import type { ModelUsage } from "../contracts.js";
-import { QUERY_PROPOSAL_JSON_SCHEMA, queryProposalSchema, type ExplicitFields, type QueryProposal } from "./contracts.js";
+import { QUERY_PROPOSAL_JSON_SCHEMA, QUERY_PROPOSAL_JSON_SCHEMA_V1, queryProposalSchema, type ExplicitFields, type QueryProposal } from "./contracts.js";
 import type { InterpreterContextView } from "./context.js";
 
 export type InterpretInput = { query: string; explicit: ExplicitFields; context: InterpreterContextView | null };
@@ -67,19 +67,33 @@ Fields:
 
 Explicit fields were set by the caller; if the message contradicts them, describe what the message says; the system resolves the conflict.`;
 
+/**
+ * Sprint 11 (research policy v1): the same interpretation plus the research brief that governs the investigation.
+ * Still classification and extraction: the brief states what the user means; it never answers or researches.
+ */
+export const QUERY_SYSTEM_PROMPT_V1 = `${QUERY_SYSTEM_PROMPT}
+
+researchBrief (null for out_of_scope, clarify_reference and return_to_parent): the research objective as the user means it. It is carried through the whole investigation, so be precise.
+- centralQuestion: the user's question restated precisely in one sentence.
+- concepts: each distinct cultural concept the user asks about. Split a compound ("X and Y") into separate concepts even when territories keeps the user's words. meaning: what the user means, in plain words, specific enough to tell it apart from neighbouring concepts. notThis: up to 4 nearby concepts a search could confuse with it (a product category versus the practice, a venue or service versus the scene or culture, a material versus the craft, a generic category versus the specific one). An ambiguous term keeps one concept whose meaning names the readings; ask in clarificationQuestion only when the ambiguity changes the answer.
+- usefulAnswer: what would make the answer useful to the user.
+- approach: explore (no target named), investigate (understand one direction or what a connection means; no ranking is needed), compare (the user asks how territories rank or compare, or how far a move stretches relative to alternatives). approachReason: one sentence.`;
+
 const SYNTHETIC_USAGE: ModelUsage = { inputTokens: 0, outputTokens: 0 };
 
-export type AnthropicQueryInterpreterOptions = { model?: string; effort?: "low" | "medium" | "high"; client?: Pick<Anthropic, "beta"> };
+export type AnthropicQueryInterpreterOptions = { model?: string; effort?: "low" | "medium" | "high"; client?: Pick<Anthropic, "beta">; researchPolicy?: "v0" | "v1" };
 
 export class AnthropicQueryInterpreter implements QueryInterpreter {
   readonly info: InterpreterInfo;
   private readonly client: Pick<Anthropic, "beta">;
   private readonly model: string;
   private readonly effort: NonNullable<AnthropicQueryInterpreterOptions["effort"]>;
+  private readonly v1: boolean;
 
   constructor(options: AnthropicQueryInterpreterOptions = {}) {
     this.model = options.model ?? DEFAULT_AGENT_MODEL;
     this.effort = options.effort ?? DEFAULT_QUERY_EFFORT;
+    this.v1 = (options.researchPolicy ?? "v1") === "v1";
     const workspace = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
     this.client = options.client ?? new Anthropic(workspace ? { defaultHeaders: { "anthropic-workspace-id": workspace } } : {});
     this.info = { kind: "llm", model: this.model, effort: this.effort };
@@ -110,8 +124,8 @@ export class AnthropicQueryInterpreter implements QueryInterpreter {
       model: this.model,
       max_tokens: 4_000,
       ...fallbackParams(this.model),
-      output_config: { effort: this.effort, format: { type: "json_schema", schema: QUERY_PROPOSAL_JSON_SCHEMA as never } },
-      system: QUERY_SYSTEM_PROMPT,
+      output_config: { effort: this.effort, format: { type: "json_schema", schema: (this.v1 ? QUERY_PROPOSAL_JSON_SCHEMA_V1 : QUERY_PROPOSAL_JSON_SCHEMA) as never } },
+      system: this.v1 ? QUERY_SYSTEM_PROMPT_V1 : QUERY_SYSTEM_PROMPT,
       messages: [
         {
           role: "user",

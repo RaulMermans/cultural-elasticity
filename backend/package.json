@@ -32,6 +32,7 @@
     "eval:competence": "tsx scripts/eval-competence.ts",
     "eval:discovery": "tsx scripts/eval-discovery.ts",
     "eval:query": "tsx scripts/eval-query.ts",
+    "eval:research-intelligence": "tsx scripts/eval-research-intelligence.ts",
     "living-atlas:live": "tsx scripts/living-atlas-live.ts",
     "perf:agent": "tsx scripts/perf-agent.ts",
     "perf:live-trace": "tsx scripts/perf-live-trace.ts",

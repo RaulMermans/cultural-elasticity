@@ -159,6 +159,94 @@ export type AgentTerritoryResult = {
   evidenceStatus?: TerritoryEvidenceStatus;
   /** Sprint 5A.1 (additive): brand-independent entity-type probes of the territory's concepts, and why probing stopped. */
   probes?: ConceptProbeView[];
+  /** Sprint 11 (additive): how the resolved Qloo concept covers the concept the user asked about. */
+  conceptAlignment?: ConceptAlignment;
+  /** Sprint 11 (additive): the target's concept is one of the brand's own Qloo category tags (established positioning). */
+  brandCore?: { tagId: string; label: string };
+};
+
+// ---- Sprint 11: research intelligence ----
+
+/**
+ * How a Qloo concept covers the concept the user meant. The agent judges it (semantic understanding); the runtime
+ * records it and only ever uses it to qualify or refuse, never to add support.
+ *   EQUIVALENT         the same concept
+ *   NARROWER           a useful part of it (the result covers only that part)
+ *   PARTIAL_COVERAGE   one part of a compound concept (`uncovered` names the rest)
+ *   RELATED_DIFFERENT  a neighbouring but different concept (never presented as the user's concept)
+ *   MISMATCHED         a different phenomenon (refused as an anchor for a user-named territory)
+ */
+export const CONCEPT_RELATIONS = ["EQUIVALENT", "NARROWER", "PARTIAL_COVERAGE", "RELATED_DIFFERENT", "MISMATCHED"] as const;
+export type ConceptRelation = (typeof CONCEPT_RELATIONS)[number];
+export type ConceptAlignment = {
+  userConcept: string;
+  qlooConcept: { id: string; label: string };
+  relation: ConceptRelation;
+  reason: string;
+  /** Parts of the user's concept this Qloo concept does not cover (NARROWER / PARTIAL_COVERAGE). */
+  uncovered: string[];
+  decidedBy: "agent" | "runtime";
+};
+
+/** Research approaches. explore = open discovery; investigate = one direction without a ranking; compare = relative measurement. */
+export const RESEARCH_APPROACHES = ["explore", "investigate", "compare"] as const;
+export type ResearchApproach = (typeof RESEARCH_APPROACHES)[number];
+
+/** The governing research objective, proposed by the interpreter and kept for the whole investigation. */
+export type ResearchBrief = {
+  centralQuestion: string;
+  /** Each concept the user asked about, with what the user means and nearby meanings that are NOT it. */
+  concepts: { name: string; meaning: string; notThis: string[] }[];
+  /** What would make the answer useful to the user. */
+  usefulAnswer: string;
+  approach: ResearchApproach;
+  approachReason: string;
+};
+
+/** The approach the run actually followed and who chose it. A change only ever narrows (compare → investigate). */
+export type ResearchApproachRecord = {
+  approach: ResearchApproach;
+  decidedBy: "caller" | "interpreter" | "agent" | "default";
+  reason: string;
+  /** Present when the agent reframed the run mid-investigation. */
+  reframedFrom?: ResearchApproach;
+  reframedAtIteration?: number;
+};
+
+/** A business fact about the brand with its source. Supplied by the requester or a recorded packet; never Qloo evidence. */
+export type BrandFact = { statement: string; source: { title: string; url: string | null; retrievedAt: string } };
+export type BrandContextInput = { facts: BrandFact[]; positioning: string | null };
+
+/**
+ * Sprint 11 Brand Intelligence Brief: three layers kept apart.
+ *   facts        cited business facts (requester-supplied or a recorded packet; not independently verified by the system)
+ *   qlooObserved the brand's own Qloo profile (category tags = established positioning per Qloo; other observed tags)
+ *   interpretation lives only in the synthesis layer (StrategicInsight), never here
+ */
+export type BrandIntelligenceBrief = {
+  version: "brand-intelligence/v1";
+  facts: (BrandFact & { ref: number; origin: "requester_supplied" })[];
+  positioning: string | null;
+  qlooObserved: { categoryTags: { id: string; label: string }[]; otherTags: { id: string; label: string }[]; correlationId: string | null } | null;
+  unverified: string[];
+};
+
+/**
+ * Layer 2 of the synthesis: a strategic interpretation, explicitly not evidence. Only `observation` may state what was
+ * found (validated against `observationFields`); the other fields are labelled reasoning and may not carry numbers,
+ * commercial outcomes or evidence claims.
+ */
+export type StrategicInsight = {
+  territoryKey: string | null;
+  observation: string;
+  observationFields: string[];
+  interpretation: string;
+  implication: string;
+  counterpoint: string;
+  validation: string;
+  horizon: "ESTABLISHED" | "ADJACENT" | "SPECULATIVE";
+  basis: ("QLOO_EVIDENCE" | "BRAND_FACT" | "STRATEGIC_HYPOTHESIS")[];
+  brandFactRefs: number[];
 };
 
 /**
@@ -576,6 +664,8 @@ export type AgentToolCallTrace = {
 
 export type AgentTrace = {
   runId: string;
+  /** Sprint 11: research policy of the run (v0 = Sprint 10 behaviour; absent on older traces). */
+  researchPolicy?: "v0" | "v1";
   intent: AgentIntent | null;
   userQuery: string;
   interpretedRequest: { intent: AgentIntent; brand: string; territories: string[] } | null;
@@ -743,6 +833,12 @@ export type AgentAnalysisResult = {
    * Absent on older results and on runs that were not a comparison.
    */
   comparisonFeasibility?: ComparisonFeasibility | null;
+  /** Sprint 11 (additive; research policy v1): the governing research objective and the approach followed. */
+  researchBrief?: ResearchBrief | null;
+  researchApproach?: ResearchApproachRecord;
+  brandIntelligence?: BrandIntelligenceBrief;
+  /** Sprint 11: validated strategic interpretations (layer 2). Labelled reasoning, never evidence. */
+  insights?: StrategicInsight[];
 };
 
 export type NeedsInputOption = { id: string; label: string; type?: string; popularity?: number; description?: string };

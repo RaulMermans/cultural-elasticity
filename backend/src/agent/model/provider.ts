@@ -49,6 +49,13 @@ export type AgentDecisionContext = {
   userQuery: string;
   /** Fields the request fixed explicitly; the interpretation must agree with them. */
   requestFields: { intent?: string; brand?: string; territories?: string[]; researchMode?: string };
+  /** Sprint 11 (research policy v1): objective, approach, concept judgments and the Brand Intelligence Brief. */
+  research?: {
+    brief: import("@cultural-elasticity/shared").ResearchBrief | null;
+    approach: import("@cultural-elasticity/shared").ResearchApproachRecord | null;
+    conceptAlignments: (import("@cultural-elasticity/shared").ConceptAlignment & { territoryKey: string })[];
+    brand: { facts: { ref: number; statement: string; source: string }[]; positioning: string | null; qlooCategoryTags: string[] | null; unverified: string[] } | null;
+  };
   interpretation: { intent: string; brand: string; territories: string[] } | null;
   phase: string;
   brand:
@@ -122,6 +129,12 @@ export type FinalizationContext = {
   territories: ReturnType<typeof import("../prompts.js").synthesisTerritoryView>[];
   runLimitations: string[];
   finalSufficiency: EvidenceSufficiencyVerdict;
+  /** Sprint 11 (research policy v1): the question as the user meant it and the brand context; selects the two-layer synthesis. */
+  research?: {
+    researchBrief: import("@cultural-elasticity/shared").ResearchBrief | null;
+    approach: import("@cultural-elasticity/shared").ResearchApproachRecord | null;
+    brandIntelligence: { facts: { ref: number; statement: string; source: string }[]; positioning: string | null; qlooCategoryTags: string[] } | null;
+  };
 };
 
 export type SynthesisTurn = { output: unknown; usage?: ModelUsage } | { invalid: string; usage?: ModelUsage };

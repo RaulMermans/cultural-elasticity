@@ -16,6 +16,7 @@
  * Relative positions and classes depend on the comparison set, so how the set was built is always
  * recorded (ComparisonSetConstruction) and returned with the result.
  */
+import { nameAlignment, policyOf } from "./research-intelligence.js";
 import type { AgentTerritoryResult, AnchorDecision, CandidateCanonicalization, CandidateSource, ComparisonSetConstruction, DomainRelation, FacetRole, OpportunityBlocker, OpportunitySignal, OpportunityStatus, OpportunityView, TerritoryEvidenceStatus } from "@cultural-elasticity/shared";
 import { setOverlap } from "../analysis/overlap.js";
 import { matchOperationalRule } from "../methodology/operational-tags.js";
@@ -486,6 +487,8 @@ export function anchorOnObservedMembers(state: AgentRunState, tagId: string, tar
     if (activeTerritories(state).some((o) => o.key !== t.key && o.concept && (o.concept.id === tagId || canonicalTagName(o.concept.id) === canonicalTagName(tagId)))) continue;
     t.concept = { id: tag.id, label: tag.label, type: tag.type };
     t.status = "anchored";
+    // Sprint 11: the territory's own same-named tag is recorded as equivalent coverage by the runtime (no model judgment).
+    if (named && policyOf(state) === "v1" && t.role === "target" && t.origin === "user") t.conceptAlignment = nameAlignment(t, tag);
     recordAnchorDecision(state, t, tagId, source ? "SOURCE_TAG_MEMBERS" : "LABEL_TAG_MEMBERS", "runtime", null, `${source ? "grounding tag" : "the territory's own same-named tag"} returned ${members} ${targetType} member(s) (brand-independent pool)`);
     anchored.push(t.key);
   }

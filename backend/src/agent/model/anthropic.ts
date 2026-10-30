@@ -13,7 +13,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { AgentModelInfo } from "@cultural-elasticity/shared";
 import type { ModelTurn } from "../contracts.js";
-import { AGENT_SYSTEM_PROMPT, SYNTHESIS_SYSTEM_PROMPT } from "../prompts.js";
+import { AGENT_SYSTEM_PROMPT, AGENT_SYSTEM_PROMPT_V1, SYNTHESIS_SYSTEM_PROMPT, SYNTHESIS_SYSTEM_PROMPT_V1 } from "../prompts.js";
 import type { AgentDecisionContext, AgentModel, FinalizationContext, SynthesisTurn } from "./provider.js";
 
 /**
@@ -70,6 +70,35 @@ const SYNTHESIS_SCHEMA = {
   },
   required: ["summary", "findings", "followUpOptions"],
   additionalProperties: false,
+};
+
+/** Sprint 11 (research policy v1): the same schema plus layer-2 strategic insights. */
+const SYNTHESIS_SCHEMA_V1 = {
+  ...SYNTHESIS_SCHEMA,
+  properties: {
+    ...SYNTHESIS_SCHEMA.properties,
+    insights: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          territoryKey: { anyOf: [{ type: "string" }, { type: "null" }] },
+          observation: { type: "string" },
+          observationFields: { type: "array", items: { type: "string" } },
+          interpretation: { type: "string" },
+          implication: { type: "string" },
+          counterpoint: { type: "string" },
+          validation: { type: "string" },
+          horizon: { type: "string", enum: ["ESTABLISHED", "ADJACENT", "SPECULATIVE"] },
+          basis: { type: "array", items: { type: "string", enum: ["QLOO_EVIDENCE", "BRAND_FACT", "STRATEGIC_HYPOTHESIS"] } },
+          brandFactRefs: { type: "array", items: { type: "integer" } },
+        },
+        required: ["territoryKey", "observation", "observationFields", "interpretation", "implication", "counterpoint", "validation", "horizon", "basis", "brandFactRefs"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: [...SYNTHESIS_SCHEMA.required, "insights"],
 };
 
 export type AnthropicAgentModelOptions = {
@@ -138,7 +167,7 @@ export class AnthropicAgentModel implements AgentModel {
       max_tokens: this.decisionMaxTokens,
       ...this.fallback,
       output_config: { effort: this.effort },
-      system: [{ type: "text", text: AGENT_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
+      system: [{ type: "text", text: view.research ? AGENT_SYSTEM_PROMPT_V1 : AGENT_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
       tools: tools as never,
       tool_choice: { type: "auto" },
       messages: [
@@ -172,8 +201,8 @@ export class AnthropicAgentModel implements AgentModel {
       model: this.model,
       max_tokens: this.synthesisMaxTokens,
       ...this.fallback,
-      output_config: { effort: this.effort, format: { type: "json_schema", schema: SYNTHESIS_SCHEMA } },
-      system: SYNTHESIS_SYSTEM_PROMPT,
+      output_config: { effort: this.effort, format: { type: "json_schema", schema: context.research ? SYNTHESIS_SCHEMA_V1 : SYNTHESIS_SCHEMA } },
+      system: context.research ? SYNTHESIS_SYSTEM_PROMPT_V1 : SYNTHESIS_SYSTEM_PROMPT,
       messages: [
         {
           role: "user",

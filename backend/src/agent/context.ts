@@ -10,6 +10,7 @@
  * Never present: raw Qloo payloads, full traces, benchmark data (the runtime has none), secrets or
  * environment values, inactive skills, unexposed tools.
  */
+import { brandIntelligenceBrief, policyOf, withoutComparison } from "./research-intelligence.js";
 import { exemplarCandidates } from "./candidate-discovery.js";
 import { matchOperationalRule } from "../methodology/operational-tags.js";
 import { tagFacet } from "../methodology/tag-facets.js";
@@ -26,7 +27,7 @@ import { referenceCandidates, referencePlan } from "./reference-strategy.js";
 import type { ContextSection, SkillDefinition, TerminalAction } from "./skills/contracts.js";
 import { SkillRegistry } from "./skills/registry.js";
 import { activeTerritories, derivePhase, remainingQlooCalls, type AgentRunState } from "./state.js";
-import { toolJsonSchema, type ToolRegistry } from "./tool-registry.js";
+import { toolSpecFor, type ToolRegistry } from "./tool-registry.js";
 
 const MAX_TAGS = 24;
 const MAX_CANDIDATES_PER_TERRITORY = 8;
@@ -170,7 +171,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
       evidence.alreadyCollected = { profiledEntityIds, searchedQueries };
     }
   }
-  if (state.request.researchMode === "single_hypothesis_v1") {
+  if (withoutComparison(state)) {
     evidence.recentConceptQueries = state.pools.slice(-8).map((pool) => ({
       tagId: pool.tagIds.join(" + "), entityType: pool.targetType,
       brandConditioned: pool.conditionedOn !== null,
@@ -191,6 +192,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
       ...(state.request.territories && { territories: state.request.territories }),
       ...(state.request.researchMode && { researchMode: state.request.researchMode }),
     },
+    ...(policyOf(state) === "v1" && { research: researchView(state) }),
     interpretation: state.interpretation,
     phase: derivePhase(state),
     brand,
@@ -210,7 +212,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
     clarifications: state.clarifications,
     tools: exposure.tools.flatMap((name) => {
       const tool = registry.get(name);
-      return tool ? [{ name: tool.name, description: tool.description, inputSchema: toolJsonSchema(tool) }] : [];
+      return tool ? [toolSpecFor(tool, policyOf(state))] : [];
     }),
     actions: [...exposure.actions],
     repair: options.repair ?? null,
@@ -254,13 +256,13 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
   // Sprint 5A.1: type alignment comes before further probing (a shared type is what makes a comparison possible).
   const alignment = comparisonRepresentationPlan(state);
   if (alignment && alignment.feasibility !== "SUPPORTED" && alignment.preferredCommonType) for (const m of alignment.missingRequirements.slice(0, 3)) outstanding.push(`type alignment (${alignment.preferredCommonType}): ${m}`);
-  if (state.request.researchMode !== "single_hypothesis_v1") {
+  if (!withoutComparison(state)) {
     const plan = referencePlan(state);
     if (plan.feasible && plan.outstanding) outstanding.push(plan.outstanding);
     else if (plan.applicable && plan.reason && plan.valid < plan.required) outstanding.push(`references: ${plan.reason}`);
   }
   // Sprint 9N: the comparison-feasibility assessment states the single most useful action first.
-  const feasibility = state.request.researchMode !== "single_hypothesis_v1" ? assessComparisonFeasibility(state) : null;
+  const feasibility = !withoutComparison(state) ? assessComparisonFeasibility(state) : null;
   if (feasibility && state.feasibilityPolicy === "enforce" && feasibility.status !== "FEASIBLE" && feasibility.nextAction) outstanding.unshift(`feasibility ${feasibility.status}: ${feasibility.nextAction.action} — ${feasibility.nextAction.detail}`);
   const evidenceGap = frontierEvidenceBaseGap(state);
   if (evidenceGap) outstanding.unshift(`${evidenceGap.action} (${evidenceGap.target}): ${evidenceGap.reason}`);
@@ -272,7 +274,9 @@ function decisionFocus(state: AgentRunState, active: readonly SkillDefinition[],
     ...state.candidateRejections.slice(-4).map((c) => `${c.key}: ${c.code} — ${c.reason}`.slice(0, 220)),
   ];
   return {
-    objective: state.request.researchMode === "single_hypothesis_v1"
+    objective: withoutComparison(state) && state.request.researchMode !== "single_hypothesis_v1"
+      ? "Answer the user's research question (research.brief) by investigating the named direction without a ranking: keep the Qloo concept faithful to the meaning the user intended, test a brand-conditioned Qloo relationship, check that the exemplars are real instances of that phenomenon, then analyze or stop. No comparison set is required."
+      : withoutComparison(state)
       ? "Investigate the one user-proposed cultural direction. Test a brand-conditioned Qloo relationship, inspect whether the concept and representation are specific, then analyze or stop. No comparison set is required."
       : OBJECTIVE[state.interpretation?.intent ?? ""] ?? "Interpret the request, then gather the Qloo evidence the deterministic methodology needs, then stop.",
     stage,
@@ -316,4 +320,18 @@ function withdrawnTools(state: AgentRunState, skills: SkillRegistry, active: rea
 export function contextSize(context: AgentDecisionContext): { chars: number; tokensEstimate: number } {
   const chars = JSON.stringify(context).length;
   return { chars, tokensEstimate: Math.ceil(chars / 4) };
+}
+
+/**
+ * Sprint 11: the governing research objective, the approach in force, each target's recorded concept judgment, and the
+ * Brand Intelligence Brief (cited facts kept apart from the brand's own Qloo profile). Compact by construction.
+ */
+function researchView(state: AgentRunState) {
+  const brief = brandIntelligenceBrief(state);
+  return {
+    brief: state.request.researchBrief ?? null,
+    approach: state.researchApproach ?? null,
+    conceptAlignments: state.territories.filter((t) => t.role === "target" && t.conceptAlignment).map((t) => ({ territoryKey: t.key, ...t.conceptAlignment! })),
+    brand: brief ? { facts: brief.facts.map((f) => ({ ref: f.ref, statement: f.statement, source: f.source.title })), positioning: brief.positioning, qlooCategoryTags: brief.qlooObserved?.categoryTags.map((t) => t.label) ?? null, unverified: brief.unverified } : null,
+  };
 }

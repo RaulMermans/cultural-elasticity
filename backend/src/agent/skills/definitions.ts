@@ -14,6 +14,7 @@
  * (e.g. one territory is being represented while another is being resolved). Sequences adapt to evidence:
  * no skill forces the next one.
  */
+import { withoutComparison } from "../research-intelligence.js";
 import type { AnalysisRoute } from "@cultural-elasticity/shared";
 import { z } from "zod";
 import { MIN_FRONTIER_SUPPORTED } from "../contracts.js";
@@ -91,7 +92,9 @@ export const resolveTerritorySkill: SkillDefinition<{ territories: string[] }, {
   // then for its tag namespace, then the comparison's shared type, then structural observations, then bounded
   // exploration) and shown as nextProbe; a type barren for 2 other concepts of the namespace is deferred; a grounding
   // tag that returns members anchors its candidate; tag searches named after the grounding tag stay attached.
-  version: 5,
+  // v6 (Sprint 11, research policy v1): anchoring a user-named territory records the agent's concept-alignment judgment;
+  // a tag without the territory's name needs one, and the agent's own MISMATCHED verdict is refused.
+  version: 6,
   purpose: "Anchor each territory to one Qloo concept tag, choosing among tags by the Qloo members they carry; drop territories Qloo cannot express.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "an in-scope territory has no concept and resolution is possible"],
@@ -120,7 +123,9 @@ export const buildRepresentationSkill: SkillDefinition<{ territories: string[] }
   // untried supported entity types, alternate concepts, attempts left and the tool for each step.
   // v4 (Sprint 5A.1): recovery priority (reuse a type with members → the comparison's shared type → remaining probe
   // slots → alternate concept → concept-only); exhausted concepts are not probed again.
-  version: 4,
+  // v5 (Sprint 11, research policy v1): every exemplar of a user-named territory carries a semantic judgment against
+  // the user's meaning (research.brief); weak = shares an audience but is not an instance (removal only).
+  version: 5,
   purpose: "Represent each anchored territory with distinct, well-evidenced Qloo exemplars; recover with another strategy when the candidate pool is weak; never force a weak panel.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "an in-scope territory is anchored without a representation and strategies remain"],
@@ -161,13 +166,15 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
   // it collects the validated target exemplars' profiles and probes the best type-evidenced MEANINGFUL candidates, so
   // the model chooses among references whose Qloo yield is known. A candidate with type evidence stays probeable past
   // REFERENCE_EMPTY_PROBE_LIMIT.
-  version: 5,
+  // v6 (Sprint 11, research policy v1): exposes reframe_research — the agent may decline a comparison that would not
+  // answer the question and investigate instead (narrows work only; no budget added).
+  version: 6,
   purpose: "Give a single move or a two-territory comparison a semantically meaningful comparison set of ≥ 3 represented territories of one entity type, or establish that none is feasible (then the result is an honest PARTIAL).",
   intents: ["analyze_move", "compare_territories"],
   preconditions: ["a target is represented", `fewer than ${MIN_COMPARISON_SET} meaningful represented territories of its entity type`, "a meaningful reference set is still feasible within the budget, or the profiles needed to find one are missing"],
   relevant: (state) => {
     const intent = state.interpretation?.intent;
-    if ((intent !== "analyze_move" && intent !== "compare_territories") || state.request.researchMode === "single_hypothesis_v1" || !state.brand.entity || discoverySpent(state, "build_comparison_set")) return false;
+    if ((intent !== "analyze_move" && intent !== "compare_territories") || withoutComparison(state) || !state.brand.entity || discoverySpent(state, "build_comparison_set")) return false;
     if (referenceEntityType(state) === null || comparisonSetSize(state) >= MIN_COMPARISON_SET) return false;
     if (state.territories.length >= state.limits.maxCandidateTerritories || remainingQlooCalls(state) < 2) return false;
     const brandProfiled = state.profiles.has(state.brand.entity.id);
@@ -178,7 +185,7 @@ export const buildComparisonSetSkill: SkillDefinition<{ entityType: string | nul
   focus: (state) => ({ entityType: referenceEntityType(state), size: comparisonSetSize(state) }),
   outputSchema: z.object({ size: z.number(), references: keys }),
   outcome: (state) => ({ size: comparisonSetSize(state), references: activeTerritories(state).filter((t) => t.role === "reference").map((t) => t.key) }),
-  allowedTools: ["qloo_get_entity_tags", "qloo_recommend", "propose_territory", "anchor_territory", "validate_territory_representation", "assess_concept_duplicates", "drop_territory"],
+  allowedTools: ["qloo_get_entity_tags", "qloo_recommend", "propose_territory", "anchor_territory", "validate_territory_representation", "assess_concept_duplicates", "drop_territory", "reframe_research"],
   allowedActions: [],
   allowedRoutes: ["FULL_RELATIVE_ANALYSIS"],
   contextRequirements: ["referenceCandidates", "brandProfile", "exemplarCandidates", "conceptDedup"],
@@ -237,7 +244,8 @@ export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { ana
   id: "analyze_territories",
   // v2 (Sprint 5A): analysis of targets is deferred (bounded, REFERENCES_PENDING) while a meaningful comparison set
   // is still feasible; FULL additionally requires the semantic comparison validator's acceptance.
-  version: 3,
+  // v4 (Sprint 11, research policy v1): exposes reframe_research before any target is analyzed.
+  version: 4,
   purpose: "Run the deterministic analysis for ready territories and finish when sufficiency allows.",
   intents: ["analyze_move", "compare_territories", "explore_frontier"],
   preconditions: ["brand resolved", "a territory is ready (validated panel, or concept-only/unsupported with nothing left to try), a result exists, or every territory is analyzed"],
@@ -246,7 +254,7 @@ export const analyzeTerritoriesSkill: SkillDefinition<{ ready: string[] }, { ana
   focus: (state) => ({ ready: open(state).filter((t) => isReady(territoryReadiness(state, t))).map((t) => t.key) }),
   outputSchema: z.object({ analyzed: keys }),
   outcome: (state) => ({ analyzed: state.territories.filter((t) => t.status === "analyzed").map((t) => t.key) }),
-  allowedTools: ["assess_evidence_sufficiency", "drop_territory"],
+  allowedTools: ["assess_evidence_sufficiency", "drop_territory", "reframe_research"],
   allowedActions: ["analyze", "finish"],
   allowedRoutes: ALL_ROUTES,
   contextRequirements: ["analysisResults"],

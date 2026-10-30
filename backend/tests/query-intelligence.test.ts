@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { resetLifecycle } from "../src/ops/lifecycle.js";
 import { buildApp } from "../src/app.js";
 import { BaselinePolicyModel } from "../src/agent/model/baseline.js";
-import { QUERY_PROPOSAL_JSON_SCHEMA, queryProposalSchema, type QueryProposal } from "../src/agent/query/contracts.js";
+import { QUERY_PROPOSAL_JSON_SCHEMA, QUERY_PROPOSAL_JSON_SCHEMA_V1, queryProposalSchema, type QueryProposal } from "../src/agent/query/contracts.js";
 import { AnthropicQueryInterpreter, QUERY_SYSTEM_PROMPT, ScriptedQueryInterpreter, StructuralQueryInterpreter, type InterpretInput } from "../src/agent/query/interpreter.js";
 import { runGate } from "../src/agent/query/gate.js";
 import { QueryAlreadyExecutedError, QueryService } from "../src/agent/query/service.js";
@@ -41,8 +41,12 @@ const gate = (p: Partial<QueryProposal>, explicit = {}) => runGate({ query: "q",
 
 describe("query contracts", () => {
   it("keeps the model's JSON schema in sync with the strict zod proposal schema", () => {
-    expect(Object.keys(QUERY_PROPOSAL_JSON_SCHEMA.properties).sort()).toEqual(Object.keys(queryProposalSchema.shape).sort());
-    expect([...QUERY_PROPOSAL_JSON_SCHEMA.required].sort()).toEqual(Object.keys(queryProposalSchema.shape).sort());
+    // Sprint 11: the v0 schema omits only the optional research brief; the v1 schema carries every field.
+    const v0Keys = Object.keys(queryProposalSchema.shape).filter((k) => k !== "researchBrief").sort();
+    expect(Object.keys(QUERY_PROPOSAL_JSON_SCHEMA.properties).sort()).toEqual(v0Keys);
+    expect([...QUERY_PROPOSAL_JSON_SCHEMA.required].sort()).toEqual(v0Keys);
+    expect(Object.keys(QUERY_PROPOSAL_JSON_SCHEMA_V1.properties).sort()).toEqual(Object.keys(queryProposalSchema.shape).sort());
+    expect([...QUERY_PROPOSAL_JSON_SCHEMA_V1.required].sort()).toEqual(Object.keys(queryProposalSchema.shape).sort());
   });
 
   it("has no field through which a query could name a tool, budget, evidence, entity id or run id", () => {

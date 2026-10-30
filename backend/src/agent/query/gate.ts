@@ -12,7 +12,7 @@
  */
 import { CONTEXTUAL_QUERY_INTENTS, DEFERRED_QUERY_INTENTS, EXECUTABLE_QUERY_INTENTS, QUERY_SCHEMA_VERSION, type InvestigationLink, type InvestigationOperation, type QueryDisposition, type QueryHandoff, type QueryIntent, type QueryInterpretation, type QueryReasonCode, type RefinementRecord } from "@cultural-elasticity/shared";
 import type { AgentIntent, AgentRequest, Interpretation } from "../contracts.js";
-import { interpretationSchema } from "../contracts.js";
+import { interpretationSchema, researchBriefSchema } from "../contracts.js";
 import { resolveInterpretation } from "../router.js";
 import { slugify, type AgentRunState } from "../state.js";
 import { MAX_LINEAGE_DEPTH, type ResolvedContext } from "./context.js";
@@ -306,7 +306,9 @@ function plan(
     const question = intent === "analyze_move" ? "Which single territory should be investigated?" : intent === "compare_territories" ? "Which territories (two or more) should be compared?" : "Should the brand's frontier be explored openly, or specific territories investigated?";
     return { ok: false, code: "TERRITORY_CARDINALITY", detail, question };
   }
-  const request: AgentRequest = { userQuery: input.query, intent, brand: brandArg, territories: names };
+  // Sprint 11: a valid research brief travels with the request as the governing objective (text only; the runtime reads it).
+  const brief = input.proposal.researchBrief ? researchBriefSchema.safeParse(input.proposal.researchBrief) : null;
+  const request: AgentRequest = { userQuery: input.query, intent, brand: brandArg, territories: names, ...(brief?.success && { researchBrief: brief.data }) };
   const check = resolveInterpretation(request, schema.data);
   if (!check.ok) return { ok: false, code: "INTERPRETATION_REJECTED", detail: check.reason, question: "Could you restate the brand and territories to investigate?" };
   const inheritedBrand = brand.source === "INHERITED" && parent?.brand.entity ? { id: parent.brand.entity.id, label: parent.brand.entity.label } : null;

@@ -91,6 +91,8 @@ export type TerritoryState = {
    * proposer cited as motivation. Explains why a candidate surfaced; never support.
    */
   motivatedBy: string[];
+  /** Sprint 11: the agent's judgment of how the anchored Qloo concept covers the concept the user meant (qualifies, never supports). */
+  conceptAlignment?: import("@cultural-elasticity/shared").ConceptAlignment | null;
 };
 
 export type BrandState = {
@@ -174,6 +176,10 @@ export type AgentRunState = {
   feasibilityAtAnalysis: import("@cultural-elasticity/shared").ComparisonFeasibility | null;
   /** Sprint 9O: the runtime ran its reference search (once per run). */
   referenceDiscoveryDone?: boolean;
+  /** Sprint 11: research policy of this run (v0 = Sprint 10 production behaviour, the evaluation's arm A). */
+  researchPolicy?: "v0" | "v1";
+  /** Sprint 11: the research approach the run follows and who chose it (v1 only). */
+  researchApproach?: import("@cultural-elasticity/shared").ResearchApproachRecord;
   /** Sprint 5B.1: parent-child link of a query-layer run (server-recorded; null for a run started outside it). */
   link: InvestigationLink | null;
   startedAt: number;

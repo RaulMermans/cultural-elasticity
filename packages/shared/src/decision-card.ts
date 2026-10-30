@@ -13,7 +13,7 @@
  * Next actions come from the recorded evidence gap. When feasibility says the same question would likely end the same
  * way (Qloo's evidence, not the run's budget, blocked it), the card never suggests asking it again.
  */
-import type { AgentAnalysisResult, AgentTerritoryResult, ComparisonFeasibility } from "./agent.js";
+import type { AgentAnalysisResult, AgentTerritoryResult, ComparisonFeasibility, ConceptRelation, StrategicInsight } from "./agent.js";
 
 export const DECISION_CARD_VERSION = "decision-card/v1" as const;
 
@@ -41,6 +41,11 @@ export type DecisionCard = {
   /** From comparison feasibility: would asking the same question again likely end the same way? */
   repeat: ComparisonFeasibility["repeat"] | null;
   evidenceOrigin: AgentAnalysisResult["evidenceOrigin"];
+  /**
+   * Sprint 11 (additive): validated strategic interpretations for this territory. Labelled reasoning, not evidence:
+   * only `observation` states what was found.
+   */
+  interpretations?: Pick<StrategicInsight, "observation" | "interpretation" | "implication" | "counterpoint" | "validation" | "horizon">[];
 };
 
 export type DecisionCardContext = {
@@ -90,6 +95,7 @@ const LIMITATION: Record<string, (t: string) => string> = {
   NOT_COLLECTED_BUDGET: () => "Some evidence was not collected because the investigation reached its budget.",
   PANEL_CALL_FAILED: () => "One of Qloo's lookups failed, so part of the comparison is missing.",
   SEMANTIC_COMPARISON_INVALID: () => "The territories available were not similar enough in kind for a fair ranking.",
+  COMPARISON_DECLINED: (t) => `${t} was investigated without a ranking, because a comparison would not have answered the question.`,
 };
 
 /** Why an unmeasured territory has no position, from its route alone (used when no feasibility blocker was recorded). */
@@ -140,9 +146,12 @@ export function decisionCard(result: AgentAnalysisResult | null | undefined, ter
       ? `Not measured: ${name} was examined as a single hypothesis, without a comparison.`
       : `Not measured yet: ${name} has no position relative to other territories.`;
 
+  // Sprint 11: a non-equivalent concept and the brand's own category change how every other line must be read.
+  const alignment = t.conceptAlignment && t.conceptAlignment.relation !== "EQUIVALENT" ? t.conceptAlignment : null;
   const whyInteresting = uniq([
+    t.brandCore ? `Qloo categorises ${brand} itself as "${t.brandCore.label}", so ${name} is ${brand}'s established positioning, not a new direction.` : null,
     context.directionWhy ?? null,
-    t.resolvedConcept ? `Qloo resolves ${name} to its concept "${t.resolvedConcept.label}".` : null,
+    alignment ? `The evidence below is about Qloo's concept "${alignment.qlooConcept.label}", which is ${RELATION_COPY[alignment.relation]} ${name}.` : t.resolvedConcept ? `Qloo resolves ${name} to its concept "${t.resolvedConcept.label}".` : null,
     t.conditionedEvidence?.topEntities.length ? `For ${brand}, Qloo's closest matches within ${name} include ${t.conditionedEvidence.topEntities.slice(0, 3).map((e) => e.label).join(", ")}.` : null,
     t.coherence?.consistentlyShared.length ? `${name}'s examples share these Qloo signals with ${brand}: ${t.coherence.consistentlyShared.slice(0, 4).map((s) => s.label).join(", ")}.` : null,
   ]).slice(0, 3);
@@ -158,6 +167,8 @@ export function decisionCard(result: AgentAnalysisResult | null | undefined, ter
 
   const blocker = measured ? null : (feasibility?.blocker ? BLOCKER[feasibility.blocker.code]?.(name, feasibility) : null) ?? ROUTE[t.analysisRoute]?.(name) ?? null;
   const uncertain = uniq([
+    alignment ? `Qloo has no exact concept for ${name} as asked${alignment.uncovered.length ? `; not covered: ${alignment.uncovered.join(", ")}` : ""}.` : null,
+    t.brandCore && measured ? `A ranking here compares cultural taste within one set; it does not say how far ${name} is from ${brand}'s business.` : null,
     blocker,
     measured && t.robustness && t.robustness.level !== "HIGH" && t.robustness.level !== "MEDIUM" ? "The ranking could change with a different set of examples." : null,
     measured && t.classification?.label === "UNCERTAIN_REPRESENTATION_SENSITIVE" ? "The class depends on which examples stand for it." : null,
@@ -200,8 +211,21 @@ export function decisionCard(result: AgentAnalysisResult | null | undefined, ter
     nextActions: nextActions.slice(0, 2),
     repeat,
     evidenceOrigin: result.evidenceOrigin,
+    ...((result.insights?.length ?? 0) > 0 && {
+      interpretations: (result.insights ?? [])
+        .filter((i) => i.territoryKey === t.key || i.territoryKey === null)
+        .map(({ observation, interpretation, implication, counterpoint, validation, horizon }) => ({ observation, interpretation, implication, counterpoint, validation, horizon })),
+    }),
   };
 }
+
+const RELATION_COPY: Record<ConceptRelation, string> = {
+  EQUIVALENT: "the same as",
+  NARROWER: "narrower than",
+  PARTIAL_COVERAGE: "only part of",
+  RELATED_DIFFERENT: "related to, but not the same as,",
+  MISMATCHED: "different from",
+};
 
 /** Wording a decision card must never contain (commercial outcomes, certainty, raw codes). Used by tests and evals. */
 const FORBIDDEN = /\b(sales|revenue|profit|profitab\w*|roi|market share|will (succeed|sell|win)|guarantee\w*|demand forecast|probability|confidence)\b|%/iu;

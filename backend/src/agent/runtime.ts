@@ -16,6 +16,7 @@
  * validator's reasons (no generic self-reflection). When no material evidence gap remains and the model
  * still proposes nothing acceptable, the runtime analyzes the ready territories itself.
  */
+import { withoutComparison } from "./research-intelligence.js";
 import type { AgentDecisionTrace, AgentRunResponse, AgentTrace, DiscoverySeed, InvestigationLink } from "@cultural-elasticity/shared";
 import { runAnalysis } from "./analysis-runner.js";
 import { applyConceptDedup } from "./concept-dedup.js";
@@ -59,6 +60,11 @@ export type AgentRuntimeDeps = {
   referenceDiscovery?: boolean;
   /** Sprint 10B: false omits focus.withdrawn (the decision evaluation's matched "before" arm). */
   withdrawnToolNotes?: boolean;
+  /**
+   * Sprint 11: research policy for new runs. "v1" needs a decision model that can judge meaning (production passes it for
+   * an LLM, CE_RESEARCH_POLICY=v0 restores Sprint 10). Unset = "v0": deterministic policies cannot supply the judgments.
+   */
+  researchPolicy?: "v0" | "v1";
 };
 
 /** Sprint 5B.1: a gate-approved interpretation and the run's parent-child link (both optional). */
@@ -119,6 +125,8 @@ export class AgentRuntime {
     state.territoryGrounding = options.territoryGrounding ?? null;
     if (options.discoverySeeds?.length) state.discoverySeeds = options.discoverySeeds.map((seed) => ({ ...seed }));
     state.feasibilityPolicy = this.deps.feasibilityPolicy ?? "enforce";
+    state.researchPolicy = this.deps.researchPolicy ?? "v0";
+    state.trace.researchPolicy = state.researchPolicy;
     if (options.link) {
       state.link = options.link;
       state.trace.investigationLink = options.link;
@@ -496,7 +504,7 @@ export class AgentRuntime {
         // Sprint 5A: analyzing a target locks its route. While a meaningful comparison set is still feasible within
         // the budget, the decision is deferred (bounded: after MAX_REFERENCE_DEFERRALS the runtime stops deferring).
         const plan = referencePlan(state);
-        if (state.request.researchMode !== "single_hypothesis_v1" && plan.feasible && state.referenceDeferrals < MAX_REFERENCE_DEFERRALS && requested.some((k) => state.territories.find((t) => t.key === k)?.role === "target")) {
+        if (!withoutComparison(state) && plan.feasible && state.referenceDeferrals < MAX_REFERENCE_DEFERRALS && requested.some((k) => state.territories.find((t) => t.key === k)?.role === "target")) {
           state.referenceDeferrals += 1;
           reject("analyze", "REFERENCES_PENDING", `${plan.outstanding ?? plan.reason} (deferred once; if you analyze again now, the analysis proceeds and the result is PARTIAL)`, { reasonSummary: decision.reasonSummary });
           return { accepted: false, stop: null };

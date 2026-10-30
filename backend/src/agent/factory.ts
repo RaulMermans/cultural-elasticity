@@ -9,6 +9,7 @@
  * Model: Claude (AnthropicAgentModel) when ANTHROPIC_API_KEY is set. The deterministic baseline policy is
  * used ONLY when explicitly requested (it is a reference policy, never a silent substitute for the agent).
  */
+import { researchPolicyFromEnv } from "./research-intelligence.js";
 import { harnessChildEnv, LIVE_QLOO_HOST_VERIFIED, QlooEnvironmentError, requireHackathonBaseUrl, verifyHarnessHost } from "../qloo/environment.js";
 import { withProcessDispatchLimit } from "../qloo/dispatch-limit.js";
 import { HarnessMcpTransport } from "../qloo/mcp-transport.js";
@@ -52,6 +53,7 @@ export function createQueryInterpreter(choice: ModelChoice = "auto", env: NodeJS
   return new AnthropicQueryInterpreter({
     ...(env.AGENT_MODEL?.trim() && { model: env.AGENT_MODEL.trim() }),
     ...(effort && ["low", "medium", "high"].includes(effort) && { effort: effort as "low" | "medium" | "high" }),
+    researchPolicy: researchPolicyFromEnv(env),
   });
 }
 

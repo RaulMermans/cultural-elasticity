@@ -20,6 +20,7 @@
  * Blockers that are Qloo's evidence (no candidate, no yield, unsupported target, thin panel) repeat; the run's own
  * budget, turns or slots may not.
  */
+import { withoutComparison } from "./research-intelligence.js";
 import type { ComparisonFeasibility, ComparisonFeasibilityBlocker } from "@cultural-elasticity/shared";
 import { memoRun } from "./derived-cache.js";
 import type { RankableType } from "./contracts.js";
@@ -37,7 +38,7 @@ const EVIDENCE_BLOCKERS: ReadonlySet<ComparisonFeasibilityBlocker> = new Set(["T
 
 export function comparativeRun(state: AgentRunState): boolean {
   const intent = state.interpretation?.intent;
-  return (intent === "analyze_move" || intent === "compare_territories") && state.request.researchMode !== "single_hypothesis_v1";
+  return (intent === "analyze_move" || intent === "compare_territories") && !withoutComparison(state);
 }
 
 /** The comparison-feasibility assessment of the current state, or null for a run that is not a comparison. */

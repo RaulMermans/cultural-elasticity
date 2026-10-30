@@ -166,7 +166,7 @@ describe("Sprint 9O runtime reference discovery (build_comparison_set v5)", () =
     expect(sweep[0]!.probes.map((p) => p.tagId).sort()).toEqual([LISTEN, PRINT]);
     expect(sweep[0]!.probes.every((p) => (p.eligible ?? 0) >= 2)).toBe(true);
     const sweepCalls = r.trace.toolCalls.filter((c) => c.tool === "qloo_recommend" && [PRINT, LISTEN].includes((c.arguments as { tagIds: string[] }).tagIds[0]!));
-    expect(sweepCalls.every((c) => c.skill?.id === "build_comparison_set" && c.skill.version === 5)).toBe(true);
+    expect(sweepCalls.every((c) => c.skill?.id === "build_comparison_set" && c.skill.version === 6)).toBe(true);
     expect("territories" in r && r.territories.find((t) => t.label === "Reading Rooms")?.analysisRoute).toBe("FULL_RELATIVE_ANALYSIS");
   });
 

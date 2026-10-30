@@ -3,7 +3,10 @@
  * acts on it: requests, interpretations, decisions and tool arguments. Nothing in this file names a
  * brand, territory or exemplar: the runtime works for any Qloo-resolvable input.
  */
+import { CONCEPT_RELATIONS, RESEARCH_APPROACHES } from "@cultural-elasticity/shared";
 import { z } from "zod";
+
+export { CONCEPT_RELATIONS, RESEARCH_APPROACHES };
 
 export const AGENT_INTENTS = ["analyze_move", "compare_territories", "explore_frontier"] as const;
 export type AgentIntent = (typeof AGENT_INTENTS)[number];
@@ -55,12 +58,32 @@ export function defaultLimits(intent: AgentIntent | undefined): InvestigationLim
 
 // ---- Request (deterministic intake) ----
 
+/** Sprint 11: the governing research objective (proposed by the interpreter, approved by the gate). */
+export const researchBriefSchema = z.strictObject({
+  centralQuestion: text.max(400),
+  concepts: z.array(z.strictObject({ name: text.max(120), meaning: text.max(300), notThis: z.array(text.max(160)).max(4) })).max(6),
+  usefulAnswer: text.max(300),
+  approach: z.enum(RESEARCH_APPROACHES),
+  approachReason: text.max(300),
+});
+
+/** Sprint 11: cited business facts about the brand, supplied by the requester. Context, never Qloo evidence. */
+export const brandContextSchema = z.strictObject({
+  facts: z.array(z.strictObject({
+    statement: text.max(300),
+    source: z.strictObject({ title: text.max(160), url: z.string().url().max(400).nullable(), retrievedAt: z.string().date() }),
+  })).max(8),
+  positioning: text.max(400).nullable(),
+});
+
 export const agentRequestSchema = z.strictObject({
   userQuery: text.max(2_000),
   intent: z.enum(AGENT_INTENTS).optional(),
   brand: text.max(200).optional(),
   territories: z.array(text.max(200)).max(6).optional(),
   researchMode: z.literal("single_hypothesis_v1").optional(),
+  researchBrief: researchBriefSchema.optional(),
+  brandContext: brandContextSchema.optional(),
   limits: investigationLimitsSchema.partial().optional(),
 }).superRefine((value, ctx) => {
   if (value.researchMode && (value.intent !== "analyze_move" || value.territories?.length !== 1)) {
@@ -146,6 +169,19 @@ export const synthesisSchema = z.strictObject({
   territoryNotes: z.array(z.strictObject({ territoryKey: text, text: z.string().trim().min(1).max(1_200) })).max(12).default([]),
   findings: z.array(groundedFindingSchema).max(16).default([]),
   followUpOptions: z.array(z.string().trim().min(1).max(300)).max(6),
+  /** Sprint 11 (research policy v1): layer-2 strategic interpretations, validated by validateInsights. */
+  insights: z.array(z.strictObject({
+    territoryKey: text.nullable(),
+    observation: z.string().trim().min(1).max(400),
+    observationFields: z.array(text).min(1).max(6),
+    interpretation: z.string().trim().min(1).max(500),
+    implication: z.string().trim().min(1).max(500),
+    counterpoint: z.string().trim().min(1).max(400),
+    validation: z.string().trim().min(1).max(400),
+    horizon: z.enum(["ESTABLISHED", "ADJACENT", "SPECULATIVE"]),
+    basis: z.array(z.enum(["QLOO_EVIDENCE", "BRAND_FACT", "STRATEGIC_HYPOTHESIS"])).min(1).max(3),
+    brandFactRefs: z.array(z.number().int().min(1)).max(8),
+  })).max(4).default([]),
 });
 export type Synthesis = z.output<typeof synthesisSchema>;
 
