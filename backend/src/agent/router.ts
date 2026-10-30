@@ -9,7 +9,7 @@
  *
  * The model can influence what is investigated. It cannot pick a route or invent a methodology.
  */
-import { initialApproach, policyOf } from "./research-intelligence.js";
+import { initialApproach, splitCompoundTarget, policyOf } from "./research-intelligence.js";
 import type { AnalysisRoute, CapabilityAvailability } from "@cultural-elasticity/shared";
 import { MAX_PANEL_OPTIONS } from "../methodology/contracts.js";
 import { DEFAULT_QLOO_CALLS, interpretationSchema, type AgentRequest, type Interpretation, type RankableType } from "./contracts.js";
@@ -65,7 +65,10 @@ export function applyInterpretation(state: AgentRunState, interpretation: Interp
     addTerritory(state, { label, role: "target", origin: "user", rationale: grounded ? `named by the user; the brand baseline observed it as Qloo tag ${grounded.tagId}` : "named by the user", ...(grounded && { sourceTagId: grounded.tagId }) });
   }
   // Sprint 11: the research approach is fixed once the operation is known (v1 only; v0 keeps the Sprint 10 flow).
-  if (policyOf(state) === "v1") state.researchApproach = initialApproach(state);
+  if (policyOf(state) === "v1") {
+    splitCompoundTarget(state);
+    state.researchApproach = initialApproach(state);
+  }
 }
 
 /** Intent implied by the request structure alone, when it is unambiguous. */

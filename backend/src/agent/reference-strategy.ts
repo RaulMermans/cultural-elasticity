@@ -51,6 +51,13 @@ import type { CompletionFeasibility } from "@cultural-elasticity/shared";
 export const MIN_REFERENCE_POOL = 2;
 /** Sprint 9N: empty brand-independent reference probes of the comparison type after which, with references still missing, FULL is not feasible. */
 export const REFERENCE_EMPTY_PROBE_LIMIT = 4;
+/**
+ * Sprint 12: with a thin target panel (fewer than MEANINGFUL_EXEMPLAR_SUPPORT validated exemplars) only the brand's own
+ * profile tags can be references. Once this many of them returned no eligible member, with no candidate observed on
+ * profiles of the type and none usable or pending, the comparison cannot be completed and the run moves to analysis.
+ * Trace evidence: live 10D L2 spent 4 probes and 2 turns this way, all empty, before NO_REFERENCE_YIELD.
+ */
+export const THIN_PANEL_EMPTY_PROBE_LIMIT = 2;
 
 export type ReferenceSource = "brand_profile" | "target_exemplar_profiles";
 
@@ -374,6 +381,8 @@ function computeReferencePlan(state: AgentRunState): ReferencePlan {
             ? ["QLOO_BUDGET", `${remainingQlooCalls(state)} Qloo call(s) left; references and analysis need about ${cost.calls}`]
             : needed > 0 && probes.empty >= REFERENCE_EMPTY_PROBE_LIMIT && usableProbed + typedUnprobed < needed
               ? ["NO_REFERENCE_YIELD", `${probes.empty} brand-independent reference probes returned no eligible ${entityType} member and the ${needed} missing reference(s) have no usable probed candidate or unprobed candidate observed on ${entityType} profiles${thin}`]
+              : needed > 0 && validExemplars < MEANINGFUL_EXEMPLAR_SUPPORT && probes.empty >= THIN_PANEL_EMPTY_PROBE_LIMIT && usableProbed + typedUnprobed === 0 && pending.length === 0
+                ? ["NO_REFERENCE_YIELD", `${probes.empty} brand-independent reference probes returned no eligible ${entityType} member, and with a thin target panel no remaining candidate has been observed on ${entityType} profiles${thin}`]
               : needed > 0 && meaningful.length < needed && discovery.length === 0
                 ? ["NO_MEANINGFUL_REFERENCE_CANDIDATES", `only ${meaningful.length} semantically meaningful reference candidate(s) with possible ${entityType} members; ${needed} needed${thin}`]
                 : [null, null];

@@ -11,6 +11,7 @@
  * Nothing here names a brand, territory or concept (AGENTS.md generalization rules).
  */
 import type { AgentTerritoryResult, BrandIntelligenceBrief, ConceptAlignment, Limitation, ResearchApproach, ResearchApproachRecord } from "@cultural-elasticity/shared";
+import { addTerritory } from "./state.js";
 import { tagFacet, tagRole } from "../methodology/tag-facets.js";
 import { canonicalTagName } from "./concept-dedup.js";
 import type { AgentRunState, TerritoryState } from "./state.js";
@@ -35,9 +36,56 @@ export function policyOf(state: AgentRunState): ResearchPolicy {
 export function initialApproach(state: AgentRunState): ResearchApproachRecord {
   const intent = state.interpretation?.intent ?? state.request.intent;
   if (state.request.researchMode === "single_hypothesis_v1") return { approach: "investigate", decidedBy: "caller", reason: "the caller asked for a single-hypothesis investigation" };
+  if (state.researchScope) return { approach: "investigate", decidedBy: "runtime", reason: `compound question: ${state.researchScope.reason}; a comparison per part does not fit the same budget` };
   const brief = state.request.researchBrief;
   if (brief && approachFits(brief.approach, intent)) return { approach: brief.approach, decidedBy: "interpreter", reason: brief.approachReason };
   return { approach: intent === "explore_frontier" ? "explore" : "compare", decidedBy: "default", reason: "the default approach for this operation" };
+}
+
+/**
+ * Sprint 12: Qloo calls one concept of a compound question needs for direct evidence (tag search, member pool, up to
+ * four tag profiles, the brand-conditioned query). A planning estimate for the split, never a budget.
+ */
+export const CALLS_PER_COMPOUND_PART = 8;
+/** Calls the run spends before any concept (brand resolution and the brand's tag profile). */
+const RUN_OVERHEAD_CALLS = 2;
+
+const contentWords = (v: string) => new Set(v.toLowerCase().normalize("NFKD").replace(/[^\p{L}\p{N}]+/gu, " ").trim().split(/\s+/u).filter((w) => w.length >= 4).map((w) => w.replace(/(?<=\p{L}{3})s$/u, "")));
+
+/**
+ * Sprint 12: a compound question ("X and Y") becomes one user target per distinct concept of the gate-approved research
+ * brief, so each part is investigated on its own evidence and evidence for one part is never read as evidence for
+ * another. Applies only to a single user-named target of analyze_move under v1, when every brief concept shares a
+ * content word with the user's own territory label (the parts are of that territory, not other subjects of the
+ * sentence). Parts that do not fit the run's existing Qloo budget stay listed, without a target, as not investigated.
+ * The run then investigates without a ranking: one comparison per part does not fit the same budget. No budget changes.
+ */
+export function splitCompoundTarget(state: AgentRunState): void {
+  if (policyOf(state) !== "v1" || state.territoryGrounding) return;
+  const intent = state.interpretation?.intent ?? state.request.intent;
+  const concepts = state.request.researchBrief?.concepts ?? [];
+  const targets = state.territories.filter((t) => t.role === "target");
+  if (intent !== "analyze_move" || concepts.length < 2 || targets.length !== 1 || targets[0]!.origin !== "user" || targets[0]!.status !== "open") return;
+  const original = targets[0]!;
+  const words = contentWords(original.label);
+  const names = [...new Map(concepts.map((c) => [c.name.trim().toLowerCase(), c.name.trim()])).values()];
+  if (names.length < 2 || !names.every((n) => [...contentWords(n)].some((w) => words.has(w)))) return;
+  if (names.some((n) => n.toLowerCase() === original.label.trim().toLowerCase())) return;
+  const affordable = Math.max(1, Math.floor((state.limits.maxQlooCalls - RUN_OVERHEAD_CALLS) / CALLS_PER_COMPOUND_PART));
+  const fit = Math.min(affordable, state.limits.maxCandidateTerritories);
+  if (fit < 2) return;
+  state.territories = state.territories.filter((t) => t !== original);
+  const parts = names.map((name, i) => i < fit
+    ? { name, territoryKey: addTerritory(state, { label: name, role: "target", origin: "user", rationale: `named by the user as part of the compound question "${original.label}"` }).key as string | null }
+    : { name, territoryKey: null });
+  state.researchScope = {
+    originalTerritory: original.label,
+    concepts: parts,
+    decidedBy: "runtime",
+    reason: parts.some((p) => p.territoryKey === null)
+      ? `the question names ${names.length} concepts; ${fit} fit the run's Qloo budget and are investigated separately, the rest are reported as not investigated`
+      : `the question names ${names.length} concepts; each is investigated separately on its own evidence`,
+  };
 }
 
 /** explore belongs to open discovery only; investigate and compare to a named direction. */

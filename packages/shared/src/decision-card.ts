@@ -12,15 +12,21 @@
  *   INCONCLUSIVE                 no relative position was measured, or the class is "insufficient evidence"
  * Next actions come from the recorded evidence gap. When feasibility says the same question would likely end the same
  * way (Qloo's evidence, not the run's budget, blocked it), the card never suggests asking it again.
+ *
+ * Sprint 12 (decision-card/v2): the card leads with the research conclusion, the shared evidence assessment
+ * (evidence-assessment/v1), so a result with valid direct evidence is never reduced to "not measured". The comparative
+ * result is its own section. Next actions follow the investigation's real blockers; a named comparison only ever
+ * uses references a validated source supplied (never the brand's other directions taken in list order).
  */
 import type { AgentAnalysisResult, AgentTerritoryResult, ComparisonFeasibility, ConceptRelation, StrategicInsight } from "./agent.js";
+import { researchAssessmentOf, type ConceptCoverage, type ComparativeStatus, type EvidenceOutcome, type TerritoryEvidenceAssessment } from "./evidence-assessment.js";
 
-export const DECISION_CARD_VERSION = "decision-card/v1" as const;
+export const DECISION_CARD_VERSION = "decision-card/v2" as const;
 
-export type DecisionImplication = "SUPPORTED_FOR_EXPLORATION" | "PRELIMINARY_HYPOTHESIS" | "RELATIVE_FIT_NOT_SUPPORTED" | "INCONCLUSIVE";
+export type DecisionImplication = "SUPPORTED_FOR_EXPLORATION" | "PRELIMINARY_HYPOTHESIS" | "RELATIVE_FIT_NOT_SUPPORTED" | "INCONCLUSIVE" | "ESTABLISHED_POSITIONING" | "NO_SUPPORT_FOUND" | "NOT_TESTABLE_AS_ASKED";
 
 export type DecisionNextAction = {
-  kind: "COMPARE_WITH_NAMED" | "RUN_AGAIN" | "TEST_WITH_OTHER_EXAMPLES" | "VALIDATE_WITH_PEOPLE" | "EXPLORE_CONNECTIONS";
+  kind: "COMPARE_WITH_NAMED" | "MEASURE_WITH_COMPARISON" | "RUN_AGAIN" | "TEST_WITH_OTHER_EXAMPLES" | "VALIDATE_WITH_PEOPLE" | "EXPLORE_CONNECTIONS" | "INVESTIGATE_UNCOVERED" | "REFRAME_CONCEPT" | "EXTEND_ESTABLISHED";
   text: string;
   /** A question the product can send as a new investigation (absent when the action is outside the product). */
   question?: string;
@@ -32,6 +38,13 @@ export type DecisionCard = {
   territory: string;
   brand: string;
   measured: boolean;
+  /** Sprint 12: the research conclusion (evidence-assessment/v1) for this territory; null only for a non-target. */
+  conclusion: { outcome: EvidenceOutcome; label: string; text: string } | null;
+  /** Sprint 12: what was observed directly, with its limits and the evidence that would change the answer. */
+  evidence: { observed: string[]; limitations: string[]; missing: string[]; coverage: ConceptCoverage[] };
+  /** Sprint 12: whether cultural fit was established comparatively, kept apart from the conclusion. */
+  comparative: ComparativeStatus;
+  /** The comparative finding when measured, else the conclusion (kept for decision-card/v1 readers). */
   finding: string;
   whyInteresting: string[];
   supports: string[];
@@ -51,8 +64,12 @@ export type DecisionCard = {
 export type DecisionCardContext = {
   /** Why the direction appeared (the baseline's own observation), when the investigation started from one. */
   directionWhy?: string | null;
-  /** Other Qloo-grounded directions of the same brand, for a named comparison (a different question). */
-  otherDirections?: readonly string[];
+  /**
+   * Sprint 12: comparison references a validated source accepted for THIS target (the server's comparison-eligibility
+   * gate). The only names a named-comparison action may use. Sprint 9N's `otherDirections` (the brand's other
+   * directions in list order) is no longer read: they were not checked as meaningful alternatives to the question.
+   */
+  validatedReferences?: readonly string[];
 };
 
 const CLASS_LABEL: Record<string, string> = {
@@ -67,7 +84,19 @@ const IMPLICATION: Record<DecisionImplication, { label: string; text: (t: string
   SUPPORTED_FOR_EXPLORATION: { label: "Supported case for further exploration", text: (t, b) => `Within this comparison, Qloo's evidence supports exploring ${t} further for ${b}.` },
   PRELIMINARY_HYPOTHESIS: { label: "Preliminary hypothesis to validate", text: (t) => `${t} is a hypothesis worth validating; the evidence does not settle it yet.` },
   RELATIVE_FIT_NOT_SUPPORTED: { label: "Relative fit not supported", text: (t, b) => `Within this comparison, Qloo's evidence does not support ${t} as a close fit for ${b}.` },
-  INCONCLUSIVE: { label: "Inconclusive evidence", text: (t) => `There is no measured position for ${t} yet, so the evidence is inconclusive.` },
+  INCONCLUSIVE: { label: "Inconclusive evidence", text: (t) => `The evidence gathered for ${t} does not support a conclusion either way yet.` },
+  ESTABLISHED_POSITIONING: { label: "Part of the existing position", text: (t, b) => `Treat ${t} as cultural ground ${b} already holds; the strategic question is how to deepen or extend it, not whether it fits.` },
+  NO_SUPPORT_FOUND: { label: "No support found in the scope tested", text: (t, b) => `Qloo's evidence gives no reason to pursue ${t} for ${b} on this concept; this is not proof that no relationship exists.` },
+  NOT_TESTABLE_AS_ASKED: { label: "Not testable as asked", text: (t) => `Qloo has no faithful concept for ${t} as asked, so this investigation cannot answer the question.` },
+};
+
+const FROM_OUTCOME: Record<EvidenceOutcome, DecisionImplication> = {
+  ESTABLISHED_ASSOCIATION: "ESTABLISHED_POSITIONING",
+  OBSERVED_ASSOCIATION: "PRELIMINARY_HYPOTHESIS",
+  LIMITED_EVIDENCE: "INCONCLUSIVE",
+  NO_SUPPORT_IN_TESTED_SCOPE: "NO_SUPPORT_FOUND",
+  CONCEPT_NOT_REPRESENTED: "NOT_TESTABLE_AS_ASKED",
+  INCOMPLETE: "INCONCLUSIVE",
 };
 
 /** Plain-language versions of the comparison-feasibility blockers. */
@@ -113,19 +142,18 @@ function pick(result: AgentAnalysisResult, territoryKey: string | null): AgentTe
   return result.territories.find((t) => t.role === "target") ?? (result.territories.length === 1 ? result.territories[0] : undefined);
 }
 
-function implicationOf(t: AgentTerritoryResult, result: AgentAnalysisResult, measured: boolean): DecisionImplication {
-  if (!measured) {
-    const outcome = result.hypothesisAssessment?.outcome;
-    if (outcome === "WORTH_FURTHER_INVESTIGATION") return "PRELIMINARY_HYPOTHESIS";
-    if (outcome === "NOT_SUPPORTED_BY_CURRENT_EVIDENCE") return "RELATIVE_FIT_NOT_SUPPORTED";
-    return "INCONCLUSIVE";
-  }
+function implicationOf(t: AgentTerritoryResult, measured: boolean, assessment: TerritoryEvidenceAssessment | null): DecisionImplication {
+  const outcome = assessment?.outcome;
+  // The concept or the run's completeness decides first: a ranking of the wrong concept, or of nothing, settles nothing.
+  if (outcome === "CONCEPT_NOT_REPRESENTED" || outcome === "INCOMPLETE") return FROM_OUTCOME[outcome];
+  if (!measured) return outcome ? FROM_OUTCOME[outcome] : "INCONCLUSIVE";
   const steady = t.robustness?.level === "HIGH" || t.robustness?.level === "MEDIUM";
   const cls = t.classification!.label;
-  if (cls === "INSUFFICIENT_EVIDENCE") return "INCONCLUSIVE";
-  if (steady && (cls === "NATURAL_ADJACENCY" || cls === "CREDIBLE_STRETCH")) return "SUPPORTED_FOR_EXPLORATION";
+  if (cls === "INSUFFICIENT_EVIDENCE") return outcome ? FROM_OUTCOME[outcome] : "INCONCLUSIVE";
+  if (steady && (cls === "NATURAL_ADJACENCY" || cls === "CREDIBLE_STRETCH")) return outcome === "ESTABLISHED_ASSOCIATION" ? "ESTABLISHED_POSITIONING" : "SUPPORTED_FOR_EXPLORATION";
   if (steady && cls === "CULTURAL_BREAK") return "RELATIVE_FIT_NOT_SUPPORTED";
-  return "PRELIMINARY_HYPOTHESIS";
+  // An unsettled ranking leaves the direct evidence as the answer.
+  return outcome === "ESTABLISHED_ASSOCIATION" ? "ESTABLISHED_POSITIONING" : "PRELIMINARY_HYPOTHESIS";
 }
 
 export function decisionCard(result: AgentAnalysisResult | null | undefined, territoryKey: string | null, context: DecisionCardContext = {}): DecisionCard | null {
@@ -139,28 +167,26 @@ export function decisionCard(result: AgentAnalysisResult | null | undefined, ter
   const feasibility = result.comparisonFeasibility ?? null;
   const inSet = new Set(t.comparisonSet?.territoryKeys ?? []);
   const peers = result.territories.filter((x) => inSet.has(x.key) && x.key !== t.key).map((x) => x.label);
+  const research = t.role === "target" ? researchAssessmentOf(result) : null;
+  const assessment = research?.territories.find((a) => a.territoryKey === t.key) ?? null;
 
-  const finding = measured
-    ? `${CLASS_LABEL[t.classification!.label] ?? "Classified"} (provisional): ranked ${position} of ${t.relativePosition!.of} in one Qloo comparison with ${peers.join(", ")}.`
-    : result.hypothesisAssessment
-      ? `Not measured: ${name} was examined as a single hypothesis, without a comparison.`
-      : `Not measured yet: ${name} has no position relative to other territories.`;
+  const measuredFinding = measured ? `${CLASS_LABEL[t.classification!.label] ?? "Classified"} (provisional): ranked ${position} of ${t.relativePosition!.of} in one Qloo comparison with ${peers.join(", ")}.` : null;
+  const finding = measuredFinding
+    ?? assessment?.conclusion
+    ?? (result.hypothesisAssessment ? `${name} was examined as a single hypothesis, without a comparison.` : `${name} has no position relative to other territories.`);
 
   // Sprint 11: a non-equivalent concept and the brand's own category change how every other line must be read.
   const alignment = t.conceptAlignment && t.conceptAlignment.relation !== "EQUIVALENT" ? t.conceptAlignment : null;
   const whyInteresting = uniq([
     t.brandCore ? `Qloo categorises ${brand} itself as "${t.brandCore.label}", so ${name} is ${brand}'s established positioning, not a new direction.` : null,
+    !t.brandCore && assessment?.outcome === "ESTABLISHED_ASSOCIATION" ? `${name} is already on ${brand}'s own Qloo profile, so it reads as existing cultural ground rather than a new extension.` : null,
     context.directionWhy ?? null,
     alignment ? `The evidence below is about Qloo's concept "${alignment.qlooConcept.label}", which is ${RELATION_COPY[alignment.relation]} ${name}.` : t.resolvedConcept ? `Qloo resolves ${name} to its concept "${t.resolvedConcept.label}".` : null,
-    t.conditionedEvidence?.topEntities.length ? `For ${brand}, Qloo's closest matches within ${name} include ${t.conditionedEvidence.topEntities.slice(0, 3).map((e) => e.label).join(", ")}.` : null,
-    t.coherence?.consistentlyShared.length ? `${name}'s examples share these Qloo signals with ${brand}: ${t.coherence.consistentlyShared.slice(0, 4).map((s) => s.label).join(", ")}.` : null,
   ]).slice(0, 3);
 
-  const exemplars = t.representation.exemplars.map((e) => e.label);
   const supports = uniq([
     measured ? `Its position comes from one Qloo call, compared only within these ${t.relativePosition!.of} territories.` : null,
     measured && (t.robustness?.level === "HIGH" || t.robustness?.level === "MEDIUM") ? "The ranking held across the example sets tested." : null,
-    exemplars.length ? `Examples that stood for it: ${exemplars.slice(0, 5).join(", ")}.` : null,
     t.evidenceQuality ? `Evidence quality: ${t.evidenceQuality.level.toLowerCase()}.` : null,
     result.hypothesisAssessment?.supports.length ? result.hypothesisAssessment.supports[0] : null,
   ]);
@@ -177,25 +203,9 @@ export function decisionCard(result: AgentAnalysisResult | null | undefined, ter
     "Qloo describes cultural taste; it does not show whether people would buy.",
   ]).slice(0, 5);
 
-  const code = implicationOf(t, result, measured);
+  const code = implicationOf(t, measured, assessment);
   const repeat = !measured && feasibility ? feasibility.repeat : null;
-  const others = [...new Set((context.otherDirections ?? []).filter((d) => d.trim().toLowerCase() !== name.trim().toLowerCase()))];
-  const nextActions: DecisionNextAction[] = [];
-  const compareNamed = () => {
-    if (others.length >= 2) nextActions.push({ kind: "COMPARE_WITH_NAMED", text: `Name the comparison yourself: compare ${name} with ${others[0]} and ${others[1]}, two other directions Qloo found for ${brand}.`, question: `Compare ${name} with ${others[0]} and ${others[1]}` });
-  };
-  if (measured) {
-    if (code === "PRELIMINARY_HYPOTHESIS") nextActions.push({ kind: "TEST_WITH_OTHER_EXAMPLES", text: `Test ${name} again with other examples; a different set could move its ranking.` });
-    else compareNamed();
-    nextActions.push({ kind: "VALIDATE_WITH_PEOPLE", text: `Check the idea with the people ${brand} serves; Qloo shows cultural affinity, not purchase intent.` });
-  } else if (repeat === "MAY_CHANGE" && feasibility?.blocker && ["TURN_BUDGET", "QLOO_BUDGET", "SKILL_BUDGET", "CANDIDATE_SLOTS", "REFERENCE_PROBES_PENDING", "REFERENCE_DISCOVERY_PENDING"].includes(feasibility.blocker.code)) {
-    nextActions.push({ kind: "RUN_AGAIN", text: `Measure ${name} again: this run stopped on its own budget, not on Qloo's evidence.` });
-    compareNamed();
-  } else {
-    compareNamed();
-    if (nextActions.length === 0) nextActions.push({ kind: "EXPLORE_CONNECTIONS", text: `Explore the Qloo connections around ${name} to find a related territory Qloo represents better.` });
-    if (repeat === "LIKELY_REPEATS") nextActions.push({ kind: "VALIDATE_WITH_PEOPLE", text: "Asking the same question again would likely repeat the same work; qualitative research with people is the next useful evidence." });
-  }
+  const nextActions = nextActionsFor({ result, t, name, brand, measured, code, assessment, coverage: research?.coverage ?? [], feasibility, repeat, validated: context.validatedReferences ?? [] });
 
   return {
     version: DECISION_CARD_VERSION,
@@ -203,6 +213,14 @@ export function decisionCard(result: AgentAnalysisResult | null | undefined, ter
     territory: name,
     brand,
     measured,
+    conclusion: assessment ? { outcome: assessment.outcome, label: assessment.label, text: assessment.conclusion } : null,
+    evidence: {
+      observed: assessment?.observed.map((o) => o.text) ?? [],
+      limitations: assessment?.limitations ?? [],
+      missing: assessment?.missing ?? [],
+      coverage: research?.coverage ?? [],
+    },
+    comparative: measured ? { status: "MEASURED", text: measuredFinding! } : { status: assessment?.comparative.status ?? "NOT_MEASURED", text: [assessment?.comparative.text ?? `Cultural fit was not established comparatively for ${name}.`, blocker].filter(Boolean).join(" ") },
     finding,
     whyInteresting,
     supports,
@@ -219,6 +237,64 @@ export function decisionCard(result: AgentAnalysisResult | null | undefined, ter
   };
 }
 
+const BUDGET_BLOCKERS = new Set(["TURN_BUDGET", "QLOO_BUDGET", "SKILL_BUDGET", "CANDIDATE_SLOTS", "REFERENCE_PROBES_PENDING", "REFERENCE_DISCOVERY_PENDING"]);
+
+/**
+ * Research-question-aware next actions (Sprint 12). Each follows from the investigation's actual blocker:
+ *   an uncovered part of a compound question      → investigate that part on its own
+ *   no faithful Qloo concept                       → reframe the concept (never a ranking of the substitute)
+ *   the run's own budget stopped it                → run it again (never when Qloo's evidence blocked it)
+ *   established positioning                        → explore what extends it (fit is not the open question)
+ *   an observed association without a comparison  → measure it with the product's validated comparison, or a named
+ *                                                    comparison only with validated references
+ *   no support / thin evidence that would repeat   → qualitative validation, never the same paid investigation again
+ */
+function nextActionsFor(input: { result: AgentAnalysisResult; t: AgentTerritoryResult; name: string; brand: string; measured: boolean; code: DecisionImplication; assessment: TerritoryEvidenceAssessment | null; coverage: ConceptCoverage[]; feasibility: ComparisonFeasibility | null; repeat: ComparisonFeasibility["repeat"] | null; validated: readonly string[] }): DecisionNextAction[] {
+  const { result, t, name, brand, measured, code, assessment, coverage, feasibility, repeat } = input;
+  const out: DecisionNextAction[] = [];
+  const outcome = assessment?.outcome ?? null;
+  const repeats = repeat === "LIKELY_REPEATS";
+  const references = [...new Set(input.validated.filter((d) => d.trim().toLowerCase() !== name.trim().toLowerCase()))];
+  const compare = () => {
+    if (references.length >= 2) out.push({ kind: "COMPARE_WITH_NAMED", text: `Compare ${name} with ${references[0]} and ${references[1]}, references checked as meaningful alternatives for this question.`, question: `Compare ${name} with ${references[0]} and ${references[1]}` });
+    else if (!repeats && !t.brandCore) out.push({ kind: "MEASURE_WITH_COMPARISON", text: `Measure ${name}'s fit with a Qloo comparison; the product proposes only reference territories Qloo ties to this question.` });
+  };
+  const uncovered = coverage.filter((c) => c.status === "NOT_COVERED" && c.territoryKey === null);
+  if (uncovered[0]) out.push({ kind: "INVESTIGATE_UNCOVERED", text: `Investigate ${uncovered[0].concept} on its own: this run did not cover it, and the evidence about ${name} says nothing about it.`, question: `Is ${uncovered[0].concept} a credible cultural territory for ${brand}?` });
+  const budgetStopped = result.status === "BUDGET_EXHAUSTED" || t.limitations.some((l) => l.code === "BUDGET_EXHAUSTED" || l.code === "NOT_COLLECTED_BUDGET") || (feasibility?.blocker && BUDGET_BLOCKERS.has(feasibility.blocker.code) && repeat === "MAY_CHANGE");
+  if (outcome === "INCOMPLETE") {
+    if (budgetStopped || !repeats) out.push({ kind: "RUN_AGAIN", text: `Run the investigation of ${name} again: it stopped before finishing, not on Qloo's evidence.` });
+    else out.push({ kind: "VALIDATE_WITH_PEOPLE", text: "Asking the same question again would likely repeat the same work; qualitative research with people is the next useful evidence." });
+  } else if (outcome === "CONCEPT_NOT_REPRESENTED") {
+    const a = t.conceptAlignment;
+    out.push({ kind: "REFRAME_CONCEPT", text: a && t.resolvedConcept ? `Decide whether Qloo's "${t.resolvedConcept.label}" is a useful stand-in for ${a.userConcept}; if not, ask again with a more specific term for ${a.userConcept} (a practice, scene, genre or kind of place).` : `Ask again with a more specific term for ${name} that Qloo may know (a practice, scene, genre or kind of place).` });
+  } else if (measured) {
+    if (code === "PRELIMINARY_HYPOTHESIS" && t.robustness && t.robustness.level !== "HIGH" && t.robustness.level !== "MEDIUM") out.push({ kind: "TEST_WITH_OTHER_EXAMPLES", text: `Treat ${name}'s position as unsettled: it moved with the examples used, so check it against other examples before relying on it.` });
+    else if (code === "ESTABLISHED_POSITIONING") out.push({ kind: "EXTEND_ESTABLISHED", text: `${name} is already part of ${brand}'s position; explore which neighbouring territories extend it.`, question: `Which cultural territories could extend ${brand}'s ${name} positioning?` });
+    else if (references.length >= 2) compare();
+    out.push({ kind: "VALIDATE_WITH_PEOPLE", text: `Check the idea with the people ${brand} serves; Qloo shows cultural affinity, not purchase intent.` });
+  } else if (outcome === "ESTABLISHED_ASSOCIATION") {
+    out.push({ kind: "EXTEND_ESTABLISHED", text: `${name} is already part of ${brand}'s cultural position, so its fit is not the open question; explore which neighbouring territories extend it.`, question: `Which cultural territories could extend ${brand}'s ${name} positioning?` });
+    out.push({ kind: "VALIDATE_WITH_PEOPLE", text: `Check with the people ${brand} serves how they see ${name} in the brand today; Qloo shows cultural affinity, not purchase intent.` });
+  } else if (outcome === "OBSERVED_ASSOCIATION") {
+    if (budgetStopped && !repeats) out.push({ kind: "RUN_AGAIN", text: `Measure ${name} again: this run stopped on its own budget, not on Qloo's evidence.` });
+    else compare();
+    out.push({ kind: "VALIDATE_WITH_PEOPLE", text: `Test the association with the people ${brand} serves; Qloo shows cultural affinity, not purchase intent.` });
+  } else if (outcome === "NO_SUPPORT_IN_TESTED_SCOPE") {
+    out.push({ kind: "REFRAME_CONCEPT", text: `If ${name} still matters, name a narrower or neighbouring concept to test; repeating this investigation would query the same Qloo concept.` });
+    out.push({ kind: "VALIDATE_WITH_PEOPLE", text: "Qualitative research with people is the next useful evidence on this question." });
+  } else {
+    // LIMITED_EVIDENCE (or a non-target): name what is missing, and never send the same paid investigation again.
+    if (budgetStopped && !repeats) out.push({ kind: "RUN_AGAIN", text: `Run the investigation of ${name} again: it stopped on its own budget, not on Qloo's evidence.` });
+    else if (!repeats && references.length >= 2) compare();
+    out.push(repeats
+      ? { kind: "VALIDATE_WITH_PEOPLE", text: "Asking the same question again would likely repeat the same work; qualitative research with people is the next useful evidence." }
+      : { kind: "EXPLORE_CONNECTIONS", text: `Explore the Qloo connections around ${name} to find a related territory Qloo represents better.` });
+  }
+  if (out.length === 0) out.push({ kind: "VALIDATE_WITH_PEOPLE", text: `Check the idea with the people ${brand} serves; Qloo shows cultural affinity, not purchase intent.` });
+  return out.filter((a, i) => out.findIndex((b) => b.kind === a.kind) === i);
+}
+
 const RELATION_COPY: Record<ConceptRelation, string> = {
   EQUIVALENT: "the same as",
   NARROWER: "narrower than",
@@ -231,15 +307,15 @@ const RELATION_COPY: Record<ConceptRelation, string> = {
 const FORBIDDEN = /\b(sales|revenue|profit|profitab\w*|roi|market share|will (succeed|sell|win)|guarantee\w*|demand forecast|probability|confidence)\b|%/iu;
 const RAW_CODE = /\b[A-Z]{3,}_[A-Z_]{2,}\b/u;
 
-export function decisionCardViolations(card: DecisionCard, result: AgentAnalysisResult): string[] {
+export function decisionCardViolations(card: DecisionCard, result: AgentAnalysisResult, context: DecisionCardContext = {}): string[] {
   const out: string[] = [];
-  const text = [card.finding, ...card.whyInteresting, ...card.supports, ...card.uncertain, card.implication.text, ...card.nextActions.map((a) => a.text)];
+  const text = [card.finding, card.conclusion?.text ?? "", ...card.evidence.observed, ...card.evidence.limitations, ...card.evidence.missing, card.comparative.text, ...card.whyInteresting, ...card.supports, ...card.uncertain, card.implication.text, ...card.nextActions.map((a) => a.text)].filter(Boolean);
   for (const line of text) {
     const hit = FORBIDDEN.exec(line) ?? RAW_CODE.exec(line);
     if (hit) out.push(`forbidden wording "${hit[0]}" in: ${line}`);
   }
   const t = result.territories.find((x) => x.key === card.territoryKey);
-  const allowed = new Set([t?.relativePosition?.position, t?.relativePosition?.of, result.comparisonFeasibility?.target.validExemplars, result.comparisonFeasibility?.referenceProbes.empty].filter((n): n is number => typeof n === "number").map(String));
+  const allowed = new Set([t?.relativePosition?.position, t?.relativePosition?.of, result.comparisonFeasibility?.target.validExemplars, result.comparisonFeasibility?.referenceProbes.empty, t?.conditionedEvidence?.entityCount, t?.directEvidence?.conditionedQuery.entityCount].filter((n): n is number => typeof n === "number").map(String));
   // Digits inside recorded names (a venue called "Studio 54") are part of the name, not a claim.
   const labels = [card.brand, ...result.territories.flatMap((x) => [x.label, x.resolvedConcept?.label ?? "", ...x.representation.exemplars.map((e) => e.label), ...(x.coherence?.consistentlyShared.map((c) => c.label) ?? []), ...(x.conditionedEvidence?.topEntities.map((e) => e.label) ?? [])])];
   for (const line of text) {
@@ -251,5 +327,14 @@ export function decisionCardViolations(card: DecisionCard, result: AgentAnalysis
   if (card.repeat === "LIKELY_REPEATS" && card.nextActions.some((a) => a.kind === "RUN_AGAIN")) out.push("suggests repeating a question that would likely end the same way");
   if (!card.measured && card.uncertain.length === 0) out.push("a partial finding states no limitation");
   if (card.nextActions.length === 0) out.push("no next action");
+  // Sprint 12: recommendations follow the real blocker and never name an unvalidated comparison.
+  const validated = new Set((context.validatedReferences ?? []).map((r) => r.trim().toLowerCase()));
+  for (const a of card.nextActions.filter((x) => x.kind === "COMPARE_WITH_NAMED")) {
+    const named = /with (.+) and (.+)$/u.exec(a.question ?? "");
+    if (!named || ![named[1]!, named[2]!].every((n) => validated.has(n.trim().toLowerCase()))) out.push(`names a comparison that no validated source supplied: ${a.text}`);
+  }
+  if (card.repeat === "LIKELY_REPEATS" && card.nextActions.some((a) => a.kind === "MEASURE_WITH_COMPARISON")) out.push("offers a comparison that Qloo's evidence already blocked");
+  if ((card.conclusion?.outcome === "NO_SUPPORT_IN_TESTED_SCOPE" || card.conclusion?.outcome === "CONCEPT_NOT_REPRESENTED") && card.nextActions.some((a) => a.kind === "RUN_AGAIN")) out.push("suggests repeating an investigation whose evidence path would not change");
+  if (card.conclusion && !card.measured && /^not measured/iu.test(card.finding)) out.push("leads with 'not measured' while a direct assessment exists");
   return out;
 }

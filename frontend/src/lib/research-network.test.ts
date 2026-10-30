@@ -99,7 +99,7 @@ test("Sprint 9L: an unmeasured reading always gets a concrete follow-up that can
   assert.equal(measureQuestion("Crocs", "Fiction", single, directions), "How far can Crocs extend into Fiction?");
   // A comparison was tried and measured nothing: compare with two other directions, never the target itself.
   const compared = { status: "COMPLETE", territories: [{ role: "target" }, { role: "reference" }] } as never;
-  assert.equal(measureQuestion("Crocs", "Fiction", compared, directions), "Compare Fiction with Hip Hop and casual footwear");
+  assert.equal(measureQuestion("Crocs", "Fiction", compared, directions), null, "Sprint 12: never the brand's other directions in list order");
   // Nothing concrete to propose: the user names the references.
   assert.equal(measureQuestion("Crocs", "Fiction", compared, ["Fiction", "Hip Hop"]), null);
 });
@@ -108,7 +108,7 @@ test("Sprint 9N: a comparison Qloo's evidence blocked is not asked again; one th
   const directions = ["Manga", "Workwear", "Minimal design"];
   // Live Uniqlo → Manga shape: comparative run, no reference built, feasibility says the same question would repeat.
   const blocked = { status: "COMPLETE", territories: [{ role: "target" }], comparisonFeasibility: { repeat: "LIKELY_REPEATS" } } as never;
-  assert.equal(measureQuestion("Uniqlo", "Manga", blocked, directions), "Compare Manga with Workwear and Minimal design");
+  assert.equal(measureQuestion("Uniqlo", "Manga", blocked, directions), null);
   assert.equal(measureQuestion("Uniqlo", "Manga", blocked, ["Manga"]), null);
   const budget = { status: "COMPLETE", territories: [{ role: "target" }], comparisonFeasibility: { repeat: "MAY_CHANGE" } } as never;
   assert.equal(measureQuestion("Uniqlo", "Manga", budget, directions), "How far can Uniqlo extend into Manga?");

@@ -1,5 +1,5 @@
 /** A bounded qualitative projection of one completed target. This adds no provider evidence or score. */
-import type { AgentAnalysisResult, AgentTerritoryResult } from "@cultural-elasticity/shared";
+import { nonTautologicalSignals, type AgentAnalysisResult, type AgentTerritoryResult } from "@cultural-elasticity/shared";
 import type { AgentRunState } from "./state.js";
 
 type Assessment = NonNullable<AgentAnalysisResult["hypothesisAssessment"]>;
@@ -17,7 +17,8 @@ export function assessSingleHypothesis(state: AgentRunState, target: AgentTerrit
   const correlationId = observed?.call.envelope.execution.correlation_id;
   const sourceIsEligible = Boolean(correlationId && target?.conditionedEvidence?.correlationId === correlationId && target.provenance.correlationIds.includes(correlationId));
   const allRelevantQueriesCleanEmpty = relevant.length > 0 && relevant.every((pool) => ["ok", "empty"].includes(pool.call.envelope.status) && pool.memberIds.length === 0);
-  const shared = target?.coherence?.consistentlyShared ?? [];
+  // Sprint 12: the concept's own tag is shared by construction (its examples carry it), so it is not a separate signal.
+  const shared = target ? nonTautologicalSignals(target).kept : [];
   const brandProfile = brand ? state.profiles.get(brand.id) : undefined;
   const inBrandProfile = Boolean(concept && brandProfile?.tagIds.includes(concept.id));
   const conceptSearches = state.trace.toolCalls.filter((tool) => tool.tool === "qloo_find_tags" && tool.status !== "rejected" && (tool.arguments as { query?: unknown })?.query === target?.label);

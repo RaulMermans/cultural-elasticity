@@ -1,0 +1,727 @@
+{
+  "summary": {
+    "label": "OFFLINE_REPLAY_OF_STORED_RESULTS (no provider call; not Qloo or live-model validation)",
+    "baseline": "/Users/raulm/dev/ce-11/packages/shared/dist/index.js",
+    "targets": 13,
+    "beforeLedWithNotMeasured": 8,
+    "afterLedWithNotMeasured": 0,
+    "outcomes": {
+      "Limited evidence": 12,
+      "Not testable as asked": 1
+    },
+    "violations": 0
+  },
+  "rows": [
+    {
+      "file": "artifacts/live_model-L-C1.json",
+      "origin": "live",
+      "brand": "RAPHA",
+      "question": "For Rapha, compare cycling cafes, mountaineering and coffee.",
+      "territory": "Coffee",
+      "route": "FULL_RELATIVE_ANALYSIS",
+      "before": {
+        "finding": "Not settled (provisional): ranked 1 of 3 in one Qloo comparison with Mountaineering, Cycling.",
+        "implication": "Preliminary hypothesis to validate",
+        "next": [
+          "TEST_WITH_OTHER_EXAMPLES: Test Coffee again with other examples; a different set could move its ranking.",
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people RAPHA serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about Coffee for RAPHA, but not enough to call it an association: the examples share no consistent cultural signal with RAPHA's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Coffee entities with RAPHA as context, Qloo returned 20, led by Black Bird Bookstore and Café, JANE Motorcycles, The Fold. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Coffee: Blue Bottle Coffee, Coffee Bru, Georges espressobar."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Coffee\" is on RAPHA's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Coffee's examples share with RAPHA.",
+          "Whether \"Coffee\" is on RAPHA's own Qloo profile."
+        ],
+        "comparative": "Not settled (provisional): ranked 1 of 3 in one Qloo comparison with Mountaineering, Cycling.",
+        "implication": "Preliminary hypothesis to validate",
+        "next": [
+          "TEST_WITH_OTHER_EXAMPLES: Treat Coffee's position as unsettled: it moved with the examples used, so check it against other examples before relying on it.",
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people RAPHA serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "Coffee",
+          "status": "COVERED",
+          "territoryKey": "coffee",
+          "qlooConcept": "Coffee",
+          "note": "Investigated as Qloo's \"Coffee\"."
+        },
+        {
+          "concept": "Mountaineering",
+          "status": "COVERED",
+          "territoryKey": "mountaineering",
+          "qlooConcept": "Mountaineering",
+          "note": "Investigated as Qloo's \"Mountaineering\"."
+        },
+        {
+          "concept": "Cycling",
+          "status": "COVERED",
+          "territoryKey": "cycling",
+          "qlooConcept": "Cycling",
+          "note": "Investigated as Qloo's \"Cycling\"."
+        }
+      ]
+    },
+    {
+      "file": "artifacts/live_model-L-C1.json",
+      "origin": "live",
+      "brand": "RAPHA",
+      "question": "For Rapha, compare cycling cafes, mountaineering and coffee.",
+      "territory": "Mountaineering",
+      "route": "FULL_RELATIVE_ANALYSIS",
+      "before": {
+        "finding": "Not enough evidence (provisional): ranked 2 of 3 in one Qloo comparison with Coffee, Cycling.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people RAPHA serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about Mountaineering for RAPHA, but not enough to call it an association: the examples share no consistent cultural signal with RAPHA's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Mountaineering entities with RAPHA as context, Qloo returned 20, led by Half Dome, Ben Nevis, Mount Shasta. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Mountaineering: Mount Marapi, Ben Vane, Tararua Range."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Mountaineering\" is on RAPHA's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Mountaineering's examples share with RAPHA.",
+          "Whether \"Mountaineering\" is on RAPHA's own Qloo profile."
+        ],
+        "comparative": "Not enough evidence (provisional): ranked 2 of 3 in one Qloo comparison with Coffee, Cycling.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people RAPHA serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "Coffee",
+          "status": "COVERED",
+          "territoryKey": "coffee",
+          "qlooConcept": "Coffee",
+          "note": "Investigated as Qloo's \"Coffee\"."
+        },
+        {
+          "concept": "Mountaineering",
+          "status": "COVERED",
+          "territoryKey": "mountaineering",
+          "qlooConcept": "Mountaineering",
+          "note": "Investigated as Qloo's \"Mountaineering\"."
+        },
+        {
+          "concept": "Cycling",
+          "status": "COVERED",
+          "territoryKey": "cycling",
+          "qlooConcept": "Cycling",
+          "note": "Investigated as Qloo's \"Cycling\"."
+        }
+      ]
+    },
+    {
+      "file": "artifacts/live_model-L-C1.json",
+      "origin": "live",
+      "brand": "RAPHA",
+      "question": "For Rapha, compare cycling cafes, mountaineering and coffee.",
+      "territory": "Cycling",
+      "route": "FULL_RELATIVE_ANALYSIS",
+      "before": {
+        "finding": "Not settled (provisional): ranked 3 of 3 in one Qloo comparison with Coffee, Mountaineering.",
+        "implication": "Preliminary hypothesis to validate",
+        "next": [
+          "TEST_WITH_OTHER_EXAMPLES: Test Cycling again with other examples; a different set could move its ranking.",
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people RAPHA serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about Cycling for RAPHA, but not enough to call it an association: the examples share no consistent cultural signal with RAPHA's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Cycling entities with RAPHA as context, Qloo returned 20, led by Lambeth Bridge, Hampstead Heath, Golden Gate Promenade. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Cycling: Costanera, Sunset Hill Lodge."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Cycling\" is on RAPHA's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Cycling's examples share with RAPHA.",
+          "Whether \"Cycling\" is on RAPHA's own Qloo profile."
+        ],
+        "comparative": "Not settled (provisional): ranked 3 of 3 in one Qloo comparison with Coffee, Mountaineering.",
+        "implication": "Preliminary hypothesis to validate",
+        "next": [
+          "TEST_WITH_OTHER_EXAMPLES: Treat Cycling's position as unsettled: it moved with the examples used, so check it against other examples before relying on it.",
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people RAPHA serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "Coffee",
+          "status": "COVERED",
+          "territoryKey": "coffee",
+          "qlooConcept": "Coffee",
+          "note": "Investigated as Qloo's \"Coffee\"."
+        },
+        {
+          "concept": "Mountaineering",
+          "status": "COVERED",
+          "territoryKey": "mountaineering",
+          "qlooConcept": "Mountaineering",
+          "note": "Investigated as Qloo's \"Mountaineering\"."
+        },
+        {
+          "concept": "Cycling",
+          "status": "COVERED",
+          "territoryKey": "cycling",
+          "qlooConcept": "Cycling",
+          "note": "Investigated as Qloo's \"Cycling\"."
+        }
+      ]
+    },
+    {
+      "file": "artifacts/live_model-L-C2.json",
+      "origin": "live",
+      "brand": "Liquid Death",
+      "question": "For Liquid Death, compare heavy metal and moonlit gastronomy.",
+      "territory": "Heavy Metal",
+      "route": "PARTIAL_CULTURAL_ANALYSIS",
+      "before": {
+        "finding": "Not measured yet: Heavy Metal has no position relative to other territories.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Heavy Metal to find a related territory Qloo represents better."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about Heavy Metal for Liquid Death, but not enough to call it an association: the examples share no consistent cultural signal with Liquid Death's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Heavy Metal entities with Liquid Death as context, Qloo returned 20, led by Les Foufounes Électriques, Dragon Rojo Rock Bar, Foro Hendrix. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Heavy Metal: The Underworld, Robot, Absoluto Rock Bar."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Heavy Metal\" is on Liquid Death's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Heavy Metal's examples share with Liquid Death.",
+          "Whether \"Heavy Metal\" is on Liquid Death's own Qloo profile."
+        ],
+        "comparative": "Cultural fit was not established comparatively: no valid comparison with other territories of the same kind was completed. Heavy Metal has cultural evidence from Qloo but was not placed in a comparison of at least three territories of one kind.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Heavy Metal to find a related territory Qloo represents better."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "Heavy Metal",
+          "status": "COVERED",
+          "territoryKey": "heavy_metal",
+          "qlooConcept": "Heavy Metal",
+          "note": "Investigated as Qloo's \"Heavy Metal\"."
+        },
+        {
+          "concept": "Moonlit Gastronomy",
+          "status": "COVERED",
+          "territoryKey": "moonlit_gastronomy",
+          "qlooConcept": "Terang Bulan",
+          "note": "Investigated as Qloo's \"Terang Bulan\"."
+        }
+      ]
+    },
+    {
+      "file": "artifacts/live_model-L-C2.json",
+      "origin": "live",
+      "brand": "Liquid Death",
+      "question": "For Liquid Death, compare heavy metal and moonlit gastronomy.",
+      "territory": "Moonlit Gastronomy",
+      "route": "DESCRIPTIVE_ANALYSIS",
+      "before": {
+        "finding": "Not measured yet: Moonlit Gastronomy has no position relative to other territories.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Moonlit Gastronomy to find a related territory Qloo represents better."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about Moonlit Gastronomy for Liquid Death, but not enough to call it an association: the examples share no consistent cultural signal with Liquid Death's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Terang Bulan entities with Liquid Death as context, Qloo returned 20, led by Holandia \"97\" Martabak & Terang Bulan, Martabak TOP BANDUNG \"BEN\", Martabak Alim. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Terang Bulan: Martabak Shima, Terang Bulan MERDEKA, Martabak Jakarta 1994."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Terang Bulan\" is on Liquid Death's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Terang Bulan's examples share with Liquid Death.",
+          "Whether \"Terang Bulan\" is on Liquid Death's own Qloo profile."
+        ],
+        "comparative": "Cultural fit was not established comparatively: no valid comparison with other territories of the same kind was completed. Qloo describes Moonlit Gastronomy, but returned no examples that could be compared with other territories.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Moonlit Gastronomy to find a related territory Qloo represents better."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "Heavy Metal",
+          "status": "COVERED",
+          "territoryKey": "heavy_metal",
+          "qlooConcept": "Heavy Metal",
+          "note": "Investigated as Qloo's \"Heavy Metal\"."
+        },
+        {
+          "concept": "Moonlit Gastronomy",
+          "status": "COVERED",
+          "territoryKey": "moonlit_gastronomy",
+          "qlooConcept": "Terang Bulan",
+          "note": "Investigated as Qloo's \"Terang Bulan\"."
+        }
+      ]
+    },
+    {
+      "file": "artifacts/live_model-L-M1.json",
+      "origin": "live",
+      "brand": "Aesop",
+      "question": "Could Aesop credibly move into coffee?",
+      "territory": "Coffee",
+      "route": "PARTIAL_CULTURAL_ANALYSIS",
+      "before": {
+        "finding": "Not measured yet: Coffee has no position relative to other territories.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Coffee to find a related territory Qloo represents better."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about Coffee for Aesop, but not enough to call it an association: the examples share no consistent cultural signal with Aesop's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Coffee entities with Aesop as context, Qloo returned 20, led by Jack & NaNa coffee store, Raw Coffee Stand, LiLo Coffee Roasters. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Coffee: Coffee Bru, Georges espressobar."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Coffee\" is on Aesop's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Coffee's examples share with Aesop.",
+          "Whether \"Coffee\" is on Aesop's own Qloo profile."
+        ],
+        "comparative": "Cultural fit was not established comparatively: no valid comparison with other territories of the same kind was completed. Coffee has cultural evidence from Qloo but was not placed in a comparison of at least three territories of one kind.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Coffee to find a related territory Qloo represents better."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "Coffee",
+          "status": "COVERED",
+          "territoryKey": "coffee",
+          "qlooConcept": "Coffee",
+          "note": "Investigated as Qloo's \"Coffee\"."
+        }
+      ]
+    },
+    {
+      "file": "artifacts/live_model-L-M2.json",
+      "origin": "live",
+      "brand": "YETI",
+      "question": "Could Yeti move into fly fishing?",
+      "territory": "Fly Fishing",
+      "route": "PARTIAL_CULTURAL_ANALYSIS",
+      "before": {
+        "finding": "Not measured yet: Fly Fishing has no position relative to other territories.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Fly Fishing to find a related territory Qloo represents better."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about Fly Fishing for YETI, but not enough to call it an association: the examples share no consistent cultural signal with YETI's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Fly Fishing entities with YETI as context, Qloo returned 20, led by Rainbow Trout Ranch, Blackberry Farm, The Ranch at Rock Creek. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Fly Fishing: Critchley Hackle Lodge, Montusi Mountain Lodge, Old Toccoa Farm Resort."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Fly Fishing\" is on YETI's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Fly Fishing's examples share with YETI.",
+          "Whether \"Fly Fishing\" is on YETI's own Qloo profile."
+        ],
+        "comparative": "Cultural fit was not established comparatively: no valid comparison with other territories of the same kind was completed. Fly Fishing has cultural evidence from Qloo but was not placed in a comparison of at least three territories of one kind.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Fly Fishing to find a related territory Qloo represents better."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "Fly Fishing",
+          "status": "COVERED",
+          "territoryKey": "fly_fishing",
+          "qlooConcept": "Fly Fishing",
+          "note": "Investigated as Qloo's \"Fly Fishing\"."
+        }
+      ]
+    },
+    {
+      "file": "artifacts/live_model-L-M3.json",
+      "origin": "live",
+      "brand": "Le Creuset",
+      "question": "Could Le Creuset move into tea culture?",
+      "territory": "Tea",
+      "route": "PARTIAL_CULTURAL_ANALYSIS",
+      "before": {
+        "finding": "Not measured yet: Tea has no position relative to other territories.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Tea to find a related territory Qloo represents better."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about Tea for Le Creuset, but not enough to call it an association: the examples share no consistent cultural signal with Le Creuset's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Tea entities with Le Creuset as context, Qloo returned 20, led by Enstrom Candies Arvada, Ladurée Cannes, Ladurée. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Tea: Pipra Borin Popular Tea Center, Kebuke Black Tea, Honeymee."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Tea\" is on Le Creuset's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Tea's examples share with Le Creuset.",
+          "Whether \"Tea\" is on Le Creuset's own Qloo profile."
+        ],
+        "comparative": "Cultural fit was not established comparatively: no valid comparison with other territories of the same kind was completed. Tea has cultural evidence from Qloo but was not placed in a comparison of at least three territories of one kind.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around Tea to find a related territory Qloo represents better."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "Tea",
+          "status": "COVERED",
+          "territoryKey": "tea",
+          "qlooConcept": "Tea",
+          "note": "Investigated as Qloo's \"Tea\"."
+        }
+      ]
+    },
+    {
+      "file": "replay10d/L2#retry-result.json",
+      "origin": "live",
+      "brand": "Bodum",
+      "question": "Is specialty coffee culture a defensible extension for Bodum?",
+      "territory": "specialty coffee culture",
+      "route": "PARTIAL_CULTURAL_ANALYSIS",
+      "before": {
+        "finding": "Not measured yet: specialty coffee culture has no position relative to other territories.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around specialty coffee culture to find a related territory Qloo represents better.",
+          "VALIDATE_WITH_PEOPLE: Asking the same question again would likely repeat the same work; qualitative research with people is the next useful evidence."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about specialty coffee culture for Bodum, but not enough to call it an association: the examples share no consistent cultural signal with Bodum's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Specialty Coffee Culture entities with Bodum as context, Qloo returned 20, led by Fauna & Flora - Santos, b Café Pastelaria, Chocolates de Beatriz. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Specialty Coffee Culture: Caliber Coffee Co.."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Specialty Coffee Culture\" is on Bodum's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Specialty Coffee Culture's examples share with Bodum.",
+          "Whether \"Specialty Coffee Culture\" is on Bodum's own Qloo profile."
+        ],
+        "comparative": "Cultural fit was not established comparatively: no valid comparison with other territories of the same kind was completed. Qloo returned no comparable place examples for 4 candidate territories, so there was nothing to compare it with.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "VALIDATE_WITH_PEOPLE: Asking the same question again would likely repeat the same work; qualitative research with people is the next useful evidence."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "specialty coffee culture",
+          "status": "COVERED",
+          "territoryKey": "specialty_coffee_culture",
+          "qlooConcept": "Specialty Coffee Culture",
+          "note": "Investigated as Qloo's \"Specialty Coffee Culture\"."
+        }
+      ]
+    },
+    {
+      "file": "replay10d/L3-result.json",
+      "origin": "live",
+      "brand": "Diptyque",
+      "question": "For Diptyque, compare boutique hotels, ceramics and jazz as cultural territories.",
+      "territory": "ceramics",
+      "route": "FULL_RELATIVE_ANALYSIS",
+      "before": {
+        "finding": "Not settled (provisional): ranked 1 of 3 in one Qloo comparison with boutique hotels, Horology.",
+        "implication": "Preliminary hypothesis to validate",
+        "next": [
+          "TEST_WITH_OTHER_EXAMPLES: Test ceramics again with other examples; a different set could move its ranking.",
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people Diptyque serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about ceramics for Diptyque, but not enough to call it an association: the examples share no consistent cultural signal with Diptyque's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Ceramic entities with Diptyque as context, Qloo returned 20, led by Anya Hindmarch, ANISSA KERMICHE, MARIN MONTAGUT. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Ceramic: Richard Mille, Rolex; the agent judged some candidates weak or off-topic, and they were not used."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Ceramic\" is on Diptyque's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Ceramic's examples share with Diptyque.",
+          "Whether \"Ceramic\" is on Diptyque's own Qloo profile."
+        ],
+        "comparative": "Not settled (provisional): ranked 1 of 3 in one Qloo comparison with boutique hotels, Horology.",
+        "implication": "Preliminary hypothesis to validate",
+        "next": [
+          "TEST_WITH_OTHER_EXAMPLES: Treat ceramics's position as unsettled: it moved with the examples used, so check it against other examples before relying on it.",
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people Diptyque serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "ceramics",
+          "status": "COVERED",
+          "territoryKey": "ceramics",
+          "qlooConcept": "Ceramic",
+          "note": "Investigated as Qloo's \"Ceramic\"."
+        },
+        {
+          "concept": "boutique hotels",
+          "status": "COVERED",
+          "territoryKey": "boutique_hotels",
+          "qlooConcept": "Boutique Hotels",
+          "note": "Investigated as Qloo's \"Boutique Hotels\"."
+        },
+        {
+          "concept": "jazz",
+          "status": "NOT_COVERED",
+          "territoryKey": "jazz",
+          "qlooConcept": null,
+          "note": "No Qloo concept represented it."
+        }
+      ]
+    },
+    {
+      "file": "replay10d/L3-result.json",
+      "origin": "live",
+      "brand": "Diptyque",
+      "question": "For Diptyque, compare boutique hotels, ceramics and jazz as cultural territories.",
+      "territory": "boutique hotels",
+      "route": "FULL_RELATIVE_ANALYSIS",
+      "before": {
+        "finding": "Not settled (provisional): ranked 3 of 3 in one Qloo comparison with ceramics, Horology.",
+        "implication": "Preliminary hypothesis to validate",
+        "next": [
+          "TEST_WITH_OTHER_EXAMPLES: Test boutique hotels again with other examples; a different set could move its ranking.",
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people Diptyque serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about boutique hotels for Diptyque, but not enough to call it an association: the examples share no consistent cultural signal with Diptyque's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Boutique Hotels entities with Diptyque as context, Qloo returned 1, led by Joie de Vivre Hotels. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Boutique Hotels: Joie de Vivre Hotels."
+        ],
+        "limitations": [
+          "Whether \"Boutique Hotels\" is on Diptyque's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Boutique Hotels's examples share with Diptyque.",
+          "Whether \"Boutique Hotels\" is on Diptyque's own Qloo profile."
+        ],
+        "comparative": "Not settled (provisional): ranked 3 of 3 in one Qloo comparison with ceramics, Horology.",
+        "implication": "Preliminary hypothesis to validate",
+        "next": [
+          "TEST_WITH_OTHER_EXAMPLES: Treat boutique hotels's position as unsettled: it moved with the examples used, so check it against other examples before relying on it.",
+          "VALIDATE_WITH_PEOPLE: Check the idea with the people Diptyque serves; Qloo shows cultural affinity, not purchase intent."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "ceramics",
+          "status": "COVERED",
+          "territoryKey": "ceramics",
+          "qlooConcept": "Ceramic",
+          "note": "Investigated as Qloo's \"Ceramic\"."
+        },
+        {
+          "concept": "boutique hotels",
+          "status": "COVERED",
+          "territoryKey": "boutique_hotels",
+          "qlooConcept": "Boutique Hotels",
+          "note": "Investigated as Qloo's \"Boutique Hotels\"."
+        },
+        {
+          "concept": "jazz",
+          "status": "NOT_COVERED",
+          "territoryKey": "jazz",
+          "qlooConcept": null,
+          "note": "No Qloo concept represented it."
+        }
+      ]
+    },
+    {
+      "file": "replay10d/L3-result.json",
+      "origin": "live",
+      "brand": "Diptyque",
+      "question": "For Diptyque, compare boutique hotels, ceramics and jazz as cultural territories.",
+      "territory": "jazz",
+      "route": "INSUFFICIENT_EVIDENCE",
+      "before": {
+        "finding": "Not measured yet: jazz has no position relative to other territories.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around jazz to find a related territory Qloo represents better."
+        ]
+      },
+      "after": {
+        "conclusion": "Not testable as asked: Qloo has no concept that represents jazz as asked, so this investigation could not test it.",
+        "rule": "no Qloo concept anchored",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [],
+        "limitations": [],
+        "missing": [
+          "A Qloo concept that represents jazz; a more specific wording may find one."
+        ],
+        "comparative": "Cultural fit was not established comparatively: no valid comparison with other territories of the same kind was completed. Qloo did not return enough evidence about jazz to place it.",
+        "implication": "Not testable as asked",
+        "next": [
+          "REFRAME_CONCEPT: Ask again with a more specific term for jazz that Qloo may know (a practice, scene, genre or kind of place)."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "ceramics",
+          "status": "COVERED",
+          "territoryKey": "ceramics",
+          "qlooConcept": "Ceramic",
+          "note": "Investigated as Qloo's \"Ceramic\"."
+        },
+        {
+          "concept": "boutique hotels",
+          "status": "COVERED",
+          "territoryKey": "boutique_hotels",
+          "qlooConcept": "Boutique Hotels",
+          "note": "Investigated as Qloo's \"Boutique Hotels\"."
+        },
+        {
+          "concept": "jazz",
+          "status": "NOT_COVERED",
+          "territoryKey": "jazz",
+          "qlooConcept": null,
+          "note": "No Qloo concept represented it."
+        }
+      ]
+    },
+    {
+      "file": "replay10d/L4-result.json",
+      "origin": "live",
+      "brand": "Dyson",
+      "question": "Could Dyson credibly move into wellness retreats?",
+      "territory": "wellness retreats",
+      "route": "PARTIAL_CULTURAL_ANALYSIS",
+      "before": {
+        "finding": "Not measured yet: wellness retreats has no position relative to other territories.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "EXPLORE_CONNECTIONS: Explore the Qloo connections around wellness retreats to find a related territory Qloo represents better.",
+          "VALIDATE_WITH_PEOPLE: Asking the same question again would likely repeat the same work; qualitative research with people is the next useful evidence."
+        ]
+      },
+      "after": {
+        "conclusion": "Limited evidence: Qloo returned some evidence about wellness retreats for Dyson, but not enough to call it an association: the examples share no consistent cultural signal with Dyson's Qloo profile.",
+        "rule": "conditioned entities, no shared signal",
+        "basis": "DERIVED_FROM_STORED_RESULT",
+        "observed": [
+          "Asked for Wellness Retreats entities with Dyson as context, Qloo returned 20, led by Clarins Group, Sisley Paris, Alo Yoga. A count of returned entities is not a measure of affinity.",
+          "Examples that passed validation for Wellness Retreats: Lululemon, Alo Yoga."
+        ],
+        "limitations": [
+          "Qloo returned more entities than were read; only the first page was used.",
+          "Whether \"Wellness Retreats\" is on Dyson's own Qloo profile was not observed in this run."
+        ],
+        "missing": [
+          "A cultural signal, beyond the concept itself, that Wellness Retreats's examples share with Dyson.",
+          "Whether \"Wellness Retreats\" is on Dyson's own Qloo profile."
+        ],
+        "comparative": "Cultural fit was not established comparatively: no valid comparison with other territories of the same kind was completed. Qloo returned no comparable brand examples for 4 candidate territories, so there was nothing to compare it with.",
+        "implication": "Inconclusive evidence",
+        "next": [
+          "VALIDATE_WITH_PEOPLE: Asking the same question again would likely repeat the same work; qualitative research with people is the next useful evidence."
+        ]
+      },
+      "violations": [],
+      "coverage": [
+        {
+          "concept": "wellness retreats",
+          "status": "COVERED",
+          "territoryKey": "wellness_retreats",
+          "qlooConcept": "Wellness Retreats",
+          "note": "Investigated as Qloo's \"Wellness Retreats\"."
+        }
+      ]
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import type { Limitation } from "./analysis.js";
 import type { CulturalElasticityResult, ElasticityClass, RobustnessLevel } from "./methodology.js";
 import type { InvestigationLink } from "./query.js";
 import type { DomainRelation, FacetRole, OpportunityView } from "./opportunity.js";
+import type { ResearchAssessment } from "./evidence-assessment.js";
 
 /**
  * 0.3 (Sprint 5A, additive): semantic comparison assessments, grounded findings, synthesis attempt details,
@@ -163,6 +164,41 @@ export type AgentTerritoryResult = {
   conceptAlignment?: ConceptAlignment;
   /** Sprint 11 (additive): the target's concept is one of the brand's own Qloo category tags (established positioning). */
   brandCore?: { tagId: string; label: string };
+  /** Sprint 12 (additive): direct brand × concept observations for a target, recorded by the runtime. Never a score. */
+  directEvidence?: DirectEvidenceFacts;
+};
+
+/**
+ * Sprint 12 (direct-evidence/v1): what this run observed directly about the brand and a target's Qloo concept, each
+ * fact with the correlation ID of the call it came from. These are the inputs of the evidence assessment
+ * (evidence-assessment.ts). Counts are what Qloo returned, never an affinity strength: a type-filtered query saturates.
+ */
+export type DirectEvidenceFacts = {
+  version: "direct-evidence/v1";
+  /** The concept tag on the brand's own Qloo tag profile (this run's profile call, or the baseline scan that grounded it). */
+  brandProfile: { status: "CONTAINS_CONCEPT" | "ABSENT" | "NOT_OBSERVED"; source: "run_profile" | "baseline_scan" | null; correlationId: string | null };
+  /** The brand-conditioned query on the concept tag (the one the result's conditioned evidence comes from). */
+  conditionedQuery: { status: "RETURNED" | "CLEAN_EMPTY" | "UNRELIABLE" | "FAILED" | "NOT_RUN"; entityCount: number; correlationId: string | null };
+  /** Qloo tag search for the territory's words: FOUND (a tag came back), CLEAN_EMPTY, FAILED or NOT_RUN. */
+  conceptSearch: "FOUND" | "CLEAN_EMPTY" | "FAILED" | "NOT_RUN";
+  /** The agent's relevance judgments of the exemplars that stood for the concept (advisory; can only remove support). */
+  exemplarJudgments: { strong: number; adequate: number; weak: number; mismatch: number; unjudged: number };
+  /** Signals shared by the brand profile and the concept's examples, without the concept's own tag. */
+  sharedSignals: { id: string; label: string }[];
+  /** Shared signals removed because they are the concept itself (a concept is not evidence for itself). */
+  tautologicalSignals: { id: string; label: string }[];
+};
+
+/**
+ * Sprint 12: how a compound research question was split into one target per distinct concept. Decided by the runtime
+ * from the gate-approved research brief; each part is investigated and reported on its own evidence.
+ */
+export type ResearchScope = {
+  originalTerritory: string;
+  /** territoryKey null: the part did not fit the run's budget and was not investigated. */
+  concepts: { name: string; territoryKey: string | null }[];
+  decidedBy: "runtime";
+  reason: string;
 };
 
 // ---- Sprint 11: research intelligence ----
@@ -206,7 +242,7 @@ export type ResearchBrief = {
 /** The approach the run actually followed and who chose it. A change only ever narrows (compare → investigate). */
 export type ResearchApproachRecord = {
   approach: ResearchApproach;
-  decidedBy: "caller" | "interpreter" | "agent" | "default";
+  decidedBy: "caller" | "interpreter" | "agent" | "default" | "runtime";
   reason: string;
   /** Present when the agent reframed the run mid-investigation. */
   reframedFrom?: ResearchApproach;
@@ -799,6 +835,10 @@ export type AgentAnalysisResult = {
   userQuery: string;
   brand: { id: string; label: string; type: string; resolution: string } | null;
   territories: AgentTerritoryResult[];
+  /** Sprint 12: one target per concept of a compound question (absent when the question named one concept). */
+  researchScope?: ResearchScope | null;
+  /** Sprint 12: the evidence-assessment/v1 projection of this result (the shared `assessResearch`), stored for consumers. */
+  evidenceAssessment?: ResearchAssessment;
   /** Versioned qualitative assessment for an explicitly requested single hypothesis. Never a commercial verdict. */
   hypothesisAssessment?: {
     version: "single-hypothesis/v1";

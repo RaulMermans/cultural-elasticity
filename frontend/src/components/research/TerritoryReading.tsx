@@ -1,7 +1,7 @@
 "use client";
 
 import { FIT_STEPS, type TerritoryReading } from "@/lib/territory-reading";
-import { DecisionCardView } from "./DecisionCard";
+import { DecisionUncertainty, EvidenceMeasurementView, NextStepsView, ResearchConclusionView, StrategicMeaningView } from "./DecisionCard";
 import { TagChip } from "./TagChip";
 
 function Chips({ title, hint, items }: { title: string; hint: string; items: string[] }) {
@@ -12,23 +12,31 @@ function Chips({ title, hint, items }: { title: string; hint: string; items: str
   </div>;
 }
 
-/** One territory's result in plain words. Everything shown is read from the deterministic result. */
+/**
+ * One territory's result in plain words. Everything shown is read from the deterministic result.
+ * Sprint 12 order: research conclusion → evidence measurement → strategic meaning → comparative result → next action →
+ * technical details. A missing comparison is stated in its own section; it never replaces the conclusion.
+ */
 export function TerritoryReadingView({ reading, brand, onMeasure, busy }: { reading: TerritoryReading; brand: string; onMeasure?: () => void; busy?: boolean }) {
-  const { fit, name } = reading;
-  return <section className="rr" data-testid="network-reading">
-    <div className="rr-hero" data-fit={fit?.code ?? "NONE"} data-testid="network-elasticity">
-      <p className="rr-eyebrow">How well does {name} fit {brand}?</p>
-      <p className="rr-verdict" data-testid="network-verdict">{fit ? fit.label : "Not measured yet"}{fit ? <span className="rr-provisional">provisional</span> : null}</p>
-      <p className="rr-meaning">{fit ? fit.meaning : `${name} hasn't been compared with other territories yet, so Qloo can't say how well it fits.`}</p>
-      {fit ? <ol className="rr-scale" aria-label="Where it sits, from natural fit to cultural break">
-        {FIT_STEPS.map((step) => <li key={step.code} data-active={fit.onScale === step.code ? "true" : undefined} aria-current={fit.onScale === step.code ? "true" : undefined}>{step.label}</li>)}
-      </ol> : null}
-      {fit && !fit.onScale ? <p className="rr-offscale">Not placed on the scale until the evidence settles.</p> : null}
-      {reading.steadiness ? <p className="rr-steady" data-steady={reading.steadiness.steady ? "true" : "false"}>{reading.steadiness.text}</p> : null}
-      {!fit && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure} data-testid="network-measure">Measure it with a Qloo comparison</button> : null}
-    </div>
+  const { fit, name, decision } = reading;
+  const conclusion = decision?.conclusion ? decision : null;
+  const comparative = <div className={conclusion ? "rr-section rr-comparative" : "rr-hero"} data-fit={fit?.code ?? "NONE"} data-testid="network-elasticity">
+    {conclusion ? <h3>Comparative result</h3> : <p className="rr-eyebrow">How well does {name} fit {brand}?</p>}
+    <p className={conclusion ? "rr-comparative__verdict" : "rr-verdict"} data-testid="network-verdict">{fit ? fit.label : conclusion ? "Not established comparatively" : "Not measured yet"}{fit ? <span className="rr-provisional">provisional</span> : null}</p>
+    <p className="rr-meaning">{fit ? fit.meaning : conclusion ? decision!.comparative.text : `${name} hasn't been compared with other territories yet, so Qloo can't say how well it fits.`}</p>
+    {fit ? <ol className="rr-scale" aria-label="Where it sits, from natural fit to cultural break">
+      {FIT_STEPS.map((step) => <li key={step.code} data-active={fit.onScale === step.code ? "true" : undefined} aria-current={fit.onScale === step.code ? "true" : undefined}>{step.label}</li>)}
+    </ol> : null}
+    {fit && !fit.onScale ? <p className="rr-offscale">Not placed on the scale until the evidence settles.</p> : null}
+    {reading.steadiness ? <p className="rr-steady" data-steady={reading.steadiness.steady ? "true" : "false"}>{reading.steadiness.text}</p> : null}
+    {!fit && onMeasure ? <button type="button" className="rw-secondary" disabled={busy} onClick={onMeasure} data-testid="network-measure">Measure it with a Qloo comparison</button> : null}
+  </div>;
 
-    {reading.decision ? <DecisionCardView card={reading.decision} /> : null}
+  return <section className="rr" data-testid="network-reading">
+    {conclusion ? <ResearchConclusionView card={conclusion} question={reading.question} /> : comparative}
+    {conclusion ? <EvidenceMeasurementView card={conclusion} /> : null}
+    {decision ? <StrategicMeaningView card={decision} /> : null}
+    {conclusion ? comparative : null}
 
     {reading.compared.length > 1 ? <div className="rr-section">
       <h3>How it ranked</h3>
@@ -40,11 +48,13 @@ export function TerritoryReadingView({ reading, brand, onMeasure, busy }: { read
       </li>)}</ol>
     </div> : null}
 
-    {reading.sharedTastes.length ? <Chips title={`Tastes it shares with ${brand}`} hint={`Signals Qloo finds both in ${brand}'s profile and in the examples for ${name}.`} items={reading.sharedTastes} /> : null}
-    {reading.closestMatches.length ? <Chips title={`Qloo's closest matches for ${brand} here`} hint={`Within ${name}, what Qloo associates most with ${brand}, in Qloo's order.`} items={reading.closestMatches} /> : null}
-    {reading.examples.length ? <Chips title="Examples that stand for it" hint={`What the agent used to represent ${name} in the comparison.`} items={reading.examples} /> : null}
+    {decision ? <NextStepsView card={decision} /> : null}
 
-    {!reading.decision && reading.unknowns.length ? <div className="rr-section">
+    {reading.sharedTastes.length ? <Chips title={`Tastes it shares with ${brand}`} hint={`Signals Qloo finds both in ${brand}'s profile and in the examples for ${name}, not counting the concept itself.`} items={reading.sharedTastes} /> : null}
+    {reading.closestMatches.length ? <Chips title={`Qloo's closest matches for ${brand} here`} hint={`Within ${name}, what Qloo associates most with ${brand}, in Qloo's order.`} items={reading.closestMatches} /> : null}
+    {reading.examples.length ? <Chips title="Examples that stand for it" hint={`What the agent used to represent ${name}.`} items={reading.examples} /> : null}
+
+    {!decision && reading.unknowns.length ? <div className="rr-section">
       <h3>What we don&apos;t know yet</h3>
       <ul className="rr-unknowns">{reading.unknowns.map((line) => <li key={line}>{line}</li>)}</ul>
     </div> : null}
@@ -59,8 +69,9 @@ export function TerritoryReadingView({ reading, brand, onMeasure, busy }: { read
       {reading.surfaced.next ? <p className="rr-hint">Next: {reading.surfaced.next}</p> : null}
     </div> : null}
 
-    {reading.technical.length || reading.concept ? <details className="rr-tech">
-      <summary>Technical notes</summary>
+    {reading.technical.length || reading.concept || decision ? <details className="rr-tech">
+      <summary>Technical details: provenance, uncertainty and method</summary>
+      {decision ? <DecisionUncertainty card={decision} /> : null}
       <ul>
         {reading.concept ? <li>Qloo concept: {reading.concept}</li> : null}
         {reading.technical.map((line) => <li key={line}>{line}</li>)}

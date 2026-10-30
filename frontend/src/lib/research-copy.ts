@@ -255,7 +255,7 @@ export const USER_POSITION_COPY = {
 } as const;
 export const hypothesisOutcomeCopy = {
   WORTH_FURTHER_INVESTIGATION: "Worth further investigation",
-  INCONCLUSIVE: "Not measured yet: needs a comparison",
+  INCONCLUSIVE: "Inconclusive: no conclusion either way yet",
   NOT_SUPPORTED_BY_CURRENT_EVIDENCE: "Not supported by current evidence",
   UNABLE_TO_COMPLETE_RESEARCH: "Research could not be completed",
 } as const;

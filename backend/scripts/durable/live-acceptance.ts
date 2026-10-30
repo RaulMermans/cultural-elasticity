@@ -36,6 +36,20 @@ export const ASSIGNMENTS = [
   { id: "L4", kind: "recovery_demonstration", intent: "analyze_move" as const, query: "Could Dyson credibly move into wellness retreats?", interrupt: true },
 ];
 
+/**
+ * Sprint 12 measurement and research-completion set (pre-registered 2026-10-30, before any Sprint 12 live result).
+ * Development diagnostics named by the sprint brief, not holdouts. Selected with `--set s12`.
+ * Expected readings are written down in docs/sprint-12/MEASUREMENT_AND_RESEARCH_COMPLETION.md §10 before the run.
+ */
+export const SPRINT12_ASSIGNMENTS = [
+  { id: "S1", kind: "established_candidate", intent: "analyze_move" as const, query: "How well does circular economy fit Vinted as a cultural territory?", interrupt: false },
+  { id: "S2", kind: "compound", intent: "analyze_move" as const, query: "Could Vinted credibly move into clothing repair and creative upcycling?", interrupt: false },
+  { id: "S3", kind: "weak_or_unsupported", intent: "analyze_move" as const, query: "Could Vinted credibly move into space tourism?", interrupt: false },
+  { id: "S4", kind: "brand_core", intent: "analyze_move" as const, query: "Is online marketplace culture a good territory for Vinted?", interrupt: false },
+  { id: "S5", kind: "adjacent_candidate", intent: "analyze_move" as const, query: "Could Diptyque credibly move into ceramics?", interrupt: false },
+  { id: "S6", kind: "adjacent_candidate", intent: "analyze_move" as const, query: "Could Dyson credibly move into wellness retreats?", interrupt: false },
+];
+
 const backend = fileURLToPath(new URL("../..", import.meta.url));
 const arg = (name: string) => {
   const i = process.argv.indexOf(name);
@@ -66,8 +80,8 @@ export function worstCase(selected: readonly { intent: keyof typeof DEFAULT_QLOO
  * `retry` (Sprint 10D) adds one more attempt of an assignment, right after it, as `<id>#retry`. It is for an attempt
  * lost to an infrastructure failure; both attempts stay in the record.
  */
-export function selectAssignments(only: readonly string[] | undefined, retry: readonly string[] = []) {
-  return ASSIGNMENTS.filter((a) => !only || only.includes(a.id)).flatMap((a) => (retry.includes(a.id) ? [a, { ...a, id: `${a.id}#retry` }] : [a]));
+export function selectAssignments(only: readonly string[] | undefined, retry: readonly string[] = [], set: string | undefined = undefined) {
+  return (set === "s12" ? SPRINT12_ASSIGNMENTS : ASSIGNMENTS).filter((a) => !only || only.includes(a.id)).flatMap((a) => (retry.includes(a.id) ? [a, { ...a, id: `${a.id}#retry` }] : [a]));
 }
 
 function readKeys(file: string): { QLOO_API_KEY: string; ANTHROPIC_API_KEY: string } {
@@ -78,7 +92,7 @@ function readKeys(file: string): { QLOO_API_KEY: string; ANTHROPIC_API_KEY: stri
 
 async function main(): Promise<number> {
   const only = arg("--only")?.split(",");
-  const selected = selectAssignments(only, arg("--retry")?.split(","));
+  const selected = selectAssignments(only, arg("--retry")?.split(","), arg("--set"));
   if (selected.length === 0) {
     console.error("NO_ASSIGNMENT_SELECTED");
     return 2;

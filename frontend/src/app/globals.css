@@ -1102,6 +1102,15 @@ body:not(:has(.atlas)) .sprint { margin-bottom: 0; opacity: 0.7; }
 .rr-decision li { font-size: 0.92rem; margin-bottom: 0.25rem; overflow-wrap: anywhere; }
 .rr-decision__finding { margin: 0 0 0.25rem; font-weight: 600; overflow-wrap: anywhere; }
 .rr-decision__implication { margin: 0; font-size: 0.92rem; }
+/* Sprint 12: research conclusion first, comparative result as its own section. */
+.rr-conclusion[data-outcome="ESTABLISHED_ASSOCIATION"] { background: linear-gradient(145deg, #eaf4ec, #dcecdf); border-color: #b9d4bf; }
+.rr-conclusion[data-outcome="OBSERVED_ASSOCIATION"] { background: linear-gradient(145deg, #fbf1dc, #f5e3bd); border-color: #e6c98a; }
+.rr-conclusion[data-outcome="NO_SUPPORT_IN_TESTED_SCOPE"], .rr-conclusion[data-outcome="CONCEPT_NOT_REPRESENTED"], .rr-conclusion[data-outcome="INCOMPLETE"] { background: repeating-linear-gradient(135deg, #f5f1ea, #f5f1ea 10px, #efe9df 10px, #efe9df 20px); border-color: #d8cdbb; }
+.rr-conclusion .rr-verdict { font-size: 1.6rem; }
+.rr-comparative { border: 1px solid var(--ce-line); border-radius: 12px; padding: var(--ce-space-3); background: var(--ce-paper); }
+.rr-comparative__verdict { margin: 0.1rem 0 0.3rem; font-family: var(--ce-serif); font-size: 1.25rem; color: var(--ce-ink); }
+.rr-coverage li[data-status="NOT_COVERED"], .rr-coverage li[data-status="RELATED_ONLY"] { color: var(--ce-ink-soft); }
+.rr-tech > ul[data-testid="decision-uncertain"] { margin-top: var(--ce-space-2); font-size: 0.8rem; color: var(--ce-muted); }
 .rn-modes p { margin: 0 0 var(--ce-space-2); font-size: 0.88rem; line-height: 1.4; }
 .rn-tie path { fill: none; stroke: #8a6bb0; stroke-width: 1.6; stroke-dasharray: 0.012 0.012; opacity: 0.55; animation: rn-flow 2.4s linear infinite; }
 .rn-tie circle { fill: #f3edf9; stroke: #8a6bb0; stroke-width: 1.2; }

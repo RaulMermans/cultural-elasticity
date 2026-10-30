@@ -10,7 +10,7 @@
  */
 import { brandCoreTag, brandIntelligenceBrief, policyOf, researchLimitations, withoutComparison } from "./research-intelligence.js";
 import { comparativeRun, finalFeasibility } from "./feasibility.js";
-import { AGENT_RESULT_SCHEMA_VERSION, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type ConceptRelation, type Limitation } from "@cultural-elasticity/shared";
+import { AGENT_RESULT_SCHEMA_VERSION, assessResearch, type AgentAnalysisResult, type AgentMetrics, type AgentNeedsInputResponse, type AgentResultLayers, type AgentTerritoryResult, type ConceptRelation, type Limitation } from "@cultural-elasticity/shared";
 import { reconcileLatency } from "../ops/latency.js";
 import { recorderOf, reconcileSpanCoverage } from "../ops/spans.js";
 import { priceUsd } from "../ops/pricing.js";
@@ -22,6 +22,7 @@ import { categorize, validateClaims, validateConceptFraming, validateFindings, v
 import { synthesisSchema, type Synthesis } from "./contracts.js";
 import { assessEvidenceSufficiency } from "./evidence-sufficiency.js";
 import { assessSingleHypothesis } from "./hypothesis-assessment.js";
+import { directEvidenceFacts } from "./direct-evidence.js";
 import type { AgentModel, FinalizationContext } from "./model/provider.js";
 import { synthesisTerritoryView } from "./prompts.js";
 import type { AgentRunState } from "./state.js";
@@ -264,6 +265,8 @@ export function allResults(state: AgentRunState): AgentTerritoryResult[] {
       // Sprint 5A.1 (additive): canonical identity, UI evidence status and the probes behind the route.
       const probes = probeViews(state, t);
       const base: AgentTerritoryResult = { ...r, candidate: candidateCanonicalization(state, t), evidenceStatus: evidenceStatus(r), ...(probes.length > 0 && { probes }) };
+      // Sprint 12: direct brand × concept observations for every target (facts only; the shared assessment reads them).
+      if (t.role === "target") base.directEvidence = directEvidenceFacts(state, t, r);
       if (policyOf(state) !== "v1") return base;
       // Sprint 11: the agent's concept judgment and the brand-core check qualify the result; no number changes.
       const core = t.role === "target" && r.resolvedConcept ? brandCoreTag(state, r.resolvedConcept.id) : null;
@@ -387,6 +390,9 @@ export async function finalize(state: AgentRunState, model: AgentModel, options:
       insights: synthesis ? final.insights.map((i) => ({ ...i })) : [],
     }),
   };
+  if (state.researchScope) result.researchScope = state.researchScope;
+  // Sprint 12: the direct evidence assessment, stored so every consumer reads the same projection.
+  result.evidenceAssessment = assessResearch(result);
   result.failureCategory = classifyRunFailure(result);
   return result;
 }

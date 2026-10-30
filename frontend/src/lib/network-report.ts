@@ -44,7 +44,6 @@ export function reportFileName(brand: string, date: Date, extension: "html" | "p
 /** The latest reading for each territory card: its own result, or a later question that grew from it about it. */
 function cardReadings(nodes: readonly NetworkNode[], inquiries: readonly Inquiry[], brand: string, view: ResearchView): CardReading[] {
   const byJob = new Map(inquiries.map((item) => [item.jobId, item]));
-  const otherDirections = view.directions.map((item) => item.name);
   const out: CardReading[] = [];
   for (const card of nodes) {
     if (card.kind !== "direction" && card.kind !== "finding") continue;
@@ -61,7 +60,7 @@ function cardReadings(nodes: readonly NetworkNode[], inquiries: readonly Inquiry
     }
     // Sprint 9O: the same decision-card context as the card's live dossier (ResearchNetwork), so the export prints its card.
     const direction = card.kind === "direction" ? view.directions.find((item) => item.key === card.directionKey) : undefined;
-    const context = direction ? { directionWhy: direction.why, otherDirections } : { otherDirections };
+    const context = direction ? { directionWhy: direction.why } : {};
     const latest = candidates
       .map((item) => ({ ...item, reading: territoryReading(item.response.investigation?.result, item.key, brand, context), items: territoryItems(item.response.investigation?.result, item.key)?.items ?? [] }))
       .filter((item): item is typeof item & { reading: TerritoryReading } => item.reading !== null)
@@ -140,10 +139,25 @@ export function networkPatterns(readings: readonly CardReading[], inquiries: rea
   return blocks;
 }
 
+/** Sprint 12: the card's evidence measurement and strategic interpretation, as report bullets (same text as the dossier). */
+function decisionEvidenceLines(card: NonNullable<TerritoryReading["decision"]>): string[] {
+  return [
+    ...card.evidence.observed.map((line) => `Observed: ${line}`),
+    ...(card.evidence.coverage.length > 1 || card.evidence.coverage.some((item) => item.status !== "COVERED") ? card.evidence.coverage.map((item) => `Coverage: ${item.concept}: ${item.note}`) : []),
+    ...card.evidence.limitations.map((line) => `Limit: ${line}`),
+    ...card.evidence.missing.map((line) => `Would change the answer: ${line}`),
+    `Comparative result: ${card.comparative.text}`,
+    ...card.whyInteresting.map((line) => `Why it matters: ${line}`),
+    ...(card.interpretations ?? []).map((item) => `Interpretation (reasoning, not evidence): ${item.interpretation} Implication: ${item.implication} Could be wrong if: ${item.counterpoint}`),
+  ];
+}
+
 function readingLine(item: CardReading): string {
   const { reading } = item;
   const rank = reading.compared.find((entry) => entry.current);
-  const parts = [reading.fit ? reading.fit.label : "Not measured yet"];
+  // Sprint 12: the research conclusion leads; the comparative result follows it (the same order as the live dossier).
+  const head = reading.decision?.conclusion?.label;
+  const parts = head ? [head, reading.fit ? `comparative: ${reading.fit.label.toLowerCase()}` : "fit not established comparatively"] : [reading.fit ? reading.fit.label : "Not measured yet"];
   if (rank && reading.compared.length > 1) parts.push(`ranked ${rank.position} of ${reading.compared.length} among ${list(reading.compared.map((entry) => entry.name))}`);
   if (reading.steadiness) parts.push(reading.steadiness.steady ? "steady across example sets" : "could change with other examples");
   return parts.join(" · ");
@@ -179,7 +193,14 @@ export function buildNetworkReport(input: { view: ResearchView; nodes: readonly 
   }
   if (solid.length) summary.push(`On the most solid footing: ${list(solid.map((item) => `${item.card.label} (${item.reading.fit!.label.toLowerCase()}, steady)`))}.`);
   if (unsettled.length) summary.push(`${list(unsettled)} ${unsettled.length === 1 ? "changes" : "change"} with the examples chosen, so ${unsettled.length === 1 ? "it needs" : "they need"} a wider comparison before any conclusion.`);
-  if (unmeasured.length) summary.push(`Read but not yet measured: ${list(unmeasured.slice(0, 6))}${unmeasured.length > 6 ? ` and ${unmeasured.length - 6} more` : ""}. Comparing ${unmeasured.length === 1 ? "it" : "them"} with named territories would measure fit.`);
+  // Sprint 12: every investigated territory has a research conclusion from its direct evidence, compared or not.
+  const concluded = readings.filter((item) => item.reading.decision?.conclusion);
+  if (concluded.length) {
+    const groups = new Map<string, string[]>();
+    for (const item of concluded) groups.set(item.reading.decision!.conclusion!.label, [...(groups.get(item.reading.decision!.conclusion!.label) ?? []), item.card.label]);
+    summary.push(`Research conclusions from direct Qloo evidence: ${list([...groups.entries()].map(([label, names]) => `${label.toLowerCase()} (${list(names)})`))}.`);
+  }
+  if (unmeasured.length) summary.push(`Fit not established comparatively: ${list(unmeasured.slice(0, 6))}${unmeasured.length > 6 ? ` and ${unmeasured.length - 6} more` : ""}.`);
   if (links.length) {
     const top = links[0]!;
     summary.push(`${plural(links.length, "connection")} ${links.length === 1 ? "links" : "link"} different branches through the same Qloo signals; the widest is ${byId.get(top.a)?.label ?? "?"} × ${byId.get(top.b)?.label ?? "?"} (${plural(top.shared.length, "shared signal")}).`);
@@ -219,9 +240,11 @@ export function buildNetworkReport(input: { view: ResearchView; nodes: readonly 
       blocks: readings.map((item) => ({
         heading: item.card.label,
         meta: readingLine(item),
-        text: item.reading.fit ? item.reading.fit.meaning : `${item.card.label} has not been compared with other territories yet.`,
+        text: item.reading.decision?.conclusion?.text ?? (item.reading.fit ? item.reading.fit.meaning : `${item.card.label} has not been compared with other territories yet.`),
         bullets: [
-          ...(item.reading.decision ? [`Implication: ${item.reading.decision.implication.label}. ${item.reading.decision.implication.text}`, ...item.reading.decision.nextActions.map((action) => `Next: ${action.text}`)] : []),
+          ...(item.reading.decision ? [`Implication: ${item.reading.decision.implication.label}. ${item.reading.decision.implication.text}`] : []),
+          ...(item.reading.decision ? decisionEvidenceLines(item.reading.decision) : []),
+          ...(item.reading.decision ? item.reading.decision.nextActions.map((action) => `Next: ${action.text}`) : []),
           ...(item.reading.sharedTastes.length ? [`Tastes shared with ${brand}: ${item.reading.sharedTastes.slice(0, 6).join(", ")}`] : []),
           ...(item.reading.closestMatches.length ? [`Qloo's closest matches for ${brand} here: ${item.reading.closestMatches.slice(0, 6).join(", ")}`] : []),
           ...(item.reading.examples.length ? [`Examples standing for it: ${item.reading.examples.slice(0, 6).join(", ")}`] : []),
@@ -256,7 +279,8 @@ export function buildNetworkReport(input: { view: ResearchView; nodes: readonly 
       const b = byId.get(link.b)?.label;
       return a && b ? connectionQuestions(brand, a, b, link.shared).map((item) => item.question) : [];
     }),
-    ...unmeasured.map((name) => `Compare ${name} with `),
+    // Sprint 12: each card's own research-question-aware actions, never an open-ended comparison of every unmeasured territory.
+    ...readings.flatMap((item) => (item.reading.decision?.nextActions ?? []).flatMap((action) => (action.question ? [action.question] : []))),
     ...finished.flatMap((item) => { const result = item.response!.investigation!.result; return result && result.status !== "NEEDS_INPUT" ? result.followUpOptions : []; }),
   ].filter((question) => !asked.has(normName(question)));
   const unique = [...new Set(next)].map((question) => question.endsWith(" ") ? `${question.trim()} territories you name` : question).slice(0, 8);

@@ -3,7 +3,7 @@
  * them. An edge means "investigated from". Position on the canvas is lineage only; it never encodes affinity,
  * distance, confidence, elasticity or a recommendation. Every status here is read from a validated server response.
  */
-import type { AgentRunResponse, QueryResponse } from "@cultural-elasticity/shared";
+import { researchAssessmentOf, type AgentAnalysisResult, type AgentRunResponse, type EvidenceOutcome, type QueryResponse } from "@cultural-elasticity/shared";
 import { runCopy, territoryCopy, type AtlasTone, type Point } from "../components/atlas/atlas-model.ts";
 import type { JobActivity } from "./job-envelope.ts";
 import type { DirectionView } from "./research-view.ts";
@@ -94,10 +94,27 @@ export function branchDirection(nodes: readonly NetworkNode[], id: string): Netw
 
 const ASSESSMENT_TONE: Record<string, { tone: AtlasTone; status: string }> = {
   WORTH_FURTHER_INVESTIGATION: { tone: "supported", status: "Worth pursuing" },
-  INCONCLUSIVE: { tone: "partial", status: "Not measured yet" },
+  INCONCLUSIVE: { tone: "partial", status: "Inconclusive" },
   NOT_SUPPORTED_BY_CURRENT_EVIDENCE: { tone: "unsupported", status: "Not supported" },
   UNABLE_TO_COMPLETE_RESEARCH: { tone: "incomplete", status: "Could not complete" },
 };
+
+/** Sprint 12: the card status of a completed investigation is its research conclusion (evidence-assessment/v1). */
+const OUTCOME_TONE: Record<EvidenceOutcome, AtlasTone> = {
+  ESTABLISHED_ASSOCIATION: "supported",
+  OBSERVED_ASSOCIATION: "supported",
+  LIMITED_EVIDENCE: "partial",
+  NO_SUPPORT_IN_TESTED_SCOPE: "unsupported",
+  CONCEPT_NOT_REPRESENTED: "unsupported",
+  INCOMPLETE: "incomplete",
+};
+
+function conclusionState(result: AgentAnalysisResult): { tone: AtlasTone; status: string } | null {
+  if (result.status === "FAILED" || !Array.isArray(result.territories) || !result.territories.some((t) => t.role === "target")) return null;
+  const assessed = researchAssessmentOf(result).territories;
+  if (assessed.length === 1) return { tone: OUTCOME_TONE[assessed[0]!.outcome], status: assessed[0]!.label };
+  return { tone: assessed.some((a) => a.outcome === "ESTABLISHED_ASSOCIATION" || a.outcome === "OBSERVED_ASSOCIATION") ? "supported" : "partial", status: `${assessed.length} concepts assessed` };
+}
 
 /**
  * Sprint 9L: the follow-up that can turn an unmeasured reading into a measured one. Elasticity is only measured by a
@@ -111,8 +128,10 @@ export function measureQuestion(brand: string, target: string, result: AgentRunR
   const done = result && result.status !== "NEEDS_INPUT" ? result : null;
   const compared = Boolean(done && (done.territories.some((territory) => territory.role === "reference") || done.comparisonFeasibility?.repeat === "LIKELY_REPEATS"));
   if (!compared) return `How far can ${brand} extend into ${target}?`;
-  const others = [...new Map(directions.filter((name) => normName(name) !== normName(target)).map((name) => [normName(name), name])).values()];
-  return others.length >= 2 ? `Compare ${target} with ${others[0]} and ${others[1]}` : null;
+  // Sprint 12: once a comparison was tried, the brand's other directions are not offered as references: they were never
+  // checked as meaningful alternatives to this question (the decision card names the evidence-based next step instead).
+  void directions;
+  return null;
 }
 
 /** The state of one inquiry, from its job and validated response only. */
@@ -132,7 +151,10 @@ export function inquiryState(inquiry: Inquiry): { tone: AtlasTone; status: strin
     return { tone: "unsupported", status: "Not run" };
   }
   const result = response.investigation?.result;
-  const assessment = result && result.status !== "NEEDS_INPUT" ? result.hypothesisAssessment : undefined;
+  const done = result && result.status !== "NEEDS_INPUT" ? result : undefined;
+  const concluded = done ? conclusionState(done) : null;
+  if (concluded) return concluded;
+  const assessment = done?.hypothesisAssessment;
   if (assessment) return ASSESSMENT_TONE[assessment.outcome] ?? { tone: "idle", status: "Investigated" };
   const copy = runCopy(response);
   return { tone: copy.tone, status: copy.statusLabel };
