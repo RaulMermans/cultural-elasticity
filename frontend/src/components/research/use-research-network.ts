@@ -59,9 +59,13 @@ export function useResearchNetwork({ scanId, brand, scanToken, onAttempt }: { sc
       const response = await fetch(`/api/agent/jobs/${encodeURIComponent(inquiry.jobId)}`, { headers: { "x-job-token": inquiry.token }, cache: "no-store" });
       if (response.status === 404) { update(inquiry.jobId, (item) => ({ ...item, lost: true })); return; }
       const parsed = parseJobEnvelope(await readJson(response));
-      if (response.ok && parsed.ok) update(inquiry.jobId, (item) => merge(item, parsed.job));
+      if (response.ok && parsed.ok) {
+        update(inquiry.jobId, (item) => merge(item, parsed.job));
+        // Hotfix: a settled question may have returned its investigation unit; re-read the allowance (free).
+        if (isPending(inquiry) && !["queued", "running"].includes(parsed.job.status)) onAttempt?.();
+      }
     } catch { /* A missed poll is retried on the next tick. */ }
-  }, [update]);
+  }, [update, onAttempt]);
 
   // The interval follows the set of pending jobs, not every status change; it reads the latest list through a ref.
   const latest = useRef(inquiries);

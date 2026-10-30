@@ -171,6 +171,16 @@ export type QueryTelemetry = {
   queryHash: string;
 };
 
+/**
+ * Hotfix (P0): whether a query response started a NEW agent investigation (the only outcome a public investigation
+ * unit pays for). Unsupported, clarification, interpretation failure and returning to an existing run start none.
+ * Unknown (no response) counts as started, so doubt keeps the unit.
+ */
+export function startedNewInvestigation(response: Pick<QueryResponse, "investigation"> | null | undefined): boolean {
+  if (!response) return true;
+  return response.investigation !== null && !response.investigation.reused;
+}
+
 export type QueryResponse = {
   schemaVersion: typeof QUERY_SCHEMA_VERSION;
   queryId: string;

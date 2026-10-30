@@ -2,7 +2,7 @@ import { publicEvaluationExpiry, publicEvaluationQuota } from "../config/product
 import { networkKeyOf, verifyPaidOperator } from "./identity.js";
 import { runLedger } from "./run-ledger.js";
 
-export type PublicQuotaKind = "resolve" | "scan" | "investigation";
+export type PublicQuotaKind = "resolve" | "scan" | "investigation" | "question";
 export type PublicQuotaDecision =
   | { ok: true }
   | { ok: false; status: 403 | 429 | 503; error: "visitor_unattributed" | "visitor_quota_reached" | "quota_unavailable"; message: string };
@@ -10,7 +10,8 @@ export type PublicQuotaDecision =
 /**
  * Sprint 9M: durable per-network quotas for callers admitted by a public evaluation. An operator (or a private
  * process) is not quota-limited here; it remains bound by the run-wide ceilings. A unit is taken before the
- * paid work starts and is never returned, so a refused or failed start still counts. Any doubt refuses.
+ * paid work starts, so a failed start still counts. Any doubt refuses. Hotfix (P0): an investigation unit is returned
+ * by `returnPublicQuota` only when nothing paid started, or when the committed answer started no investigation.
  */
 export async function takePublicQuota(headers: Record<string, unknown>, kind: PublicQuotaKind, env: NodeJS.ProcessEnv = process.env): Promise<PublicQuotaDecision> {
   const decision = verifyPaidOperator(headers, env);
@@ -22,7 +23,7 @@ export async function takePublicQuota(headers: Record<string, unknown>, kind: Pu
   if (taken.ok) return { ok: true };
   if (taken.code === "limit_reached") {
     const limit = publicEvaluationQuota(kind, env);
-    const [one, many] = { investigation: ["investigation", "investigations"], scan: ["brand research run", "brand research runs"], resolve: ["brand search", "brand searches"] }[kind];
+    const [one, many] = { investigation: ["investigation", "investigations"], scan: ["brand research run", "brand research runs"], resolve: ["brand search", "brand searches"], question: ["question", "questions"] }[kind];
     const expiry = publicEvaluationExpiry(env);
     const until = expiry === null ? "" : `, which runs until ${formatEvaluationEnd(expiry)}`;
     return { ok: false, status: 429, error: "visitor_quota_reached", message: `This network has used its allowance of ${limit} ${limit === 1 ? one : many} for this evaluation${until}. Saved research and the recorded example remain available.` };

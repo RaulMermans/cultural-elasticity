@@ -202,7 +202,9 @@ function harness(env: Record<string, string>) {
 }
 
 describe("SYNTHETIC public evaluation through the HTTP API", () => {
-  const payload = { query: "Where could Northwind Atelier expand?" };
+  // A request that starts an investigation (structured brand and territory). P0 hotfix: a question that starts none,
+  // such as a clarification, returns its investigation unit, so it cannot exercise the quota.
+  const payload = { query: "Could Northwind Atelier move into boutique stays?", brand: "Northwind Atelier", territories: ["Boutique Stays"] };
 
   it("an anonymous visitor starts research without an operator cookie, until their network quota is spent", async () => {
     const h = harness({ CE_PUBLIC_QUOTA_INVESTIGATIONS: "1" });

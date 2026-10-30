@@ -17,7 +17,7 @@
  */
 import type { TerritoryGrounding } from "../state.js";
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
-import type { AgentRunResponse, AgentTrace, DiscoverySeed, QueryResponse } from "@cultural-elasticity/shared";
+import { startedNewInvestigation, type AgentRunResponse, type AgentTrace, type DiscoverySeed, type QueryResponse } from "@cultural-elasticity/shared";
 import { jobActivity, type JobActivity } from "./activity.js";
 import { AgentInputError, AgentNotConfiguredError, RunNotFoundError, RunNotWaitingError } from "../errors.js";
 import { fixedSpendBound, type SpendBound } from "../../ops/spend.js";
@@ -847,6 +847,8 @@ export class JobManager {
       durationMs: now - job.createdAt,
       abortReason: job.abortReason,
       usage,
+      // Hotfix (P0): read by the API to return a public investigation unit when no investigation started.
+      startedInvestigation: status === "completed" ? startedNewInvestigation(job.response) : true,
     });
   }
 

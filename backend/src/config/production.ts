@@ -86,9 +86,16 @@ export function publicEvaluationActive(env: NodeJS.ProcessEnv = process.env, now
 }
 
 /** Durable quotas per visitor network during a public evaluation. Defaults are deliberately small. */
-export function publicEvaluationQuota(kind: "resolve" | "scan" | "investigation", env: NodeJS.ProcessEnv = process.env): number {
+export function publicEvaluationQuota(kind: "resolve" | "scan" | "investigation" | "question", env: NodeJS.ProcessEnv = process.env): number {
+  // Hotfix: a question is one bounded Haiku interpretation. It is never returned, so returning the investigation unit
+  // of a question that started no investigation cannot become unlimited free model calls. Default: 3 per investigation.
+  if (kind === "question") return quotaValue(env.CE_PUBLIC_QUOTA_QUESTIONS, 3 * publicEvaluationQuota("investigation", env));
   const raw = { resolve: env.CE_PUBLIC_QUOTA_RESOLVES, scan: env.CE_PUBLIC_QUOTA_SCANS, investigation: env.CE_PUBLIC_QUOTA_INVESTIGATIONS }[kind];
   const fallback = { resolve: 10, scan: 4, investigation: 4 }[kind];
+  return quotaValue(raw, fallback);
+}
+
+function quotaValue(raw: string | undefined, fallback: number): number {
   if (raw === undefined || raw.trim() === "") return fallback;
   const parsed = Number(raw);
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : 0;

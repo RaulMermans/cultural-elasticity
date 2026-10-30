@@ -89,6 +89,23 @@ test("SYNTHETIC investigating a direction attaches the agent's validated result 
   expect((calls.questions.at(-1) as { query: string }).query).toBe("How far can Larkspur Velo extend into Slow Touring?");
 });
 
+test("SYNTHETIC an unsupported question is not an investigation: it says no credit was used and re-reads the allowance", async ({ page }) => {
+  let statusReads = 0;
+  await stubLive(page, fixture.baseline, () => { statusReads += 1; return { enabled: true, semantics: "baseline_admission_only" }; });
+  // SYNTHETIC: the gate's answer to a bridge question (no investigation was started).
+  const base = fixture.parent.view as { response: Record<string, unknown> & { interpretation: Record<string, unknown> } };
+  const unsupported = { ...base, status: "completed", response: { ...base.response, state: "UNSUPPORTED_OPERATION", investigation: null, territories: [], reasons: [{ code: "UNSUPPORTED_OPERATION", detail: "bridge_builder is recognized but not implemented" }], interpretation: { ...base.response.interpretation, primaryIntent: "bridge_builder", unsupportedCapabilities: ["bridge_builder"] } } };
+  await page.route("**/api/agent/jobs/*", (route) => json(route, unsupported));
+  await startLarkspur(page);
+  const before = statusReads;
+  await page.getByLabel(/Ask a research question about/u).fill("What connects Larkspur Velo with Syn Artist?");
+  await page.getByRole("button", { name: "Ask the agent" }).click();
+  await expect(page.getByTestId("inquiry-no-credit")).toContainText("used no investigation credit");
+  await expect(page.getByTestId("network-dossier")).not.toContainText("Investigated");
+  // Once at the start and once when the answer settles.
+  await expect.poll(() => statusReads - before).toBeGreaterThanOrEqual(2);
+});
+
 test("SYNTHETIC a question from the composer names the brand; a follow-up carries only its run context", async ({ page }) => {
   const calls = await stubLive(page);
   await startLarkspur(page);

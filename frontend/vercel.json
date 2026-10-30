@@ -7,6 +7,7 @@
       "sprint/11-research-intelligence": false,
       "sprint/12-measurement-research-completion": false,
       "hotfix/sprint-12-durable-facts": false,
+      "hotfix/quota-free-unsupported-questions": false,
       "hotfix/public-quota-limits": false
     }
   }
