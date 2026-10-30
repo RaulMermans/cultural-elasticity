@@ -34,7 +34,7 @@ function merge(inquiry: Inquiry, view: JobEnvelope): Inquiry {
   return { ...inquiry, status: view.status, stageLabel: view.stageLabel, response: parsed?.ok ? parsed.response : inquiry.response, activity: view.activity.length ? view.activity : inquiry.activity ?? [] };
 }
 
-export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: string; brand: string; scanToken: string | null }) {
+export function useResearchNetwork({ scanId, brand, scanToken, onAttempt }: { scanId: string; brand: string; scanToken: string | null; onAttempt?: () => void }) {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
@@ -93,8 +93,10 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
       const response = await fetch(url, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body) });
       const payload = await readJson(response);
       const parsed = parseJobEnvelope(payload);
+      // A start or a refusal may change what this visitor can still start: re-read it (free).
+      onAttempt?.();
       if (!response.ok || !parsed.ok || !parsed.job.accessToken) {
-        setNotice(response.status === 503 ? "Live investigations are paused right now." : publicFailure(response.status, payload));
+        setNotice(publicFailure(response.status, payload));
         return null;
       }
       const next = merge({ jobId: parsed.job.jobId, token: parsed.job.accessToken, ...inquiry, status: parsed.job.status, stageLabel: parsed.job.stageLabel, response: null, lost: false, createdAt: replaces?.createdAt ?? Date.now() }, parsed.job);
@@ -111,7 +113,7 @@ export function useResearchNetwork({ scanId, brand, scanToken }: { scanId: strin
     } finally {
       setStarting(false);
     }
-  }, [starting]);
+  }, [starting, onAttempt]);
 
   /** Deep investigation of a baseline direction. The server rereads the scan; the browser sends identifiers only. */
   const investigateDirection = useCallback((directionId: string, directionName: string, parentId: string) => {

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { parseAdmission, type AdmissionStatus } from "@/lib/admissions";
-import { availabilityCopy, scanStatusCopy, stageCopy } from "@/lib/research-copy";
+import { availabilityCopy, investigationBlockCopy, scanStatusCopy, stageCopy } from "@/lib/research-copy";
 import { HOME, SESSION_RESEARCH, parseRoute, routeQuery, type Route } from "@/lib/research-route";
 import { AtlasApp } from "../atlas/AtlasApp";
 import { AtlasShell } from "../atlas/AtlasShell";
@@ -47,7 +47,10 @@ export function ResearchApp({ initialRoute }: { initialRoute: Route }) {
     return <AtlasApp nav={nav} initialQuery={route.ask} />;
   }
 
-  const deepResearch = admissions === "accepting" && route.research === SESSION_RESEARCH && Boolean(research.scanToken) ? "available" : "unavailable";
+  // Hotfix: a known refusal for this caller (allowance used, budget spent) turns the live controls off; the server still decides.
+  const blockedReason = investigationBlockCopy(research.eligibility?.investigations ?? null);
+  const liveAsk = admissions === "accepting" && !blockedReason;
+  const deepResearch = liveAsk && route.research === SESSION_RESEARCH && Boolean(research.scanToken) ? "available" : "unavailable";
   const result = route.research === SESSION_RESEARCH ? research.scan?.result ?? null : null;
 
   let body;
@@ -55,6 +58,7 @@ export function ResearchApp({ initialRoute }: { initialRoute: Route }) {
     body = (
       <BrandDiscovery
         availability={research.availability}
+        allowance={research.eligibility?.allowance ?? null}
         resolution={research.resolution}
         busy={research.busy}
         error={research.error}
@@ -73,8 +77,10 @@ export function ResearchApp({ initialRoute }: { initialRoute: Route }) {
         key={result.scanId}
         result={result}
         scanToken={route.research === SESSION_RESEARCH ? research.scanToken : null}
-        canAsk={admissions === "accepting"}
+        canAsk={liveAsk}
         canInvestigate={deepResearch === "available"}
+        blockedReason={blockedReason}
+        onAttempt={() => void research.refreshStatus()}
         onHome={() => navigate(HOME)}
         onBack={() => { if (window.history.length > 1) window.history.back(); else navigate(HOME); }}
       />

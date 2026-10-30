@@ -3,7 +3,8 @@
   "git": {
     "deploymentEnabled": {
       "sprint/9d-agentic-cultural-intelligence": false,
-      "sprint/10d-final-research-intelligence": false
+      "sprint/10d-final-research-intelligence": false,
+      "hotfix/public-quota-limits": false
     }
   }
 }

@@ -124,7 +124,67 @@ export function tagRoleCopy(role: string | undefined): string {
   return role && ROLE[role] ? ROLE[role] : "Cultural tag";
 }
 
-export type BrandResearchAvailability = "checking" | "available" | "paused" | "unavailable";
+export type BrandResearchAvailability = "checking" | "available" | "paused" | "unavailable" | "allowance_used" | "budget_exhausted";
+
+/** Hotfix: the backend's per-caller eligibility (`/api/brands/status` `research`). A display hint; the server decides. */
+export type Eligibility = "available" | "admissions_paused" | "operator_required" | "budget_exhausted" | "visitor_allowance_used" | "unknown";
+export type QuotaUse = { used: number; limit: number };
+export type VisitorAllowance = { endsAt: string; searches: QuotaUse; scans: QuotaUse; investigations: QuotaUse };
+export type ResearchEligibility = { newBrandResearch: Eligibility; investigations: Eligibility; allowance: VisitorAllowance | null };
+
+const ELIGIBILITY = new Set<Eligibility>(["available", "admissions_paused", "operator_required", "budget_exhausted", "visitor_allowance_used", "unknown"]);
+
+export function parseResearchEligibility(value: unknown): ResearchEligibility | null {
+  const body = value && typeof value === "object" ? value as Record<string, unknown> : null;
+  if (!body || !ELIGIBILITY.has(body.newBrandResearch as Eligibility) || !ELIGIBILITY.has(body.investigations as Eligibility)) return null;
+  return { newBrandResearch: body.newBrandResearch as Eligibility, investigations: body.investigations as Eligibility, allowance: parseAllowance(body.allowance) };
+}
+
+function parseAllowance(value: unknown): VisitorAllowance | null {
+  const body = value && typeof value === "object" ? value as Record<string, unknown> : null;
+  const use = (item: unknown): QuotaUse | null => {
+    const row = item && typeof item === "object" ? item as Record<string, unknown> : null;
+    return row && Number.isInteger(row.used) && Number.isInteger(row.limit) && (row.used as number) >= 0 && (row.limit as number) >= 0 ? { used: row.used as number, limit: row.limit as number } : null;
+  };
+  if (!body || typeof body.endsAt !== "string" || !Number.isFinite(Date.parse(body.endsAt))) return null;
+  const searches = use(body.searches), scans = use(body.scans), investigations = use(body.investigations);
+  return searches && scans && investigations ? { endsAt: body.endsAt, searches, scans, investigations } : null;
+}
+
+/** Status body → homepage availability. Only a known refusal changes "available"; an unknown state never disables. */
+export function availabilityFromStatus(body: Record<string, unknown> | null, ok: boolean): BrandResearchAvailability {
+  if (!ok || !body) return "unavailable";
+  if (body.enabled !== true) return "paused";
+  const research = parseResearchEligibility(body.research);
+  if (research?.newBrandResearch === "visitor_allowance_used") return "allowance_used";
+  if (research?.newBrandResearch === "budget_exhausted") return "budget_exhausted";
+  if (research?.newBrandResearch === "admissions_paused" || research?.newBrandResearch === "operator_required") return "paused";
+  return "available";
+}
+
+/** Why live investigations can't start for this caller, or null when they can (or it isn't known). */
+export function investigationBlockCopy(eligibility: Eligibility | null): string | null {
+  switch (eligibility) {
+    case "visitor_allowance_used": return "This network has used its investigation allowance for this evaluation. Saved research and the recorded examples still open.";
+    case "budget_exhausted": return "The shared research budget for this evaluation has been used, so new investigations can't start. Saved research and the recorded examples still open.";
+    case "admissions_paused": return "New investigations are paused right now. Saved research still opens.";
+    case "operator_required": return "Live investigations are restricted to an authorized research operator.";
+    default: return null;
+  }
+}
+
+/** "8 of 12 investigations left": only the caller's own network numbers. Fixed to UTC. */
+export function allowanceCopy(allowance: VisitorAllowance): string {
+  const left = (use: QuotaUse, one: string, many: string) => `${Math.max(0, use.limit - use.used)} of ${use.limit} ${use.limit === 1 ? one : many}`;
+  return `Public evaluation allowance for this network: ${left(allowance.scans, "brand research run", "brand research runs")}, ${left(allowance.investigations, "investigation", "investigations")} and ${left(allowance.searches, "brand search", "brand searches")} left, until ${formatUtc(allowance.endsAt)}. Opening saved research and the recorded examples doesn't count.`;
+}
+
+function formatUtc(iso: string): string {
+  const d = new Date(iso);
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getUTCDate()} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
+}
 
 export function availabilityCopy(status: BrandResearchAvailability): { label: string; detail: string } {
   switch (status) {
@@ -134,6 +194,10 @@ export function availabilityCopy(status: BrandResearchAvailability): { label: st
       return { label: "New research is temporarily unavailable.", detail: "The research service is connected, but it is not accepting new brand research right now. Research in your library still opens." };
     case "unavailable":
       return { label: "The research service can't be reached right now.", detail: "New research can't start. Research in your library still opens." };
+    case "allowance_used":
+      return { label: "This network has used its brand research allowance.", detail: "New brand research can't start from this network during the evaluation. Research in your library and the recorded examples still open." };
+    case "budget_exhausted":
+      return { label: "The shared research budget for this evaluation has been used.", detail: "New brand research can't start. Research in your library and the recorded examples still open." };
     default:
       return { label: "Checking whether new research is available.", detail: "Research in your library still opens while we check." };
   }
@@ -152,17 +216,22 @@ const API_ERRORS: Record<string, string> = {
   request_too_large: "That request is too long.",
   operator_required: "Live research is restricted to an authorized research operator. No paid call was started.",
   operator_expired: "The research operator's authorization has expired. No paid call was started.",
-  visitor_quota_reached: "You have used this evaluation's free research allowance. No paid call was started. Your saved research and the recorded example are still available.",
+  visitor_quota_reached: "This network has used its free research allowance for this evaluation. No paid call was started. Your saved research and the recorded example are still available.",
+  too_many_requests: "Too many requests in a short time. Wait a moment and try again. No paid call was started.",
+  too_many_investigations: "Too many investigations are running right now. Try again in a few minutes. No paid call was started.",
+  admissions_paused: "New research is paused right now. No paid call was started.",
+  budget_unavailable: "New research cannot start because the spend record is unavailable. No paid call was started.",
   visitor_unattributed: "This request could not be matched to a visitor, so no paid call was started. Please reload the page and try again.",
   quota_unavailable: "New research cannot start because the usage record is unavailable. No paid call was started.",
   budget_exhausted: "The public research budget for this evaluation has been used. No paid call was started. Saved research and the recorded example are still available.",
+  global_call_limit_exhausted: "The shared research budget for this evaluation has been used. No new Qloo call was started. Saved research and the recorded example are still available.",
 };
 
 /** API error bodies carry a code; this turns it into a sentence. Limits share one message. */
 export function apiErrorCopy(code: unknown): string {
   if (typeof code !== "string") return "Something went wrong. Please try again later.";
   if (API_ERRORS[code]) return API_ERRORS[code]!;
-  if (code.includes("limit")) return "The research allowance for now has been used. Please try again later.";
+  if (code.includes("limit")) return "A research limit was reached. Saved research and the recorded example are still available.";
   return API_ERRORS[code] ?? "Something went wrong. Please try again later.";
 }
 

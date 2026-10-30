@@ -6,8 +6,10 @@ import { paidOperatorToken, publicEvaluationId, publicRuntime } from "../config/
  * Sprint 9J: durable accounting for one bounded operator run. Counters live in the existing
  * `baseline_budget_accounts` table (no new migration), keyed by a hash of the paid operator credential, so a
  * process restart continues the same counters instead of granting a fresh allowance; a new allowance needs a
- * new credential. A limit is fixed when its row is first written and is never raised by a later boot. Units
- * are never returned. Any database doubt refuses the unit (fail closed).
+ * new credential. A run counter's limit is fixed when its row is first written and is never raised by a later
+ * boot. A per-network quota's limit follows a raised configuration (never a lowered one), keeping its usage.
+ * Units are never returned except a quota unit whose request provably started nothing. Any database doubt
+ * refuses the unit (fail closed).
  */
 export type RunCounter = "qloo_calls" | "model_usd_cents";
 export type RunTake = { ok: true; used: number; limit: number } | { ok: false; code: "limit_reached" | "ledger_unavailable" };
@@ -19,12 +21,20 @@ export interface RunLedger {
    * called once per reservation, after the provider reported its usage; doubt keeps the units consumed.
    */
   release(counter: RunCounter, units: number): Promise<void>;
-  /** Sprint 9M: a durable quota under this run (e.g. one visitor network's scans). Same semantics as `take`. */
+  /**
+   * Sprint 9M: a durable quota under this run (e.g. one visitor network's scans). Same semantics as `take`, except
+   * that a configured limit above the stored one raises it (hotfix): usage is kept and a lower limit never applies.
+   */
   takeQuota(scope: string, units: number, limit: number): Promise<RunTake>;
+  /** Hotfix: returns a quota unit whose request was refused before anything paid could start. Doubt keeps it. */
+  releaseQuota(scope: string, units: number): Promise<void>;
+  /** Hotfix: a free read of one quota (null: never used). "unavailable" on any database doubt. */
+  peekQuota(scope: string): Promise<{ used: number; limit: number } | null | "unavailable">;
   snapshot(): Promise<Record<RunCounter, { limit: number; used: number } | null> | null>;
 }
 
 const COUNTERS: RunCounter[] = ["qloo_calls", "model_usd_cents"];
+const QUOTA_SCOPE = /^[a-z]+:[a-f0-9]{32}$/u;
 
 export class PostgresRunLedger implements RunLedger {
   private readonly prefix: string;
@@ -40,8 +50,28 @@ export class PostgresRunLedger implements RunLedger {
   }
 
   async takeQuota(scope: string, units: number, limit: number): Promise<RunTake> {
-    if (!/^[a-z]+:[a-f0-9]{32}$/u.test(scope)) return { ok: false, code: "limit_reached" };
-    return this.takeKey(`${this.prefix}quota:${scope}`, units, limit);
+    if (!QUOTA_SCOPE.test(scope)) return { ok: false, code: "limit_reached" };
+    return this.takeKey(`${this.prefix}quota:${scope}`, units, limit, true);
+  }
+
+  async releaseQuota(scope: string, units: number): Promise<void> {
+    if (!QUOTA_SCOPE.test(scope) || !Number.isInteger(units) || units <= 0) return;
+    try {
+      await this.pool.query("UPDATE baseline_budget_accounts SET used_calls=GREATEST(used_calls-$2,0),updated_at=now() WHERE budget_key=$1", [`${this.prefix}quota:${scope}`, units]);
+    } catch {
+      // A failed return keeps the unit consumed: the safe direction.
+    }
+  }
+
+  async peekQuota(scope: string): Promise<{ used: number; limit: number } | null | "unavailable"> {
+    if (!QUOTA_SCOPE.test(scope)) return "unavailable";
+    try {
+      const result = await this.pool.query<{ used_calls: number; limit_calls: number }>("SELECT used_calls,limit_calls FROM baseline_budget_accounts WHERE budget_key=$1", [`${this.prefix}quota:${scope}`]);
+      const row = result.rows[0];
+      return row ? { used: row.used_calls, limit: row.limit_calls } : null;
+    } catch {
+      return "unavailable";
+    }
   }
 
   async release(counter: RunCounter, units: number): Promise<void> {
@@ -53,10 +83,16 @@ export class PostgresRunLedger implements RunLedger {
     }
   }
 
-  private async takeKey(key: string, units: number, limit: number): Promise<RunTake> {
+  private async takeKey(key: string, units: number, limit: number, raise = false): Promise<RunTake> {
     if (!Number.isInteger(units) || units <= 0 || !Number.isInteger(limit) || limit < 0) return { ok: false, code: "limit_reached" };
     try {
-      await this.pool.query("INSERT INTO baseline_budget_accounts (budget_key, limit_calls) VALUES ($1,$2) ON CONFLICT (budget_key) DO NOTHING", [key, limit]);
+      // Only a quota row may be raised, and only upward; the conditional increment below stays the one atomic check.
+      await this.pool.query(
+        raise
+          ? "INSERT INTO baseline_budget_accounts (budget_key, limit_calls) VALUES ($1,$2) ON CONFLICT (budget_key) DO UPDATE SET limit_calls=EXCLUDED.limit_calls,updated_at=now() WHERE baseline_budget_accounts.limit_calls < EXCLUDED.limit_calls"
+          : "INSERT INTO baseline_budget_accounts (budget_key, limit_calls) VALUES ($1,$2) ON CONFLICT (budget_key) DO NOTHING",
+        [key, limit],
+      );
       const result = await this.pool.query<{ used_calls: number; limit_calls: number }>(
         "UPDATE baseline_budget_accounts SET used_calls=used_calls+$2,updated_at=now() WHERE budget_key=$1 AND used_calls+$2 <= limit_calls RETURNING used_calls,limit_calls",
         [key, units],
@@ -99,6 +135,10 @@ export const refusingRunLedger: RunLedger = {
   },
   async takeQuota() {
     return { ok: false, code: "ledger_unavailable" };
+  },
+  async releaseQuota() {},
+  async peekQuota() {
+    return "unavailable";
   },
   async release() {},
   async snapshot() {

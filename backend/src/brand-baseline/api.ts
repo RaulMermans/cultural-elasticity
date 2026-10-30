@@ -3,7 +3,8 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 import { verifyInternalAuth, admitVisitor, verifyOperator, verifyPaidOperator } from "../ops/identity.js";
 import { operatorToken } from "../config/production.js";
-import { takePublicQuota, type PublicQuotaKind } from "../ops/public-quota.js";
+import { researchEligibility, type ResearchEligibility } from "../ops/eligibility.js";
+import { returnPublicQuota, takePublicQuota, type PublicQuotaKind } from "../ops/public-quota.js";
 import { createBaselinePool, databaseReady } from "./db.js";
 import { BaselineRepository, BaselineRepositoryError, payloadHash } from "./repository.js";
 import { resolveBrand } from "./research.js";
@@ -16,6 +17,8 @@ export type BrandStatus = {
   admissionsOpen: boolean;
   operator: "authorized" | "operator_required" | "operator_expired";
   semantics: "baseline_admission_for_caller";
+  /** Hotfix: what this caller could start now (states only) and, for a public-evaluation visitor, their own allowance. */
+  research?: ResearchEligibility;
 };
 
 /**
@@ -30,6 +33,7 @@ export function brandStatusForCaller(admissionsOpen: boolean, headers: Record<st
 }
 
 const idParams = z.strictObject({ id: z.uuid() });
+const REFUSED_BEFORE_QUEUE = new Set(["IDEMPOTENCY_CONFLICT", "RESOLUTION_INVALID_OR_STALE", "SCAN_IN_PROGRESS"]);
 const tokenHeader = "x-baseline-token";
 
 export async function brandBaselineRoutes(app: FastifyInstance): Promise<void> {
@@ -86,7 +90,17 @@ export async function brandBaselineRoutes(app: FastifyInstance): Promise<void> {
     return reply.code(503).send({ error: "baseline_unavailable" });
   };
 
-  app.get("/api/brands/status", async (request) => brandStatusForCaller(enabled && liveEnabled && Boolean(repository), request.headers as Record<string, unknown>));
+  app.get("/api/brands/status", async (request) => {
+    const headers = request.headers as Record<string, unknown>;
+    const status = brandStatusForCaller(enabled && liveEnabled && Boolean(repository), headers);
+    const research = await researchEligibility({
+      headers,
+      callerAuthorized: status.operator === "authorized",
+      baselineOpen: status.admissionsOpen,
+      baselineBudget: repository ? () => repository.budgetSnapshot() : null,
+    });
+    return { ...status, research };
+  });
 
   app.get("/ops/baselines", async (request, reply) => {
     if (!operatorToken() || !verifyOperator(request.headers as Record<string, unknown>)) return reply.code(404).send({ error: "not_found" });
@@ -132,9 +146,15 @@ export async function brandBaselineRoutes(app: FastifyInstance): Promise<void> {
     if (!(await quota(request, reply, "scan"))) return;
     try {
       const created = await repository!.createScan({ resolutionId: parsed.data.resolutionId, scope: scopeOf(request), accessToken: tokenOf(request), idempotencyKey: parsed.data.idempotencyKey, requestHash: payloadHash({ resolutionId: parsed.data.resolutionId }) });
+      // Hotfix: a replayed request or a stored result queues no Qloo call, so it costs the visitor nothing.
+      if (created.cached || created.reused) await returnPublicQuota(request.headers as Record<string, unknown>, "scan");
       void worker?.tick();
       return reply.code(created.cached || created.reused ? 200 : 202).send({ scanId: created.id, scanStatus: created.status, reused: created.reused, cached: created.cached });
-    } catch (error) { return errorResponse(error, reply); }
+    } catch (error) {
+      // Refused inside the rolled-back transaction, before any scan was queued.
+      if (error instanceof BaselineRepositoryError && REFUSED_BEFORE_QUEUE.has(error.code)) await returnPublicQuota(request.headers as Record<string, unknown>, "scan");
+      return errorResponse(error, reply);
+    }
   });
 
   const read = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {

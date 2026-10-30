@@ -18,7 +18,17 @@ export function memoryRunLedger(): RunLedger & { rows: Map<RunCounter, { limit: 
       return takeFrom(rows, counter, units, limit);
     },
     async takeQuota(scope, units, limit) {
+      const row = quotas.get(scope);
+      if (row && limit > row.limit) row.limit = limit;
       return takeFrom(quotas, scope, units, limit);
+    },
+    async releaseQuota(scope, units) {
+      const row = quotas.get(scope);
+      if (row) row.used = Math.max(0, row.used - units);
+    },
+    async peekQuota(scope) {
+      const row = quotas.get(scope);
+      return row ? { ...row } : null;
     },
     async release(counter, units) {
       const row = rows.get(counter);

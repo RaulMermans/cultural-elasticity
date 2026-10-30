@@ -59,7 +59,14 @@ export function parseJobEnvelope(value: unknown): { ok: true; job: JobEnvelope }
 
 export function publicFailure(status: number, body: unknown): string {
   if (isMessage(body) && body.message.length > 0 && body.message.length < 240 && !body.message.includes("\n")) return body.message;
-  if (status === 429) return "An investigation is already running. You can start another when it finishes.";
+  // Hotfix: a 429 can mean a visitor allowance, the shared budget or a rate limit; never assume which one.
+  const code = isRecord(body) && typeof body.error === "string" ? body.error : "";
+  if (code === "visitor_quota_reached") return "This network has used its investigation allowance for this evaluation. No paid call was started.";
+  if (code === "budget_exhausted") return "The shared research budget for this evaluation has been used. No paid call was started.";
+  if (code === "too_many_requests") return "Too many requests in a short time. Wait a moment and try again.";
+  if (code === "admissions_paused") return "New investigations are paused right now.";
+  if (code === "quota_unavailable") return "New research cannot start because the usage record is unavailable. No paid call was started.";
+  if (status === 429) return "The investigation could not start right now. No paid call was started. Try again later.";
   if (status === 409) return "That confirmation was already used.";
   if (status === 401) return "The investigation service is not available from that origin.";
   if (status === 404) return "This investigation is no longer available. You can start a new one.";

@@ -259,7 +259,9 @@ test("UX-04 status, stage, availability and API error codes all map to sentences
   assert.equal(stageCopy("artist", "RUNNING"), "Finding related artists: in progress");
   assert.equal(availabilityCopy("paused").label, "New research is temporarily unavailable.");
   assert.equal(apiErrorCopy("baseline_paused"), "New research is temporarily unavailable.");
-  assert.match(apiErrorCopy("qloo_call_limit_reached"), /allowance/u);
+  // Hotfix: a shared limit is not the visitor allowance.
+  assert.match(apiErrorCopy("qloo_call_limit_reached"), /limit was reached/u);
+  assert.doesNotMatch(apiErrorCopy("qloo_call_limit_reached"), /allowance/u);
   assert.match(apiErrorCopy({}), /Something went wrong/u);
 });
 

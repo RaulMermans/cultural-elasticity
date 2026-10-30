@@ -270,7 +270,7 @@ function NewDirectionDossier({ node, inquiries, brand, canAsk, busy, onInvestiga
   </>;
 }
 
-function DirectionDossier({ view, direction, inquiries, canInvestigate, busy, onInvestigate, onSelect, onMeasure }: { view: ResearchView; direction: DirectionView; inquiries: Inquiry[]; canInvestigate: boolean; busy: boolean; onInvestigate: () => void; onSelect: (id: string) => void; onMeasure?: (result: AgentRunResponse | null | undefined) => (() => void) | undefined }) {
+function DirectionDossier({ view, direction, inquiries, canInvestigate, blockedReason, busy, onInvestigate, onSelect, onMeasure }: { view: ResearchView; direction: DirectionView; inquiries: Inquiry[]; canInvestigate: boolean; blockedReason: string | null; busy: boolean; onInvestigate: () => void; onSelect: (id: string) => void; onMeasure?: (result: AgentRunResponse | null | undefined) => (() => void) | undefined }) {
   const investigations = inquiries.filter((item) => item.origin === "direction");
   const connections = connectionsFor(view, direction);
   const latest = [...inquiries].reverse().find((item) => item.response?.investigation?.result);
@@ -301,7 +301,9 @@ function DirectionDossier({ view, direction, inquiries, canInvestigate, busy, on
       ? <p className="quiet" data-testid="network-repeat-note">Measured once already. Qloo&apos;s evidence could not support a comparison, so measuring the same question again would likely repeat the same work. Use the next step above instead.</p>
       : canInvestigate
         ? <button type="button" className="primary" data-testid="network-investigate" disabled={busy || running} onClick={onInvestigate}>{running ? "Measuring…" : investigations.length ? "Measure again" : "Measure cultural fit"}</button>
-        : <p className="quiet">This research was reopened without its scan session, so the direction can&apos;t be measured directly. Ask about it in the question box below instead.</p>}
+        : blockedReason
+          ? <p className="quiet" data-testid="network-investigate-blocked">{blockedReason}</p>
+          : <p className="quiet">This research was reopened without its scan session, so the direction can&apos;t be measured directly. Ask about it in the question box below instead.</p>}
   </>;
 }
 
@@ -348,9 +350,9 @@ function branchOf(nodes: readonly NetworkNode[], id: string): string[] {
   return out;
 }
 
-export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onHome, onBack }: { result: AnyBrandBaselineResult; scanToken: string | null; canAsk: boolean; canInvestigate: boolean; onHome: () => void; onBack: () => void }) {
+export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, blockedReason = null, onAttempt, onHome, onBack }: { result: AnyBrandBaselineResult; scanToken: string | null; canAsk: boolean; canInvestigate: boolean; blockedReason?: string | null; onAttempt?: () => void; onHome: () => void; onBack: () => void }) {
   const view = useMemo(() => buildResearchView(result, {}), [result]);
-  const network = useResearchNetwork({ scanId: view.scanId, brand: view.brand.name, scanToken });
+  const network = useResearchNetwork({ scanId: view.scanId, brand: view.brand.name, scanToken, ...(onAttempt && { onAttempt }) });
   const [selectedId, setSelectedId] = useState<string>(BRAND_NODE);
   const [question, setQuestion] = useState("");
   const [openDirection, setOpenDirection] = useState<string | null>(null);
@@ -460,7 +462,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
   let dossier;
   if (directionNode.kind === "direction" && directionNode.directionKey) {
     const direction = view.directions.find((item) => item.key === directionNode.directionKey)!;
-    dossier = <DirectionDossier view={view} direction={direction} inquiries={branchInquiries(directionNode.id)} canInvestigate={canInvestigate && Boolean(scanToken)} busy={network.starting} onInvestigate={() => void network.investigateDirection(direction.id, direction.name, directionNode.id)} onSelect={setSelectedId} onMeasure={(result) => measureFor(direction.name, result)} />;
+    dossier = <DirectionDossier view={view} direction={direction} inquiries={branchInquiries(directionNode.id)} canInvestigate={canInvestigate && Boolean(scanToken)} blockedReason={blockedReason} busy={network.starting} onInvestigate={() => void network.investigateDirection(direction.id, direction.name, directionNode.id)} onSelect={setSelectedId} onMeasure={(result) => measureFor(direction.name, result)} />;
   } else if (directionNode.kind === "direction") {
     dossier = <NewDirectionDossier node={directionNode} inquiries={branchInquiries(directionNode.id)} brand={view.brand.name} canAsk={live} busy={network.starting} onInvestigate={() => investigateTerritory(directionNode.label)} onSelect={setSelectedId} />;
   } else if (selected.kind === "bridge") {
@@ -542,7 +544,7 @@ export function ResearchNetwork({ result, scanToken, canAsk, canInvestigate, onH
             <input id="rn-question" ref={composerRef} value={question} maxLength={2000} placeholder={askFrom?.kind === "bridge" ? "What do these two share for the brand? Which audiences overlap?" : askFrom?.kind === "direction" ? `How far can ${view.brand.name} extend into ${askFrom.label}? Which audiences overlap?` : askFrom ? "Ask a follow-up, narrow it down, or switch territory" : `Where could ${view.brand.name} go next? How far can ${view.brand.name} extend into tennis?`} onChange={(event) => setQuestion(event.target.value)} disabled={!live} />
             <button type="submit" className="primary" disabled={!live || network.starting || !question.trim()}>{network.starting ? "Starting…" : "Ask the agent"}</button>
           </div>
-          <p className="quiet">{live ? "The agent plans its own Qloo lookups within a fixed budget. Every number it reports comes from Qloo." : "Live research is off, so new questions can’t start. You can still explore this network."}</p>
+          <p className="quiet" data-testid="network-live-note">{live ? "The agent plans its own Qloo lookups within a fixed budget. Every number it reports comes from Qloo." : blockedReason ?? "Live research is off, so new questions can’t start. You can still explore this network."}</p>
           {network.notice ? <p className="notice" role="alert">{network.notice}</p> : null}
         </form>
       </div>

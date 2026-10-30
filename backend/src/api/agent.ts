@@ -28,7 +28,7 @@ import { canAcceptInvestigations } from "../ops/lifecycle.js";
 import { opsMetrics } from "../ops/metrics.js";
 import { registerJobManager } from "../ops/server.js";
 import { spendLedger, type SpendReservation } from "../ops/spend.js";
-import { takePublicQuota } from "../ops/public-quota.js";
+import { returnPublicQuota, takePublicQuota } from "../ops/public-quota.js";
 import { runLedger, unusedReservationCents } from "../ops/run-ledger.js";
 import type { ObservedUsage } from "../ops/usage.js";
 
@@ -321,14 +321,17 @@ export function agentRoutes(
         opsMetrics().record("admission_rejected");
         return reply.code(503).send({ error: "durability_unavailable", message: "Investigations cannot start because their durable record is unavailable." });
       }
-      const quota = await takePublicQuota(headersOf(request), "investigation");
-      if (!quota.ok) {
-        opsMetrics().record("admission_rejected");
-        return reply.code(quota.status).send({ error: quota.error, message: quota.message });
-      }
+      // Hotfix: the shared budget is checked first, so a refusal for budget reasons costs the visitor nothing.
       const held = await reserveSpend(reply);
       if (!held) return;
       const hold = held.reservation;
+      const quota = await takePublicQuota(headersOf(request), "investigation");
+      if (!quota.ok) {
+        spendLedger().settle(hold.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
+        releaseCents(held.durableCents);
+        opsMetrics().record("admission_rejected");
+        return reply.code(quota.status).send({ error: quota.error, message: quota.message });
+      }
       opsMetrics().record("budget_reserved");
       return handle(reply, async () => {
         try {
@@ -344,6 +347,9 @@ export function agentRoutes(
         } catch (error) {
           spendLedger().settle(hold.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
           releaseCents(held.durableCents);
+          // Refused before the job was recorded (stopping, queue full, duplicate confirm): nothing can start from it.
+          // A durable-write failure keeps the unit, since a commit with a lost reply could still be recovered.
+          if (error instanceof JobRejectedError && error.code !== "durability_unavailable") await returnPublicQuota(headersOf(request), "investigation");
           throw error;
         }
       });
