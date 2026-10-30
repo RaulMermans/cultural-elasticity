@@ -9,7 +9,6 @@ import { randomUUID } from "node:crypto";
 import type { AgentAnalysisResult, AgentIntent, DiscoverySeed, AgentModelInfo, NeedsInputOption, InvestigationLink, AgentRunStatus, AgentTerritoryResult, AgentTrace, CandidateSource, ConceptDedupVerdict, RepresentationFailureCode, SemanticRelevance, SkillRef, TerritoryOrigin, TerritoryRole } from "@cultural-elasticity/shared";
 import type { Limitation } from "../evidence/schema.js";
 import type { LiveCall } from "../qloo/live-adapter.js";
-import type { ConceptRef } from "../contracts/qloo.js";
 import type { ResolutionCandidate } from "../qloo/normalize.js";
 import { defaultLimits, type AgentRequest, type Interpretation, type InvestigationLimits, type RankableType } from "./contracts.js";
 import type { QlooCallResult } from "./tool-provider.js";

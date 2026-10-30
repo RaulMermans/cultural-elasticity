@@ -167,6 +167,13 @@ Canonical record: `docs/sprint-10c/DURABLE_AGENT_EXECUTION_AND_LIVE_RELIABILITY.
 9. **Durability is validated with real process interruption** (`pnpm test:durable`: SIGKILL, SIGSTOP, SIGTERM against disposable PostgreSQL, synthetic provider). Fault injection (`CE_DURABLE_FAULT`) is test-only and ignored on a public runtime.
 10. **Infrastructure recovery is not research quality.** A resumed job is not evidence that the research is useful; report the two separately. Live acceptance (`pnpm durable:live`) runs locally, only with owner approval.
 
+## Final research evaluation (permanent, from Sprint 10D)
+
+1. **A live session runs from frozen code.** Never edit or rebuild the checkout a live worker runs from; use a detached worktree at the session commit.
+2. **The live harness never resubmits an admitted job.** It records the job at admission, adopts an orphaned job on resume, and replaces a dead worker so durable recovery resumes it (`pnpm durable:live`, `--rehearse` is provider-free).
+3. **An attribute tag is not a territory.** A territory is never anchored to an incidental-attribute tag (venue facilities, product `material`, …) while its own Qloo search returned a concept of another namespace (`incidentalAnchorRefusal`).
+4. **Probe efficiency is not research correctness.** The decision audit cannot see a semantically wrong representation; each live run also gets a representation and claim review. Canonical record: `docs/sprint-10d/FINAL_RESEARCH_INTELLIGENCE_AND_RELEASE.md`.
+
 ## Deployment provenance (permanent, from Sprint 8F)
 
 1. **GitHub is the canonical source.** `RaulMermans/cultural-elasticity` is the only release repository. Do not deploy from copied archives as the ordinary process.

@@ -1,0 +1,481 @@
+{
+  "schema": "ce-sprint-10d-live-digest/v1",
+  "label": "LIVE Qloo (hackathon host) + claude-haiku-5-5, local durable worker, isolated local PostgreSQL",
+  "approved": {
+    "qloo": 120,
+    "usd": 1
+  },
+  "ledgerFinal": [
+    {
+      "counter": "model_usd_cents",
+      "used": 84,
+      "limit": 100
+    },
+    {
+      "counter": "qloo_calls",
+      "used": 69,
+      "limit": 120
+    }
+  ],
+  "runs": [
+    {
+      "id": "L1",
+      "kind": "open_discovery",
+      "query": "What unexpected cultural territories could Fjällräven credibly stretch into?",
+      "jobId": "155367e0-3257-4fde-8bac-429af3c3327d",
+      "status": "completed",
+      "durableStatus": "COMPLETED",
+      "attempts": 1,
+      "interruption": null,
+      "recovery": null,
+      "wallMs": 10431,
+      "totals": {
+        "qlooCommitted": 1,
+        "qlooDispatches": 1,
+        "unknownOutcomes": 0,
+        "modelCalls": 3
+      },
+      "resultStatus": "NEEDS_INPUT",
+      "question": "Qloo returns two brand entities named \"Fjällräven\" and I can't tell from Qloo's types which one you mean. Which one should I analyze?\n1. Fjällräven (id 1BFF764A-D06D-48CA-9075-1E0F2A3FCE3D)\n2. Fjällräven (id E9A70778-6E65-49A4-8C38-A24D20C05BDA)\n\nIf you can tell me anything that distinguishes them (country, product line, or a link to a website), I can use that to confirm the match.",
+      "options": [
+        {
+          "id": "1BFF764A-D06D-48CA-9075-1E0F2A3FCE3D",
+          "label": "Fjällräven",
+          "type": "urn:entity:brand"
+        },
+        {
+          "id": "E9A70778-6E65-49A4-8C38-A24D20C05BDA",
+          "label": "Fjällräven",
+          "type": "urn:entity:brand"
+        }
+      ],
+      "correlationIds": [
+        "mcp-df25cf69-e790-44d6-9caf-6f4647010a26"
+      ],
+      "anchorDecisions": [],
+      "recoveryEvents": []
+    },
+    {
+      "id": "L2",
+      "kind": "targeted",
+      "query": "Is specialty coffee culture a defensible extension for Bodum?",
+      "jobId": "4a61a608-2dc2-489e-bb48-0f4ceb437fa0",
+      "status": "COMPLETED",
+      "durableStatus": "COMPLETED",
+      "attempts": 2,
+      "interruption": null,
+      "recovery": {
+        "adopted": true,
+        "unplannedWorkerRestarts": 0
+      },
+      "wallMs": 34491,
+      "totals": {
+        "qlooCommitted": 12,
+        "qlooDispatches": 12,
+        "unknownOutcomes": 0,
+        "modelCalls": 11
+      },
+      "resultStatus": "COMPLETE",
+      "territories": [
+        {
+          "label": "specialty coffee culture",
+          "role": "target",
+          "concept": "urn:tag:interests:qloo:specialty_coffee_culture",
+          "entityType": "place",
+          "exemplars": [
+            "Caliber Coffee Co.",
+            "Ubuntu Café"
+          ],
+          "relativePosition": null,
+          "classification": null,
+          "limitations": [
+            "COMPARISON_SET_TOO_SMALL",
+            "CONDITIONED_LIST_TRUNCATED",
+            "NO_RELATIVE_POSITION"
+          ]
+        }
+      ],
+      "summary": "The evidence does not yet establish specialty coffee culture as a defensible extension for Bodum. Only a partial route ran: the place exemplars share no consistent cultural signal, and no relative position or classification exists for this territory, so it cannot be placed against a comparison set. A brand-conditioned association list is available, but it is truncated and describes association only, not outcomes.\nspecialty coffee culture: After operational tags were filtered, no cultural signal band registered, and no signal was consistently shared across the place exemplars. A brand-conditioned query for this concept returned supported entities, led by Fauna & Flora - Santos and b Café Pastelaria; the list is truncated and reflects association only. The route is partial, with relative position and classification unavailable, so this territory's standing against a comparison set cannot be stated.",
+      "comparisonFeasibility": {
+        "status": "INFEASIBLE",
+        "blocker": "NO_REFERENCE_YIELD"
+      },
+      "metrics": {
+        "qloo_calls": 12,
+        "model_cost_usd": 0.0109,
+        "empty_type_probes": 4,
+        "probe_limit_refusals": 0
+      },
+      "correlationIds": [
+        "mcp-73e96ff3-fe3a-42eb-98bd-09a7370cdd78",
+        "mcp-4e057c2a-e759-4433-9914-18c04eab0379",
+        "mcp-f4368416-18bf-404e-b6ed-11fd94c61a09",
+        "mcp-4758a9ae-44f7-4d98-afe7-2c52742d7c60",
+        "mcp-824c3d9a-aee4-4ea9-b96d-2eed599fad28",
+        "mcp-4a57e7e5-a23f-4c7a-b470-f7d3473f0e5f",
+        "mcp-120026a2-4d23-42f7-b31e-d61655369884",
+        "mcp-f25d8f29-8683-4736-8b2d-667f4cf27b0f",
+        "mcp-5101d709-2f91-4f70-92f9-f5038f0d13d8",
+        "mcp-a8e810c1-c8ec-4189-8177-fe1d9b5cf773",
+        "mcp-ae642814-3fc9-4fc9-8b80-0fc81c445b54",
+        "mcp-38b6e7d1-7a74-4057-b710-8fd6916ec297"
+      ],
+      "anchorDecisions": [
+        {
+          "territoryKey": "specialty_coffee_culture",
+          "anchoredTagId": "urn:tag:interests:qloo:specialty_coffee_culture",
+          "basis": "LABEL_TAG_MEMBERS",
+          "decidedBy": "runtime"
+        }
+      ],
+      "recoveryEvents": [
+        {
+          "type": "RECOVERY_DECISION",
+          "detail": {
+            "action": "resume",
+            "reason": "replaying 17 committed provider call(s)",
+            "worker": "db3b0f36-5211-433f-b5c3-c8a0e06480ba",
+            "attempt": 2,
+            "unknown": 0,
+            "committed": 17,
+            "decisionMs": 8
+          },
+          "occurredAt": "2026-10-30T10:00:07.265Z"
+        }
+      ]
+    },
+    {
+      "id": "L2#retry",
+      "kind": "targeted",
+      "query": "Is specialty coffee culture a defensible extension for Bodum?",
+      "jobId": "31143c41-7538-47ca-9712-17226102ec82",
+      "status": "completed",
+      "durableStatus": "COMPLETED",
+      "attempts": 1,
+      "interruption": null,
+      "recovery": {
+        "adopted": false,
+        "unplannedWorkerRestarts": 0
+      },
+      "wallMs": 95050,
+      "totals": {
+        "qlooCommitted": 12,
+        "qlooDispatches": 12,
+        "unknownOutcomes": 0,
+        "modelCalls": 11
+      },
+      "resultStatus": "COMPLETE",
+      "territories": [
+        {
+          "label": "specialty coffee culture",
+          "role": "target",
+          "concept": "urn:tag:interests:qloo:specialty_coffee_culture",
+          "entityType": "place",
+          "exemplars": [
+            "Caliber Coffee Co.",
+            "Akwarela Café",
+            "Julice Boulangère"
+          ],
+          "relativePosition": null,
+          "classification": null,
+          "limitations": [
+            "COMPARISON_SET_TOO_SMALL",
+            "CONDITIONED_LIST_TRUNCATED",
+            "NO_RELATIVE_POSITION"
+          ]
+        }
+      ],
+      "summary": "For Bodum, specialty coffee culture is a partially analyzed target: place exemplars and a brand-conditioned list of associated entities are available, but there is no comparison set, relative position, or robustness reading. The exemplars share no cultural signals after operational tags are filtered, so the evidence does not establish whether this extension is defensible. The conditioned entity list is truncated and evidence quality is medium, so any reading is limited to partial, association-only evidence.\nspecialty coffee culture: Representation is supported through a place panel of linked exemplars, but relative position is unavailable, so the territory cannot yet be read against a comparison set. The brand-conditioned query returns supported associations, led by Fauna & Flora - Santos, b Café Pastelaria and Chocolates de Beatriz, but the list is truncated and describes association only. No cultural signals are consistently shared across the place exemplars after filtering operational tags, so the panel does not show a common cultural core on this route.",
+      "comparisonFeasibility": {
+        "status": "INFEASIBLE",
+        "blocker": "NO_REFERENCE_YIELD"
+      },
+      "metrics": {
+        "qloo_calls": 12,
+        "model_cost_usd": 0.0087,
+        "empty_type_probes": 4,
+        "probe_limit_refusals": 0
+      },
+      "correlationIds": [
+        "mcp-b3e2a64e-1b06-4850-9115-5c7cae92c28e",
+        "mcp-d504501b-7c15-44b8-a4c5-e4283cb1c4b6",
+        "mcp-3e144eb4-d2ff-4b02-ba81-c6e0794478bb",
+        "mcp-288ae9bf-f9ec-4864-b834-2408b6c392ac",
+        "mcp-c6c29211-6677-449d-a749-791f04dbc3d2",
+        "mcp-2d82828d-9f89-47c1-bde0-45c4f9275179",
+        "mcp-5362f11d-34e4-4c40-87e9-7c10b871f3c7",
+        "mcp-0207cec7-775c-4532-adf1-3e2998352368",
+        "mcp-6440f947-8293-47d8-9a82-aef85903c564",
+        "mcp-4dbfc07c-232d-454a-9a26-a73921a0bfe7",
+        "mcp-80c3c5e0-fc28-4bcf-bc6f-3c408337eb30",
+        "mcp-2269a44f-1225-4ab6-a428-c8e6ef3bc2b2"
+      ],
+      "anchorDecisions": [
+        {
+          "territoryKey": "specialty_coffee_culture",
+          "anchoredTagId": "urn:tag:interests:qloo:specialty_coffee_culture",
+          "basis": "LABEL_TAG_MEMBERS",
+          "decidedBy": "runtime"
+        }
+      ],
+      "recoveryEvents": []
+    },
+    {
+      "id": "L3",
+      "kind": "comparative",
+      "query": "For Diptyque, compare boutique hotels, ceramics and jazz as cultural territories.",
+      "jobId": "ff4e5dfb-59da-4624-bfd8-b6c23ae7b3a6",
+      "status": "completed",
+      "durableStatus": "COMPLETED",
+      "attempts": 1,
+      "interruption": null,
+      "recovery": {
+        "adopted": false,
+        "unplannedWorkerRestarts": 0
+      },
+      "wallMs": 265569,
+      "totals": {
+        "qlooCommitted": 30,
+        "qlooDispatches": 30,
+        "unknownOutcomes": 0,
+        "modelCalls": 14
+      },
+      "resultStatus": "COMPLETE",
+      "territories": [
+        {
+          "label": "ceramics",
+          "role": "target",
+          "concept": "urn:tag:material:qloo:ceramic",
+          "entityType": "brand",
+          "exemplars": [
+            "Richard Mille",
+            "Rolex",
+            "Tissot"
+          ],
+          "relativePosition": {
+            "position": 1,
+            "of": 3,
+            "medianPercentile": 1,
+            "medianRank": 1
+          },
+          "classification": "UNCERTAIN_REPRESENTATION_SENSITIVE",
+          "limitations": [
+            "CONDITIONED_LIST_TRUNCATED",
+            "ROBUSTNESS_LOW",
+            "TERRITORY_APPROXIMATION",
+            "TERRITORY_APPROXIMATION"
+          ]
+        },
+        {
+          "label": "boutique hotels",
+          "role": "target",
+          "concept": "urn:tag:industry:qloo:boutique_hotels",
+          "entityType": "brand",
+          "exemplars": [
+            "Joie de Vivre Hotels"
+          ],
+          "relativePosition": {
+            "position": 3,
+            "of": 3,
+            "medianPercentile": 0,
+            "medianRank": 3
+          },
+          "classification": "UNCERTAIN_REPRESENTATION_SENSITIVE",
+          "limitations": [
+            "ROBUSTNESS_INSUFFICIENT",
+            "TERRITORY_APPROXIMATION"
+          ]
+        },
+        {
+          "label": "jazz",
+          "role": "target",
+          "concept": null,
+          "entityType": null,
+          "exemplars": [],
+          "relativePosition": null,
+          "classification": null,
+          "limitations": [
+            "QLOO_EMPTY"
+          ]
+        },
+        {
+          "label": "Horology",
+          "role": "reference",
+          "concept": "urn:tag:industry:qloo:horology",
+          "entityType": "brand",
+          "exemplars": [
+            "Roger Dubuis",
+            "A. Lange & Söhne",
+            "Hamilton Watch Company"
+          ],
+          "relativePosition": {
+            "position": 2,
+            "of": 3,
+            "medianPercentile": 0.5,
+            "medianRank": 2
+          },
+          "classification": "UNCERTAIN_REPRESENTATION_SENSITIVE",
+          "limitations": [
+            "CONDITIONED_LIST_TRUNCATED",
+            "ROBUSTNESS_LOW",
+            "TERRITORY_APPROXIMATION"
+          ]
+        }
+      ],
+      "summary": "For Diptyque, ceramics ranks highest within the comparison set of boutique hotels, ceramics and Horology, with Horology in the middle and boutique hotels last. Robustness is low for ceramics and Horology and insufficient for boutique hotels, and all three placed territories carry only provisional classes, so the ordering is a tentative reading rather than a settled one. Jazz could not be assessed because no Qloo concept anchors it, and the evidence cannot say how these territories would rank against other comparison sets.\nceramics: Ceramics ranks first within this comparison set, but its representation robustness is low, so the placement is fragile rather than settled. Ceramics is provisionally classed as UNCERTAIN_REPRESENTATION_SENSITIVE, relative to this comparison set only. A brand-conditioned query returned supported evidence led by Anya Hindmarch, ANISSA KERMICHE and MARIN MONTAGUT, but the list is truncated and gives only a partial view.\nboutique hotels: Boutique hotels sits last within this comparison set, but robustness is insufficient and the panel rests on a single exemplar, so the placement cannot be read as a reliable ranking. Representation is only partial and is drawn from one brand exemplar, Joie de Vivre Hotels. Boutique hotels is provisionally classed as UNCERTAIN_REPRESENTATION_SENSITIVE, relative to this comparison set only, and its conditioned evidence is sparse.\njazz: Jazz could not be assessed because no Qloo concept anchors it, so no position, robustness or classification is offered.\nHorology: Horology sits in the middle of this comparison set, but its robustness is low, so that middle placement is tentative. Horology serves as the reference territory and is provisionally classed as UNCERTAIN_REPRESENTATION_SENSITIVE, relative to this comparison set only. Brand-conditioned evidence is supported and led by Van Cleef & Arpels, Harry Winston and Piaget, though the list is truncated.",
+      "comparisonFeasibility": {
+        "status": "FEASIBLE",
+        "blocker": null
+      },
+      "metrics": {
+        "qloo_calls": 30,
+        "model_cost_usd": 0.0189,
+        "empty_type_probes": 8,
+        "probe_limit_refusals": 1
+      },
+      "correlationIds": [
+        "mcp-cb4f1a81-0ac2-4d57-bb50-e8723b106c30",
+        "mcp-7c6f1db4-1a71-4be1-b81d-ae4c5022b07f",
+        "mcp-c2a170c7-f4f8-4b99-9a4f-6845a6571d3a",
+        "mcp-778e2c6a-2744-4e1b-97cf-02ca06f7a136",
+        "mcp-6bab8dd7-fdd0-445a-a8bb-e912e74a0d23",
+        "mcp-3ca0df0e-2737-4035-9cbe-75a0fe6ff26c",
+        "mcp-575db2f5-ffe4-40b8-957b-a200a5177f84",
+        "mcp-512a7499-68bf-45d4-bc1d-1ae98d69f03b",
+        "mcp-473ed809-2322-4efe-a8fd-f482453ea840",
+        "mcp-3ffe37e4-5e2a-4f2f-9de2-980572171c49",
+        "mcp-db9b5a06-591a-4f5d-8819-e6d9fede6019",
+        "mcp-d4510c63-38c5-4413-ba59-ae2be865214e",
+        "mcp-c28b7632-aefa-49c7-b5d8-8807c18fcde6",
+        "mcp-7c525e7d-e3ab-44c2-b59d-f14fc0e4509f",
+        "mcp-400bf7ee-4673-4574-b51a-2f0ba32ce0f2",
+        "mcp-d91aaedd-a1b8-4f6c-a8bb-b84f45dc1738",
+        "mcp-93c0f975-e4d4-4469-9921-001012c7c371",
+        "mcp-aa8b5d96-10fd-470f-a40c-a09a924184ce",
+        "mcp-5c770d58-1000-41ce-bd43-ae626c01fe36",
+        "mcp-c1aade69-a960-4999-8891-0156218a20fe",
+        "mcp-f93e664b-950d-4942-8cd5-2f62e2448911",
+        "mcp-d205bab7-3d87-45a9-b220-d0a289f81866",
+        "mcp-cda293c5-c450-4e6f-bc0b-524770500472",
+        "mcp-761dff63-3309-4f09-9c54-0b9f7a465c99",
+        "mcp-e5196e46-c990-4837-b8d1-e2b0793417d8",
+        "mcp-1b9fe262-8923-40e2-b74a-6875986026ae",
+        "mcp-e17d264d-13ab-4634-988e-74807e6856a0",
+        "mcp-35937300-eaf8-4fba-83ed-0789f19fcd53",
+        "mcp-b56bb2e2-8682-4983-84a2-d48cf3f48e75",
+        "mcp-a4bd2852-4d7f-4760-97c9-0a4b4a2b6350"
+      ],
+      "anchorDecisions": [
+        {
+          "territoryKey": "boutique_hotels",
+          "anchoredTagId": "urn:tag:industry:qloo:boutique_hotels",
+          "basis": "LABEL_TAG_MEMBERS",
+          "decidedBy": "runtime"
+        },
+        {
+          "territoryKey": "ceramics",
+          "anchoredTagId": "urn:tag:material:qloo:ceramic",
+          "basis": "LABEL_TAG_MEMBERS",
+          "decidedBy": "runtime"
+        }
+      ],
+      "recoveryEvents": []
+    },
+    {
+      "id": "L4",
+      "kind": "recovery_demonstration",
+      "query": "Could Dyson credibly move into wellness retreats?",
+      "jobId": "0d48a086-2a3a-4aba-8a3e-ca6e075826db",
+      "status": "completed",
+      "durableStatus": "COMPLETED",
+      "attempts": 2,
+      "interruption": {
+        "killedAfterCheckpoint": 2,
+        "committedBeforeKill": 5,
+        "restartMs": 1210
+      },
+      "recovery": {
+        "adopted": false,
+        "unplannedWorkerRestarts": 0
+      },
+      "wallMs": 116169,
+      "totals": {
+        "qlooCommitted": 14,
+        "qlooDispatches": 14,
+        "unknownOutcomes": 0,
+        "modelCalls": 12
+      },
+      "resultStatus": "COMPLETE",
+      "territories": [
+        {
+          "label": "wellness retreats",
+          "role": "target",
+          "concept": "urn:tag:lifestyle:qloo:wellness_retreats",
+          "entityType": "brand",
+          "exemplars": [
+            "Lululemon",
+            "Alo Yoga",
+            "Fitvia"
+          ],
+          "relativePosition": null,
+          "classification": null,
+          "limitations": [
+            "COMPARISON_SET_TOO_SMALL",
+            "CONDITIONED_LIST_TRUNCATED",
+            "NO_RELATIVE_POSITION"
+          ]
+        }
+      ],
+      "summary": "Dyson's move into wellness retreats has only partial cultural evidence, so the results cannot say whether it would be credible relative to any comparison set. The three exemplar brands share no consistent cultural signal, and the brand-conditioned association list is supported but truncated, with Alo Yoga among its leading names. Relative position, robustness and classification are unavailable on this route, so the evidence describes association only and does not settle the strategic question.\nwellness retreats: The route is partial, and relative position, robustness and classification are all unavailable, so no placement against a comparison set can be stated for wellness retreats. The coherence band is NONE and no signals are consistently shared across the exemplar panel of Lululemon, Alo Yoga and Fitvia, so the exemplars show no common cultural signal for this territory. A brand-conditioned query for wellness retreats is supported and returns Alo Yoga among its leading entities, alongside Clarins Group and Sisley Paris, though the list is truncated and therefore may be incomplete.",
+      "comparisonFeasibility": {
+        "status": "INFEASIBLE",
+        "blocker": "NO_REFERENCE_YIELD"
+      },
+      "metrics": {
+        "qloo_calls": 14,
+        "model_cost_usd": 0.0085,
+        "empty_type_probes": 5,
+        "probe_limit_refusals": 0
+      },
+      "correlationIds": [
+        "mcp-1f51b2ad-807d-4387-b9be-228594ecc9ec",
+        "mcp-f786763a-7212-4b53-a309-b91fbbd2882a",
+        "mcp-1e30021e-d837-43a9-8eb6-163bb910f997",
+        "mcp-d0233394-345f-4d84-9db4-9972ca41daaf",
+        "mcp-10a89714-b4bc-487f-b440-65f3ffebedf7",
+        "mcp-bb1cbf7a-b3d8-4df3-ba19-d4b7fc5ddef8",
+        "mcp-f8a917a1-9455-49eb-bbca-c5d79dcdbd89",
+        "mcp-b23e55af-3bfd-4eba-b238-638c83cf2256",
+        "mcp-ceffe431-0d85-4044-9b6d-a55b89199143",
+        "mcp-e6ec860e-d056-4cef-b1e4-16a7ebe64adf",
+        "mcp-5836077d-59dd-46d3-9a7f-8f5895c7decd",
+        "mcp-3643fd49-4a9f-4c3b-8098-224f2fe09052",
+        "mcp-69b4da33-f4e5-45f5-9c31-42c983e81af9",
+        "mcp-7e5e3470-8e9a-4de2-8bdb-fbf4f010ad7e"
+      ],
+      "anchorDecisions": [
+        {
+          "territoryKey": "wellness_retreats",
+          "anchoredTagId": "urn:tag:lifestyle:qloo:wellness_retreats",
+          "basis": "LABEL_TAG_MEMBERS",
+          "decidedBy": "runtime"
+        }
+      ],
+      "recoveryEvents": [
+        {
+          "type": "RECOVERY_DECISION",
+          "detail": {
+            "action": "resume",
+            "reason": "replaying 5 committed provider call(s)",
+            "worker": "6c386d46-2e1f-4a12-ba08-aae0f02ae754",
+            "attempt": 2,
+            "unknown": 0,
+            "committed": 5,
+            "decisionMs": 4
+          },
+          "occurredAt": "2026-10-30T10:07:02.367Z"
+        }
+      ]
+    }
+  ]
+}

@@ -26,7 +26,7 @@ import { conceptPools, eligibleMembers, territoryConcepts, territoryProbeState, 
 import { memoRun } from "./derived-cache.js";
 import { preferredTypeFor } from "./representation-alignment.js";
 import { MIN_FRONTIER_SUPPORTED } from "./contracts.js";
-import { incidentalConcept } from "./semantic-comparison.js";
+import { incidentalAnchorRefusal, incidentalConcept } from "./semantic-comparison.js";
 import { activeTerritories, turnsAvailable, type AgentRunState, type TerritoryState } from "./state.js";
 
 /** Union-of-exemplar-profile Jaccard at or above this marks two candidates as culturally overlapping. */
@@ -481,6 +481,8 @@ export function anchorOnObservedMembers(state: AgentRunState, tagId: string, tar
     const preferred = preferredTypeFor(state, t);
     const named = !source && canonicalConceptKey(tagId) === canonicalConceptKey(t.label) && (territoryQueryTags(state, t) ?? []).includes(tagId) && (preferred === null || preferred === targetType);
     if (!source && !named) continue;
+    // Sprint 10D: a same-named attribute tag (e.g. a product material) never becomes the anchor by itself.
+    if (named && incidentalAnchorRefusal(territoryQueryTags(state, t), tagId)) continue;
     if (activeTerritories(state).some((o) => o.key !== t.key && o.concept && (o.concept.id === tagId || canonicalTagName(o.concept.id) === canonicalTagName(tagId)))) continue;
     t.concept = { id: tag.id, label: tag.label, type: tag.type };
     t.status = "anchored";

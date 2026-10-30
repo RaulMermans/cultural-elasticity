@@ -254,7 +254,8 @@ async function main(): Promise<number> {
           await new Promise((resolve) => setTimeout(resolve, 2_000));
           status = (await store.getJob(id))?.status;
         }
-        const view = tokens[a.id] ? await poll(port, id, tokens[a.id]!) : { status: status ?? "unknown", error: null, response: (await store.getJob(id))?.result ?? null };
+        // Without the access token the durable status is read directly, in the API's lowercase vocabulary.
+        const view = tokens[a.id] ? await poll(port, id, tokens[a.id]!) : { status: (status ?? "unknown").toLowerCase(), error: null, response: (await store.getJob(id))?.result ?? null };
         const row = await store.getJob(id);
         const result = (view.response as { investigation?: { result?: unknown } } | null)?.investigation?.result ?? null;
         if (result) writeFileSync(join(session, `${a.id}-result.json`), `${JSON.stringify(result, null, 2)}\n`);
