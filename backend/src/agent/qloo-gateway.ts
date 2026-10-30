@@ -12,6 +12,7 @@ import { toEntitySignals, toTagSignals } from "../qloo/normalize.js";
 import type { LiveCall } from "../qloo/live-adapter.js";
 import type { QlooOperation, QlooOperationInput } from "../qloo/types.js";
 import { recorderOf } from "../ops/spans.js";
+import { markJournalDiscarded } from "./durable/scope.js";
 import { shortEntityType, type RankableType } from "./contracts.js";
 import { recordEntity, recordTag, remainingQlooCalls, type AgentRunState } from "./state.js";
 import type { AgentToolProvider, QlooCallMeta, QlooCallResult } from "./tool-provider.js";
@@ -144,6 +145,8 @@ export async function callQloo<O extends QlooOperation>(
     }
     if (abandoned || afterFinalization) {
       if (!afterFinalization) trace.qlooOperations.push(`${operation} (late answer discarded)`);
+      // Sprint 10C: the committed journal row stays charged but is marked as not evidence.
+      await markJournalDiscarded(meta.operationId);
       return refuse(
         afterFinalization ? "RUN_FINALIZED" : "TOOL_TIMEOUT",
         afterFinalization

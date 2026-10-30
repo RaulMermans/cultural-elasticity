@@ -86,6 +86,11 @@ export class BaselinePolicyModel implements AgentModel {
     }
   }
 
+  /** Sprint 10C: memory is a deterministic function of the contexts seen, so a replay re-derives it locally. */
+  async replay(context: AgentDecisionContext): Promise<void> {
+    await this.decide(context);
+  }
+
   async decide(context: AgentDecisionContext): Promise<ModelTurn> {
     const m = this.mem(context.runId);
     this.absorb(m, context);

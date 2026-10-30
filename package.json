@@ -48,7 +48,10 @@
     "perf:agent": "pnpm --filter backend perf:agent",
     "perf:live-trace": "pnpm --filter backend perf:live-trace",
     "effort:compare": "pnpm --filter backend effort:compare",
-    "poc:vercel": "pnpm --filter backend poc:vercel"
+    "poc:vercel": "pnpm --filter backend poc:vercel",
+    "agent:recovery": "pnpm --filter backend agent:recovery",
+    "test:durable": "pnpm --filter backend test:durable",
+    "durable:live": "pnpm --filter backend durable:live"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

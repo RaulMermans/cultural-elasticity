@@ -39,6 +39,7 @@ import type { ExpectedValue } from "@cultural-elasticity/shared";
 import { assessEvidenceSufficiency, barrenProbe, type SufficiencyAssessment } from "./evidence-sufficiency.js";
 import { recorderOf } from "../ops/spans.js";
 import { abandonedToolCalls, cacheKey } from "./qloo-gateway.js";
+import { RunSuspendedError } from "./durable/scope.js";
 import type { SkillDefinition } from "./skills/contracts.js";
 import { skillRef } from "./skills/contracts.js";
 import type { SkillRegistry } from "./skills/registry.js";
@@ -251,6 +252,8 @@ export async function executeToolCall(
     dispatch?.end(result.status === "failed" ? "error" : "ok", result.errorCode);
     return { accepted: true, result, trace };
   } catch (error) {
+    // Sprint 10C: a suspended durable job (lease lost, unknown outcome, shutdown) is not a tool failure.
+    if (error instanceof RunSuspendedError) throw error;
     const message = error instanceof Error ? error.message : String(error);
     const code = message.startsWith("TOOL_TIMEOUT") ? "TOOL_TIMEOUT" : "TOOL_ERROR";
     // Sprint 5A.2: a timed-out call's late Qloo answer must not become evidence (qloo-gateway abandonedToolCalls).

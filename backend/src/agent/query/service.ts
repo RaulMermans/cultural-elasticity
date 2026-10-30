@@ -21,19 +21,47 @@ import { comparisonFromSources } from "./comparison.js";
 import type { ExplicitFields, InvestigationBody, QueryBody } from "./contracts.js";
 import { runGate, type ExecutionPlan, type GateResult } from "./gate.js";
 import type { InterpretOutcome, QueryInterpreter } from "./interpreter.js";
+import { durableId, durableScope } from "../durable/scope.js";
 
 /** One interpreted query, kept (bounded, in memory) so it can be confirmed without a second interpretation. */
-type QueryRecord = { queryId: string; plan: ExecutionPlan | null; alternative: ExecutionPlan | null; interpretation: QueryInterpretation; executed: boolean; telemetry: QueryTelemetry };
+export type QueryRecord = { queryId: string; plan: ExecutionPlan | null; alternative: ExecutionPlan | null; interpretation: QueryInterpretation; executed: boolean; telemetry: QueryTelemetry };
+
+/** Sprint 10C: durable backing for interpreted queries (agent_queries). Execution is single-use across processes. */
+export type QueryPersistence = {
+  put(record: QueryRecord): Promise<void>;
+  /** True when this query was not executed yet, or was claimed by the same job (its own replay). */
+  claim(queryId: string, jobId: string | null): Promise<boolean>;
+};
 
 export class QueryStore {
   private readonly records = new Map<string, QueryRecord>();
-  constructor(private readonly capacity = 200) {}
-  put(record: QueryRecord): void {
+  constructor(
+    private readonly capacity = 200,
+    private readonly persistence: QueryPersistence | null = null,
+  ) {}
+  async put(record: QueryRecord): Promise<void> {
+    this.remember(record);
+    await this.persistence?.put(record);
+  }
+  /** Restores records read back from the durable store (startup); never persisted again. */
+  remember(record: QueryRecord): void {
     this.records.set(record.queryId, record);
     while (this.records.size > this.capacity) this.records.delete(this.records.keys().next().value as string);
   }
   get(queryId: string): QueryRecord | undefined {
     return this.records.get(queryId);
+  }
+  /** Marks a query executed. False when it already was (by another job, or in memory without persistence). */
+  async claim(queryId: string): Promise<boolean> {
+    const record = this.records.get(queryId);
+    if (this.persistence) {
+      const ok = await this.persistence.claim(queryId, durableScope()?.jobId ?? null);
+      if (ok && record) record.executed = true;
+      return ok;
+    }
+    if (!record || record.executed) return false;
+    record.executed = true;
+    return true;
   }
 }
 
@@ -105,11 +133,12 @@ export class QueryService {
     const record = this.queries.get(queryId);
     const telemetry = blankTelemetry(randomUUID(), "", []);
     if (!record) return this.respond({ telemetry, state: "CONTEXT_UNAVAILABLE", interpretation: null, errors: [{ code: "QUERY_NOT_FOUND", detail: `query ${queryId} is not held by this process (expired, evicted or restarted); send the question again` }] });
-    if (record.executed) throw new QueryAlreadyExecutedError(queryId);
+    if (record.executed && !durableScope()) throw new QueryAlreadyExecutedError(queryId);
     if (record.interpretation.systemDirectives.length > 0) {
       record.plan = null;
       record.alternative = null;
       record.executed = true;
+      await this.queries.claim(queryId);
       return this.respond({
         telemetry: record.telemetry,
         state: "UNSUPPORTED_OPERATION",
@@ -122,8 +151,8 @@ export class QueryService {
     if (plan.link.parentRunId && !this.deps.runtime.store.get(plan.link.parentRunId)) {
       return this.respond({ telemetry: record.telemetry, state: "CONTEXT_UNAVAILABLE", interpretation: record.interpretation, errors: [{ code: "PARENT_NOT_FOUND", detail: `the parent run ${plan.link.parentRunId} is no longer held by this process` }] });
     }
-    record.executed = true;
-    const confirmed: QueryTelemetry = { ...record.telemetry, queryId: randomUUID() };
+    if (!(await this.queries.claim(queryId))) throw new QueryAlreadyExecutedError(queryId);
+    const confirmed: QueryTelemetry = { ...record.telemetry, queryId: durableId("query") };
     return this.run(queryId, plan, record.interpretation, confirmed, record.alternative === plan, null, undefined, hooks);
   }
 
@@ -135,7 +164,7 @@ export class QueryService {
       const fresh: InvestigationBody = { query: body.query, brand: verdict.brandLabel, intent: "compare_territories", territories: verdict.labels, ...(body.model ? { model: body.model } : {}) };
       return this.handle(fresh, execute, hooks);
     }
-    const queryId = randomUUID();
+    const queryId = durableId("query");
     const explicit: ExplicitFields = { ...(body.brand && { brand: body.brand }), ...(body.intent && { intent: body.intent }), ...(body.territories && { territories: body.territories }) };
     const telemetry = blankTelemetry(queryId, body.query, Object.keys(explicit));
     if (hooks?.signal?.aborted) return this.cancelledResponse(telemetry, null, "Cancelled before interpretation started.");
@@ -181,7 +210,7 @@ export class QueryService {
     telemetry.clarificationRequired = interpretation.disposition === "NEEDS_CLARIFICATION";
     telemetry.selectedCapability = gate.plan?.handoff.intent ?? null;
     telemetry.errorCodes = interpretation.reasonCodes.map((r) => r.code);
-    this.queries.put({ queryId, plan: gate.plan, alternative: gate.alternative?.plan ?? null, interpretation, executed: false, telemetry });
+    await this.queries.put({ queryId, plan: gate.plan, alternative: gate.alternative?.plan ?? null, interpretation, executed: false, telemetry });
 
     if (gate.navigation) {
       const target = this.deps.runtime.store.get(gate.navigation.runId);
@@ -198,9 +227,10 @@ export class QueryService {
         stored.alternative = null;
         stored.executed = true;
       }
+      await this.queries.claim(queryId);
       return this.cancelledResponse(telemetry, interpretation, "Cancelled before an investigation started.");
     }
-    this.queries.get(queryId)!.executed = true;
+    if (!(await this.queries.claim(queryId))) throw new QueryAlreadyExecutedError(queryId);
     return this.run(queryId, gate.plan, interpretation, telemetry, false, context, gate, hooks);
   }
 

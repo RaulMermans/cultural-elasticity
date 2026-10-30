@@ -34,13 +34,19 @@ export type QlooCallResult =
   | { outcome: "needs_input"; call: LiveCall; issues: ResolutionIssue[]; attempts: number; flags: Limitation[]; callMeta: QlooCallMeta }
   | { outcome: "failed"; code: string; retryable: boolean; detail: string; attempts: number; correlationId?: string; callMeta: QlooCallMeta };
 
+export type CallOptions = { maxRetries?: number; onDispatch?: () => Promise<void> };
+
 export interface AgentToolProvider {
   readonly name: string;
   /** "live" = real Qloo through the hackathon API; "scripted" = deterministic synthetic world. */
   readonly mode: "live" | "scripted";
   readonly evidenceSource: string;
-  /** `maxRetries` caps automatic retries for this call (the runtime lowers it to stay within budget). */
-  call<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], options?: { maxRetries?: number }): Promise<QlooCallResult>;
+  /**
+   * `maxRetries` caps automatic retries for this call (the runtime lowers it to stay within budget). Sprint 10C:
+   * `onDispatch` is awaited immediately before each attempt leaves the process (after spacing and rate-limit waits),
+   * so a durable journal can tell "never sent" from "possibly sent".
+   */
+  call<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], options?: CallOptions): Promise<QlooCallResult>;
   close?(): void;
 }
 
@@ -84,7 +90,7 @@ export class QlooToolProvider implements AgentToolProvider {
     return (this.options.sleep ?? ((t: number) => new Promise<void>((resolve) => setTimeout(resolve, t))))(ms);
   }
 
-  async call<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], callOptions: { maxRetries?: number } = {}): Promise<QlooCallResult> {
+  async call<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], callOptions: CallOptions = {}): Promise<QlooCallResult> {
     const previous = this.queue;
     let release: () => void = () => undefined;
     this.queue = new Promise<void>((resolve) => {
@@ -98,7 +104,7 @@ export class QlooToolProvider implements AgentToolProvider {
     }
   }
 
-  private async callExclusive<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], callOptions: { maxRetries?: number } = {}): Promise<QlooCallResult> {
+  private async callExclusive<O extends QlooOperation>(operation: O, input: QlooOperationInput[O], callOptions: CallOptions = {}): Promise<QlooCallResult> {
     const maxRetries = Math.min(this.options.maxRetries ?? 1, callOptions.maxRetries ?? 1);
     const callMeta: QlooCallMeta = { operationId: randomUUID(), spacingMs: 0, rateLimitMs: 0, startupMs: 0 };
     for (let attempt = 1; ; attempt += 1) {
@@ -112,6 +118,7 @@ export class QlooToolProvider implements AgentToolProvider {
       const capturedAt = (this.options.now ?? (() => new Date()))().toISOString();
       let call: LiveCall | undefined;
       let failure: { code: string; retryable: boolean; detail: string; correlationId?: string } | undefined;
+      await callOptions.onDispatch?.();
       try {
         const result = await this.transport.execute(operation, input);
         const startup = (this.transport as { lastStartupMs?: number }).lastStartupMs;

@@ -37,7 +37,10 @@
     "perf:live-trace": "tsx scripts/perf-live-trace.ts",
     "effort:compare": "tsx scripts/effort-compare.ts",
     "poc:vercel": "tsx scripts/vercel-feasibility/run-poc.ts",
-    "eval:brand-baseline:report": "tsx scripts/brand-baseline-eval/report.ts"
+    "eval:brand-baseline:report": "tsx scripts/brand-baseline-eval/report.ts",
+    "agent:recovery": "tsx scripts/agent-recovery.ts",
+    "test:durable": "vitest run --config vitest.durable.config.ts",
+    "durable:live": "tsx scripts/durable/live-acceptance.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.131.0",

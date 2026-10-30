@@ -134,6 +134,14 @@ export interface AgentModel {
    * `feedback` lists claim-validation violations of the previous attempt.
    */
   synthesize?(context: FinalizationContext, feedback: string[]): Promise<SynthesisTurn>;
+  /**
+   * Sprint 10C: a durable replay reused a committed decision for `context` instead of calling `decide`. A LOCAL policy
+   * that keeps memory across turns (the baseline reference policy, scripted test models) updates it here; it must never
+   * call a provider. A stateless adapter (the Anthropic model: one request per decision) omits it.
+   */
+  replay?(context: AgentDecisionContext): Promise<void>;
+  /** Sprint 10C: the same for a reused synthesis. */
+  replaySynthesis?(context: FinalizationContext, feedback: string[]): Promise<void>;
 }
 
 export type { AgentTerritoryResult };

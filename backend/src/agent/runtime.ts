@@ -45,6 +45,7 @@ import { decisionCeilingUsd, priceUsd, roundUsd, synthesisCeilingUsd } from "../
 import { attachRecorder, recorderOf } from "../ops/spans.js";
 import type { AgentToolProvider } from "./tool-provider.js";
 import { ToolRegistry } from "./tool-registry.js";
+import { assertNotHalted, checkpoint, durableId, durableScope, RunSuspendedError } from "./durable/scope.js";
 
 export type AgentRuntimeDeps = {
   model: AgentModel;
@@ -112,7 +113,8 @@ export class AgentRuntime {
     const request = parsed.data as AgentRequest;
     const check = options.interpretation ? resolveInterpretation(request, options.interpretation) : null;
     if (check && !check.ok) throw new AgentInputError([{ path: "interpretation", message: check.reason }]);
-    const state = createRunState(request, this.deps.model.info, { name: this.deps.provider.name, mode: this.deps.provider.mode, evidenceSource: this.deps.provider.evidenceSource }, limits);
+    // Sprint 10C: inside a durable job the run id is derived from the job, so a replay after a restart is the same run.
+    const state = createRunState(request, this.deps.model.info, { name: this.deps.provider.name, mode: this.deps.provider.mode, evidenceSource: this.deps.provider.evidenceSource }, limits, durableScope() ? durableId("run") : undefined);
     state.expectedBrandId = options.expectedBrandId ?? null;
     state.territoryGrounding = options.territoryGrounding ?? null;
     if (options.discoverySeeds?.length) state.discoverySeeds = options.discoverySeeds.map((seed) => ({ ...seed }));
@@ -136,6 +138,7 @@ export class AgentRuntime {
     if (options.signal) this.cancelSignals.set(state, options.signal);
     if (options.spend) this.spendBounds.set(state, options.spend);
     if (this.cancelled(state)) return this.cancel(state);
+    await checkpoint(state, "intake");
     return this.loop(state);
   }
 
@@ -164,6 +167,8 @@ export class AgentRuntime {
 
   /** Stops future turns. Does not abort the Qloo call already in flight, and does not present the run as complete. */
   private async cancel(state: AgentRunState): Promise<AgentRunResponse> {
+    // Sprint 10C: a suspended durable job stops without a result; its committed state is recovered elsewhere.
+    assertNotHalted();
     if (TERMINAL_STATUSES.includes(state.status) && state.final) return state.final;
     const detail = "the investigation was cancelled; evidence gathered before it finished is not a completed finding";
     state.trace.stopReason = { code: "INVESTIGATION_CANCELLED", detail };
@@ -193,13 +198,16 @@ export class AgentRuntime {
         if (sufficiency.verdict === "SUFFICIENT" && state.usage.iterations >= state.limits.maxAgentIterations) return await this.complete(state, "sufficient at the iteration budget");
         if (state.finishRequested || sufficiency.verdict === "INSUFFICIENT") return await this.complete(state, sufficiency.verdict === "INSUFFICIENT" ? "evidence insufficient" : "agent finished");
         if (sufficiency.verdict === "BUDGET_EXHAUSTED") return await this.exhausted(state, sufficiency.reasons.join("; "));
-        if (sufficiency.verdict === "NEEDS_USER_INPUT" && state.pendingQuestion) return needsInputResponse(state);
+        if (sufficiency.verdict === "NEEDS_USER_INPUT" && state.pendingQuestion) return await this.needsInput(state);
         if (this.spendRefused(state, "decision")) {
           return await this.exhausted(state, "the authorized model spend cannot cover another decision; findings already supported were kept");
         }
 
         // Sprint 9O: the runtime's own reference search, once, before the model chooses references (reference-discovery.ts).
-        if (this.deps.referenceDiscovery !== false && (await runReferenceDiscovery(state, this.registry, this.deps.provider, this.skills))) continue;
+        if (this.deps.referenceDiscovery !== false && (await runReferenceDiscovery(state, this.registry, this.deps.provider, this.skills))) {
+          await checkpoint(state, "turn");
+          continue;
+        }
 
         state.usage.iterations += 1;
         state.turnOpen = true;
@@ -208,11 +216,13 @@ export class AgentRuntime {
         });
         lastTurn = turn.lastTurn;
         if (turn.stop === "cancelled") return this.cancel(state);
-        if (turn.stop === "needs_input") return needsInputResponse(state);
+        if (turn.stop === "needs_input") return await this.needsInput(state);
+        await checkpoint(state, "turn");
         if (turn.stop === "failed") return await this.fail(state, `model produced no valid action for ${state.limits.maxInvalidTurns} consecutive turns`);
         if (turn.stop === "finish") return await this.complete(state, "agent finished");
       }
     } catch (error) {
+      if (error instanceof RunSuspendedError) throw error;
       state.trace.errors.push({ iteration: state.usage.iterations, code: "RUNTIME_ERROR", detail: error instanceof Error ? error.message.slice(0, 500) : String(error) });
       return this.fail(state, "runtime error");
     }
@@ -339,6 +349,7 @@ export class AgentRuntime {
         state.usage.uncachedInputTokens += modelTurn.usage.inputTokens;
       }
     } catch (error) {
+      if (error instanceof RunSuspendedError) throw error;
       raw = { invalid: `model call failed: ${error instanceof Error ? error.message.slice(0, 200) : String(error)}` };
       this.noteUnknownModelSpend(state, "decision");
       modelSpan?.end("error", "MODEL_CALL_FAILED");
@@ -628,7 +639,15 @@ export class AgentRuntime {
     result.trace = state.trace;
     result.metrics = computeMetrics(state, result.territories);
     state.final = result;
+    await checkpoint(state, "final");
     return result;
+  }
+
+  /** Sprint 10C: a NEEDS_INPUT run is a continuation point, checkpointed before the question is returned. */
+  private async needsInput(state: AgentRunState): Promise<AgentRunResponse> {
+    const response = needsInputResponse(state);
+    await checkpoint(state, "needs_input");
+    return response;
   }
 }
 

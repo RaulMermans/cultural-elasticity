@@ -26,7 +26,7 @@ Neither an isolated successful provider build nor a healthy old backend proves t
 | Backend source | Same canonical Git repository, `main`, **no pinned old SHA** |
 | Backend build | `backend/Dockerfile` from monorepo root; shared workspace included |
 | Health | `/health` and actual runtime readiness |
-| Replicas | **One**: jobs and the in-process spend view are process-local (the operator-run ledger is durable, below) |
+| Replicas | **One**: jobs and the in-process spend view are process-local (the operator-run ledger is durable, below). Sprint 10C durable jobs (`CE_DURABLE_AGENT=1`, migration 002) are lease-fenced but validated for one worker only; not enabled in production until a separate cutover approval (`docs/sprint-10c/`, §13) |
 | Database | Existing PostgreSQL and volume; never recreate or migrate implicitly |
 | Research spending | `CE_ACCEPT_INVESTIGATIONS=0` and baseline admission off by default, until independently approved |
 | Paid operator gate (Sprint 9J) | Every paid start on a public runtime needs `CE_PAID_OPERATOR_TOKEN` (≥ 32 chars, distinct from other secrets) plus an unexpired `CE_PAID_OPERATOR_EXPIRES_AT`; absent on production except during an approved run |
