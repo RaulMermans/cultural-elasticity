@@ -745,13 +745,16 @@ export type AgentAnalysisResult = {
   comparisonFeasibility?: ComparisonFeasibility | null;
 };
 
+export type NeedsInputOption = { id: string; label: string; type?: string; popularity?: number; description?: string };
+
 export type AgentNeedsInputResponse = {
   schemaVersion: typeof AGENT_RESULT_SCHEMA_VERSION;
   runId: string;
   status: "NEEDS_INPUT";
   question: string;
   ambiguity: string;
-  options: { id: string; label: string; type?: string }[];
+  /** Sprint 10D: `popularity` and `description` are Qloo's resolution detail, verbatim; they help a choice, never make one. */
+  options: NeedsInputOption[];
   model: AgentModelInfo;
   trace: AgentTrace;
   metrics: AgentMetrics;

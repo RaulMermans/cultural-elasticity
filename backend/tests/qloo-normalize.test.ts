@@ -86,6 +86,27 @@ describe("result normalization", () => {
     expect(issue?.candidates.map((c) => c.label)).toEqual(["Twin A", "Twin B"]);
   });
 
+  it("keeps Qloo's popularity and a bounded description for same-named candidates (Sprint 10D)", () => {
+    const env = parseEnvelope(
+      "describe",
+      envelope("describe", "needs_input", {
+        resolution: {
+          issues: [{
+            input: "Twin", kind: "ambiguous", input_kind: "entity", field: "entity",
+            candidates: [
+              { id: syntheticId(3), name: "Twin", type: "urn:entity:brand", popularity: 0.91, description: "SYNTHETIC first description." },
+              { id: syntheticId(4), name: "Twin", type: "urn:entity:brand", description: "d".repeat(500) },
+            ],
+          }],
+        },
+      }),
+    );
+    const [issue] = toResolutionIssues("describe", env);
+    expect(issue?.candidates[0]).toEqual({ qlooId: syntheticId(3), label: "Twin", type: "urn:entity:brand", popularity: 0.91, description: "SYNTHETIC first description." });
+    expect(issue?.candidates[1]?.popularity).toBeUndefined();
+    expect(issue?.candidates[1]?.description?.length).toBeLessThanOrEqual(201);
+  });
+
   it("flags partial and degraded results in provenance and keeps warnings", () => {
     const partial = toProvenance("rank", parseEnvelope("rank", envelope("rank", "partial", { warnings: ["2 of 6 options missing"] })));
     expect(partial).toMatchObject({ partial: true, degraded: false, warnings: ["2 of 6 options missing"] });

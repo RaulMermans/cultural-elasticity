@@ -76,7 +76,7 @@ export function buildDecisionContext(state: AgentRunState, registry: ToolRegistr
   const brand: AgentDecisionContext["brand"] = brandEntity
     ? { status: "resolved", id: brandEntity.id, label: brandEntity.label, type: brandEntity.type, resolution: brandEntity.resolution }
     : state.brand.ambiguity
-      ? { status: "ambiguous", input: state.brand.ambiguity.input, candidates: state.brand.ambiguity.candidates.map((c) => ({ id: c.qlooId, label: c.label, type: c.type ?? null })) }
+      ? { status: "ambiguous", input: state.brand.ambiguity.input, candidates: state.brand.ambiguity.candidates.map((c) => ({ id: c.qlooId, label: c.label, type: c.type ?? null, popularity: c.popularity ?? null, description: c.description ?? null })) }
       : { status: state.brand.notFound ? "not_found" : "unresolved", query: state.brand.query };
 
   const detail = needs.has("exemplarCandidates") || needs.has("representationRecovery");

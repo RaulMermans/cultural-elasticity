@@ -154,6 +154,15 @@ export function agentRoutes(
     // Query-layer telemetry carries no raw query text (length + hash only), no prompt and no credential.
     const log = (telemetry: unknown) => app.log.info({ queryTelemetry: telemetry }, "query");
     const reservations = new Map<string, { id: string; started: boolean; durableCents: number }>();
+    // Sprint 10D: durable releases are awaited on shutdown, so a stop right after settlement cannot keep an unused
+    // reservation charged (a lost release only ever over-counts, but it can refuse the next approved run).
+    const pendingReleases = new Set<Promise<void>>();
+    const releaseCents = (cents: number) => {
+      const ledger = runLedger();
+      if (!ledger || cents <= 0) return;
+      const release = ledger.release("model_usd_cents", cents).finally(() => pendingReleases.delete(release));
+      pendingReleases.add(release);
+    };
     const handoffJobs = new Map<string, { directionKey: string; pending: Promise<unknown> }>();
     /** Investigations started from a baseline scan (job id → scan). Scan ownership is how siblings are found. */
     const handoffOrigins = new Map<string, { scanId: string }>();
@@ -194,7 +203,7 @@ export function agentRoutes(
             // Sprint 9M: once the provider reported usage, the unused part of the durable reservation is returned,
             // so a long public evaluation is bounded by real spend. Unknown usage keeps the whole reservation.
             const unused = unusedReservationCents(hold.durableCents, settled);
-            if (unused > 0) void runLedger()?.release("model_usd_cents", unused);
+            if (unused > 0) releaseCents(unused);
             reservations.delete(jobId);
           }
         }
@@ -230,6 +239,7 @@ export function agentRoutes(
         await jobs.drain();
         await durable.store.pool.end().catch(() => undefined);
       }
+      await Promise.allSettled([...pendingReleases]);
       await baselinePool?.end();
     });
     const modelChoice = (model: string | undefined) => (model === "baseline" ? "baseline" : "auto");
@@ -333,7 +343,7 @@ export function agentRoutes(
           return created;
         } catch (error) {
           spendLedger().settle(hold.id, { observedUsd: 0, started: false, cancelledBeforeStart: true });
-          if (held.durableCents > 0) void runLedger()?.release("model_usd_cents", held.durableCents);
+          releaseCents(held.durableCents);
           throw error;
         }
       });
@@ -393,6 +403,19 @@ export function agentRoutes(
      * Sprint 9L: a direction is investigated comparatively (the runtime builds its own Qloo-validated reference set),
      * so it can be placed and classed; the single-hypothesis check could only ever say "inconclusive" for thin evidence.
      */
+    /**
+     * Sprint 10D: after a restart the in-memory key map is empty, but the durable job records still carry the key.
+     * A repeated key never starts a second paid job. Its access token was never stored, so the job is not returned
+     * again: the caller reopens it from where it was saved.
+     */
+    const startedBefore = async (origin: string, idempotencyKey: string, requestKey: string, reply: FastifyReply): Promise<boolean> => {
+      if (!jobs.isDurable) return false;
+      const prior = (await jobs.originHandoffs(origin)).find((item) => item.handoff.idempotencyKey === idempotencyKey);
+      if (!prior) return false;
+      if (prior.handoff.requestKey !== requestKey) void reply.code(409).send({ error: "idempotency_conflict" });
+      else void reply.code(409).send({ error: "idempotency_unavailable", jobId: prior.jobId, message: "This investigation was already started. Reopen it from your saved research." });
+      return true;
+    };
     const handoff = async (request: FastifyRequest<{ Body: unknown }>, reply: FastifyReply, execute: boolean) => {
       if (rejectUnauthenticated(request, reply)) return;
       const parsed = handoffBody.safeParse(request.body);
@@ -415,12 +438,13 @@ export function agentRoutes(
         if (!prior || typeof prior !== "object" || !("jobId" in prior)) return reply.code(409).send({ error: "idempotency_unavailable" });
         return reply.code(200).send(prior);
       }
+      if (await startedBefore(`scan:${parsed.data.scanId}`, parsed.data.idempotencyKey, directionKey, reply)) return;
       const body = "territory" in prepared
         ? queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "analyze_move", territories: [prepared.territory.name] })
         : queryBody.parse({ query: prepared.agentRequest.userQuery, brand: prepared.brand.name, intent: "explore_frontier", territories: [] });
       const grounding = parsed.data.territoryId ? directionGrounding(scan.result, parsed.data.territoryId) : null;
       const seeds = "seeds" in prepared && prepared.seeds.length ? prepared.seeds : null;
-      const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId, ...(grounding && { territoryGrounding: grounding }), ...(seeds && { discoverySeeds: seeds }) }, request, reply, `scan:${parsed.data.scanId}`));
+      const pending = Promise.resolve(enqueue({ kind: "execute", body, model: "auto", expectedBrandId: prepared.brand.qlooId, ...(grounding && { territoryGrounding: grounding }), ...(seeds && { discoverySeeds: seeds }), handoff: { idempotencyKey: parsed.data.idempotencyKey, requestKey: directionKey } }, request, reply, `scan:${parsed.data.scanId}`));
       handoffJobs.set(key, { directionKey, pending });
       if (handoffJobs.size > 200) handoffJobs.delete(handoffJobs.keys().next().value!);
       const created = await pending;
@@ -542,12 +566,14 @@ export function agentRoutes(
         if (!prior || typeof prior !== "object" || !("jobId" in prior)) return reply.code(409).send({ error: "idempotency_unavailable" });
         return reply.code(200).send(prior);
       }
+      const compareOrigin = `compare:${body.scanId}:${body.parentJobId}`;
+      if (await startedBefore(compareOrigin, body.idempotencyKey, referenceKey, reply)) return;
       if (!handoff.ok) return reply.code(422).send({ error: "comparison_not_eligible", eligibility: handoff.eligibility });
       // Paid admission is decided here, at dispatch, never by the eligibility gate or the browser.
       if (!admitCreate(request, reply)) return;
       const plan = planFor(context, handoff);
       const queryBodyValue = queryBody.parse({ query: handoff.request.userQuery, brand: handoff.request.brand, intent: "compare_territories", territories: handoff.request.territories });
-      const pending = Promise.resolve(enqueue({ kind: "execute", body: queryBodyValue, model: "auto", expectedBrandId: context.scan.brand.qlooId }, request, reply));
+      const pending = Promise.resolve(enqueue({ kind: "execute", body: queryBodyValue, model: "auto", expectedBrandId: context.scan.brand.qlooId, handoff: { idempotencyKey: body.idempotencyKey, requestKey: referenceKey, plan } }, request, reply, compareOrigin));
       remember(comparativeKeys, key, { referenceKey, pending });
       const created = await pending;
       if (!created || typeof created !== "object" || !("jobId" in created)) comparativeKeys.delete(key);
@@ -561,7 +587,10 @@ export function agentRoutes(
     app.get<{ Params: { id: string } }>("/api/agent/handoff/compare/:id/report", async (request, reply) => {
       if (rejectUnauthenticated(request, reply)) return;
       const view = await jobs.read(request.params.id, tokenOf(request.headers["x-job-token"]));
-      const entry = comparativeJobs.get(request.params.id);
+      // Sprint 10D: after a restart the plan is read back from the durable job record (the token was proven above).
+      // The scan is not re-read without its token, so the connection map is then built from the run alone.
+      const stored = view && !comparativeJobs.has(request.params.id) ? await jobs.durableHandoff(request.params.id) : null;
+      const entry = comparativeJobs.get(request.params.id) ?? (isComparativePlan(stored?.plan) ? { plan: stored.plan, baseline: null } : undefined);
       if (!view || !entry) return reply.code(404).send({ error: "job_not_found", message: "This comparison is not available. It may have expired, or the server may have restarted." });
       const result = view.response?.investigation?.result;
       const analysis = result && typeof result === "object" && (result as AgentRunResponse).status !== "NEEDS_INPUT" ? (result as AgentAnalysisResult) : null;
@@ -608,4 +637,9 @@ export function agentRoutes(
       return handle(reply, () => factory(modelChoice(body.data.model)).continue(body.data.runId, body.data.clarification));
     });
   };
+}
+
+function isComparativePlan(value: unknown): value is ComparativePlan {
+  const plan = value as Partial<ComparativePlan> | null | undefined;
+  return Boolean(plan && typeof plan.brandId === "string" && typeof plan.brandLabel === "string" && plan.target && Array.isArray(plan.references));
 }

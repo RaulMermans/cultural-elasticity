@@ -4,7 +4,8 @@ import { isBrandBaselineResult, type AnyBrandBaselineResult } from "@cultural-el
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RESOLUTION_COPY, TERMINAL_SCAN_STATUSES, apiErrorCopy, type BrandResearchAvailability } from "@/lib/research-copy";
 
-export type Candidate = { qlooId: string; label: string; type?: string };
+/** `popularity` and `description` are Qloo's own resolution detail (Sprint 10D): shown to help the choice, never used to make it. */
+export type Candidate = { qlooId: string; label: string; type?: string; popularity?: number; description?: string };
 export type Resolution = { resolutionId: string; accessToken: string; status: string; entity?: { qlooId: string; label: string }; candidates?: Candidate[] };
 export type LiveScan = { scanId: string; scanStatus: string; stages: { stage: string; status: string }[]; result: AnyBrandBaselineResult | null };
 

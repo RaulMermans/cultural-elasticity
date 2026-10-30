@@ -6,10 +6,11 @@
  * allowed-transition table and records every change in the trace.
  */
 import { randomUUID } from "node:crypto";
-import type { AgentAnalysisResult, AgentIntent, DiscoverySeed, AgentModelInfo, InvestigationLink, AgentRunStatus, AgentTerritoryResult, AgentTrace, CandidateSource, ConceptDedupVerdict, RepresentationFailureCode, SemanticRelevance, SkillRef, TerritoryOrigin, TerritoryRole } from "@cultural-elasticity/shared";
+import type { AgentAnalysisResult, AgentIntent, DiscoverySeed, AgentModelInfo, NeedsInputOption, InvestigationLink, AgentRunStatus, AgentTerritoryResult, AgentTrace, CandidateSource, ConceptDedupVerdict, RepresentationFailureCode, SemanticRelevance, SkillRef, TerritoryOrigin, TerritoryRole } from "@cultural-elasticity/shared";
 import type { Limitation } from "../evidence/schema.js";
 import type { LiveCall } from "../qloo/live-adapter.js";
 import type { ConceptRef } from "../contracts/qloo.js";
+import type { ResolutionCandidate } from "../qloo/normalize.js";
 import { defaultLimits, type AgentRequest, type Interpretation, type InvestigationLimits, type RankableType } from "./contracts.js";
 import type { QlooCallResult } from "./tool-provider.js";
 import type { CulturalElasticityResult } from "@cultural-elasticity/shared";
@@ -96,7 +97,7 @@ export type TerritoryState = {
 export type BrandState = {
   query: string | null;
   entity: { id: string; label: string; type: string; match: string | null; resolution: "confirmed" | "unconfirmed"; call: LiveCall } | null;
-  ambiguity: { input: string; candidates: ConceptRef[]; correlationId: string } | null;
+  ambiguity: { input: string; candidates: ResolutionCandidate[]; correlationId: string } | null;
   notFound: boolean;
   attempts: number;
 };
@@ -134,7 +135,7 @@ export type AgentRunState = {
   /** partial / degraded flags and other run-level limitations. */
   flags: Limitation[];
   usage: { iterations: number; qlooCalls: number; invalidTurnsInRow: number; inputTokens: number; outputTokens: number; retries: number; cacheReadTokens: number; cacheCreationTokens: number; uncachedInputTokens: number; synthesisAttempts: number; qlooLatencyMs: number; qlooSpacingMs: number };
-  pendingQuestion: { question: string; ambiguity: string; options: { id: string; label: string; type?: string }[] } | null;
+  pendingQuestion: { question: string; ambiguity: string; options: NeedsInputOption[] } | null;
   clarifications: string[];
   finishRequested: boolean;
   /** True when the caller fixed maxQlooCalls; otherwise the interpreted intent sets the default budget. */

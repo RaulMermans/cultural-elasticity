@@ -74,7 +74,7 @@ const interpretedEntitySchema = z.looseObject({
 });
 
 // [harness] resolution issue emitted with status "needs_input".
-const resolutionCandidateSchema = z.looseObject({ id: z.string(), name: z.string(), type: z.string().optional() });
+const resolutionCandidateSchema = z.looseObject({ id: z.string(), name: z.string(), type: z.string().optional(), popularity: z.number().optional(), description: z.string().optional() });
 const resolutionIssueSchema = z.looseObject({
   input: z.string(),
   kind: z.string(),
@@ -87,8 +87,15 @@ export type ResolutionIssue = {
   kind: "ambiguous" | "not_found" | string;
   inputKind: "entity" | "tag" | undefined;
   field: string | undefined;
-  candidates: ConceptRef[];
+  candidates: ResolutionCandidate[];
 };
+
+/**
+ * Sprint 10D: Qloo's own disambiguation detail for a candidate, kept verbatim (description bounded) so a person can
+ * tell same-named entities apart. It is shown to help a choice, never used to make one: popularity is not identity.
+ */
+export type ResolutionCandidate = ConceptRef & { popularity?: number; description?: string };
+const MAX_CANDIDATE_DESCRIPTION = 200;
 
 export function parseEnvelope(operation: QlooOperation, raw: unknown): QlooEnvelope {
   const parsed = envelopeSchema.safeParse(raw);
@@ -218,6 +225,8 @@ export function toResolutionIssues(operation: QlooOperation, envelope: QlooEnvel
       qlooId: candidate.id,
       label: candidate.name,
       ...(candidate.type !== undefined ? { type: candidate.type } : {}),
+      ...(candidate.popularity !== undefined && Number.isFinite(candidate.popularity) ? { popularity: candidate.popularity } : {}),
+      ...(candidate.description ? { description: candidate.description.length > MAX_CANDIDATE_DESCRIPTION ? `${candidate.description.slice(0, MAX_CANDIDATE_DESCRIPTION)}…` : candidate.description } : {}),
     })),
   }));
 }

@@ -350,7 +350,7 @@ const resolveEntity: AgentTool<{ name: string; type: RankableType; role: "brand"
         if (issue?.kind === "ambiguous" && candidates.length > 0) state.brand.ambiguity = { input: input.name, candidates, correlationId: result.call.envelope.execution.correlation_id };
         else state.brand.notFound = true;
       }
-      return { status: "needs_input", summary: `${issue?.kind ?? "unresolved"}: ${candidates.length} candidate(s)`, data: { kind: issue?.kind ?? null, candidates: candidates.map((c) => ({ id: c.qlooId, label: c.label, type: c.type ?? null })) } };
+      return { status: "needs_input", summary: `${issue?.kind ?? "unresolved"}: ${candidates.length} candidate(s)`, data: { kind: issue?.kind ?? null, candidates: candidates.map((c) => ({ id: c.qlooId, label: c.label, type: c.type ?? null, popularity: c.popularity ?? null, description: c.description ?? null })) } };
     }
     if (result.outcome === "empty" || !describedEntity(result.call)) {
       if (input.role === "brand") state.brand.notFound = true;
