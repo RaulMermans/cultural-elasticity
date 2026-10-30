@@ -199,6 +199,12 @@ async function main(): Promise<number> {
     for (const a of selected) {
       // A resumed session never repeats an admitted assignment (failed or not); one refused at admission sent nothing.
       if (finished.has(a.id)) continue;
+      // A retry runs only when the original attempt ended without a completed investigation.
+      if (a.id.endsWith("#retry") && summary.find((r) => r.id === a.id.replace(/#retry$/u, ""))?.status === "completed") {
+        summary.push({ id: a.id, status: "skipped", reason: "ORIGINAL_COMPLETED" });
+        await persist();
+        continue;
+      }
       const startedAt = Date.now();
       let jobId: string | undefined = adoptable.get(a.id) ?? (summary.find((r) => r.id === a.id)?.jobId as string | undefined);
       let interruption: Record<string, unknown> | null = null;
