@@ -398,9 +398,10 @@ test("SYNTHETIC HOTFIX a used investigation allowance replaces Measure cultural 
 });
 
 test("SYNTHETIC HOTFIX a server 429 shows its own reason and the controls follow the re-read status", async ({ page }) => {
-  let reads = 0;
-  await stubLive(page, fixture.baseline, () => (++reads <= 3 ? eligible("available", "available", 11) : eligible("available", "visitor_allowance_used", 12)));
-  await page.route("**/api/research/handoff/jobs", (route) => json(route, { error: "visitor_quota_reached", message: "This network has used its allowance of 12 investigations for this evaluation, which runs until 6 Nov 2026, 05:00 UTC. Saved research and the recorded example remain available." }, 429));
+  // The status changes only once the server has refused, however often the page reads it before that.
+  let refused = false;
+  await stubLive(page, fixture.baseline, () => (refused ? eligible("available", "visitor_allowance_used", 12) : eligible("available", "available", 11)));
+  await page.route("**/api/research/handoff/jobs", (route) => { refused = true; return json(route, { error: "visitor_quota_reached", message: "This network has used its allowance of 12 investigations for this evaluation, which runs until 6 Nov 2026, 05:00 UTC. Saved research and the recorded example remain available." }, 429); });
   await startLarkspur(page);
   await page.getByRole("treeitem", { name: /Direction: Slow Touring/u }).click();
   await page.getByTestId("network-investigate").click();
